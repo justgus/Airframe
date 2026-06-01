@@ -17,6 +17,18 @@ Backlog -> Active -> Resolved - Not Verified -> Resolved - Verified
 - **Resolved - Verified**: User has explicitly verified the fix.
 - **Closed**: User has directed that the issue should be closed without verification.
 
+## GitHub Issue Mapping
+
+Every Airframe Issue must have exactly one GitHub Issue number. Every GitHub Issue used for Issue tracking must identify exactly one Airframe Issue ID.
+
+Rules:
+
+- The GitHub Issue title must begin with `[I-XXXX]`.
+- The Issue record must include `**GitHub Issue:** #NNN`.
+- The GitHub Issue body must include `Airframe Type: Issue` and `Airframe ID: I-XXXX`.
+- A GitHub Issue may not represent more than one Airframe Issue.
+- Resolving, verifying, or closing an Issue must update both the local Issue record and the linked GitHub Issue.
+
 ## Authorization
 
 AI Cockpit / agents may create Issues, move assigned Issues to In Progress, document root cause and resolution, and mark fixes Resolved - Not Verified.
@@ -43,6 +55,7 @@ docs/Issues/
 ## I-XXXX: [Title]
 
 **Status:** Open / In Progress / Resolved - Not Verified / Resolved - Verified / Closed
+**GitHub Issue:** #NNN
 **Platform:** macOS / iOS / visionOS / All platforms / Not applicable
 **Component:** [Affected component]
 **Severity:** Critical / High / Medium / Low

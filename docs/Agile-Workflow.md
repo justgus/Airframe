@@ -61,6 +61,7 @@ docs/
 4. Agents may mark work as implemented or resolved but not human-verified unless the user explicitly directs it.
 5. Sprint and epic closure require human approval.
 6. Every implemented item needs verification evidence and clear test steps before being marked ready for human review.
+7. Every Task and Issue must have a one-to-one GitHub Issue mapping recorded in `docs/GitHub-Issue-Mapping.md`.
 
 ## Initial State
 

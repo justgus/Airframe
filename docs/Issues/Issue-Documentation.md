@@ -3,6 +3,7 @@
 This is the main index for Agile Airframe Issues. Issues track bugs, regressions, and unintended system behavior.
 
 > Note: For planned improvements, use [Tasks](../Tasks/Task-Documentation.md).
+> GitHub mapping is tracked in [GitHub-Issue-Mapping.md](../GitHub-Issue-Mapping.md).
 
 ## Organization
 
@@ -15,8 +16,8 @@ This is the main index for Agile Airframe Issues. Issues track bugs, regressions
 
 Currently: **0 active Issues**
 
-| Issue | Title | Severity | Sprint | Status |
-| ----- | ----- | -------- | ------ | ------ |
+| Issue | GitHub Issue | Title | Severity | Sprint | Status |
+| ----- | ------------ | ----- | -------- | ------ | ------ |
 
 See: [Issue-active.md](Issue-active.md)
 
@@ -24,8 +25,8 @@ See: [Issue-active.md](Issue-active.md)
 
 Currently: **0 backlogged Issues**
 
-| Issue | Title | Severity | Status |
-| ----- | ----- | -------- | ------ |
+| Issue | GitHub Issue | Title | Severity | Status |
+| ----- | ------------ | ----- | -------- | ------ |
 
 See: [Issue-backlog.md](Issue-backlog.md)
 

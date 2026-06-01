@@ -17,6 +17,18 @@ Backlog -> Active -> Implemented - Not Verified -> Implemented - Verified
 - **Implemented - Verified**: User has explicitly verified the task.
 - **Closed**: User has directed that the task should not proceed.
 
+## GitHub Issue Mapping
+
+Every Airframe Task must have exactly one GitHub Issue number. Every GitHub Issue used for Task tracking must identify exactly one Airframe Task ID.
+
+Rules:
+
+- The GitHub Issue title must begin with `[T-XXXX]`.
+- The Task record must include `**GitHub Issue:** #NNN`.
+- The GitHub Issue body must include `Airframe Type: Task` and `Airframe ID: T-XXXX`.
+- A GitHub Issue may not represent more than one Airframe Task.
+- Closing or verifying a Task must update both the local Task record and the linked GitHub Issue.
+
 ## Authorization
 
 AI Cockpit / agents may:
@@ -52,6 +64,7 @@ docs/Tasks/
 ## T-XXXX: [Brief Title]
 
 **Status:** Backlog / Active / Implemented - Not Verified / Implemented - Verified / Closed
+**GitHub Issue:** #NNN
 **Component:** [Primary component]
 **Priority:** Critical / High / Medium / Low
 **Epic:** [EP-XXX or None]

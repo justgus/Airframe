@@ -9,6 +9,7 @@ Currently: **45 backlog Tasks**
 ## T-0001: Scaffold AirframeCore Swift package
 
 **Status:** Backlog  
+**GitHub Issue:** #1  
 **Component:** AirframeCore  
 **Priority:** High  
 **Epic:** EP-001  
@@ -56,6 +57,7 @@ Supports EP-001.
 ## T-0002: Scaffold AICockpit Swift package executable
 
 **Status:** Backlog  
+**GitHub Issue:** #2  
 **Component:** AICockpit  
 **Priority:** High  
 **Epic:** EP-001  
@@ -104,6 +106,7 @@ Supports EP-001.
 ## T-0003: Scaffold AgileCockpit macOS SwiftUI app
 
 **Status:** Backlog  
+**GitHub Issue:** #3  
 **Component:** AgileCockpit  
 **Priority:** High  
 **Epic:** EP-001  
@@ -152,6 +155,7 @@ Supports EP-001.
 ## T-0004: Assemble Airframe workspace and schemes
 
 **Status:** Backlog  
+**GitHub Issue:** #4  
 **Component:** Workspace  
 **Priority:** High  
 **Epic:** EP-001  
@@ -203,6 +207,7 @@ Supports EP-001.
 ## T-0005: Establish baseline build and test documentation
 
 **Status:** Backlog  
+**GitHub Issue:** #5  
 **Component:** Workspace  
 **Priority:** Medium  
 **Epic:** EP-001  
@@ -251,6 +256,7 @@ Supports EP-001.
 ## T-0006: Verify clean checkout workspace baseline
 
 **Status:** Backlog  
+**GitHub Issue:** #6  
 **Component:** Workspace  
 **Priority:** High  
 **Epic:** EP-001  
@@ -298,77 +304,77 @@ Supports EP-001.
 
 ## EP-002 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0007 | Define canonical domain model | High | Core models for projects, work items, issues, tasks, sprints, epics, evidence, verification gates, audit, metrics, actors, and backend references compile and are unit tested. |
-| T-0008 | Define configuration model and fixtures | High | Sample workspace/project fixtures exist and represent local backend configuration. |
-| T-0009 | Implement AirframeCore configuration loading | High | Valid config loads and malformed config fails with structured errors. |
-| T-0010 | Implement AICockpit context display | Medium | CLI displays current workspace/project context from AirframeCore. |
-| T-0011 | Implement AgileCockpit project context UI | Medium | App displays current workspace/project context from AirframeCore. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0007 | #7 | Define canonical domain model | High | Core models for projects, work items, issues, tasks, sprints, epics, evidence, verification gates, audit, metrics, actors, and backend references compile and are unit tested. |
+| T-0008 | #8 | Define configuration model and fixtures | High | Sample workspace/project fixtures exist and represent local backend configuration. |
+| T-0009 | #9 | Implement AirframeCore configuration loading | High | Valid config loads and malformed config fails with structured errors. |
+| T-0010 | #10 | Implement AICockpit context display | Medium | CLI displays current workspace/project context from AirframeCore. |
+| T-0011 | #11 | Implement AgileCockpit project context UI | Medium | App displays current workspace/project context from AirframeCore. |
 
 ## EP-003 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0012 | Implement actor and certified context model | High | Actor identity/type/project context data is represented without trusting caller assertions. |
-| T-0013 | Implement authority evaluator | High | Allowed, denied, and requires-confirmation results are returned with reason codes. |
-| T-0014 | Implement workflow transition evaluator | High | Task, issue, sprint, epic, and verification state transitions are validated. |
-| T-0015 | Implement audit event service | High | Allowed and denied write attempts generate audit records. |
-| T-0016 | Implement AICockpit denied-operation output | Medium | CLI prints compact human-readable and JSON denial output. |
-| T-0017 | Implement AgileCockpit authority and audit display | Medium | UI shows disabled/denied actions and audit records from AirframeCore. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0012 | #12 | Implement actor and certified context model | High | Actor identity/type/project context data is represented without trusting caller assertions. |
+| T-0013 | #13 | Implement authority evaluator | High | Allowed, denied, and requires-confirmation results are returned with reason codes. |
+| T-0014 | #14 | Implement workflow transition evaluator | High | Task, issue, sprint, epic, and verification state transitions are validated. |
+| T-0015 | #15 | Implement audit event service | High | Allowed and denied write attempts generate audit records. |
+| T-0016 | #16 | Implement AICockpit denied-operation output | Medium | CLI prints compact human-readable and JSON denial output. |
+| T-0017 | #17 | Implement AgileCockpit authority and audit display | Medium | UI shows disabled/denied actions and audit records from AirframeCore. |
 
 ## EP-004 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0018 | Define backend adapter protocol and capabilities | High | Backend protocol and capability model are unit tested. |
-| T-0019 | Implement local filesystem backend | High | Local issue/task records can be created, queried, and updated. |
-| T-0020 | Implement evidence attachment workflow | High | Evidence can be attached to authorized work items. |
-| T-0021 | Implement task packet generation | High | Task packets include objective, scope, acceptance criteria, constraints, evidence requirements, protected paths, and report format. |
-| T-0022 | Implement local dashboard summary APIs | High | Dashboard summary data can be produced from local backend fixtures. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0018 | #18 | Define backend adapter protocol and capabilities | High | Backend protocol and capability model are unit tested. |
+| T-0019 | #19 | Implement local filesystem backend | High | Local issue/task records can be created, queried, and updated. |
+| T-0020 | #20 | Implement evidence attachment workflow | High | Evidence can be attached to authorized work items. |
+| T-0021 | #21 | Implement task packet generation | High | Task packets include objective, scope, acceptance criteria, constraints, evidence requirements, protected paths, and report format. |
+| T-0022 | #22 | Implement local dashboard summary APIs | High | Dashboard summary data can be produced from local backend fixtures. |
 
 ## EP-005 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0023 | Finalize AICockpit MVP command names and parser | High | MVP command names are documented and parser tests pass. |
-| T-0024 | Implement issue and task proposal commands | High | CLI can propose issues and tasks through AirframeCore. |
-| T-0025 | Implement next-task and task-packet commands | High | CLI can retrieve next work and generate task packets. |
-| T-0026 | Implement evidence and ready-for-verification commands | High | CLI can attach evidence and mark work ready through AirframeCore. |
-| T-0027 | Implement Markdown and JSON output contracts | High | Output contract tests pass for MVP commands. |
-| T-0028 | Document AICockpit agent usage | Medium | Agent usage docs cover local setup and command examples. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0023 | #23 | Finalize AICockpit MVP command names and parser | High | MVP command names are documented and parser tests pass. |
+| T-0024 | #24 | Implement issue and task proposal commands | High | CLI can propose issues and tasks through AirframeCore. |
+| T-0025 | #25 | Implement next-task and task-packet commands | High | CLI can retrieve next work and generate task packets. |
+| T-0026 | #26 | Implement evidence and ready-for-verification commands | High | CLI can attach evidence and mark work ready through AirframeCore. |
+| T-0027 | #27 | Implement Markdown and JSON output contracts | High | Output contract tests pass for MVP commands. |
+| T-0028 | #28 | Document AICockpit agent usage | Medium | Agent usage docs cover local setup and command examples. |
 
 ## EP-006 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0029 | Implement AgileCockpit application shell | High | App shell supports navigation, project context, and global status. |
-| T-0030 | Implement dashboard summary UI | High | Dashboard shows recently done, active, ready, blocked, next, upcoming, sprint health, and epic progress sections. |
-| T-0031 | Implement verification queue and review flow | High | User can open ready work and inspect evidence/acceptance criteria. |
-| T-0032 | Implement human verification actions | High | User can accept, reject, or request evidence through AirframeCore. |
-| T-0033 | Implement sprint and epic read views | Medium | App shows sprint and epic detail data from AirframeCore. |
-| T-0034 | Implement metrics and audit views | Medium | App displays metric summaries and audit event records. |
-| T-0035 | Add primary accessibility and UI tests | High | Primary workflow controls have accessibility labels and tests. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0029 | #29 | Implement AgileCockpit application shell | High | App shell supports navigation, project context, and global status. |
+| T-0030 | #30 | Implement dashboard summary UI | High | Dashboard shows recently done, active, ready, blocked, next, upcoming, sprint health, and epic progress sections. |
+| T-0031 | #31 | Implement verification queue and review flow | High | User can open ready work and inspect evidence/acceptance criteria. |
+| T-0032 | #32 | Implement human verification actions | High | User can accept, reject, or request evidence through AirframeCore. |
+| T-0033 | #33 | Implement sprint and epic read views | Medium | App shows sprint and epic detail data from AirframeCore. |
+| T-0034 | #34 | Implement metrics and audit views | Medium | App displays metric summaries and audit event records. |
+| T-0035 | #35 | Add primary accessibility and UI tests | High | Primary workflow controls have accessibility labels and tests. |
 
 ## EP-007 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0036 | Implement GitHub backend capability map and configuration | High | GitHub capability/configuration model is represented and tested. |
-| T-0037 | Implement GitHub issue/task mapping | High | Canonical issues/tasks map to GitHub records. |
-| T-0038 | Implement GitHub sprint/epic/evidence mapping | Medium | Sprint, epic, evidence, and audit references map where supported. |
-| T-0039 | Integrate GitHub backend with AICockpit | Medium | CLI commands work against GitHub-backed projects through AirframeCore. |
-| T-0040 | Integrate GitHub backend status with AgileCockpit | Medium | App displays GitHub-backed data and backend status through canonical APIs. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0036 | #36 | Implement GitHub backend capability map and configuration | High | GitHub capability/configuration model is represented and tested. |
+| T-0037 | #37 | Implement GitHub issue/task mapping | High | Canonical issues/tasks map to GitHub records. |
+| T-0038 | #38 | Implement GitHub sprint/epic/evidence mapping | Medium | Sprint, epic, evidence, and audit references map where supported. |
+| T-0039 | #39 | Integrate GitHub backend with AICockpit | Medium | CLI commands work against GitHub-backed projects through AirframeCore. |
+| T-0040 | #40 | Integrate GitHub backend status with AgileCockpit | Medium | App displays GitHub-backed data and backend status through canonical APIs. |
 
 ## EP-008 Tasks
 
-| Task | Title | Priority | Acceptance Summary |
-| ---- | ----- | -------- | ------------------ |
-| T-0041 | Add full regression and integration test pass | High | AirframeCore, AICockpit, and AgileCockpit test suites pass together. |
-| T-0042 | Harden CLI output and error contracts | High | CLI output and error snapshots/contracts are stable. |
-| T-0043 | Harden AgileCockpit accessibility and UI flows | High | Primary app workflows pass accessibility and UI verification. |
-| T-0044 | Add configuration diagnostics and failure handling | Medium | Configuration, stale data, and backend failure states are clear and tested. |
-| T-0045 | Write release candidate verification documentation | Medium | Release candidate checklist and manual verification docs exist. |
+| Task | GitHub Issue | Title | Priority | Acceptance Summary |
+| ---- | ------------ | ----- | -------- | ------------------ |
+| T-0041 | #41 | Add full regression and integration test pass | High | AirframeCore, AICockpit, and AgileCockpit test suites pass together. |
+| T-0042 | #42 | Harden CLI output and error contracts | High | CLI output and error snapshots/contracts are stable. |
+| T-0043 | #43 | Harden AgileCockpit accessibility and UI flows | High | Primary app workflows pass accessibility and UI verification. |
+| T-0044 | #44 | Add configuration diagnostics and failure handling | Medium | Configuration, stale data, and backend failure states are clear and tested. |
+| T-0045 | #45 | Write release candidate verification documentation | Medium | Release candidate checklist and manual verification docs exist. |
 
 ---
 
