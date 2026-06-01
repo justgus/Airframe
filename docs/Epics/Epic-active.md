@@ -6,7 +6,7 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ## EP-001: Workspace and Toolchain Baseline
 
-**Status:** Active  
+**Status:** Complete  
 **Owner:** HumanOwner  
 **Start Date:** 2026-06-01  
 **Target Close Date:** TBD  
@@ -43,18 +43,18 @@ All later work depends on a stable workspace, package, app, and test baseline th
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-001 | Workspace Skeleton | Active |
+| SP-001 | Workspace Skeleton | Closed |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0001 | Scaffold AirframeCore Swift package | Implemented - Not Verified |
-| T-0002 | Scaffold AICockpit Swift package executable | Implemented - Not Verified |
-| T-0003 | Scaffold AgileCockpit macOS SwiftUI app | Implemented - Not Verified |
-| T-0004 | Assemble Airframe workspace and schemes | Implemented - Not Verified |
-| T-0005 | Establish baseline build and test documentation | Implemented - Not Verified |
-| T-0006 | Verify clean checkout workspace baseline | Implemented - Not Verified |
+| T-0001 | Scaffold AirframeCore Swift package | Implemented - Verified |
+| T-0002 | Scaffold AICockpit Swift package executable | Implemented - Verified |
+| T-0003 | Scaffold AgileCockpit macOS SwiftUI app | Implemented - Verified |
+| T-0004 | Assemble Airframe workspace and schemes | Implemented - Verified |
+| T-0005 | Establish baseline build and test documentation | Implemented - Verified |
+| T-0006 | Verify clean checkout workspace baseline | Implemented - Verified |
 
 ### Related Issues
 
@@ -63,15 +63,15 @@ All later work depends on a stable workspace, package, app, and test baseline th
 
 ### Notes
 
-This Epic should be the first implementation target.
+SP-001 is closed and all related Tasks are verified. EP-001 is complete pending human epic closeout.
 
 ---
 
 ## EP-002: Core Domain and Configuration Foundation
 
-**Status:** Draft  
+**Status:** Active  
 **Owner:** HumanOwner  
-**Start Date:** TBD  
+**Start Date:** 2026-06-01  
 **Target Close Date:** TBD  
 **Close Date:** TBD  
 
@@ -105,16 +105,17 @@ All clients need a common vocabulary and configuration source before workflow, b
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
+| SP-002 | Core Domain and Configuration Foundation | Active |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0007 | Define canonical domain model | Backlog |
-| T-0008 | Define configuration model and fixtures | Backlog |
-| T-0009 | Implement AirframeCore configuration loading | Backlog |
-| T-0010 | Implement AICockpit context display | Backlog |
-| T-0011 | Implement AgileCockpit project context UI | Backlog |
+| T-0007 | Define canonical domain model | Active |
+| T-0008 | Define configuration model and fixtures | Active |
+| T-0009 | Implement AirframeCore configuration loading | Active |
+| T-0010 | Implement AICockpit context display | Active |
+| T-0011 | Implement AgileCockpit project context UI | Active |
 
 ### Related Issues
 
@@ -123,7 +124,7 @@ All clients need a common vocabulary and configuration source before workflow, b
 
 ### Notes
 
-This Epic should preserve AirframeCore as UI-independent Swift code.
+SP-002 is active. This Epic should preserve AirframeCore as UI-independent Swift code.
 
 ---
 
@@ -497,4 +498,4 @@ This Epic should avoid scope expansion and focus on confidence, repeatability, a
 
 ---
 
-*Last Updated: 2026-06-01 (T-0001 through T-0006 implemented, awaiting human verification)*
+*Last Updated: 2026-06-01 (SP-001 closed and SP-002 activated)*

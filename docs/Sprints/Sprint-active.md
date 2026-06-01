@@ -2,11 +2,11 @@
 
 ---
 
-## SP-001: Workspace Skeleton
+## SP-002: Core Domain and Configuration Foundation
 
 **Status:** Active  
-**Epic:** EP-001: Workspace and Toolchain Baseline  
-**Goal:** Create the workspace and minimal buildable skeletons for all three CSCIs.  
+**Epic:** EP-002: Core Domain and Configuration Foundation  
+**Goal:** Define the canonical model and configuration path used by AirframeCore, AICockpit, and AgileCockpit.  
 **Start Date:** 2026-06-01  
 **End Date:** TBD  
 **Capacity:** TBD  
@@ -15,12 +15,11 @@
 
 | Task | GitHub Issue | Title | Priority | Status |
 | ---- | ------------ | ----- | -------- | ------ |
-| T-0001 | #1 | Scaffold AirframeCore Swift package | High | Implemented - Not Verified |
-| T-0002 | #2 | Scaffold AICockpit Swift package executable | High | Implemented - Not Verified |
-| T-0003 | #3 | Scaffold AgileCockpit macOS SwiftUI app | High | Implemented - Not Verified |
-| T-0004 | #4 | Assemble Airframe workspace and schemes | High | Implemented - Not Verified |
-| T-0005 | #5 | Establish baseline build and test documentation | Medium | Implemented - Not Verified |
-| T-0006 | #6 | Verify clean checkout workspace baseline | High | Implemented - Not Verified |
+| T-0007 | #7 | Define canonical domain model | High | Active |
+| T-0008 | #8 | Define configuration model and fixtures | High | Active |
+| T-0009 | #9 | Implement AirframeCore configuration loading | High | Active |
+| T-0010 | #10 | Implement AICockpit context display | Medium | Active |
+| T-0011 | #11 | Implement AgileCockpit project context UI | Medium | Active |
 
 ### Assigned Issues
 
@@ -29,21 +28,21 @@
 
 ### Sprint Notes
 
-SP-001 starts EP-001. The Sprint should produce an executable baseline: AirframeCore tests pass, AICockpit prints help, and AgileCockpit builds from the workspace.
+SP-002 starts EP-002. The Sprint should produce a shared sample workspace/project configuration that can be loaded through AirframeCore and displayed through both AICockpit and AgileCockpit.
 
 ### Verification Targets
 
 ```sh
 swift test --package-path AirframeCore
 swift test --package-path AICockpit
-swift run --package-path AICockpit aicockpit --help
-xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'platform=macOS' build
+swift run --package-path AICockpit aicockpit context
+xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'platform=macOS' test
 ```
 
 ### Retrospective
 
 **Completed:**
-- T-0001 through T-0006 are implemented and awaiting human verification.
+- TBD.
 
 **Returned to Backlog:**
 - TBD.
@@ -59,4 +58,4 @@ xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'pl
 
 ---
 
-*Last Updated: 2026-06-01 (T-0001 through T-0006 implemented, awaiting human verification)*
+*Last Updated: 2026-06-01 (SP-002 activated)*

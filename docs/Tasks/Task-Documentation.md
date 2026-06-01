@@ -14,15 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **39 backlog Tasks**
+Currently: **34 backlog Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
 | ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0007 | #7 | Define canonical domain model | EP-002 | Not Assigned | High | Backlog |
-| T-0008 | #8 | Define configuration model and fixtures | EP-002 | Not Assigned | High | Backlog |
-| T-0009 | #9 | Implement AirframeCore configuration loading | EP-002 | Not Assigned | High | Backlog |
-| T-0010 | #10 | Implement AICockpit context display | EP-002 | Not Assigned | Medium | Backlog |
-| T-0011 | #11 | Implement AgileCockpit project context UI | EP-002 | Not Assigned | Medium | Backlog |
 | T-0012 | #12 | Implement actor and certified context model | EP-003 | Not Assigned | High | Backlog |
 | T-0013 | #13 | Implement authority evaluator | EP-003 | Not Assigned | High | Backlog |
 | T-0014 | #14 | Implement workflow transition evaluator | EP-003 | Not Assigned | High | Backlog |
@@ -62,43 +57,48 @@ See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **0 active Tasks**
+Currently: **5 active Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Status |
 | ---- | ------------ | ----- | ---- | ------ | ------ |
+| T-0007 | #7 | Define canonical domain model | EP-002 | SP-002 | Active |
+| T-0008 | #8 | Define configuration model and fixtures | EP-002 | SP-002 | Active |
+| T-0009 | #9 | Implement AirframeCore configuration loading | EP-002 | SP-002 | Active |
+| T-0010 | #10 | Implement AICockpit context display | EP-002 | SP-002 | Active |
+| T-0011 | #11 | Implement AgileCockpit project context UI | EP-002 | SP-002 | Active |
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **6 unverified Tasks**
+Currently: **0 unverified Tasks**
 
 | Task | GitHub Issue | Title | Status |
 | ---- | ------------ | ----- | ------ |
-| T-0001 | #1 | Scaffold AirframeCore Swift package | Implemented - Not Verified |
-| T-0002 | #2 | Scaffold AICockpit Swift package executable | Implemented - Not Verified |
-| T-0003 | #3 | Scaffold AgileCockpit macOS SwiftUI app | Implemented - Not Verified |
-| T-0004 | #4 | Assemble Airframe workspace and schemes | Implemented - Not Verified |
-| T-0005 | #5 | Establish baseline build and test documentation | Implemented - Not Verified |
-| T-0006 | #6 | Verify clean checkout workspace baseline | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **0 verified Tasks** | Next available: **T-0046**
+Currently: **6 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
+| T-0001 | #1 | Scaffold AirframeCore Swift package | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
+| T-0002 | #2 | Scaffold AICockpit Swift package executable | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
+| T-0003 | #3 | Scaffold AgileCockpit macOS SwiftUI app | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
+| T-0004 | #4 | Assemble Airframe workspace and schemes | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
+| T-0005 | #5 | Establish baseline build and test documentation | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
+| T-0006 | #6 | Verify clean checkout workspace baseline | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 39
-- **Active:** 0
-- **Unverified:** 6
-- **Verified:** 0
+- **Backlog:** 34
+- **Active:** 5
+- **Unverified:** 0
+- **Verified:** 6
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-01 (T-0001 through T-0006 implemented, awaiting human verification)*
+*Last Updated: 2026-06-01 (SP-001 verified and SP-002 activated)*

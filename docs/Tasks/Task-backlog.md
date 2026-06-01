@@ -2,19 +2,9 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **39 backlog Tasks**
+Currently: **34 backlog Tasks**
 
 ---
-
-## EP-002 Tasks
-
-| Task | GitHub Issue | Title | Priority | Acceptance Summary |
-| ---- | ------------ | ----- | -------- | ------------------ |
-| T-0007 | #7 | Define canonical domain model | High | Core models for projects, work items, issues, tasks, sprints, epics, evidence, verification gates, audit, metrics, actors, and backend references compile and are unit tested. |
-| T-0008 | #8 | Define configuration model and fixtures | High | Sample workspace/project fixtures exist and represent local backend configuration. |
-| T-0009 | #9 | Implement AirframeCore configuration loading | High | Valid config loads and malformed config fails with structured errors. |
-| T-0010 | #10 | Implement AICockpit context display | Medium | CLI displays current workspace/project context from AirframeCore. |
-| T-0011 | #11 | Implement AgileCockpit project context UI | Medium | App displays current workspace/project context from AirframeCore. |
 
 ## EP-003 Tasks
 
@@ -82,4 +72,4 @@ Currently: **39 backlog Tasks**
 
 ---
 
-*Last Updated: 2026-06-01 (SP-001 activated)*
+*Last Updated: 2026-06-01 (SP-002 activated)*
