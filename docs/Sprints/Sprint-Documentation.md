@@ -11,24 +11,25 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Active Sprint
 
-Currently: **None**
+Currently: **SP-001: Workspace Skeleton**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **0 Sprints** | Next available: **SP-001**
+Currently: **1 Sprint** | Next available: **SP-002**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
+| SP-001 | Workspace Skeleton | EP-001 | T-0001, T-0002, T-0003, T-0004, T-0005, T-0006 | None | Active |
 
 ## Statistics
 
-- **Total Sprints:** 0
+- **Total Sprints:** 1
 - **Planning:** 0
-- **Active:** 0
+- **Active:** 1
 - **Review:** 0
 - **Closed:** 0
-- **Next available:** SP-001
+- **Next available:** SP-002
 
-*Last Updated: 2026-06-01 (Initial setup)*
+*Last Updated: 2026-06-01 (SP-001 activated)*

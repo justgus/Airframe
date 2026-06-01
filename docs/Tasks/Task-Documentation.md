@@ -14,16 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **45 backlog Tasks**
+Currently: **39 backlog Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
 | ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0001 | #1 | Scaffold AirframeCore Swift package | EP-001 | Not Assigned | High | Backlog |
-| T-0002 | #2 | Scaffold AICockpit Swift package executable | EP-001 | Not Assigned | High | Backlog |
-| T-0003 | #3 | Scaffold AgileCockpit macOS SwiftUI app | EP-001 | Not Assigned | High | Backlog |
-| T-0004 | #4 | Assemble Airframe workspace and schemes | EP-001 | Not Assigned | High | Backlog |
-| T-0005 | #5 | Establish baseline build and test documentation | EP-001 | Not Assigned | Medium | Backlog |
-| T-0006 | #6 | Verify clean checkout workspace baseline | EP-001 | Not Assigned | High | Backlog |
 | T-0007 | #7 | Define canonical domain model | EP-002 | Not Assigned | High | Backlog |
 | T-0008 | #8 | Define configuration model and fixtures | EP-002 | Not Assigned | High | Backlog |
 | T-0009 | #9 | Implement AirframeCore configuration loading | EP-002 | Not Assigned | High | Backlog |
@@ -77,10 +71,16 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **6 unverified Tasks**
 
 | Task | GitHub Issue | Title | Status |
 | ---- | ------------ | ----- | ------ |
+| T-0001 | #1 | Scaffold AirframeCore Swift package | Implemented - Not Verified |
+| T-0002 | #2 | Scaffold AICockpit Swift package executable | Implemented - Not Verified |
+| T-0003 | #3 | Scaffold AgileCockpit macOS SwiftUI app | Implemented - Not Verified |
+| T-0004 | #4 | Assemble Airframe workspace and schemes | Implemented - Not Verified |
+| T-0005 | #5 | Establish baseline build and test documentation | Implemented - Not Verified |
+| T-0006 | #6 | Verify clean checkout workspace baseline | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
@@ -94,11 +94,11 @@ Currently: **0 verified Tasks** | Next available: **T-0046**
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 45
+- **Backlog:** 39
 - **Active:** 0
-- **Unverified:** 0
+- **Unverified:** 6
 - **Verified:** 0
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-01 (Implementation planning baseline)*
+*Last Updated: 2026-06-01 (T-0001 through T-0006 implemented, awaiting human verification)*

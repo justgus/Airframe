@@ -6,9 +6,9 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ## EP-001: Workspace and Toolchain Baseline
 
-**Status:** Draft  
+**Status:** Active  
 **Owner:** HumanOwner  
-**Start Date:** TBD  
+**Start Date:** 2026-06-01  
 **Target Close Date:** TBD  
 **Close Date:** TBD  
 
@@ -43,18 +43,18 @@ All later work depends on a stable workspace, package, app, and test baseline th
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-001 | Workspace Skeleton | Planned |
+| SP-001 | Workspace Skeleton | Active |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0001 | Scaffold AirframeCore Swift package | Backlog |
-| T-0002 | Scaffold AICockpit Swift package executable | Backlog |
-| T-0003 | Scaffold AgileCockpit macOS SwiftUI app | Backlog |
-| T-0004 | Assemble Airframe workspace and schemes | Backlog |
-| T-0005 | Establish baseline build and test documentation | Backlog |
-| T-0006 | Verify clean checkout workspace baseline | Backlog |
+| T-0001 | Scaffold AirframeCore Swift package | Implemented - Not Verified |
+| T-0002 | Scaffold AICockpit Swift package executable | Implemented - Not Verified |
+| T-0003 | Scaffold AgileCockpit macOS SwiftUI app | Implemented - Not Verified |
+| T-0004 | Assemble Airframe workspace and schemes | Implemented - Not Verified |
+| T-0005 | Establish baseline build and test documentation | Implemented - Not Verified |
+| T-0006 | Verify clean checkout workspace baseline | Implemented - Not Verified |
 
 ### Related Issues
 
@@ -497,4 +497,4 @@ This Epic should avoid scope expansion and focus on confidence, repeatability, a
 
 ---
 
-*Last Updated: 2026-06-01 (Implementation planning baseline)*
+*Last Updated: 2026-06-01 (T-0001 through T-0006 implemented, awaiting human verification)*
