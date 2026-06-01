@@ -2,7 +2,7 @@
 
 This is the main index for Agile Airframe Issues. Issues track bugs, regressions, and unintended system behavior.
 
-> Note: For planned improvements, use [Tasks](../Tasks/Task-Documentation.md). For formal discrepancies, use [DRs](../DRs/DR-Documentation.md).
+> Note: For planned improvements, use [Tasks](../Tasks/Task-Documentation.md).
 
 ## Organization
 

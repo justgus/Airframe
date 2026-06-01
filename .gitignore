@@ -1,1 +1,47 @@
 .DS_Store
+
+# Xcode build products
+build/
+Build/
+DerivedData/
+*.xcarchive
+*.ipa
+*.dSYM/
+*.dSYM.zip
+*.app.dSYM/
+
+# Swift Package Manager build products
+.build/
+.swiftpm/
+
+# Xcode user-local state
+*.xcuserstate
+*.xcscmblueprint
+xcuserdata/
+*.moved-aside
+*.xccheckout
+
+# Xcode generated reports and logs
+*.xcresult
+*.xcactivitylog
+*.profdata
+*.coverage
+
+# Playground generated files
+timeline.xctimeline
+playground.xcworkspace/
+
+# CocoaPods / Carthage build outputs
+Pods/
+Carthage/Build/
+
+# Fastlane generated output
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example

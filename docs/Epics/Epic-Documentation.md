@@ -1,6 +1,6 @@
 # Epics - Index
 
-This is the main index for Agile Airframe Epics. Epics are strategic milestones that group Sprints, Tasks, and Issues into a major capability.
+This is the main index for Agile Airframe Epics. Epics are implementation milestones that group Sprints and broad Tasks into independently verifiable increments.
 
 > Related: [Tasks](../Tasks/Task-Documentation.md) | [Issues](../Issues/Issue-Documentation.md) | [Sprints](../Sprints/Sprint-Documentation.md)
 
@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Epics. Epics are strategic milestones 
 
 ## Active Epics
 
-Currently: **None**
+Currently: **8 Draft Epics**
 
 See: [Epic-active.md](Epic-active.md)
 
@@ -24,19 +24,27 @@ See: [Epic-backlog.md](Epic-backlog.md)
 
 ## All Epics
 
-Currently: **0 Epics** | Next available: **EP-001**
+Currently: **8 Epics** | Next available: **EP-009**
 
 | Epic | Title | Status | Start | Close |
 | ---- | ----- | ------ | ----- | ----- |
+| EP-001 | Workspace and Toolchain Baseline | Draft | TBD | TBD |
+| EP-002 | Core Domain and Configuration Foundation | Draft | TBD | TBD |
+| EP-003 | Workflow, Authority, and Audit Foundation | Draft | TBD | TBD |
+| EP-004 | Local Backend and Task Packet MVP | Draft | TBD | TBD |
+| EP-005 | AICockpit MVP Integration | Draft | TBD | TBD |
+| EP-006 | AgileCockpit Dashboard MVP Integration | Draft | TBD | TBD |
+| EP-007 | GitHub Backend MVP | Draft | TBD | TBD |
+| EP-008 | Verification, Hardening, and Release Candidate | Draft | TBD | TBD |
 
 ## Statistics
 
-- **Total Epics:** 0
+- **Total Epics:** 8
 - **Proposed:** 0
-- **Draft:** 0
+- **Draft:** 8
 - **Active:** 0
 - **Complete pending close:** 0
 - **Closed:** 0
-- **Next available:** EP-001
+- **Next available:** EP-009
 
-*Last Updated: 2026-06-01 (Initial setup)*
+*Last Updated: 2026-06-01 (Implementation planning baseline)*

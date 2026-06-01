@@ -1,6 +1,6 @@
 # Issue Guidelines
 
-Issues track bugs, regressions, and unintended behavior in Agile Airframe. Planned improvements belong in Tasks or ERs.
+Issues track bugs, regressions, and unintended behavior in Agile Airframe. Planned improvements belong in Tasks.
 
 ## Lifecycle
 
@@ -83,7 +83,7 @@ docs/Issues/
 1. [Verification step]
 
 **Related Items:**
-- [Task, DR, ER, Sprint, or Epic reference]
+- [Task, Sprint, or Epic reference]
 ```
 
 ## Update Checklist

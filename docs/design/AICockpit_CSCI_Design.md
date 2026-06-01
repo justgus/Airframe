@@ -123,8 +123,6 @@ AI Cockpit shall call Airframe Core read APIs for:
 AI Cockpit shall call Airframe Core write APIs for:
 
 - Propose issue.
-- Propose ER.
-- Propose DR.
 - Propose task.
 - Attach evidence.
 - Mark ready for human verification.
@@ -278,6 +276,7 @@ Tests shall verify Markdown, JSON, and text output formats.
 ## 9. Open Design Decisions
 
 - Final command names remain open.
-- Implementation language remains open.
+- Implementation language selected: Swift.
+- Product form selected: standalone Swift package executable with reusable command library target; see `docs/architecture/CSCI_Project_Form_Trade_Study.md`.
 - Credential discovery strategy remains open.
 - JSON schema for machine-readable output remains open.

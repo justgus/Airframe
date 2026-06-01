@@ -1,6 +1,6 @@
 # Task Guidelines
 
-Tasks track planned implementation work for Agile Airframe: new features, refactors, documentation changes, and requirement updates. Bugs and regressions belong in Issues unless the user requests a formal DR.
+Tasks track planned implementation work for Agile Airframe: new features, refactors, documentation changes, and requirement updates. Bugs and regressions belong in Issues.
 
 ## Lifecycle
 

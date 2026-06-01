@@ -31,8 +31,8 @@ Agile Cockpit shall not directly manipulate backend systems such as GitHub, Line
 - **Actor:** A human, LLM agent, automation account, or observer interacting with the system.
 - **Actor Type:** Certified classification of an actor, such as HumanOwner, HumanReviewer, LLMAgent, Automation, or ReadOnlyObserver.
 - **Project Context:** The project scope under which an actor session or credential is operating.
-- **ER:** Enhancement Request.
-- **DR:** Discrepancy Report.
+- **Task:** Planned implementation work, feature work, refactoring, or requirement change.
+- **Issue:** Bug, defect, regression, or unintended behavior.
 - **Task Packet:** Compact work packet generated for an LLM or agent.
 - **Verification Gate:** Required evidence or check that must be satisfied before work may be accepted.
 
@@ -101,7 +101,7 @@ Agile Cockpit shall display a consolidated dashboard for one or more configured 
 
 ### AC-FR-002 Recently Completed Work
 
-Agile Cockpit shall display recently completed work items, including completed ERs, DRs, issues, tasks, merged pull requests, or backend-equivalent work records where available.
+Agile Cockpit shall display recently completed work items, including completed issues, tasks, merged pull requests, or backend-equivalent work records where available.
 
 ### AC-FR-003 Active Work
 
@@ -139,9 +139,9 @@ Agile Cockpit shall allow authorized human actors to open and close sprints, sub
 
 Agile Cockpit shall allow authorized human actors to open and close epics, subject to Airframe Core workflow validation.
 
-### AC-FR-012 ER / DR / Issue / Task Review
+### AC-FR-012 Issue / Task Review
 
-Agile Cockpit shall display ERs, DRs, issues, and tasks using canonical Airframe Core entity data independent of backend-specific storage.
+Agile Cockpit shall display issues and tasks using canonical Airframe Core entity data independent of backend-specific storage.
 
 ### AC-FR-013 Metrics Display
 
@@ -213,7 +213,7 @@ Agile Cockpit shall consume dashboard summary data from Airframe Core.
 
 ### AC-DR-002 Entity Data
 
-Agile Cockpit shall consume canonical entity records from Airframe Core for projects, epics, sprints, ERs, DRs, issues, tasks, verification gates, evidence, and audit events.
+Agile Cockpit shall consume canonical entity records from Airframe Core for projects, epics, sprints, issues, tasks, verification gates, evidence, and audit events.
 
 ### AC-DR-003 Metrics Data
 
@@ -299,6 +299,6 @@ Agile Cockpit shall undergo accessibility checks appropriate to the selected UI 
 
 ## 9. Open Issues
 
-- Final UI platform selection remains open: local web application, static generated dashboard, native macOS/iPadOS application, or hybrid approach.
+- UI platform selected: native macOS 26 SwiftUI application; see `docs/architecture/CSCI_Project_Form_Trade_Study.md`.
 - The initial authentication mechanism for local human use remains to be selected.
 - The first backend adapter is expected to be GitHub, but Agile Cockpit shall remain backend-agnostic.

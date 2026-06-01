@@ -88,7 +88,7 @@ Airframe Core shall be capable of supporting multiple backend systems through ad
 
 ### AF-FR-001 Canonical Project Model
 
-Airframe Core shall define canonical representations for projects, repositories, epics, sprints, issues, ERs, DRs, tasks, verification gates, evidence, actors, credentials, authority classes, workflow states, metrics, backend references, and audit events.
+Airframe Core shall define canonical representations for projects, repositories, epics, sprints, issues, tasks, verification gates, evidence, actors, credentials, authority classes, workflow states, metrics, backend references, and audit events.
 
 ### AF-FR-002 Actor Identity Certification
 
@@ -120,7 +120,7 @@ Airframe Core shall enforce human-only gates for accepting work, closing work, o
 
 ### AF-FR-009 LLM-Allowed Operations
 
-Airframe Core shall support LLM-allowed operations including proposing issues, proposing ERs, proposing DRs, proposing tasks, attaching evidence, and marking work ready for human verification.
+Airframe Core shall support LLM-allowed operations including proposing issues, proposing tasks, attaching evidence, and marking work ready for human verification.
 
 ### AF-FR-010 Entity Creation
 
@@ -132,7 +132,7 @@ Airframe Core shall support updates to canonical project entities subject to aut
 
 ### AF-FR-012 Entity Query
 
-Airframe Core shall support queries for projects, epics, sprints, ERs, DRs, issues, tasks, evidence, verification gates, metrics, and audit events.
+Airframe Core shall support queries for projects, epics, sprints, issues, tasks, evidence, verification gates, metrics, and audit events.
 
 ### AF-FR-013 Sprint Model
 
@@ -224,7 +224,7 @@ Airframe Core shall define stable canonical identifiers and backend reference ma
 
 ### AF-DR-002 Required Entity Fields
 
-Airframe Core shall define required fields for projects, epics, sprints, ERs, DRs, issues, tasks, verification gates, evidence, actors, policies, and audit events.
+Airframe Core shall define required fields for projects, epics, sprints, issues, tasks, verification gates, evidence, actors, policies, and audit events.
 
 ### AF-DR-003 Workflow State Records
 

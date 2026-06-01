@@ -72,8 +72,6 @@ Entities include:
 - Epic.
 - Sprint.
 - Issue.
-- ER.
-- DR.
 - Task.
 - VerificationGate.
 - Evidence.
@@ -209,8 +207,6 @@ WorkItem is a generalized base concept for issue-like entities.
 Specializations:
 
 - Issue.
-- ER.
-- DR.
 - Task.
 
 Common fields:
@@ -457,7 +453,7 @@ Each adapter shall report capabilities, such as whether it supports:
 A GitHub adapter may map:
 
 - Work items to GitHub Issues.
-- ERs / DRs / Tasks to labeled GitHub Issues.
+- Issues / Tasks to labeled GitHub Issues.
 - Sprints to Milestones or Project iteration fields.
 - Epics to issues or project fields.
 - Evidence to comments.
@@ -610,8 +606,8 @@ Security boundary tests shall verify that caller-provided actor type, role, or t
 
 ## 12. Open Design Decisions
 
-- Implementation language remains open.
-- Package structure remains open.
+- Implementation language selected: Swift.
+- Package structure selected: standalone Swift package library; see `docs/architecture/CSCI_Project_Form_Trade_Study.md`.
 - Initial backend strategy remains open.
 - Final workflow state names remain open.
 - Final policy configuration format remains open.

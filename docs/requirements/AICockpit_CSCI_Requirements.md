@@ -49,7 +49,7 @@ AI Cockpit shall not directly manipulate backend systems except through Airframe
 
 AI Cockpit shall serve as a controlled command interface between LLM agents and the project-management system. It shall support agent workflows such as:
 
-- Proposing ERs, DRs, issues, and tasks.
+- Proposing issues and tasks.
 - Retrieving the next available task within project scope.
 - Generating a compact LLM task packet.
 - Attaching implementation evidence.
@@ -101,23 +101,15 @@ AI Cockpit shall determine the execution project from Airframe Core-certified co
 
 AI Cockpit shall allow authorized LLM agents to propose issues within their certified project context.
 
-### AIC-FR-004 Propose ER
-
-AI Cockpit shall allow authorized LLM agents to propose Enhancement Requests within their certified project context.
-
-### AIC-FR-005 Propose DR
-
-AI Cockpit shall allow authorized LLM agents to propose Discrepancy Reports within their certified project context.
-
-### AIC-FR-006 Propose Task
+### AIC-FR-004 Propose Task
 
 AI Cockpit shall allow authorized LLM agents to propose tasks within their certified project context.
 
-### AIC-FR-007 Retrieve Next Task
+### AIC-FR-005 Retrieve Next Task
 
 AI Cockpit shall support retrieval of the next task appropriate to the agent's execution project and authority.
 
-### AIC-FR-008 Generate Task Packet
+### AIC-FR-006 Generate Task Packet
 
 AI Cockpit shall generate compact task packets containing:
 
@@ -132,39 +124,39 @@ AI Cockpit shall generate compact task packets containing:
 - Protected paths or no-touch areas.
 - Required final report format.
 
-### AIC-FR-009 Attach Evidence
+### AIC-FR-007 Attach Evidence
 
 AI Cockpit shall allow authorized agents to attach evidence to a work item, including command output summaries, test results, changed files, or implementation notes.
 
-### AIC-FR-010 Mark Ready for Human Verification
+### AIC-FR-008 Mark Ready for Human Verification
 
 AI Cockpit shall allow authorized agents to request transition of a work item to Ready for Human Verification when Airframe Core permits the transition.
 
-### AIC-FR-011 Project Summary
+### AIC-FR-009 Project Summary
 
 AI Cockpit shall support compact project summary output for the execution project.
 
-### AIC-FR-012 Multi-Project Summary Restrictions
+### AIC-FR-010 Multi-Project Summary Restrictions
 
 AI Cockpit shall not allow an LLM agent to retrieve or mutate multi-project data unless the actor has explicit authority or read-only aggregation permission.
 
-### AIC-FR-013 Deny Human-Only Operations
+### AIC-FR-011 Deny Human-Only Operations
 
 AI Cockpit shall deny attempts by LLM agents to accept work, reject work as final, close issues, open or close sprints, open or close epics, approve architecture decisions, or change workflow rules.
 
-### AIC-FR-014 Project Scope Mismatch Detection
+### AIC-FR-012 Project Scope Mismatch Detection
 
 AI Cockpit shall detect and report project scope mismatches returned by Airframe Core.
 
-### AIC-FR-015 Structured Output
+### AIC-FR-013 Structured Output
 
 AI Cockpit shall support structured output formats suitable for LLM consumption, including Markdown and JSON.
 
-### AIC-FR-016 Dry-Run Mode
+### AIC-FR-014 Dry-Run Mode
 
 AI Cockpit should support a dry-run mode that validates an operation without committing backend changes.
 
-### AIC-FR-017 Audit Display
+### AIC-FR-015 Audit Display
 
 AI Cockpit shall display or return audit identifiers for write operations where available.
 
@@ -210,7 +202,7 @@ AI Cockpit shall consume task packet data generated or assembled by Airframe Cor
 
 ### AIC-DR-002 Entity Proposal Data
 
-AI Cockpit shall provide proposal data for issues, ERs, DRs, and tasks using Airframe Core canonical fields.
+AI Cockpit shall provide proposal data for issues and tasks using Airframe Core canonical fields.
 
 ### AIC-DR-003 Evidence Data
 
@@ -230,7 +222,7 @@ AI Cockpit shall use Airframe Core APIs for all project-management operations.
 
 ### AIC-IR-002 CLI Command Model
 
-AI Cockpit commands shall use domain terms such as issue, ER, DR, task, evidence, verification, sprint, and epic rather than backend-specific names.
+AI Cockpit commands shall use domain terms such as issue, task, evidence, verification, sprint, and epic rather than backend-specific names.
 
 ### AIC-IR-003 Machine-Readable Output
 

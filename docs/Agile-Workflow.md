@@ -16,8 +16,6 @@ Agile Airframe separates human-authorized governance from agent-executable work:
 | ---- | ------ | ------- | -------------- |
 | Task | `T-XXXX` | Planned implementation work, feature work, refactoring, or requirement changes | `docs/Tasks/` |
 | Issue | `I-XXXX` | Bugs, defects, regressions, and unintended behavior | `docs/Issues/` |
-| Enhancement Request | `ER-XXXX` | Larger proposed capability or requirements enhancement | `docs/ERs/` |
-| Discrepancy Report | `DR-XXXX` | Formal defect/discrepancy record requiring investigation and verification | `docs/DRs/` |
 | Sprint | `SP-XXX` | Fixed execution window grouping Tasks and Issues | `docs/Sprints/` |
 | Epic | `EP-XXX` | Strategic milestone spanning one or more Sprints | `docs/Epics/` |
 
@@ -40,17 +38,6 @@ docs/
 │   ├── Issue-Documentation.md
 │   ├── Issue-backlog.md
 │   ├── Issue-active.md
-│   ├── Verified/
-│   └── Closed/
-├── ERs/
-│   ├── ER-Guidelines.md
-│   ├── ER-Documentation.md
-│   ├── ER-unverified.md
-│   └── Verified/
-├── DRs/
-│   ├── DR-GUIDELINES.md
-│   ├── DR-Documentation.md
-│   ├── DR-unverified.md
 │   ├── Verified/
 │   └── Closed/
 ├── Sprints/
@@ -77,6 +64,6 @@ docs/
 
 ## Initial State
 
-This project currently has no recorded Tasks, Issues, ERs, DRs, Sprints, or Epics in the Agile documentation tree. The next available identifiers are listed in the corresponding index files.
+This project currently has no recorded Tasks, Issues, Sprints, or Epics in the Agile documentation tree. The next available identifiers are listed in the corresponding index files.
 
 *Last Updated: 2026-06-01 (Initial setup)*
