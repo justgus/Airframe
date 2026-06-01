@@ -23,11 +23,16 @@ Every Airframe Issue must have exactly one GitHub Issue number. Every GitHub Iss
 
 Rules:
 
+- A new local Issue must create its GitHub Issue at the same time the local Issue record is created.
+- A new GitHub Issue created without an Airframe ID is imported as a backlogged Airframe Issue by the nightly sync.
 - The GitHub Issue title must begin with `[I-XXXX]`.
 - The Issue record must include `**GitHub Issue:** #NNN`.
 - The GitHub Issue body must include `Airframe Type: Issue` and `Airframe ID: I-XXXX`.
 - A GitHub Issue may not represent more than one Airframe Issue.
+- Moving an Issue to or from backlog must update both the local docs and the GitHub Issue status labels.
 - Resolving, verifying, or closing an Issue must update both the local Issue record and the linked GitHub Issue.
+
+See `docs/procedures/GitHub-Issue-Sync-Procedure.md` for the required synchronization procedure.
 
 ## Authorization
 

@@ -23,11 +23,15 @@ Every Airframe Task must have exactly one GitHub Issue number. Every GitHub Issu
 
 Rules:
 
+- A new Task must create its GitHub Issue at the same time the local Task record is created.
 - The GitHub Issue title must begin with `[T-XXXX]`.
 - The Task record must include `**GitHub Issue:** #NNN`.
 - The GitHub Issue body must include `Airframe Type: Task` and `Airframe ID: T-XXXX`.
 - A GitHub Issue may not represent more than one Airframe Task.
+- Moving a Task to or from backlog must update both the local docs and the GitHub Issue status labels.
 - Closing or verifying a Task must update both the local Task record and the linked GitHub Issue.
+
+See `docs/procedures/GitHub-Issue-Sync-Procedure.md` for the required synchronization procedure.
 
 ## Authorization
 

@@ -62,6 +62,7 @@ docs/
 5. Sprint and epic closure require human approval.
 6. Every implemented item needs verification evidence and clear test steps before being marked ready for human review.
 7. Every Task and Issue must have a one-to-one GitHub Issue mapping recorded in `docs/GitHub-Issue-Mapping.md`.
+8. Task and Issue creation, backlog moves, and GitHub imports must follow `docs/procedures/GitHub-Issue-Sync-Procedure.md`.
 
 ## Initial State
 
