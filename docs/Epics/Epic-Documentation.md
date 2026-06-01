@@ -47,4 +47,4 @@ Currently: **8 Epics** | Next available: **EP-009**
 - **Closed:** 0
 - **Next available:** EP-009
 
-*Last Updated: 2026-06-01 (SP-001 closed and SP-002 activated)*
+*Last Updated: 2026-06-01 (SP-002 tasks verified)*

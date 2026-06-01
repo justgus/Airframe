@@ -105,17 +105,17 @@ All clients need a common vocabulary and configuration source before workflow, b
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-002 | Core Domain and Configuration Foundation | Active |
+| SP-002 | Core Domain and Configuration Foundation | Review |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0007 | Define canonical domain model | Active |
-| T-0008 | Define configuration model and fixtures | Active |
-| T-0009 | Implement AirframeCore configuration loading | Active |
-| T-0010 | Implement AICockpit context display | Active |
-| T-0011 | Implement AgileCockpit project context UI | Active |
+| T-0007 | Define canonical domain model | Implemented - Verified |
+| T-0008 | Define configuration model and fixtures | Implemented - Verified |
+| T-0009 | Implement AirframeCore configuration loading | Implemented - Verified |
+| T-0010 | Implement AICockpit context display | Implemented - Verified |
+| T-0011 | Implement AgileCockpit project context UI | Implemented - Verified |
 
 ### Related Issues
 
@@ -124,7 +124,7 @@ All clients need a common vocabulary and configuration source before workflow, b
 
 ### Notes
 
-SP-002 is active. This Epic should preserve AirframeCore as UI-independent Swift code.
+SP-002 is in review with T-0007 through T-0011 human-verified. This Epic should preserve AirframeCore as UI-independent Swift code.
 
 ---
 
@@ -498,4 +498,4 @@ This Epic should avoid scope expansion and focus on confidence, repeatability, a
 
 ---
 
-*Last Updated: 2026-06-01 (SP-001 closed and SP-002 activated)*
+*Last Updated: 2026-06-01 (SP-002 tasks verified)*

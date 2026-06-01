@@ -8,6 +8,4 @@ Currently: **0 unverified Tasks**
 
 *No unverified Tasks.*
 
----
-
-*Last Updated: 2026-06-01 (SP-001 tasks verified)*
+*Last Updated: 2026-06-01 (SP-002 tasks verified)*

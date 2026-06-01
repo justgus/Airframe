@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "workspace": {
+    "id": {
+      "rawValue": "WS-AIRFRAME"
+    },
+    "name": "Airframe",
+    "rootPath": "."
+  },
+  "projects": [
+    {
+      "id": {
+        "rawValue": "PRJ-AIRFRAME"
+      },
+      "name": "Agile Airframe",
+      "repository": "justgus/Airframe",
+      "activeSprintID": {
+        "rawValue": "SP-002"
+      },
+      "activeEpicID": {
+        "rawValue": "EP-002"
+      }
+    }
+  ],
+  "defaultProjectID": {
+    "rawValue": "PRJ-AIRFRAME"
+  },
+  "backend": {
+    "kind": "local-fixture",
+    "location": "docs"
+  }
+}

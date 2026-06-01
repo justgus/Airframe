@@ -15,7 +15,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AirframeCore"
+            name: "AirframeCore",
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "AirframeCoreTests",

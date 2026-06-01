@@ -57,15 +57,10 @@ See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **5 active Tasks**
+Currently: **0 active Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Status |
 | ---- | ------------ | ----- | ---- | ------ | ------ |
-| T-0007 | #7 | Define canonical domain model | EP-002 | SP-002 | Active |
-| T-0008 | #8 | Define configuration model and fixtures | EP-002 | SP-002 | Active |
-| T-0009 | #9 | Implement AirframeCore configuration loading | EP-002 | SP-002 | Active |
-| T-0010 | #10 | Implement AICockpit context display | EP-002 | SP-002 | Active |
-| T-0011 | #11 | Implement AgileCockpit project context UI | EP-002 | SP-002 | Active |
 
 See: [Task-active.md](Task-active.md)
 
@@ -80,7 +75,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **6 verified Tasks** | Next available: **T-0046**
+Currently: **11 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -90,15 +85,20 @@ Currently: **6 verified Tasks** | Next available: **T-0046**
 | T-0004 | #4 | Assemble Airframe workspace and schemes | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
 | T-0005 | #5 | Establish baseline build and test documentation | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
 | T-0006 | #6 | Verify clean checkout workspace baseline | [Task-verified-0001-0006.md](Verified/Task-verified-0001-0006.md) | Implemented - Verified |
+| T-0007 | #7 | Define canonical domain model | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
+| T-0008 | #8 | Define configuration model and fixtures | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
+| T-0009 | #9 | Implement AirframeCore configuration loading | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
+| T-0010 | #10 | Implement AICockpit context display | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
+| T-0011 | #11 | Implement AgileCockpit project context UI | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
 - **Backlog:** 34
-- **Active:** 5
+- **Active:** 0
 - **Unverified:** 0
-- **Verified:** 6
+- **Verified:** 11
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-01 (SP-001 verified and SP-002 activated)*
+*Last Updated: 2026-06-01 (SP-002 tasks verified)*
