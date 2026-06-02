@@ -15,10 +15,10 @@
       "name": "Agile Airframe",
       "repository": "justgus/Airframe",
       "activeSprintID": {
-        "rawValue": "SP-002"
+        "rawValue": "SP-003"
       },
       "activeEpicID": {
-        "rawValue": "EP-002"
+        "rawValue": "EP-003"
       }
     }
   ],

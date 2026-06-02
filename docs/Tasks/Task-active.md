@@ -6,8 +6,8 @@ Currently: **0 active Tasks**
 
 ---
 
-*No active Tasks.*
+No Tasks are actively being implemented.
 
 ---
 
-*Last Updated: 2026-06-01 (SP-002 implementation moved to unverified)*
+*Last Updated: 2026-06-02 (SP-003 implementation complete)*

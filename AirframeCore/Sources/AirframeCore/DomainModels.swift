@@ -23,6 +23,23 @@ public enum AirframeWorkStatus: String, Codable, Equatable, Sendable {
     case closed
 }
 
+extension AirframeWorkStatus: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .backlog:
+            "Backlog"
+        case .active:
+            "Active"
+        case .implementedNotVerified:
+            "Implemented - Not Verified"
+        case .implementedVerified:
+            "Implemented - Verified"
+        case .closed:
+            "Closed"
+        }
+    }
+}
+
 public struct AirframeWorkItem: Codable, Equatable, Sendable {
     public let id: AirframeID
     public let kind: AirframeWorkItemKind
@@ -45,15 +62,154 @@ public struct AirframeWorkItem: Codable, Equatable, Sendable {
     }
 }
 
+public enum AirframeAuthorityClass: String, Codable, Equatable, Sendable {
+    case humanOwner = "HumanOwner"
+    case humanMaintainer = "HumanMaintainer"
+    case humanReviewer = "HumanReviewer"
+    case llmAgent = "LLMAgent"
+    case automation = "Automation"
+    case readOnlyObserver = "ReadOnlyObserver"
+    case unknown = "Unknown"
+}
+
+public enum AirframeCredentialSource: String, Codable, Equatable, Sendable {
+    case localSession
+    case cliEnvironment
+    case xcodeSession
+    case githubToken
+    case configuredIdentity
+    case unknown
+}
+
 public struct AirframeActor: Codable, Equatable, Sendable {
     public let id: AirframeID
     public let displayName: String
-    public let role: String
+    public let authorityClass: AirframeAuthorityClass
+    public let credentialSource: AirframeCredentialSource
+    public let isActive: Bool
 
-    public init(id: AirframeID, displayName: String, role: String) {
+    public init(
+        id: AirframeID,
+        displayName: String,
+        authorityClass: AirframeAuthorityClass,
+        credentialSource: AirframeCredentialSource,
+        isActive: Bool = true
+    ) {
         self.id = id
         self.displayName = displayName
-        self.role = role
+        self.authorityClass = authorityClass
+        self.credentialSource = credentialSource
+        self.isActive = isActive
+    }
+}
+
+public struct AirframeCredentialContext: Codable, Equatable, Sendable {
+    public let credentialID: AirframeID
+    public let actorID: AirframeID
+    public let credentialSource: AirframeCredentialSource
+    public let executionProjectID: AirframeID
+    public let allowedProjectIDs: [AirframeID]
+    public let expiresAt: Date?
+
+    public init(
+        credentialID: AirframeID,
+        actorID: AirframeID,
+        credentialSource: AirframeCredentialSource,
+        executionProjectID: AirframeID,
+        allowedProjectIDs: [AirframeID],
+        expiresAt: Date? = nil
+    ) {
+        self.credentialID = credentialID
+        self.actorID = actorID
+        self.credentialSource = credentialSource
+        self.executionProjectID = executionProjectID
+        self.allowedProjectIDs = allowedProjectIDs
+        self.expiresAt = expiresAt
+    }
+
+    public func allowsProject(_ projectID: AirframeID) -> Bool {
+        allowedProjectIDs.contains(projectID)
+    }
+}
+
+public enum AirframeCertificationError: Error, Equatable, CustomStringConvertible, Sendable {
+    case inactiveActor(AirframeID)
+    case unknownAuthorityClass(AirframeID)
+    case actorCredentialMismatch(actorID: AirframeID, credentialActorID: AirframeID)
+    case credentialSourceMismatch(actorSource: AirframeCredentialSource, credentialSource: AirframeCredentialSource)
+    case executionProjectOutOfScope(AirframeID)
+    case targetProjectOutOfScope(AirframeID)
+    case expiredCredential(AirframeID)
+
+    public var description: String {
+        switch self {
+        case .inactiveActor(let actorID):
+            "Actor \(actorID.rawValue) is inactive."
+        case .unknownAuthorityClass(let actorID):
+            "Actor \(actorID.rawValue) has no certified authority class."
+        case .actorCredentialMismatch(let actorID, let credentialActorID):
+            "Actor \(actorID.rawValue) does not match credential actor \(credentialActorID.rawValue)."
+        case .credentialSourceMismatch(let actorSource, let credentialSource):
+            "Actor credential source \(actorSource.rawValue) does not match credential source \(credentialSource.rawValue)."
+        case .executionProjectOutOfScope(let projectID):
+            "Execution project \(projectID.rawValue) is outside credential scope."
+        case .targetProjectOutOfScope(let projectID):
+            "Target project \(projectID.rawValue) is outside credential scope."
+        case .expiredCredential(let credentialID):
+            "Credential \(credentialID.rawValue) is expired."
+        }
+    }
+}
+
+public struct AirframeCertifiedContext: Codable, Equatable, Sendable {
+    public let actor: AirframeActor
+    public let credential: AirframeCredentialContext
+    public let executionProjectID: AirframeID
+    public let targetProjectID: AirframeID
+
+    public init(
+        actor: AirframeActor,
+        credential: AirframeCredentialContext,
+        targetProjectID: AirframeID,
+        now: Date = Date()
+    ) throws(AirframeCertificationError) {
+        guard actor.isActive else {
+            throw .inactiveActor(actor.id)
+        }
+
+        guard actor.authorityClass != .unknown else {
+            throw .unknownAuthorityClass(actor.id)
+        }
+
+        guard actor.id == credential.actorID else {
+            throw .actorCredentialMismatch(actorID: actor.id, credentialActorID: credential.actorID)
+        }
+
+        guard actor.credentialSource == credential.credentialSource else {
+            throw .credentialSourceMismatch(
+                actorSource: actor.credentialSource,
+                credentialSource: credential.credentialSource
+            )
+        }
+
+        if let expiresAt = credential.expiresAt {
+            guard expiresAt > now else {
+                throw .expiredCredential(credential.credentialID)
+            }
+        }
+
+        guard credential.allowsProject(credential.executionProjectID) else {
+            throw .executionProjectOutOfScope(credential.executionProjectID)
+        }
+
+        guard credential.allowsProject(targetProjectID) else {
+            throw .targetProjectOutOfScope(targetProjectID)
+        }
+
+        self.actor = actor
+        self.credential = credential
+        self.executionProjectID = credential.executionProjectID
+        self.targetProjectID = targetProjectID
     }
 }
 
@@ -72,12 +228,12 @@ public struct AirframeEvidence: Codable, Equatable, Sendable {
 public struct AirframeVerificationGate: Codable, Equatable, Sendable {
     public let id: AirframeID
     public let name: String
-    public let requiredActorRole: String
+    public let requiredAuthorityClass: AirframeAuthorityClass
 
-    public init(id: AirframeID, name: String, requiredActorRole: String) {
+    public init(id: AirframeID, name: String, requiredAuthorityClass: AirframeAuthorityClass) {
         self.id = id
         self.name = name
-        self.requiredActorRole = requiredActorRole
+        self.requiredAuthorityClass = requiredAuthorityClass
     }
 }
 
@@ -86,12 +242,39 @@ public struct AirframeAuditEvent: Codable, Equatable, Sendable {
     public let actorID: AirframeID
     public let action: String
     public let workItemID: AirframeID?
+    public let decision: AirframeAuthorityDecision?
+    public let reason: AirframeAuthorityReasonCode?
+    public let targetProjectID: AirframeID?
+    public let timestamp: Date?
 
     public init(id: AirframeID, actorID: AirframeID, action: String, workItemID: AirframeID?) {
         self.id = id
         self.actorID = actorID
         self.action = action
         self.workItemID = workItemID
+        self.decision = nil
+        self.reason = nil
+        self.targetProjectID = nil
+        self.timestamp = nil
+    }
+
+    public init(
+        id: AirframeID,
+        actorID: AirframeID,
+        action: String,
+        workItemID: AirframeID?,
+        decision: AirframeAuthorityDecision,
+        targetProjectID: AirframeID,
+        timestamp: Date
+    ) {
+        self.id = id
+        self.actorID = actorID
+        self.action = action
+        self.workItemID = workItemID
+        self.decision = decision
+        self.reason = decision.reason
+        self.targetProjectID = targetProjectID
+        self.timestamp = timestamp
     }
 }
 

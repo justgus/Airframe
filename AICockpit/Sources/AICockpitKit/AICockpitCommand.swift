@@ -52,6 +52,37 @@ public enum AICockpitCommand {
             }
         }
 
+        if arguments == ["authority", "demo-denied"] {
+            do {
+                let context = try AirframeConfigurationLoader().loadSampleContext()
+                let certifiedContext = try sampleLLMContext(projectID: context.project.id)
+                let operation = AirframeOperation(
+                    id: AirframeID("OP-ACCEPT-WORK"),
+                    category: .humanAcceptance
+                )
+                let decision = AirframeAuthorityEvaluator().evaluate(
+                    context: certifiedContext,
+                    operation: operation,
+                    targetProjectID: context.project.id
+                )
+
+                return AICockpitCommandResult(
+                    exitCode: decision.isAllowed ? 0 : 77,
+                    standardOutput: deniedOperationText(
+                        decision: decision,
+                        operation: operation,
+                        actorID: certifiedContext.actor.id,
+                        projectID: context.project.id
+                    )
+                )
+            } catch {
+                return AICockpitCommandResult(
+                    exitCode: 78,
+                    standardError: "aicockpit: \(error)\n"
+                )
+            }
+        }
+
         return AICockpitCommandResult(
             exitCode: 64,
             standardError: "aicockpit: unknown command\n\n\(helpText())\n"
@@ -68,6 +99,7 @@ public enum AICockpitCommand {
           aicockpit --help
           aicockpit version
           aicockpit context
+          aicockpit authority demo-denied
 
         Linked Core:
           \(AirframeCoreInfo.current.summary)
@@ -79,5 +111,44 @@ public enum AICockpitCommand {
         Airframe Context
         \(context.summaryLines.joined(separator: "\n"))
         """
+    }
+
+    public static func deniedOperationText(
+        decision: AirframeAuthorityDecision,
+        operation: AirframeOperation,
+        actorID: AirframeID,
+        projectID: AirframeID
+    ) -> String {
+        """
+        Airframe Authority Decision
+        status: \(decision.isAllowed ? "allowed" : "denied")
+        reason: \(decision.reason.rawValue)
+        operation: \(operation.id.rawValue)
+        category: \(operation.category.rawValue)
+        actor: \(actorID.rawValue)
+        project: \(projectID.rawValue)
+        """
+    }
+
+    private static func sampleLLMContext(projectID: AirframeID) throws -> AirframeCertifiedContext {
+        let actor = AirframeActor(
+            id: AirframeID("ACTOR-LLM"),
+            displayName: "AICockpit Agent",
+            authorityClass: .llmAgent,
+            credentialSource: .cliEnvironment
+        )
+        let credential = AirframeCredentialContext(
+            credentialID: AirframeID("CRED-AICOCKPIT-CLI"),
+            actorID: actor.id,
+            credentialSource: .cliEnvironment,
+            executionProjectID: projectID,
+            allowedProjectIDs: [projectID]
+        )
+
+        return try AirframeCertifiedContext(
+            actor: actor,
+            credential: credential,
+            targetProjectID: projectID
+        )
     }
 }

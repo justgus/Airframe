@@ -25,5 +25,15 @@ import AICockpitKit
     #expect(result.standardOutput.contains("Airframe Context"))
     #expect(result.standardOutput.contains("Workspace: Airframe (WS-AIRFRAME)"))
     #expect(result.standardOutput.contains("Project: Agile Airframe (PRJ-AIRFRAME)"))
-    #expect(result.standardOutput.contains("Active Sprint: SP-002"))
+    #expect(result.standardOutput.contains("Active Sprint: SP-003"))
+}
+
+@Test func deniedAuthorityCommandReturnsReasonCode() {
+    let result = AICockpitCommand.response(arguments: ["authority", "demo-denied"])
+
+    #expect(result.exitCode == 77)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("status: denied"))
+    #expect(result.standardOutput.contains("reason: authorityClassNotPermitted"))
+    #expect(result.standardOutput.contains("operation: OP-ACCEPT-WORK"))
 }

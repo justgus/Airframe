@@ -14,16 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **34 backlog Tasks**
+Currently: **28 backlog Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
 | ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0012 | #12 | Implement actor and certified context model | EP-003 | Not Assigned | High | Backlog |
-| T-0013 | #13 | Implement authority evaluator | EP-003 | Not Assigned | High | Backlog |
-| T-0014 | #14 | Implement workflow transition evaluator | EP-003 | Not Assigned | High | Backlog |
-| T-0015 | #15 | Implement audit event service | EP-003 | Not Assigned | High | Backlog |
-| T-0016 | #16 | Implement AICockpit denied-operation output | EP-003 | Not Assigned | Medium | Backlog |
-| T-0017 | #17 | Implement AgileCockpit authority and audit display | EP-003 | Not Assigned | Medium | Backlog |
 | T-0018 | #18 | Define backend adapter protocol and capabilities | EP-004 | Not Assigned | High | Backlog |
 | T-0019 | #19 | Implement local filesystem backend | EP-004 | Not Assigned | High | Backlog |
 | T-0020 | #20 | Implement evidence attachment workflow | EP-004 | Not Assigned | High | Backlog |
@@ -59,23 +53,26 @@ See: [Task-backlog.md](Task-backlog.md)
 
 Currently: **0 active Tasks**
 
-| Task | GitHub Issue | Title | Epic | Sprint | Status |
-| ---- | ------------ | ----- | ---- | ------ | ------ |
+No Tasks are actively being implemented.
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **4 unverified Tasks**
 
 | Task | GitHub Issue | Title | Status |
 | ---- | ------------ | ----- | ------ |
+| T-0014 | #14 | Implement workflow transition evaluator | Implemented - Not Verified |
+| T-0015 | #15 | Implement audit event service | Implemented - Not Verified |
+| T-0016 | #16 | Implement AICockpit denied-operation output | Implemented - Not Verified |
+| T-0017 | #17 | Implement AgileCockpit authority and audit display | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **11 verified Tasks** | Next available: **T-0046**
+Currently: **13 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -90,15 +87,17 @@ Currently: **11 verified Tasks** | Next available: **T-0046**
 | T-0009 | #9 | Implement AirframeCore configuration loading | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
 | T-0010 | #10 | Implement AICockpit context display | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
 | T-0011 | #11 | Implement AgileCockpit project context UI | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
+| T-0012 | #12 | Implement actor and certified context model | [Task-verified-0012.md](Verified/Task-verified-0012.md) | Implemented - Verified |
+| T-0013 | #13 | Implement authority evaluator | [Task-verified-0013.md](Verified/Task-verified-0013.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 34
+- **Backlog:** 28
 - **Active:** 0
-- **Unverified:** 0
-- **Verified:** 11
+- **Unverified:** 4
+- **Verified:** 13
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-01 (SP-002 tasks verified)*
+*Last Updated: 2026-06-02 (SP-003 implementation complete)*

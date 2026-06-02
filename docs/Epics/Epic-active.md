@@ -4,135 +4,11 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ---
 
-## EP-001: Workspace and Toolchain Baseline
-
-**Status:** Complete  
-**Owner:** HumanOwner  
-**Start Date:** 2026-06-01  
-**Target Close Date:** TBD  
-**Close Date:** TBD  
-
-**Goal:**
-Create a buildable multi-project workspace with the three CSCI skeletons in their selected product forms.
-
-**Rationale:**
-All later work depends on a stable workspace, package, app, and test baseline that can be verified from a clean checkout.
-
-**Scope:**
-- Create `Airframe.xcworkspace`.
-- Create `AirframeCore` Swift package library skeleton.
-- Create `AICockpit` Swift package executable skeleton.
-- Create `AgileCockpit` macOS SwiftUI app skeleton.
-- Link AirframeCore into both clients.
-- Establish baseline build and test commands.
-
-**Out of Scope:**
-- Production domain model.
-- Backend integrations.
-- Full app UI.
-- Final CLI command contract.
-
-**Acceptance Criteria:**
-1. `swift test --package-path AirframeCore` passes.
-2. `swift test --package-path AICockpit` passes.
-3. `swift run --package-path AICockpit aicockpit --help` prints deterministic help.
-4. `xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'platform=macOS' build` succeeds.
-5. AgileCockpit and AICockpit both import AirframeCore.
-
-### Related Sprints
-
-| Sprint | Goal | Status |
-| ------ | ---- | ------ |
-| SP-001 | Workspace Skeleton | Closed |
-
-### Related Tasks
-
-| Task | Title | Status |
-| ---- | ----- | ------ |
-| T-0001 | Scaffold AirframeCore Swift package | Implemented - Verified |
-| T-0002 | Scaffold AICockpit Swift package executable | Implemented - Verified |
-| T-0003 | Scaffold AgileCockpit macOS SwiftUI app | Implemented - Verified |
-| T-0004 | Assemble Airframe workspace and schemes | Implemented - Verified |
-| T-0005 | Establish baseline build and test documentation | Implemented - Verified |
-| T-0006 | Verify clean checkout workspace baseline | Implemented - Verified |
-
-### Related Issues
-
-| Issue | Title | Status |
-| ----- | ----- | ------ |
-
-### Notes
-
-SP-001 is closed and all related Tasks are verified. EP-001 is complete pending human epic closeout.
-
----
-
-## EP-002: Core Domain and Configuration Foundation
+## EP-003: Workflow, Authority, and Audit Foundation
 
 **Status:** Active  
 **Owner:** HumanOwner  
-**Start Date:** 2026-06-01  
-**Target Close Date:** TBD  
-**Close Date:** TBD  
-
-**Goal:**
-Define the canonical Airframe domain model and load sample workspace/project configuration through AirframeCore, AICockpit, and AgileCockpit.
-
-**Rationale:**
-All clients need a common vocabulary and configuration source before workflow, backend, metrics, or UI behavior can be implemented safely.
-
-**Scope:**
-- Define canonical IDs and entity models.
-- Define workspace/project configuration structures.
-- Implement configuration loading and validation.
-- Add local fixture workspace.
-- Add CLI context display.
-- Add AgileCockpit project context display.
-
-**Out of Scope:**
-- Full workflow enforcement.
-- Backend persistence beyond fixtures.
-- GitHub integration.
-
-**Acceptance Criteria:**
-1. AirframeCore loads valid sample configuration.
-2. AirframeCore rejects malformed configuration with structured errors.
-3. AICockpit displays current workspace/project context.
-4. AgileCockpit displays current workspace/project context.
-5. Core, CLI, and app tests cover the sample configuration path.
-
-### Related Sprints
-
-| Sprint | Goal | Status |
-| ------ | ---- | ------ |
-| SP-002 | Core Domain and Configuration Foundation | Review |
-
-### Related Tasks
-
-| Task | Title | Status |
-| ---- | ----- | ------ |
-| T-0007 | Define canonical domain model | Implemented - Verified |
-| T-0008 | Define configuration model and fixtures | Implemented - Verified |
-| T-0009 | Implement AirframeCore configuration loading | Implemented - Verified |
-| T-0010 | Implement AICockpit context display | Implemented - Verified |
-| T-0011 | Implement AgileCockpit project context UI | Implemented - Verified |
-
-### Related Issues
-
-| Issue | Title | Status |
-| ----- | ----- | ------ |
-
-### Notes
-
-SP-002 is in review with T-0007 through T-0011 human-verified. This Epic should preserve AirframeCore as UI-independent Swift code.
-
----
-
-## EP-003: Workflow, Authority, and Audit Foundation
-
-**Status:** Draft  
-**Owner:** HumanOwner  
-**Start Date:** TBD  
+**Start Date:** 2026-06-02  
 **Target Close Date:** TBD  
 **Close Date:** TBD  
 
@@ -167,17 +43,18 @@ Authority and workflow are the primary safety boundary of Agile Airframe and mus
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
+| SP-003 | Workflow, Authority, and Audit Foundation | Active |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0012 | Implement actor and certified context model | Backlog |
-| T-0013 | Implement authority evaluator | Backlog |
-| T-0014 | Implement workflow transition evaluator | Backlog |
-| T-0015 | Implement audit event service | Backlog |
-| T-0016 | Implement AICockpit denied-operation output | Backlog |
-| T-0017 | Implement AgileCockpit authority and audit display | Backlog |
+| T-0012 | Implement actor and certified context model | Implemented - Verified |
+| T-0013 | Implement authority evaluator | Implemented - Verified |
+| T-0014 | Implement workflow transition evaluator | Implemented - Not Verified |
+| T-0015 | Implement audit event service | Implemented - Not Verified |
+| T-0016 | Implement AICockpit denied-operation output | Implemented - Not Verified |
+| T-0017 | Implement AgileCockpit authority and audit display | Implemented - Not Verified |
 
 ### Related Issues
 
@@ -187,6 +64,7 @@ Authority and workflow are the primary safety boundary of Agile Airframe and mus
 ### Notes
 
 No client should implement independent authorization rules.
+SP-003 activated on 2026-06-02. T-0012 and T-0013 are human-verified. T-0014 through T-0017 are implemented and awaiting human verification.
 
 ---
 
@@ -498,4 +376,4 @@ This Epic should avoid scope expansion and focus on confidence, repeatability, a
 
 ---
 
-*Last Updated: 2026-06-01 (SP-002 tasks verified)*
+*Last Updated: 2026-06-02 (SP-003 implementation complete)*

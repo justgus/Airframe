@@ -11,5 +11,16 @@ import AirframeCore
 
     #expect(model.context.workspaceName == "Airframe")
     #expect(model.context.projectName == "Agile Airframe")
-    #expect(model.context.project.activeSprintID == AirframeID("SP-002"))
+    #expect(model.context.project.activeSprintID == AirframeID("SP-003"))
+}
+
+@Test func agileCockpitShowsAuthorityAndAuditData() throws {
+    let model = try AgileCockpitContextModel.sample()
+
+    #expect(model.actionSummaries.count == 2)
+    #expect(model.actionSummaries[0].statusText == "Allowed")
+    #expect(model.actionSummaries[1].statusText == "Denied")
+    #expect(model.actionSummaries[1].decision.reason == .authorityClassNotPermitted)
+    #expect(model.auditEvents.count == 1)
+    #expect(model.auditEvents[0].reason == .authorityClassNotPermitted)
 }

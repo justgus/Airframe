@@ -2,20 +2,9 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **34 backlog Tasks**
+Currently: **28 backlog Tasks**
 
 ---
-
-## EP-003 Tasks
-
-| Task | GitHub Issue | Title | Priority | Acceptance Summary |
-| ---- | ------------ | ----- | -------- | ------------------ |
-| T-0012 | #12 | Implement actor and certified context model | High | Actor identity/type/project context data is represented without trusting caller assertions. |
-| T-0013 | #13 | Implement authority evaluator | High | Allowed, denied, and requires-confirmation results are returned with reason codes. |
-| T-0014 | #14 | Implement workflow transition evaluator | High | Task, issue, sprint, epic, and verification state transitions are validated. |
-| T-0015 | #15 | Implement audit event service | High | Allowed and denied write attempts generate audit records. |
-| T-0016 | #16 | Implement AICockpit denied-operation output | Medium | CLI prints compact human-readable and JSON denial output. |
-| T-0017 | #17 | Implement AgileCockpit authority and audit display | Medium | UI shows disabled/denied actions and audit records from AirframeCore. |
 
 ## EP-004 Tasks
 
@@ -72,4 +61,4 @@ Currently: **34 backlog Tasks**
 
 ---
 
-*Last Updated: 2026-06-01 (SP-002 activated)*
+*Last Updated: 2026-06-02 (SP-003 activated)*
