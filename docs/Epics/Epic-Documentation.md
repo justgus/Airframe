@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Epics. Epics are implementation milest
 
 ## Active Epics
 
-Currently: **1 Active Epic, 0 Complete Epics, 5 Draft Epics**
+Currently: **0 Active Epics, 2 Complete Epics, 4 Draft Epics**
 
 See: [Epic-active.md](Epic-active.md)
 
@@ -30,8 +30,8 @@ Currently: **8 Epics** | Next available: **EP-009**
 | ---- | ----- | ------ | ----- | ----- |
 | EP-001 | Workspace and Toolchain Baseline | Closed | 2026-06-01 | 2026-06-02 |
 | EP-002 | Core Domain and Configuration Foundation | Closed | 2026-06-01 | 2026-06-02 |
-| EP-003 | Workflow, Authority, and Audit Foundation | Active | 2026-06-02 | TBD |
-| EP-004 | Local Backend and Task Packet MVP | Draft | TBD | TBD |
+| EP-003 | Workflow, Authority, and Audit Foundation | Complete | 2026-06-02 | TBD |
+| EP-004 | Local Backend and Task Packet MVP | Complete | 2026-06-03 | TBD |
 | EP-005 | AICockpit MVP Integration | Draft | TBD | TBD |
 | EP-006 | AgileCockpit Dashboard MVP Integration | Draft | TBD | TBD |
 | EP-007 | GitHub Backend MVP | Draft | TBD | TBD |
@@ -41,10 +41,10 @@ Currently: **8 Epics** | Next available: **EP-009**
 
 - **Total Epics:** 8
 - **Proposed:** 0
-- **Draft:** 5
-- **Active:** 1
-- **Complete pending close:** 0
+- **Draft:** 4
+- **Active:** 0
+- **Complete pending close:** 2
 - **Closed:** 2
 - **Next available:** EP-009
 
-*Last Updated: 2026-06-02 (EP-003 opened and SP-003 planning started)*
+*Last Updated: 2026-06-03 (SP-004 closed)*

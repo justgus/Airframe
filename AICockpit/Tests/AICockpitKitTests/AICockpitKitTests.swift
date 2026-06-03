@@ -25,7 +25,7 @@ import AICockpitKit
     #expect(result.standardOutput.contains("Airframe Context"))
     #expect(result.standardOutput.contains("Workspace: Airframe (WS-AIRFRAME)"))
     #expect(result.standardOutput.contains("Project: Agile Airframe (PRJ-AIRFRAME)"))
-    #expect(result.standardOutput.contains("Active Sprint: SP-003"))
+    #expect(result.standardOutput.contains("Active Sprint: SP-004"))
 }
 
 @Test func deniedAuthorityCommandReturnsReasonCode() {

@@ -62,6 +62,77 @@ public struct AirframeWorkItem: Codable, Equatable, Sendable {
     }
 }
 
+public enum AirframeWorkPriority: String, Codable, Equatable, Sendable {
+    case low
+    case medium
+    case high
+}
+
+extension AirframeWorkPriority: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .low:
+            "Low"
+        case .medium:
+            "Medium"
+        case .high:
+            "High"
+        }
+    }
+}
+
+public struct AirframeLocalWorkRecord: Codable, Equatable, Sendable {
+    public let workItem: AirframeWorkItem
+    public let epicID: AirframeID?
+    public let sprintID: AirframeID?
+    public let priority: AirframeWorkPriority
+    public let acceptanceCriteria: [String]
+    public let scope: [String]
+    public let constraints: [String]
+    public let evidenceRequirements: [String]
+    public let protectedPaths: [String]
+    public let reportFormat: String
+
+    public init(
+        workItem: AirframeWorkItem,
+        epicID: AirframeID? = nil,
+        sprintID: AirframeID? = nil,
+        priority: AirframeWorkPriority = .medium,
+        acceptanceCriteria: [String] = [],
+        scope: [String] = [],
+        constraints: [String] = [],
+        evidenceRequirements: [String] = [],
+        protectedPaths: [String] = [],
+        reportFormat: String = "Summarize changes, verification commands, and residual risks."
+    ) {
+        self.workItem = workItem
+        self.epicID = epicID
+        self.sprintID = sprintID
+        self.priority = priority
+        self.acceptanceCriteria = acceptanceCriteria
+        self.scope = scope
+        self.constraints = constraints
+        self.evidenceRequirements = evidenceRequirements
+        self.protectedPaths = protectedPaths
+        self.reportFormat = reportFormat
+    }
+
+    public func updating(workItem: AirframeWorkItem) -> AirframeLocalWorkRecord {
+        AirframeLocalWorkRecord(
+            workItem: workItem,
+            epicID: epicID,
+            sprintID: sprintID,
+            priority: priority,
+            acceptanceCriteria: acceptanceCriteria,
+            scope: scope,
+            constraints: constraints,
+            evidenceRequirements: evidenceRequirements,
+            protectedPaths: protectedPaths,
+            reportFormat: reportFormat
+        )
+    }
+}
+
 public enum AirframeAuthorityClass: String, Codable, Equatable, Sendable {
     case humanOwner = "HumanOwner"
     case humanMaintainer = "HumanMaintainer"
@@ -285,6 +356,68 @@ public struct AirframeMetricSnapshot: Codable, Equatable, Sendable {
     public init(activeTaskCount: Int, unverifiedTaskCount: Int) {
         self.activeTaskCount = activeTaskCount
         self.unverifiedTaskCount = unverifiedTaskCount
+    }
+}
+
+public struct AirframeTaskPacket: Codable, Equatable, Sendable {
+    public let workItem: AirframeWorkItem
+    public let objective: String
+    public let scope: [String]
+    public let acceptanceCriteria: [String]
+    public let constraints: [String]
+    public let evidenceRequirements: [String]
+    public let protectedPaths: [String]
+    public let reportFormat: String
+    public let existingEvidence: [AirframeEvidence]
+
+    public init(
+        workItem: AirframeWorkItem,
+        objective: String,
+        scope: [String],
+        acceptanceCriteria: [String],
+        constraints: [String],
+        evidenceRequirements: [String],
+        protectedPaths: [String],
+        reportFormat: String,
+        existingEvidence: [AirframeEvidence] = []
+    ) {
+        self.workItem = workItem
+        self.objective = objective
+        self.scope = scope
+        self.acceptanceCriteria = acceptanceCriteria
+        self.constraints = constraints
+        self.evidenceRequirements = evidenceRequirements
+        self.protectedPaths = protectedPaths
+        self.reportFormat = reportFormat
+        self.existingEvidence = existingEvidence
+    }
+}
+
+public struct AirframeDashboardSummary: Codable, Equatable, Sendable {
+    public let totalWorkItemCount: Int
+    public let activeTaskCount: Int
+    public let unverifiedTaskCount: Int
+    public let verifiedTaskCount: Int
+    public let issueCount: Int
+    public let nextTask: AirframeWorkItem?
+    public let recentEvidenceCount: Int
+
+    public init(
+        totalWorkItemCount: Int,
+        activeTaskCount: Int,
+        unverifiedTaskCount: Int,
+        verifiedTaskCount: Int,
+        issueCount: Int,
+        nextTask: AirframeWorkItem?,
+        recentEvidenceCount: Int
+    ) {
+        self.totalWorkItemCount = totalWorkItemCount
+        self.activeTaskCount = activeTaskCount
+        self.unverifiedTaskCount = unverifiedTaskCount
+        self.verifiedTaskCount = verifiedTaskCount
+        self.issueCount = issueCount
+        self.nextTask = nextTask
+        self.recentEvidenceCount = recentEvidenceCount
     }
 }
 

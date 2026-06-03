@@ -10,4 +10,4 @@ No Tasks are actively being implemented.
 
 ---
 
-*Last Updated: 2026-06-02 (SP-003 implementation complete)*
+*Last Updated: 2026-06-03 (SP-004 closed)*

@@ -2,19 +2,9 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **28 backlog Tasks**
+Currently: **23 backlog Tasks**
 
 ---
-
-## EP-004 Tasks
-
-| Task | GitHub Issue | Title | Priority | Acceptance Summary |
-| ---- | ------------ | ----- | -------- | ------------------ |
-| T-0018 | #18 | Define backend adapter protocol and capabilities | High | Backend protocol and capability model are unit tested. |
-| T-0019 | #19 | Implement local filesystem backend | High | Local issue/task records can be created, queried, and updated. |
-| T-0020 | #20 | Implement evidence attachment workflow | High | Evidence can be attached to authorized work items. |
-| T-0021 | #21 | Implement task packet generation | High | Task packets include objective, scope, acceptance criteria, constraints, evidence requirements, protected paths, and report format. |
-| T-0022 | #22 | Implement local dashboard summary APIs | High | Dashboard summary data can be produced from local backend fixtures. |
 
 ## EP-005 Tasks
 
@@ -61,4 +51,4 @@ Currently: **28 backlog Tasks**
 
 ---
 
-*Last Updated: 2026-06-02 (SP-003 activated)*
+*Last Updated: 2026-06-03 (SP-004 activated)*

@@ -14,15 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **28 backlog Tasks**
+Currently: **23 backlog Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
 | ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0018 | #18 | Define backend adapter protocol and capabilities | EP-004 | Not Assigned | High | Backlog |
-| T-0019 | #19 | Implement local filesystem backend | EP-004 | Not Assigned | High | Backlog |
-| T-0020 | #20 | Implement evidence attachment workflow | EP-004 | Not Assigned | High | Backlog |
-| T-0021 | #21 | Implement task packet generation | EP-004 | Not Assigned | High | Backlog |
-| T-0022 | #22 | Implement local dashboard summary APIs | EP-004 | Not Assigned | High | Backlog |
 | T-0023 | #23 | Finalize AICockpit MVP command names and parser | EP-005 | Not Assigned | High | Backlog |
 | T-0024 | #24 | Implement issue and task proposal commands | EP-005 | Not Assigned | High | Backlog |
 | T-0025 | #25 | Implement next-task and task-packet commands | EP-005 | Not Assigned | High | Backlog |
@@ -59,20 +54,15 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **4 unverified Tasks**
+Currently: **0 unverified Tasks**
 
-| Task | GitHub Issue | Title | Status |
-| ---- | ------------ | ----- | ------ |
-| T-0014 | #14 | Implement workflow transition evaluator | Implemented - Not Verified |
-| T-0015 | #15 | Implement audit event service | Implemented - Not Verified |
-| T-0016 | #16 | Implement AICockpit denied-operation output | Implemented - Not Verified |
-| T-0017 | #17 | Implement AgileCockpit authority and audit display | Implemented - Not Verified |
+No Tasks are awaiting human verification.
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **13 verified Tasks** | Next available: **T-0046**
+Currently: **22 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -89,15 +79,24 @@ Currently: **13 verified Tasks** | Next available: **T-0046**
 | T-0011 | #11 | Implement AgileCockpit project context UI | [Task-verified-0007-0011.md](Verified/Task-verified-0007-0011.md) | Implemented - Verified |
 | T-0012 | #12 | Implement actor and certified context model | [Task-verified-0012.md](Verified/Task-verified-0012.md) | Implemented - Verified |
 | T-0013 | #13 | Implement authority evaluator | [Task-verified-0013.md](Verified/Task-verified-0013.md) | Implemented - Verified |
+| T-0014 | #14 | Implement workflow transition evaluator | [Task-verified-0014-0017.md](Verified/Task-verified-0014-0017.md) | Implemented - Verified |
+| T-0015 | #15 | Implement audit event service | [Task-verified-0014-0017.md](Verified/Task-verified-0014-0017.md) | Implemented - Verified |
+| T-0016 | #16 | Implement AICockpit denied-operation output | [Task-verified-0014-0017.md](Verified/Task-verified-0014-0017.md) | Implemented - Verified |
+| T-0017 | #17 | Implement AgileCockpit authority and audit display | [Task-verified-0014-0017.md](Verified/Task-verified-0014-0017.md) | Implemented - Verified |
+| T-0018 | #18 | Define backend adapter protocol and capabilities | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
+| T-0019 | #19 | Implement local filesystem backend | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
+| T-0020 | #20 | Implement evidence attachment workflow | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
+| T-0021 | #21 | Implement task packet generation | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
+| T-0022 | #22 | Implement local dashboard summary APIs | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 28
+- **Backlog:** 23
 - **Active:** 0
-- **Unverified:** 4
-- **Verified:** 13
+- **Unverified:** 0
+- **Verified:** 22
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-02 (SP-003 implementation complete)*
+*Last Updated: 2026-06-03 (SP-004 verified)*

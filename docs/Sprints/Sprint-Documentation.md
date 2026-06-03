@@ -11,27 +11,28 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-003: Workflow, Authority, and Audit Foundation** (Active)
+Currently: **None**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **3 Sprints** | Next available: **SP-004**
+Currently: **4 Sprints** | Next available: **SP-005**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
 | SP-001 | Workspace Skeleton | EP-001 | T-0001, T-0002, T-0003, T-0004, T-0005, T-0006 | None | Closed |
 | SP-002 | Core Domain and Configuration Foundation | EP-002 | T-0007, T-0008, T-0009, T-0010, T-0011 | None | Closed |
-| SP-003 | Workflow, Authority, and Audit Foundation | EP-003 | T-0012, T-0013, T-0014, T-0015, T-0016, T-0017 | None | Active |
+| SP-003 | Workflow, Authority, and Audit Foundation | EP-003 | T-0012, T-0013, T-0014, T-0015, T-0016, T-0017 | None | Closed |
+| SP-004 | Local Backend and Task Packet MVP | EP-004 | T-0018, T-0019, T-0020, T-0021, T-0022 | None | Closed |
 
 ## Statistics
 
-- **Total Sprints:** 3
+- **Total Sprints:** 4
 - **Planning:** 0
-- **Active:** 1
+- **Active:** 0
 - **Review:** 0
-- **Closed:** 2
-- **Next available:** SP-004
+- **Closed:** 4
+- **Next available:** SP-005
 
-*Last Updated: 2026-06-02 (SP-003 implementation complete)*
+*Last Updated: 2026-06-03 (SP-004 closed)*

@@ -282,8 +282,8 @@ import Foundation
 
     #expect(context.workspaceName == "Airframe")
     #expect(context.projectName == "Agile Airframe")
-    #expect(context.project.activeSprintID == AirframeID("SP-003"))
-    #expect(context.project.activeEpicID == AirframeID("EP-003"))
+    #expect(context.project.activeSprintID == AirframeID("SP-004"))
+    #expect(context.project.activeEpicID == AirframeID("EP-004"))
     #expect(context.summaryLines.contains("Repository: justgus/Airframe"))
 }
 
@@ -321,6 +321,146 @@ import Foundation
     }
 }
 
+@Test func localBackendCreatesQueriesAndUpdatesWorkRecords() throws {
+    let backend = try makeLocalBackend()
+    let record = localTaskRecord(id: "T-0018", title: "Define backend adapter protocol and capabilities")
+
+    try backend.createWorkRecord(record)
+    let stored = try backend.workRecord(id: AirframeID("T-0018"))
+
+    #expect(backend.capabilities.supportsCreateWorkItem)
+    #expect(stored?.workItem.title == "Define backend adapter protocol and capabilities")
+    #expect(try backend.listWorkItems().map(\.id) == [AirframeID("T-0018")])
+
+    let updated = AirframeWorkItem(
+        id: AirframeID("T-0018"),
+        kind: .task,
+        title: "Define local backend adapter protocol and capabilities",
+        status: .active,
+        githubIssue: 18
+    )
+    try backend.updateWorkItem(updated)
+
+    #expect(try backend.workRecord(id: AirframeID("T-0018"))?.workItem.title == updated.title)
+}
+
+@Test func localBackendRejectsDuplicateWorkRecords() throws {
+    let backend = try makeLocalBackend()
+    let record = localTaskRecord(id: "T-0018", title: "Define backend adapter protocol and capabilities")
+
+    try backend.createWorkRecord(record)
+
+    #expect(throws: AirframeBackendError.duplicateWorkItem(AirframeID("T-0018"))) {
+        try backend.createWorkRecord(record)
+    }
+}
+
+@Test func localBackendAttachesEvidenceAndMarksTaskReadyForVerification() throws {
+    let backend = try makeLocalBackend()
+    let context = try certifiedContext(authorityClass: .llmAgent)
+    let record = localTaskRecord(id: "T-0020", title: "Implement evidence attachment workflow")
+    let evidence = AirframeEvidence(
+        id: AirframeID("EV-0020-001"),
+        summary: "Core local backend tests passed",
+        artifact: "swift test --package-path AirframeCore"
+    )
+
+    try backend.createWorkRecord(record)
+    try backend.attachEvidence(evidence, to: AirframeID("T-0020"))
+    try backend.transitionWorkItem(
+        id: AirframeID("T-0020"),
+        to: .implementedNotVerified,
+        context: context,
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(try backend.evidence(for: AirframeID("T-0020")) == [evidence])
+    #expect(try backend.workRecord(id: AirframeID("T-0020"))?.workItem.status == .implementedNotVerified)
+}
+
+@Test func localBackendDeniesHumanVerificationForLLMActor() throws {
+    let backend = try makeLocalBackend()
+    let context = try certifiedContext(authorityClass: .llmAgent)
+    let record = localTaskRecord(
+        id: "T-0020",
+        title: "Implement evidence attachment workflow",
+        status: .implementedNotVerified
+    )
+
+    try backend.createWorkRecord(record)
+
+    #expect(throws: AirframeBackendError.authorityDenied(.authorityClassNotPermitted)) {
+        try backend.transitionWorkItem(
+            id: AirframeID("T-0020"),
+            to: .implementedVerified,
+            context: context,
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        )
+    }
+}
+
+@Test func localBackendGeneratesTaskPacketFromStoredRecord() throws {
+    let backend = try makeLocalBackend()
+    let record = localTaskRecord(
+        id: "T-0021",
+        title: "Implement task packet generation",
+        acceptanceCriteria: ["Task packets include objective, acceptance criteria, constraints, and report format."],
+        scope: ["AirframeCore local backend"],
+        constraints: ["Do not scrape markdown for canonical state."],
+        evidenceRequirements: ["Core tests pass."],
+        protectedPaths: ["docs/Tasks/Verified"]
+    )
+
+    try backend.createWorkRecord(record)
+    let packet = try backend.taskPacket(for: AirframeID("T-0021"))
+
+    #expect(packet.workItem.id == AirframeID("T-0021"))
+    #expect(packet.objective == "Implement task packet generation")
+    #expect(packet.acceptanceCriteria == record.acceptanceCriteria)
+    #expect(packet.constraints.contains("Do not scrape markdown for canonical state."))
+    #expect(packet.protectedPaths == ["docs/Tasks/Verified"])
+    #expect(packet.reportFormat.contains("verification commands"))
+}
+
+@Test func localBackendProducesDashboardSummaryFromLocalRecords() throws {
+    let backend = try makeLocalBackend()
+
+    try backend.createWorkRecord(localTaskRecord(id: "T-0018", title: "Define backend adapter protocol"))
+    try backend.createWorkRecord(localTaskRecord(
+        id: "T-0020",
+        title: "Implement evidence attachment workflow",
+        status: .implementedNotVerified
+    ))
+    try backend.createWorkRecord(localTaskRecord(
+        id: "T-0012",
+        title: "Implement actor and certified context model",
+        status: .implementedVerified
+    ))
+    try backend.createWorkRecord(AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("I-0001"),
+            kind: .issue,
+            title: "Example local issue",
+            status: .active
+        ),
+        priority: .medium
+    ))
+    try backend.attachEvidence(
+        AirframeEvidence(id: AirframeID("EV-001"), summary: "Evidence", artifact: "artifact.txt"),
+        to: AirframeID("T-0020")
+    )
+
+    let summary = try backend.dashboardSummary()
+
+    #expect(summary.totalWorkItemCount == 4)
+    #expect(summary.activeTaskCount == 1)
+    #expect(summary.unverifiedTaskCount == 1)
+    #expect(summary.verifiedTaskCount == 1)
+    #expect(summary.issueCount == 1)
+    #expect(summary.nextTask?.id == AirframeID("T-0018"))
+    #expect(summary.recentEvidenceCount == 1)
+}
+
 private func certifiedContext(
     authorityClass: AirframeAuthorityClass,
     projectID: AirframeID = AirframeID("PRJ-AIRFRAME")
@@ -343,5 +483,42 @@ private func certifiedContext(
         actor: actor,
         credential: credential,
         targetProjectID: projectID
+    )
+}
+
+private func makeLocalBackend() throws -> AirframeLocalFilesystemBackend {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCoreTests")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    return AirframeLocalFilesystemBackend(rootURL: rootURL)
+}
+
+private func localTaskRecord(
+    id: String,
+    title: String,
+    status: AirframeWorkStatus = .active,
+    acceptanceCriteria: [String] = ["The work item can be implemented and verified."],
+    scope: [String] = ["AirframeCore"],
+    constraints: [String] = ["Preserve authority and workflow policy in AirframeCore."],
+    evidenceRequirements: [String] = ["Record test commands."],
+    protectedPaths: [String] = []
+) -> AirframeLocalWorkRecord {
+    AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID(id),
+            kind: .task,
+            title: title,
+            status: status,
+            githubIssue: Int(id.dropFirst(2))
+        ),
+        epicID: AirframeID("EP-004"),
+        sprintID: AirframeID("SP-004"),
+        priority: .high,
+        acceptanceCriteria: acceptanceCriteria,
+        scope: scope,
+        constraints: constraints,
+        evidenceRequirements: evidenceRequirements,
+        protectedPaths: protectedPaths
     )
 }

@@ -6,10 +6,10 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ## EP-003: Workflow, Authority, and Audit Foundation
 
-**Status:** Active  
+**Status:** Complete
 **Owner:** HumanOwner  
 **Start Date:** 2026-06-02  
-**Target Close Date:** TBD  
+**Target Close Date:** 2026-06-03
 **Close Date:** TBD  
 
 **Goal:**
@@ -43,7 +43,7 @@ Authority and workflow are the primary safety boundary of Agile Airframe and mus
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-003 | Workflow, Authority, and Audit Foundation | Active |
+| SP-003 | Workflow, Authority, and Audit Foundation | Closed |
 
 ### Related Tasks
 
@@ -51,10 +51,10 @@ Authority and workflow are the primary safety boundary of Agile Airframe and mus
 | ---- | ----- | ------ |
 | T-0012 | Implement actor and certified context model | Implemented - Verified |
 | T-0013 | Implement authority evaluator | Implemented - Verified |
-| T-0014 | Implement workflow transition evaluator | Implemented - Not Verified |
-| T-0015 | Implement audit event service | Implemented - Not Verified |
-| T-0016 | Implement AICockpit denied-operation output | Implemented - Not Verified |
-| T-0017 | Implement AgileCockpit authority and audit display | Implemented - Not Verified |
+| T-0014 | Implement workflow transition evaluator | Implemented - Verified |
+| T-0015 | Implement audit event service | Implemented - Verified |
+| T-0016 | Implement AICockpit denied-operation output | Implemented - Verified |
+| T-0017 | Implement AgileCockpit authority and audit display | Implemented - Verified |
 
 ### Related Issues
 
@@ -64,16 +64,16 @@ Authority and workflow are the primary safety boundary of Agile Airframe and mus
 ### Notes
 
 No client should implement independent authorization rules.
-SP-003 activated on 2026-06-02. T-0012 and T-0013 are human-verified. T-0014 through T-0017 are implemented and awaiting human verification.
+SP-003 activated on 2026-06-02. T-0012 and T-0013 were human-verified on 2026-06-02. T-0014 through T-0017 were human-verified on 2026-06-03. EP-003 is complete and pending human epic closeout.
 
 ---
 
 ## EP-004: Local Backend and Task Packet MVP
 
-**Status:** Draft  
+**Status:** Complete
 **Owner:** HumanOwner  
-**Start Date:** TBD  
-**Target Close Date:** TBD  
+**Start Date:** 2026-06-03
+**Target Close Date:** 2026-06-03
 **Close Date:** TBD  
 
 **Goal:**
@@ -106,16 +106,17 @@ The local backend provides a deterministic reference implementation before GitHu
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
+| SP-004 | Local Backend and Task Packet MVP | Closed |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0018 | Define backend adapter protocol and capabilities | Backlog |
-| T-0019 | Implement local filesystem backend | Backlog |
-| T-0020 | Implement evidence attachment workflow | Backlog |
-| T-0021 | Implement task packet generation | Backlog |
-| T-0022 | Implement local dashboard summary APIs | Backlog |
+| T-0018 | Define backend adapter protocol and capabilities | Implemented - Verified |
+| T-0019 | Implement local filesystem backend | Implemented - Verified |
+| T-0020 | Implement evidence attachment workflow | Implemented - Verified |
+| T-0021 | Implement task packet generation | Implemented - Verified |
+| T-0022 | Implement local dashboard summary APIs | Implemented - Verified |
 
 ### Related Issues
 
@@ -125,6 +126,8 @@ The local backend provides a deterministic reference implementation before GitHu
 ### Notes
 
 Local backend behavior should become the reference behavior for later GitHub mapping.
+SP-004 activated on 2026-06-03.
+T-0018 through T-0022 were human-verified and SP-004 was closed on 2026-06-03. EP-004 is complete and pending human epic closeout.
 
 ---
 
@@ -376,4 +379,4 @@ This Epic should avoid scope expansion and focus on confidence, repeatability, a
 
 ---
 
-*Last Updated: 2026-06-02 (SP-003 implementation complete)*
+*Last Updated: 2026-06-03 (SP-004 closed)*
