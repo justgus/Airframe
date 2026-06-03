@@ -14,16 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **23 backlog Tasks**
+Currently: **17 backlog Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
 | ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0023 | #23 | Finalize AICockpit MVP command names and parser | EP-005 | Not Assigned | High | Backlog |
-| T-0024 | #24 | Implement issue and task proposal commands | EP-005 | Not Assigned | High | Backlog |
-| T-0025 | #25 | Implement next-task and task-packet commands | EP-005 | Not Assigned | High | Backlog |
-| T-0026 | #26 | Implement evidence and ready-for-verification commands | EP-005 | Not Assigned | High | Backlog |
-| T-0027 | #27 | Implement Markdown and JSON output contracts | EP-005 | Not Assigned | High | Backlog |
-| T-0028 | #28 | Document AICockpit agent usage | EP-005 | Not Assigned | Medium | Backlog |
 | T-0029 | #29 | Implement AgileCockpit application shell | EP-006 | Not Assigned | High | Backlog |
 | T-0030 | #30 | Implement dashboard summary UI | EP-006 | Not Assigned | High | Backlog |
 | T-0031 | #31 | Implement verification queue and review flow | EP-006 | Not Assigned | High | Backlog |
@@ -62,7 +56,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **22 verified Tasks** | Next available: **T-0046**
+Currently: **28 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -88,15 +82,21 @@ Currently: **22 verified Tasks** | Next available: **T-0046**
 | T-0020 | #20 | Implement evidence attachment workflow | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
 | T-0021 | #21 | Implement task packet generation | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
 | T-0022 | #22 | Implement local dashboard summary APIs | [Task-verified-0018-0022.md](Verified/Task-verified-0018-0022.md) | Implemented - Verified |
+| T-0023 | #23 | Finalize AICockpit MVP command names and parser | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
+| T-0024 | #24 | Implement issue and task proposal commands | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
+| T-0025 | #25 | Implement next-task and task-packet commands | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
+| T-0026 | #26 | Implement evidence and ready-for-verification commands | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
+| T-0027 | #27 | Implement Markdown and JSON output contracts | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
+| T-0028 | #28 | Document AICockpit agent usage | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 23
+- **Backlog:** 17
 - **Active:** 0
 - **Unverified:** 0
-- **Verified:** 22
+- **Verified:** 28
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-03 (SP-004 verified)*
+*Last Updated: 2026-06-03 (SP-005 verified)*

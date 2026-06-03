@@ -282,8 +282,8 @@ import Foundation
 
     #expect(context.workspaceName == "Airframe")
     #expect(context.projectName == "Agile Airframe")
-    #expect(context.project.activeSprintID == AirframeID("SP-004"))
-    #expect(context.project.activeEpicID == AirframeID("EP-004"))
+    #expect(context.project.activeSprintID == AirframeID("SP-005"))
+    #expect(context.project.activeEpicID == AirframeID("EP-005"))
     #expect(context.summaryLines.contains("Repository: justgus/Airframe"))
 }
 

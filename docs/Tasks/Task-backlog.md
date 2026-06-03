@@ -2,20 +2,9 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **23 backlog Tasks**
+Currently: **17 backlog Tasks**
 
 ---
-
-## EP-005 Tasks
-
-| Task | GitHub Issue | Title | Priority | Acceptance Summary |
-| ---- | ------------ | ----- | -------- | ------------------ |
-| T-0023 | #23 | Finalize AICockpit MVP command names and parser | High | MVP command names are documented and parser tests pass. |
-| T-0024 | #24 | Implement issue and task proposal commands | High | CLI can propose issues and tasks through AirframeCore. |
-| T-0025 | #25 | Implement next-task and task-packet commands | High | CLI can retrieve next work and generate task packets. |
-| T-0026 | #26 | Implement evidence and ready-for-verification commands | High | CLI can attach evidence and mark work ready through AirframeCore. |
-| T-0027 | #27 | Implement Markdown and JSON output contracts | High | Output contract tests pass for MVP commands. |
-| T-0028 | #28 | Document AICockpit agent usage | Medium | Agent usage docs cover local setup and command examples. |
 
 ## EP-006 Tasks
 
@@ -51,4 +40,4 @@ Currently: **23 backlog Tasks**
 
 ---
 
-*Last Updated: 2026-06-03 (SP-004 activated)*
+*Last Updated: 2026-06-03 (SP-005 activated)*

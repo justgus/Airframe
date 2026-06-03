@@ -11,7 +11,7 @@ import AirframeCore
 
     #expect(model.context.workspaceName == "Airframe")
     #expect(model.context.projectName == "Agile Airframe")
-    #expect(model.context.project.activeSprintID == AirframeID("SP-004"))
+    #expect(model.context.project.activeSprintID == AirframeID("SP-005"))
 }
 
 @Test func agileCockpitShowsAuthorityAndAuditData() throws {

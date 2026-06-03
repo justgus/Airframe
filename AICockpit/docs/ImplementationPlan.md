@@ -45,11 +45,11 @@ The executable target should stay thin. Command parsing, command execution, form
 
 ## 4. Command Surface
 
-Initial command families:
+MVP command families:
 
 ```text
-aicockpit help
-aicockpit context show
+aicockpit --help
+aicockpit context
 aicockpit project summary
 aicockpit task propose
 aicockpit issue propose
@@ -60,7 +60,7 @@ aicockpit work ready <id>
 aicockpit audit show <id>
 ```
 
-Final command names remain open until EP-005. Commands should support compact default output and optional JSON output.
+EP-005 freezes the implemented local MVP command names above except `audit show`, which remains future scope. Commands support compact default Markdown output and optional JSON output.
 
 ## 5. Milestone Tasks
 
@@ -142,7 +142,7 @@ Independent executable result:
 - Freeze MVP command names and output contracts.
 - Add concise default output for all MVP commands.
 - Add deterministic JSON schema for command responses.
-- Add documentation for agent usage.
+- Add documentation for agent usage in [AgentUsage.md](AgentUsage.md).
 - Add end-to-end scripted smoke test.
 
 Verification:
@@ -201,4 +201,3 @@ AICockpit work is complete for a milestone when:
 - JSON output is valid and tested where provided.
 - Errors include actionable reason codes.
 - `swift test` passes for AICockpit and AirframeCore.
-
