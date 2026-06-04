@@ -282,9 +282,23 @@ import Foundation
 
     #expect(context.workspaceName == "Airframe")
     #expect(context.projectName == "Agile Airframe")
-    #expect(context.project.activeSprintID == AirframeID("SP-008"))
-    #expect(context.project.activeEpicID == AirframeID("EP-008"))
+    #expect(context.project.activeSprintID == nil)
+    #expect(context.project.activeEpicID == nil)
     #expect(context.summaryLines.contains("Repository: justgus/Airframe"))
+}
+
+@Test func sampleConfigurationProducesReleaseCandidateDiagnostics() throws {
+    let configuration = try AirframeConfigurationLoader().loadSampleConfiguration()
+    let diagnostics = AirframeConfigurationLoader().diagnostics(for: configuration)
+
+    #expect(diagnostics.status == .ok)
+    #expect(diagnostics.isValid)
+    #expect(diagnostics.workspaceID == AirframeID("WS-AIRFRAME"))
+    #expect(diagnostics.defaultProjectID == AirframeID("PRJ-AIRFRAME"))
+    #expect(diagnostics.projectCount == 1)
+    #expect(diagnostics.backendKind == "github-fixture")
+    #expect(diagnostics.backendLocation == "justgus/Airframe")
+    #expect(diagnostics.issues.isEmpty)
 }
 
 @Test func missingConfigurationReturnsStructuredError() {
@@ -319,6 +333,39 @@ import Foundation
     #expect(throws: AirframeConfigurationError.invalidConfiguration("At least one project is required.")) {
         try AirframeConfigurationLoader().load(data: data)
     }
+}
+
+@Test func invalidConfigurationDiagnosticsExplainBackendAndProjectFailures() throws {
+    let data = Data(
+        """
+        {
+          "schemaVersion": 1,
+          "workspace": { "id": { "rawValue": "WS-AIRFRAME" }, "name": "Airframe", "rootPath": "." },
+          "projects": [
+            {
+              "id": { "rawValue": "PRJ-AIRFRAME" },
+              "name": "Agile Airframe",
+              "repository": "",
+              "activeSprintID": { "rawValue": "" },
+              "activeEpicID": { "rawValue": "EP-008" }
+            }
+          ],
+          "defaultProjectID": { "rawValue": "PRJ-MISSING" },
+          "backend": { "kind": "github-live", "location": "Airframe" }
+        }
+        """.utf8
+    )
+
+    let diagnostics = try AirframeConfigurationLoader().diagnostics(data: data)
+    let codes = Set(diagnostics.issues.map(\.code))
+
+    #expect(diagnostics.status == .error)
+    #expect(!diagnostics.isValid)
+    #expect(codes.contains("missingDefaultProject"))
+    #expect(codes.contains("missingProjectRepository"))
+    #expect(codes.contains("missingActiveSprintID"))
+    #expect(codes.contains("unsupportedBackendKind"))
+    #expect(codes.contains("invalidGitHubRepository"))
 }
 
 @Test func localBackendCreatesQueriesAndUpdatesWorkRecords() throws {

@@ -8,9 +8,33 @@ import Foundation
     #expect(help.contains("aicockpit"))
     #expect(help.contains("AirframeCore 0.1.0"))
     #expect(help.contains("aicockpit context"))
+    #expect(help.contains("aicockpit config diagnose"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
     #expect(help.contains("--backend local-fixture|github-fixture"))
+}
+
+@Test func configDiagnoseReturnsStableMarkdownContract() {
+    let result = AICockpitCommand.response(arguments: ["config", "diagnose"])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("kind: configurationDiagnostics"))
+    #expect(result.standardOutput.contains("## Configuration Diagnostics"))
+    #expect(result.standardOutput.contains("status: ok"))
+    #expect(result.standardOutput.contains("backend: github-fixture at justgus/Airframe"))
+    #expect(result.standardOutput.contains("issues: None"))
+}
+
+@Test func configDiagnoseReturnsStableJSONContract() {
+    let result = AICockpitCommand.response(arguments: ["config", "diagnose", "--output", "json"])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"kind\" : \"configurationDiagnostics\""))
+    #expect(result.standardOutput.contains("\"configurationDiagnostics\""))
+    #expect(result.standardOutput.contains("\"backendKind\" : \"github-fixture\""))
+    #expect(result.standardOutput.contains("\"status\" : \"ok\""))
 }
 
 @Test func helpCommandReturnsSuccess() {
@@ -21,6 +45,16 @@ import Foundation
     #expect(AICockpitCommand.main(arguments: ["unknown"]) == 64)
 }
 
+@Test func unknownCommandReturnsJSONErrorEnvelope() {
+    let result = AICockpitCommand.response(arguments: ["unknown", "--output", "json"])
+
+    #expect(result.exitCode == 64)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"status\" : \"error\""))
+    #expect(result.standardOutput.contains("\"code\" : \"unknownCommand\""))
+    #expect(result.standardOutput.contains("\"message\" : \"unknown command\""))
+}
+
 @Test func contextCommandReturnsCurrentProjectContext() {
     let result = AICockpitCommand.response(arguments: ["context"])
 
@@ -29,7 +63,7 @@ import Foundation
     #expect(result.standardOutput.contains("Airframe Context"))
     #expect(result.standardOutput.contains("Workspace: Airframe (WS-AIRFRAME)"))
     #expect(result.standardOutput.contains("Project: Agile Airframe (PRJ-AIRFRAME)"))
-    #expect(result.standardOutput.contains("Active Sprint: SP-008"))
+    #expect(result.standardOutput.contains("Active Sprint: None"))
 }
 
 @Test func deniedAuthorityCommandReturnsReasonCode() {
@@ -190,6 +224,20 @@ import Foundation
 
     #expect(result.exitCode == 64)
     #expect(result.standardError.contains("missing required option --title"))
+}
+
+@Test func invalidBackendReturnsJSONErrorEnvelope() {
+    let result = AICockpitCommand.response(arguments: [
+        "project", "summary",
+        "--backend", "unknown-backend",
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 64)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"status\" : \"error\""))
+    #expect(result.standardOutput.contains("\"code\" : \"invalidArguments\""))
+    #expect(result.standardOutput.contains("unsupported backend unknown-backend"))
 }
 
 private func temporaryStorePath() -> String {

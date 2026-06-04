@@ -89,6 +89,60 @@ public struct AirframeProjectContext: Equatable, Sendable {
     }
 }
 
+public enum AirframeConfigurationDiagnosticSeverity: String, Codable, Equatable, Sendable {
+    case ok
+    case warning
+    case error
+}
+
+public struct AirframeConfigurationDiagnosticIssue: Codable, Equatable, Sendable {
+    public let severity: AirframeConfigurationDiagnosticSeverity
+    public let code: String
+    public let message: String
+
+    public init(
+        severity: AirframeConfigurationDiagnosticSeverity,
+        code: String,
+        message: String
+    ) {
+        self.severity = severity
+        self.code = code
+        self.message = message
+    }
+}
+
+public struct AirframeConfigurationDiagnostics: Codable, Equatable, Sendable {
+    public let status: AirframeConfigurationDiagnosticSeverity
+    public let workspaceID: AirframeID
+    public let defaultProjectID: AirframeID
+    public let projectCount: Int
+    public let backendKind: String
+    public let backendLocation: String
+    public let issues: [AirframeConfigurationDiagnosticIssue]
+
+    public init(
+        status: AirframeConfigurationDiagnosticSeverity,
+        workspaceID: AirframeID,
+        defaultProjectID: AirframeID,
+        projectCount: Int,
+        backendKind: String,
+        backendLocation: String,
+        issues: [AirframeConfigurationDiagnosticIssue]
+    ) {
+        self.status = status
+        self.workspaceID = workspaceID
+        self.defaultProjectID = defaultProjectID
+        self.projectCount = projectCount
+        self.backendKind = backendKind
+        self.backendLocation = backendLocation
+        self.issues = issues
+    }
+
+    public var isValid: Bool {
+        status != .error
+    }
+}
+
 public enum AirframeConfigurationError: Error, Equatable, CustomStringConvertible, Sendable {
     case missingFile(String)
     case unreadableData(String)
@@ -143,6 +197,106 @@ public struct AirframeConfigurationLoader: Sendable {
         return configuration
     }
 
+    public func diagnostics(data: Data) throws(AirframeConfigurationError) -> AirframeConfigurationDiagnostics {
+        let configuration: AirframeWorkspaceConfiguration
+        do {
+            configuration = try decoder.decode(AirframeWorkspaceConfiguration.self, from: data)
+        } catch {
+            throw .decodingFailed(error.localizedDescription)
+        }
+
+        return diagnostics(for: configuration)
+    }
+
+    public func diagnostics(for configuration: AirframeWorkspaceConfiguration) -> AirframeConfigurationDiagnostics {
+        var issues: [AirframeConfigurationDiagnosticIssue] = []
+
+        func issue(_ code: String, _ message: String) {
+            issues.append(
+                AirframeConfigurationDiagnosticIssue(
+                    severity: .error,
+                    code: code,
+                    message: message
+                )
+            )
+        }
+
+        if configuration.schemaVersion != 1 {
+            issue("unsupportedSchemaVersion", "Unsupported schema version \(configuration.schemaVersion).")
+        }
+
+        if configuration.workspace.id.rawValue.isEmpty {
+            issue("missingWorkspaceID", "Workspace ID is required.")
+        }
+
+        if configuration.workspace.name.isEmpty {
+            issue("missingWorkspaceName", "Workspace name is required.")
+        }
+
+        if configuration.workspace.rootPath.isEmpty {
+            issue("missingWorkspaceRootPath", "Workspace root path is required.")
+        }
+
+        if configuration.projects.isEmpty {
+            issue("missingProjects", "At least one project is required.")
+        }
+
+        let projectIDs = Set(configuration.projects.map(\.id))
+        if projectIDs.count != configuration.projects.count {
+            issue("duplicateProjectID", "Project IDs must be unique.")
+        }
+
+        if !projectIDs.contains(configuration.defaultProjectID) {
+            issue(
+                "missingDefaultProject",
+                "Default project \(configuration.defaultProjectID.rawValue) is not defined."
+            )
+        }
+
+        for project in configuration.projects {
+            if project.id.rawValue.isEmpty {
+                issue("missingProjectID", "Project ID is required.")
+            }
+            if project.name.isEmpty {
+                issue("missingProjectName", "Project \(project.id.rawValue) name is required.")
+            }
+            if project.repository.isEmpty {
+                issue("missingProjectRepository", "Project \(project.id.rawValue) repository is required.")
+            }
+            if let activeSprintID = project.activeSprintID, activeSprintID.rawValue.isEmpty {
+                issue("missingActiveSprintID", "Project \(project.id.rawValue) active sprint ID is empty.")
+            }
+            if let activeEpicID = project.activeEpicID, activeEpicID.rawValue.isEmpty {
+                issue("missingActiveEpicID", "Project \(project.id.rawValue) active epic ID is empty.")
+            }
+        }
+
+        if configuration.backend.kind.isEmpty {
+            issue("missingBackendKind", "Backend kind is required.")
+        } else if AirframeBackendKind(rawValue: configuration.backend.kind) == nil {
+            issue("unsupportedBackendKind", "Backend kind \(configuration.backend.kind) is not supported.")
+        }
+
+        if configuration.backend.location.isEmpty {
+            issue("missingBackendLocation", "Backend location is required.")
+        }
+
+        if configuration.backend.kind.hasPrefix("github"),
+           !configuration.backend.location.contains("/") {
+            issue("invalidGitHubRepository", "GitHub backend location must be an owner/repository slug.")
+        }
+
+        return AirframeConfigurationDiagnostics(
+            status: issues.contains { $0.severity == .error } ? .error : .ok,
+            workspaceID: configuration.workspace.id,
+            defaultProjectID: configuration.defaultProjectID,
+            projectCount: configuration.projects.count,
+            backendKind: configuration.backend.kind,
+            backendLocation: configuration.backend.location,
+            issues: issues
+        )
+    }
+
     public func loadSampleConfiguration() throws(AirframeConfigurationError) -> AirframeWorkspaceConfiguration {
         guard let url = Bundle.module.url(
             forResource: "sample-airframe-workspace",
@@ -163,25 +317,10 @@ public struct AirframeConfigurationLoader: Sendable {
     }
 
     private func validate(_ configuration: AirframeWorkspaceConfiguration) throws(AirframeConfigurationError) {
-        guard configuration.schemaVersion == 1 else {
-            throw .invalidConfiguration("Unsupported schema version \(configuration.schemaVersion).")
-        }
-
-        guard !configuration.workspace.id.rawValue.isEmpty else {
-            throw .invalidConfiguration("Workspace ID is required.")
-        }
-
-        guard !configuration.projects.isEmpty else {
-            throw .invalidConfiguration("At least one project is required.")
-        }
-
-        let projectIDs = Set(configuration.projects.map(\.id))
-        guard projectIDs.count == configuration.projects.count else {
-            throw .invalidConfiguration("Project IDs must be unique.")
-        }
-
-        guard projectIDs.contains(configuration.defaultProjectID) else {
-            throw .invalidConfiguration("Default project \(configuration.defaultProjectID.rawValue) is not defined.")
+        let diagnostics = diagnostics(for: configuration)
+        guard diagnostics.isValid else {
+            let message = diagnostics.issues.first?.message ?? "Configuration failed validation."
+            throw .invalidConfiguration(message)
         }
     }
 }

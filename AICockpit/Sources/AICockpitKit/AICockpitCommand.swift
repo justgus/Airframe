@@ -55,6 +55,37 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals == ["config", "diagnose"] {
+            do {
+                let configuration = try AirframeConfigurationLoader().loadSampleConfiguration()
+                let diagnostics = AirframeConfigurationLoader().diagnostics(for: configuration)
+                return AICockpitCommandResult(
+                    exitCode: diagnostics.isValid ? 0 : 78,
+                    standardOutput: try render(
+                        AICockpitCommandEnvelope(
+                            status: diagnostics.isValid ? "ok" : "error",
+                            kind: "configurationDiagnostics",
+                            message: diagnostics.isValid ? "Configuration diagnostics passed" : "Configuration diagnostics failed",
+                            backendCapabilities: nil,
+                            workItem: nil,
+                            taskPacket: nil,
+                            dashboardSummary: nil,
+                            configurationDiagnostics: diagnostics,
+                            evidence: []
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "configurationLoadFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
         if arguments == ["authority", "demo-denied"] {
             do {
                 let context = try AirframeConfigurationLoader().loadSampleContext()
@@ -256,9 +287,12 @@ public enum AICockpitCommand {
             }
         }
 
-        return AICockpitCommandResult(
+        return errorResult(
             exitCode: 64,
-            standardError: "aicockpit: unknown command\n\n\(helpText())\n"
+            code: "unknownCommand",
+            message: "unknown command",
+            outputFormat: outputFormat,
+            markdownSuffix: "\n\(helpText())"
         )
     }
 
@@ -272,6 +306,7 @@ public enum AICockpitCommand {
           aicockpit --help
           aicockpit version
           aicockpit context
+          aicockpit config diagnose [--output markdown|json]
           aicockpit authority demo-denied
           aicockpit project summary [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--backend local-fixture|github-fixture] [--store path]
@@ -356,15 +391,51 @@ public enum AICockpitCommand {
                 )
             )
         } catch AICockpitCommandError.invalidArguments(let message) {
-            return AICockpitCommandResult(
+            return errorResult(
                 exitCode: 64,
-                standardError: "aicockpit: \(message)\n"
+                code: "invalidArguments",
+                message: message,
+                outputFormat: outputFormat
             )
         } catch {
-            return AICockpitCommandResult(
+            return errorResult(
                 exitCode: 78,
-                standardError: "aicockpit: \(error)\n"
+                code: "backendCommandFailed",
+                message: "\(error)",
+                outputFormat: outputFormat
             )
+        }
+    }
+
+    private static func errorResult(
+        exitCode: Int32,
+        code: String,
+        message: String,
+        outputFormat: AICockpitOutputFormat,
+        markdownSuffix: String = ""
+    ) -> AICockpitCommandResult {
+        switch outputFormat {
+        case .markdown:
+            return AICockpitCommandResult(
+                exitCode: exitCode,
+                standardError: "aicockpit: \(message)\n\(markdownSuffix)"
+            )
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            let envelope = AICockpitErrorEnvelope(
+                status: "error",
+                code: code,
+                message: message
+            )
+            let output = (try? String(decoding: encoder.encode(envelope), as: UTF8.self)) ?? """
+            {
+              "status" : "error",
+              "code" : "\(code)",
+              "message" : "\(message)"
+            }
+            """
+            return AICockpitCommandResult(exitCode: exitCode, standardOutput: output)
         }
     }
 
@@ -471,6 +542,7 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     let workItem: AirframeWorkItem?
     let taskPacket: AirframeTaskPacket?
     let dashboardSummary: AirframeDashboardSummary?
+    var configurationDiagnostics: AirframeConfigurationDiagnostics? = nil
     let evidence: [AirframeEvidence]
 
     var markdown: String {
@@ -514,6 +586,28 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
             ])
         }
 
+        if let configurationDiagnostics {
+            lines.append(contentsOf: [
+                "",
+                "## Configuration Diagnostics",
+                "- status: \(configurationDiagnostics.status.rawValue)",
+                "- workspace: \(configurationDiagnostics.workspaceID.rawValue)",
+                "- defaultProject: \(configurationDiagnostics.defaultProjectID.rawValue)",
+                "- projects: \(configurationDiagnostics.projectCount)",
+                "- backend: \(configurationDiagnostics.backendKind) at \(configurationDiagnostics.backendLocation)"
+            ])
+            if configurationDiagnostics.issues.isEmpty {
+                lines.append("- issues: None")
+            } else {
+                lines.append("### Issues")
+                lines.append(
+                    contentsOf: configurationDiagnostics.issues.map {
+                        "- \($0.severity.rawValue) \($0.code): \($0.message)"
+                    }
+                )
+            }
+        }
+
         if let taskPacket {
             lines.append(contentsOf: [
                 "",
@@ -547,4 +641,10 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
 
         return lines.joined(separator: "\n")
     }
+}
+
+private struct AICockpitErrorEnvelope: Codable, Equatable {
+    let status: String
+    let code: String
+    let message: String
 }

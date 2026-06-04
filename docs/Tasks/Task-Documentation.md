@@ -14,15 +14,9 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **5 backlog Tasks**
+Currently: **0 backlog Tasks**
 
-| Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
-| ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0041 | #41 | Add full regression and integration test pass | EP-008 | SP-008 | High | Backlog |
-| T-0042 | #42 | Harden CLI output and error contracts | EP-008 | SP-008 | High | Backlog |
-| T-0043 | #43 | Harden AgileCockpit accessibility and UI flows | EP-008 | SP-008 | High | Backlog |
-| T-0044 | #44 | Add configuration diagnostics and failure handling | EP-008 | SP-008 | Medium | Backlog |
-| T-0045 | #45 | Write release candidate verification documentation | EP-008 | SP-008 | Medium | Backlog |
+No Tasks are currently in backlog.
 
 See: [Task-backlog.md](Task-backlog.md)
 
@@ -44,7 +38,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **40 verified Tasks** | Next available: **T-0046**
+Currently: **45 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -88,15 +82,20 @@ Currently: **40 verified Tasks** | Next available: **T-0046**
 | T-0038 | #38 | Implement GitHub sprint/epic/evidence mapping | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
 | T-0039 | #39 | Integrate GitHub backend with AICockpit | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
 | T-0040 | #40 | Integrate GitHub backend status with AgileCockpit | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
+| T-0041 | #41 | Add full regression and integration test pass | [Task-verified-0041-0045.md](Verified/Task-verified-0041-0045.md) | Implemented - Verified |
+| T-0042 | #42 | Harden CLI output and error contracts | [Task-verified-0041-0045.md](Verified/Task-verified-0041-0045.md) | Implemented - Verified |
+| T-0043 | #43 | Harden AgileCockpit accessibility and UI flows | [Task-verified-0041-0045.md](Verified/Task-verified-0041-0045.md) | Implemented - Verified |
+| T-0044 | #44 | Add configuration diagnostics and failure handling | [Task-verified-0041-0045.md](Verified/Task-verified-0041-0045.md) | Implemented - Verified |
+| T-0045 | #45 | Write release candidate verification documentation | [Task-verified-0041-0045.md](Verified/Task-verified-0041-0045.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 5
+- **Backlog:** 0
 - **Active:** 0
 - **Unverified:** 0
-- **Verified:** 40
+- **Verified:** 45
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-04 (SP-007 verified and SP-008 planning opened)*
+*Last Updated: 2026-06-04 (SP-008 verified and closed)*

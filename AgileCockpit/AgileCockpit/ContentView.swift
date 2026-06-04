@@ -29,6 +29,7 @@ struct AgileCockpitAuditRow: Equatable, Identifiable {
 final class AgileCockpitDashboardModel: ObservableObject {
     let coreInfo: AirframeCoreInfo
     let context: AirframeProjectContext
+    let configurationDiagnostics: AirframeConfigurationDiagnostics
 
     @Published private(set) var records: [AirframeLocalWorkRecord]
     @Published private(set) var summary: AirframeDashboardSummary
@@ -51,6 +52,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     ) throws {
         self.coreInfo = coreInfo
         self.context = context
+        self.configurationDiagnostics = AirframeConfigurationLoader().diagnostics(for: context.configuration)
         self.backend = backend
         self.reviewerContext = reviewerContext
         self.auditStore = auditStore
@@ -114,6 +116,10 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let capabilities = backend.capabilities
         let githubStatus = capabilities.supportsGitHubIssues ? "GitHub issue mapping on" : "GitHub issue mapping off"
         return "\(capabilities.backendKind) | \(githubStatus)"
+    }
+
+    var configurationStatusText: String {
+        "Configuration \(configurationDiagnostics.status.rawValue) | \(configurationDiagnostics.projectCount) project(s)"
     }
 
     var activeSprintText: String {
@@ -347,6 +353,10 @@ struct ContentView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .accessibilityIdentifier("agile-cockpit-backend-status")
+                Text(model.configurationStatusText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-configuration-status")
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {

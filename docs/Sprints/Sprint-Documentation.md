@@ -11,7 +11,7 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-008: Verification, Hardening, and Release Candidate Planning** (Planning)
+Currently: **None**
 
 See: [Sprint-active.md](Sprint-active.md)
 
@@ -28,15 +28,15 @@ Currently: **8 Sprints** | Next available: **SP-009**
 | SP-005 | AICockpit MVP Integration | EP-005 | T-0023, T-0024, T-0025, T-0026, T-0027, T-0028 | None | Closed |
 | SP-006 | AgileCockpit Dashboard MVP Integration | EP-006 | T-0029, T-0030, T-0031, T-0032, T-0033, T-0034, T-0035 | None | Closed |
 | SP-007 | GitHub Backend MVP | EP-007 | T-0036, T-0037, T-0038, T-0039, T-0040 | None | Closed |
-| SP-008 | Verification, Hardening, and Release Candidate Planning | EP-008 | T-0041, T-0042, T-0043, T-0044, T-0045 | None | Planning |
+| SP-008 | Verification, Hardening, and Release Candidate | EP-008 | T-0041, T-0042, T-0043, T-0044, T-0045 | None | Closed |
 
 ## Statistics
 
 - **Total Sprints:** 8
-- **Planning:** 1
+- **Planning:** 0
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 7
+- **Closed:** 8
 - **Next available:** SP-009
 
-*Last Updated: 2026-06-04 (SP-007 closed and SP-008 planning opened)*
+*Last Updated: 2026-06-04 (SP-008 closed)*

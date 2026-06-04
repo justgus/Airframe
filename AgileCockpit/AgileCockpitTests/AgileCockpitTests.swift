@@ -12,11 +12,13 @@ import AirframeCore
 
     #expect(model.context.workspaceName == "Airframe")
     #expect(model.context.projectName == "Agile Airframe")
-    #expect(model.context.project.activeSprintID == AirframeID("SP-008"))
-    #expect(model.context.project.activeEpicID == AirframeID("EP-008"))
+    #expect(model.context.project.activeSprintID == nil)
+    #expect(model.context.project.activeEpicID == nil)
     #expect(model.projectStatusText.contains("justgus/Airframe"))
     #expect(model.backendStatusText.contains("github-fixture"))
     #expect(model.backendStatusText.contains("GitHub issue mapping on"))
+    #expect(model.configurationDiagnostics.status == .ok)
+    #expect(model.configurationStatusText == "Configuration ok | 1 project(s)")
 }
 
 @MainActor
@@ -64,8 +66,8 @@ import AirframeCore
 @Test func agileCockpitShowsSprintEpicMetricsAndAuditRows() throws {
     let model = try AgileCockpitDashboardModel.sample()
 
-    #expect(model.sprintRecords.count == 5)
-    #expect(model.epicRecords.count == 5)
+    #expect(model.sprintRecords.count == 0)
+    #expect(model.epicRecords.count == 0)
     #expect(model.metrics.map(\.id) == ["active", "ready", "verified", "issues", "evidence"])
     #expect(model.auditRows.first?.action == "OP-READ-DASHBOARD")
 }
