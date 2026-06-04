@@ -93,7 +93,8 @@ public enum AICockpitCommand {
                     AICockpitCommandEnvelope(
                         status: "ok",
                         kind: "projectSummary",
-                        message: "Local project summary",
+                        message: "Project summary",
+                        backendCapabilities: backend.capabilities,
                         workItem: nil,
                         taskPacket: nil,
                         dashboardSummary: summary,
@@ -122,6 +123,7 @@ public enum AICockpitCommand {
 
                 let id = AirframeID(try parsed.requiredValue(for: "--id"))
                 let title = try parsed.requiredValue(for: "--title")
+                let projectContext = try AirframeConfigurationLoader().loadSampleContext()
                 let record = AirframeLocalWorkRecord(
                     workItem: AirframeWorkItem(
                         id: id,
@@ -130,8 +132,8 @@ public enum AICockpitCommand {
                         status: .active,
                         githubIssue: parsed.value(for: "--github").flatMap(Int.init)
                     ),
-                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? AirframeID("EP-005"),
-                    sprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? AirframeID("SP-005"),
+                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? projectContext.project.activeEpicID,
+                    sprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? projectContext.project.activeSprintID,
                     priority: parsed.value(for: "--priority").flatMap(AirframeWorkPriority.init(rawValue:)) ?? .medium,
                     acceptanceCriteria: parsed.repeatedValues(for: "--acceptance"),
                     scope: parsed.repeatedValues(for: "--scope"),
@@ -142,12 +144,13 @@ public enum AICockpitCommand {
                 try backend.createWorkRecord(record)
                 return try render(
                     AICockpitCommandEnvelope(
-                        status: "ok",
-                        kind: "\(kind.rawValue)Proposal",
-                        message: "\(kind.rawValue.capitalized) proposed",
-                        workItem: record.workItem,
-                        taskPacket: nil,
-                        dashboardSummary: nil,
+                    status: "ok",
+                    kind: "\(kind.rawValue)Proposal",
+                    message: "\(kind.rawValue.capitalized) proposed",
+                    backendCapabilities: backend.capabilities,
+                    workItem: record.workItem,
+                    taskPacket: nil,
+                    dashboardSummary: nil,
                         evidence: []
                     ),
                     as: outputFormat
@@ -163,6 +166,7 @@ public enum AICockpitCommand {
                         status: nextTask == nil ? "empty" : "ok",
                         kind: "nextTask",
                         message: nextTask == nil ? "No active task is available" : "Next active task",
+                        backendCapabilities: backend.capabilities,
                         workItem: nextTask,
                         taskPacket: nil,
                         dashboardSummary: nil,
@@ -181,6 +185,7 @@ public enum AICockpitCommand {
                         status: "ok",
                         kind: "taskPacket",
                         message: "Task packet generated",
+                        backendCapabilities: backend.capabilities,
                         workItem: packet.workItem,
                         taskPacket: packet,
                         dashboardSummary: nil,
@@ -214,6 +219,7 @@ public enum AICockpitCommand {
                         status: "ok",
                         kind: "evidenceAttachment",
                         message: "Evidence attached",
+                        backendCapabilities: backend.capabilities,
                         workItem: try backend.workRecord(id: AirframeID(parsed.positionals[2]))?.workItem,
                         taskPacket: nil,
                         dashboardSummary: nil,
@@ -239,6 +245,7 @@ public enum AICockpitCommand {
                         status: "ok",
                         kind: "readyForVerification",
                         message: "Work marked ready for human verification",
+                        backendCapabilities: backend.capabilities,
                         workItem: workItem,
                         taskPacket: nil,
                         dashboardSummary: nil,
@@ -266,13 +273,13 @@ public enum AICockpitCommand {
           aicockpit version
           aicockpit context
           aicockpit authority demo-denied
-          aicockpit project summary [--store path] [--output markdown|json]
-          aicockpit task propose --id T-XXXX --title title [--store path]
-          aicockpit issue propose --id I-XXXX --title title [--store path]
-          aicockpit task next [--store path] [--output markdown|json]
-          aicockpit task packet T-XXXX [--store path] [--output markdown|json]
-          aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--store path]
-          aicockpit work ready T-XXXX [--store path]
+          aicockpit project summary [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit task propose --id T-XXXX --title title [--backend local-fixture|github-fixture] [--store path]
+          aicockpit issue propose --id I-XXXX --title title [--backend local-fixture|github-fixture] [--store path]
+          aicockpit task next [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit task packet T-XXXX [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--backend local-fixture|github-fixture] [--store path]
+          aicockpit work ready T-XXXX [--backend local-fixture|github-fixture] [--store path]
 
         Linked Core:
           \(AirframeCoreInfo.current.summary)
@@ -328,12 +335,12 @@ public enum AICockpitCommand {
     private static func executeBackendCommand(
         outputFormat: AICockpitOutputFormat,
         parsed: AICockpitArguments,
-        body: (AirframeLocalFilesystemBackend, AirframeCertifiedContext) throws -> String
+        body: (any AirframeBackend, AirframeCertifiedContext) throws -> String
     ) -> AICockpitCommandResult {
         do {
             let context = try AirframeConfigurationLoader().loadSampleContext()
             let certifiedContext = try sampleLLMContext(projectID: context.project.id)
-            let backend = AirframeLocalFilesystemBackend(storeURL: parsed.storeURL)
+            let backend = try parsed.backend(projectContext: context)
             return AICockpitCommandResult(
                 exitCode: 0,
                 standardOutput: try body(backend, certifiedContext)
@@ -421,6 +428,25 @@ private struct AICockpitArguments {
         return URL(filePath: ".airframe/airframe-local-backend.json")
     }
 
+    func backend(projectContext: AirframeProjectContext) throws -> any AirframeBackend {
+        let requestedKind = value(for: "--backend")
+            ?? value(for: "--provider")
+            ?? projectContext.configuration.backend.kind
+        switch AirframeBackendKind(rawValue: requestedKind) {
+        case .localFixture:
+            return AirframeLocalFilesystemBackend(storeURL: storeURL)
+        case .githubFixture:
+            return AirframeGitHubFixtureBackend(
+                storeURL: storeURL,
+                configuration: AirframeGitHubBackendConfiguration(repositorySlug: projectContext.project.repository)
+            )
+        case .githubIssues:
+            throw AICockpitCommandError.invalidArguments("github-issues requires a live adapter; use github-fixture for deterministic CLI operations")
+        case nil:
+            throw AICockpitCommandError.invalidArguments("unsupported backend \(requestedKind)")
+        }
+    }
+
     func value(for option: String) -> String? {
         options[option]?.last
     }
@@ -441,6 +467,7 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     let status: String
     let kind: String
     let message: String
+    let backendCapabilities: AirframeBackendCapabilities?
     let workItem: AirframeWorkItem?
     let taskPacket: AirframeTaskPacket?
     let dashboardSummary: AirframeDashboardSummary?
@@ -454,6 +481,13 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
             "- kind: \(kind)",
             "- message: \(message)"
         ]
+
+        if let backendCapabilities {
+            lines.append(contentsOf: [
+                "- backend: \(backendCapabilities.backendKind)",
+                "- githubIssues: \(backendCapabilities.supportsGitHubIssues ? "supported" : "unsupported")"
+            ])
+        }
 
         if let workItem {
             lines.append(contentsOf: [

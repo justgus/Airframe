@@ -15,10 +15,10 @@
       "name": "Agile Airframe",
       "repository": "justgus/Airframe",
       "activeSprintID": {
-        "rawValue": "SP-005"
+        "rawValue": "SP-008"
       },
       "activeEpicID": {
-        "rawValue": "EP-005"
+        "rawValue": "EP-008"
       }
     }
   ],
@@ -26,7 +26,7 @@
     "rawValue": "PRJ-AIRFRAME"
   },
   "backend": {
-    "kind": "local-fixture",
-    "location": "docs"
+    "kind": "github-fixture",
+    "location": "justgus/Airframe"
   }
 }

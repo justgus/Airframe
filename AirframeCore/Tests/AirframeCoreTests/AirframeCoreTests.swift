@@ -282,8 +282,8 @@ import Foundation
 
     #expect(context.workspaceName == "Airframe")
     #expect(context.projectName == "Agile Airframe")
-    #expect(context.project.activeSprintID == AirframeID("SP-005"))
-    #expect(context.project.activeEpicID == AirframeID("EP-005"))
+    #expect(context.project.activeSprintID == AirframeID("SP-008"))
+    #expect(context.project.activeEpicID == AirframeID("EP-008"))
     #expect(context.summaryLines.contains("Repository: justgus/Airframe"))
 }
 
@@ -399,6 +399,65 @@ import Foundation
     }
 }
 
+@Test func localBackendAppliesHumanVerificationActionsForHumanReviewer() throws {
+    let backend = try makeLocalBackend()
+    let context = try certifiedContext(authorityClass: .humanReviewer)
+    let accepted = localTaskRecord(
+        id: "T-0032",
+        title: "Implement human verification actions",
+        status: .implementedNotVerified
+    )
+    let needsEvidence = localTaskRecord(
+        id: "T-0031",
+        title: "Implement verification queue and review flow",
+        status: .implementedNotVerified
+    )
+
+    try backend.createWorkRecord(accepted)
+    try backend.createWorkRecord(needsEvidence)
+
+    let acceptedResult = try backend.applyHumanVerification(
+        action: .accept,
+        to: AirframeID("T-0032"),
+        context: context,
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+    let evidenceResult = try backend.applyHumanVerification(
+        action: .requestMoreEvidence,
+        to: AirframeID("T-0031"),
+        context: context,
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(acceptedResult.decision.isAllowed)
+    #expect(acceptedResult.workItem.status == .implementedVerified)
+    #expect(evidenceResult.action == .requestMoreEvidence)
+    #expect(evidenceResult.workItem.status == .active)
+    #expect(try backend.workRecord(id: AirframeID("T-0032"))?.workItem.status == .implementedVerified)
+    #expect(try backend.workRecord(id: AirframeID("T-0031"))?.workItem.status == .active)
+}
+
+@Test func localBackendRejectsVerificationActionOutsideReadyState() throws {
+    let backend = try makeLocalBackend()
+    let context = try certifiedContext(authorityClass: .humanReviewer)
+    let record = localTaskRecord(
+        id: "T-0032",
+        title: "Implement human verification actions",
+        status: .active
+    )
+
+    try backend.createWorkRecord(record)
+
+    #expect(throws: AirframeBackendError.invalidTransition(from: .active, to: .implementedVerified)) {
+        try backend.applyHumanVerification(
+            action: .accept,
+            to: AirframeID("T-0032"),
+            context: context,
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        )
+    }
+}
+
 @Test func localBackendGeneratesTaskPacketFromStoredRecord() throws {
     let backend = try makeLocalBackend()
     let record = localTaskRecord(
@@ -459,6 +518,119 @@ import Foundation
     #expect(summary.issueCount == 1)
     #expect(summary.nextTask?.id == AirframeID("T-0018"))
     #expect(summary.recentEvidenceCount == 1)
+}
+
+@Test func githubBackendConfigurationAndCapabilitiesAreRepresented() {
+    let reference = AirframeBackendReference(kind: "github-fixture", location: "justgus/Airframe")
+    let configuration = reference.githubConfiguration
+    let capabilities = AirframeBackendCapabilities.githubFixture
+
+    #expect(reference.backendKind == .githubFixture)
+    #expect(configuration.owner == "justgus")
+    #expect(configuration.repository == "Airframe")
+    #expect(capabilities.backendKind == "github-fixture")
+    #expect(capabilities.supportsGitHubIssues)
+    #expect(capabilities.supportsGitHubLabels)
+    #expect(capabilities.supportsSprintEpicMapping)
+    #expect(capabilities.supportsEvidenceReferences)
+}
+
+@Test func githubIssueMapperMapsTasksIssuesAndStatusLabels() {
+    let mapper = AirframeGitHubIssueMapper(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe")
+    )
+    let task = localTaskRecord(
+        id: "T-0037",
+        title: "Implement GitHub issue/task mapping",
+        status: .implementedNotVerified
+    )
+    let issueRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("I-0041"),
+            kind: .issue,
+            title: "GitHub issue import failed",
+            status: .active,
+            githubIssue: 41
+        ),
+        epicID: AirframeID("EP-007"),
+        sprintID: AirframeID("SP-007"),
+        priority: .medium
+    )
+
+    let taskIssue = mapper.issue(from: task)
+    let mappedIssue = mapper.issue(from: issueRecord)
+    let roundTrippedTask = mapper.record(from: taskIssue)
+
+    #expect(taskIssue.number == 37)
+    #expect(taskIssue.labels.contains("airframe-task"))
+    #expect(taskIssue.labels.contains("status-unverified"))
+    #expect(mappedIssue.labels.contains("airframe-issue"))
+    #expect(roundTrippedTask.workItem.id == AirframeID("T-0037"))
+    #expect(roundTrippedTask.workItem.status == .implementedNotVerified)
+    #expect(roundTrippedTask.workItem.githubIssue == 37)
+}
+
+@Test func githubIssueMapperMapsSprintEpicEvidenceAndAuditReferences() {
+    let mapper = AirframeGitHubIssueMapper(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe")
+    )
+    let record = localTaskRecord(
+        id: "T-0038",
+        title: "Implement GitHub sprint/epic/evidence mapping",
+        acceptanceCriteria: ["Sprint, epic, evidence, and audit references map where supported."],
+        scope: ["AirframeCore GitHub mapper"],
+        constraints: ["Keep provider behavior behind AirframeCore backend APIs."],
+        evidenceRequirements: ["Core tests pass."],
+        protectedPaths: ["docs/Tasks/Verified"]
+    )
+    let evidence = [
+        AirframeEvidence(
+            id: AirframeID("EV-0038-001"),
+            summary: "GitHub mapper tests passed",
+            artifact: "swift test --package-path AirframeCore"
+        )
+    ]
+
+    let issue = mapper.issue(from: record, evidence: evidence)
+    let roundTrippedRecord = mapper.record(from: issue)
+    let roundTrippedEvidence = mapper.evidence(from: issue)
+
+    #expect(issue.labels.contains("sprint-SP-004"))
+    #expect(issue.labels.contains("epic-EP-004"))
+    #expect(issue.body.contains("## Evidence"))
+    #expect(roundTrippedRecord.sprintID == AirframeID("SP-004"))
+    #expect(roundTrippedRecord.epicID == AirframeID("EP-004"))
+    #expect(roundTrippedRecord.acceptanceCriteria == record.acceptanceCriteria)
+    #expect(roundTrippedRecord.protectedPaths == ["docs/Tasks/Verified"])
+    #expect(roundTrippedEvidence == evidence)
+}
+
+@Test func githubFixtureBackendUsesCanonicalBackendAPIs() throws {
+    let storeURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCoreTests")
+        .appending(path: UUID().uuidString)
+        .appending(path: "github-fixture-backend.json")
+    let backend = AirframeGitHubFixtureBackend(
+        storeURL: storeURL,
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe")
+    )
+    let record = localTaskRecord(id: "T-0039", title: "Integrate GitHub backend with AICockpit")
+    let evidence = AirframeEvidence(
+        id: AirframeID("EV-0039-001"),
+        summary: "CLI fixture command passed",
+        artifact: "swift test --package-path AICockpit"
+    )
+
+    try backend.createWorkRecord(record)
+    try backend.attachEvidence(evidence, to: AirframeID("T-0039"))
+
+    let summary = try backend.dashboardSummary()
+    let issues = try backend.githubIssues()
+
+    #expect(backend.capabilities.backendKind == "github-fixture")
+    #expect(summary.nextTask?.id == AirframeID("T-0039"))
+    #expect(issues.first?.labels.contains("airframe-task") == true)
+    #expect(issues.first?.body.contains("EV-0039-001") == true)
 }
 
 private func certifiedContext(

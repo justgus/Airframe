@@ -14,27 +14,15 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **17 backlog Tasks**
+Currently: **5 backlog Tasks**
 
 | Task | GitHub Issue | Title | Epic | Sprint | Priority | Status |
 | ---- | ------------ | ----- | ---- | ------ | -------- | ------ |
-| T-0029 | #29 | Implement AgileCockpit application shell | EP-006 | Not Assigned | High | Backlog |
-| T-0030 | #30 | Implement dashboard summary UI | EP-006 | Not Assigned | High | Backlog |
-| T-0031 | #31 | Implement verification queue and review flow | EP-006 | Not Assigned | High | Backlog |
-| T-0032 | #32 | Implement human verification actions | EP-006 | Not Assigned | High | Backlog |
-| T-0033 | #33 | Implement sprint and epic read views | EP-006 | Not Assigned | Medium | Backlog |
-| T-0034 | #34 | Implement metrics and audit views | EP-006 | Not Assigned | Medium | Backlog |
-| T-0035 | #35 | Add primary accessibility and UI tests | EP-006 | Not Assigned | High | Backlog |
-| T-0036 | #36 | Implement GitHub backend capability map and configuration | EP-007 | Not Assigned | High | Backlog |
-| T-0037 | #37 | Implement GitHub issue/task mapping | EP-007 | Not Assigned | High | Backlog |
-| T-0038 | #38 | Implement GitHub sprint/epic/evidence mapping | EP-007 | Not Assigned | Medium | Backlog |
-| T-0039 | #39 | Integrate GitHub backend with AICockpit | EP-007 | Not Assigned | Medium | Backlog |
-| T-0040 | #40 | Integrate GitHub backend status with AgileCockpit | EP-007 | Not Assigned | Medium | Backlog |
-| T-0041 | #41 | Add full regression and integration test pass | EP-008 | Not Assigned | High | Backlog |
-| T-0042 | #42 | Harden CLI output and error contracts | EP-008 | Not Assigned | High | Backlog |
-| T-0043 | #43 | Harden AgileCockpit accessibility and UI flows | EP-008 | Not Assigned | High | Backlog |
-| T-0044 | #44 | Add configuration diagnostics and failure handling | EP-008 | Not Assigned | Medium | Backlog |
-| T-0045 | #45 | Write release candidate verification documentation | EP-008 | Not Assigned | Medium | Backlog |
+| T-0041 | #41 | Add full regression and integration test pass | EP-008 | SP-008 | High | Backlog |
+| T-0042 | #42 | Harden CLI output and error contracts | EP-008 | SP-008 | High | Backlog |
+| T-0043 | #43 | Harden AgileCockpit accessibility and UI flows | EP-008 | SP-008 | High | Backlog |
+| T-0044 | #44 | Add configuration diagnostics and failure handling | EP-008 | SP-008 | Medium | Backlog |
+| T-0045 | #45 | Write release candidate verification documentation | EP-008 | SP-008 | Medium | Backlog |
 
 See: [Task-backlog.md](Task-backlog.md)
 
@@ -56,7 +44,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **28 verified Tasks** | Next available: **T-0046**
+Currently: **40 verified Tasks** | Next available: **T-0046**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -88,15 +76,27 @@ Currently: **28 verified Tasks** | Next available: **T-0046**
 | T-0026 | #26 | Implement evidence and ready-for-verification commands | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
 | T-0027 | #27 | Implement Markdown and JSON output contracts | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
 | T-0028 | #28 | Document AICockpit agent usage | [Task-verified-0023-0028.md](Verified/Task-verified-0023-0028.md) | Implemented - Verified |
+| T-0029 | #29 | Implement AgileCockpit application shell | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0030 | #30 | Implement dashboard summary UI | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0031 | #31 | Implement verification queue and review flow | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0032 | #32 | Implement human verification actions | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0033 | #33 | Implement sprint and epic read views | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0034 | #34 | Implement metrics and audit views | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0035 | #35 | Add primary accessibility and UI tests | [Task-verified-0029-0035.md](Verified/Task-verified-0029-0035.md) | Implemented - Verified |
+| T-0036 | #36 | Implement GitHub backend capability map and configuration | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
+| T-0037 | #37 | Implement GitHub issue/task mapping | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
+| T-0038 | #38 | Implement GitHub sprint/epic/evidence mapping | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
+| T-0039 | #39 | Integrate GitHub backend with AICockpit | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
+| T-0040 | #40 | Integrate GitHub backend status with AgileCockpit | [Task-verified-0036-0040.md](Verified/Task-verified-0036-0040.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 45
-- **Backlog:** 17
+- **Backlog:** 5
 - **Active:** 0
 - **Unverified:** 0
-- **Verified:** 28
+- **Verified:** 40
 - **Closed:** 0
 - **Next available:** T-0046
 
-*Last Updated: 2026-06-03 (SP-005 verified)*
+*Last Updated: 2026-06-04 (SP-007 verified and SP-008 planning opened)*

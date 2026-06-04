@@ -10,6 +10,7 @@ import Foundation
     #expect(help.contains("aicockpit context"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
+    #expect(help.contains("--backend local-fixture|github-fixture"))
 }
 
 @Test func helpCommandReturnsSuccess() {
@@ -28,7 +29,7 @@ import Foundation
     #expect(result.standardOutput.contains("Airframe Context"))
     #expect(result.standardOutput.contains("Workspace: Airframe (WS-AIRFRAME)"))
     #expect(result.standardOutput.contains("Project: Agile Airframe (PRJ-AIRFRAME)"))
-    #expect(result.standardOutput.contains("Active Sprint: SP-005"))
+    #expect(result.standardOutput.contains("Active Sprint: SP-008"))
 }
 
 @Test func deniedAuthorityCommandReturnsReasonCode() {
@@ -152,6 +153,32 @@ import Foundation
     #expect(ready.standardOutput.contains("\"kind\" : \"readyForVerification\""))
     #expect(ready.standardOutput.contains("\"status\" : \"implementedNotVerified\""))
     #expect(ready.standardOutput.contains("EV-9004-001"))
+}
+
+@Test func githubFixtureBackendWorksThroughCanonicalCommands() {
+    let store = temporaryStorePath()
+    let proposed = AICockpitCommand.response(arguments: [
+        "task", "propose",
+        "--backend", "github-fixture",
+        "--store", store,
+        "--id", "T-9039",
+        "--title", "Integrate GitHub backend with AICockpit",
+        "--github", "39"
+    ])
+    let summary = AICockpitCommand.response(arguments: [
+        "project", "summary",
+        "--backend", "github-fixture",
+        "--store", store,
+        "--output", "json"
+    ])
+
+    #expect(proposed.exitCode == 0)
+    #expect(proposed.standardOutput.contains("backend: github-fixture"))
+    #expect(proposed.standardOutput.contains("githubIssues: supported"))
+    #expect(summary.exitCode == 0)
+    #expect(summary.standardOutput.contains("\"backendKind\" : \"github-fixture\""))
+    #expect(summary.standardOutput.contains("\"supportsGitHubIssues\" : true"))
+    #expect(summary.standardOutput.contains("\"rawValue\" : \"T-9039\""))
 }
 
 @Test func missingRequiredOptionReturnsUsageError() {

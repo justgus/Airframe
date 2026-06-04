@@ -1,32 +1,61 @@
 import Foundation
 
 public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
+    public let backendKind: String
     public let supportsCreateWorkItem: Bool
     public let supportsUpdateWorkItem: Bool
     public let supportsEvidenceAttachment: Bool
     public let supportsTaskPacket: Bool
     public let supportsDashboardSummary: Bool
+    public let supportsGitHubIssues: Bool
+    public let supportsGitHubLabels: Bool
+    public let supportsSprintEpicMapping: Bool
+    public let supportsEvidenceReferences: Bool
 
     public init(
+        backendKind: String = "local-fixture",
         supportsCreateWorkItem: Bool,
         supportsUpdateWorkItem: Bool,
         supportsEvidenceAttachment: Bool,
         supportsTaskPacket: Bool,
-        supportsDashboardSummary: Bool
+        supportsDashboardSummary: Bool,
+        supportsGitHubIssues: Bool = false,
+        supportsGitHubLabels: Bool = false,
+        supportsSprintEpicMapping: Bool = false,
+        supportsEvidenceReferences: Bool = false
     ) {
+        self.backendKind = backendKind
         self.supportsCreateWorkItem = supportsCreateWorkItem
         self.supportsUpdateWorkItem = supportsUpdateWorkItem
         self.supportsEvidenceAttachment = supportsEvidenceAttachment
         self.supportsTaskPacket = supportsTaskPacket
         self.supportsDashboardSummary = supportsDashboardSummary
+        self.supportsGitHubIssues = supportsGitHubIssues
+        self.supportsGitHubLabels = supportsGitHubLabels
+        self.supportsSprintEpicMapping = supportsSprintEpicMapping
+        self.supportsEvidenceReferences = supportsEvidenceReferences
     }
 
     public static let localFilesystem = AirframeBackendCapabilities(
+        backendKind: "local-fixture",
         supportsCreateWorkItem: true,
         supportsUpdateWorkItem: true,
         supportsEvidenceAttachment: true,
         supportsTaskPacket: true,
         supportsDashboardSummary: true
+    )
+
+    public static let githubFixture = AirframeBackendCapabilities(
+        backendKind: "github-fixture",
+        supportsCreateWorkItem: true,
+        supportsUpdateWorkItem: true,
+        supportsEvidenceAttachment: true,
+        supportsTaskPacket: true,
+        supportsDashboardSummary: true,
+        supportsGitHubIssues: true,
+        supportsGitHubLabels: true,
+        supportsSprintEpicMapping: true,
+        supportsEvidenceReferences: true
     )
 }
 
@@ -84,6 +113,12 @@ public protocol AirframeBackend {
     func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws
     func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence]
     func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket
+    func applyHumanVerification(
+        action: AirframeHumanVerificationAction,
+        to workItemID: AirframeID,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeHumanVerificationResult
     func dashboardSummary() throws -> AirframeDashboardSummary
 }
 
@@ -254,6 +289,58 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
         }
     }
 
+    public func applyHumanVerification(
+        action: AirframeHumanVerificationAction,
+        to workItemID: AirframeID,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeHumanVerificationResult {
+        try withMutableLockedState { state in
+            guard let index = state.records.firstIndex(where: { $0.workItem.id == workItemID }) else {
+                throw AirframeBackendError.missingWorkItem(workItemID)
+            }
+
+            let record = state.records[index]
+            guard record.workItem.status == .implementedNotVerified else {
+                throw AirframeBackendError.invalidTransition(
+                    from: record.workItem.status,
+                    to: action.resultingStatus
+                )
+            }
+
+            let operation = AirframeOperation(
+                id: action.operationID,
+                category: .humanAcceptance
+            )
+            let decision = AirframeAuthorityEvaluator().evaluate(
+                context: context,
+                operation: operation,
+                targetProjectID: targetProjectID
+            )
+
+            switch decision {
+            case .allowed:
+                let updated = AirframeWorkItem(
+                    id: record.workItem.id,
+                    kind: record.workItem.kind,
+                    title: record.workItem.title,
+                    status: action.resultingStatus,
+                    githubIssue: record.workItem.githubIssue
+                )
+                state.records[index] = record.updating(workItem: updated)
+                return AirframeHumanVerificationResult(
+                    action: action,
+                    workItem: updated,
+                    decision: decision
+                )
+            case .requiresConfirmation(let reason):
+                throw AirframeBackendError.requiresConfirmation(reason)
+            case .denied(let reason):
+                throw AirframeBackendError.authorityDenied(reason)
+            }
+        }
+    }
+
     public func dashboardSummary() throws -> AirframeDashboardSummary {
         try withLockedState { state in
             let workItems = state.records.map(\.workItem)
@@ -289,14 +376,15 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
         return try body(loadState())
     }
 
-    private func withMutableLockedState(
-        _ body: (inout AirframeLocalBackendState) throws -> Void
-    ) throws {
+    private func withMutableLockedState<T>(
+        _ body: (inout AirframeLocalBackendState) throws -> T
+    ) throws -> T {
         lock.lock()
         defer { lock.unlock() }
         var state = try loadState()
-        try body(&state)
+        let value = try body(&state)
         try saveState(state)
+        return value
     }
 
     private func loadState() throws -> AirframeLocalBackendState {

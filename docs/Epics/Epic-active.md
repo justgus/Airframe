@@ -7,10 +7,10 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 ## EP-003: Workflow, Authority, and Audit Foundation
 
 **Status:** Complete
-**Owner:** HumanOwner  
-**Start Date:** 2026-06-02  
+**Owner:** HumanOwner
+**Start Date:** 2026-06-02
 **Target Close Date:** 2026-06-03
-**Close Date:** TBD  
+**Close Date:** TBD
 
 **Goal:**
 Implement the deny-by-default workflow, authority, project-context, and audit foundation used by both clients.
@@ -68,204 +68,13 @@ SP-003 activated on 2026-06-02. T-0012 and T-0013 were human-verified on 2026-06
 
 ---
 
-## EP-005: AICockpit MVP Integration
-
-**Status:** Complete
-**Owner:** HumanOwner  
-**Start Date:** 2026-06-03
-**Target Close Date:** TBD  
-**Close Date:** TBD  
-
-**Goal:**
-Make AICockpit independently useful for agents working against a local Airframe workspace.
-
-**Rationale:**
-Agents need a compact and deterministic command interface before the human UI or GitHub integration can provide full value.
-
-**Scope:**
-- Final MVP command names.
-- Command parser and routing.
-- Project summary command.
-- Issue/task proposal commands.
-- Next-task and task-packet commands.
-- Evidence attachment and ready-for-verification commands.
-- Markdown and JSON output contracts.
-- Agent usage documentation.
-
-**Out of Scope:**
-- Human-only operations.
-- Direct backend manipulation outside AirframeCore.
-- Full GitHub workflow.
-
-**Acceptance Criteria:**
-1. `aicockpit --help` documents MVP commands.
-2. AICockpit can propose issues and tasks.
-3. AICockpit can retrieve next task and task packet.
-4. AICockpit can attach evidence and mark work ready for human verification.
-5. JSON output is deterministic and tested for MVP commands.
-
-### Related Sprints
-
-| Sprint | Goal | Status |
-| ------ | ---- | ------ |
-| SP-005 | AICockpit MVP Integration | Closed |
-
-### Related Tasks
-
-| Task | Title | Status |
-| ---- | ----- | ------ |
-| T-0023 | Finalize AICockpit MVP command names and parser | Implemented - Verified |
-| T-0024 | Implement issue and task proposal commands | Implemented - Verified |
-| T-0025 | Implement next-task and task-packet commands | Implemented - Verified |
-| T-0026 | Implement evidence and ready-for-verification commands | Implemented - Verified |
-| T-0027 | Implement Markdown and JSON output contracts | Implemented - Verified |
-| T-0028 | Document AICockpit agent usage | Implemented - Verified |
-
-### Related Issues
-
-| Issue | Title | Status |
-| ----- | ----- | ------ |
-
-### Notes
-
-The executable target should stay thin; command behavior belongs in `AICockpitKit`.
-SP-005 planned on 2026-06-03 with T-0023 through T-0028.
-SP-005 activated on 2026-06-03.
-T-0023 through T-0028 were human-verified on 2026-06-03. SP-005 is closed. EP-005 is complete and pending human epic closeout.
-
----
-
-## EP-006: AgileCockpit Dashboard MVP Integration
-
-**Status:** Draft  
-**Owner:** HumanOwner  
-**Start Date:** TBD  
-**Target Close Date:** TBD  
-**Close Date:** TBD  
-
-**Goal:**
-Provide a native macOS dashboard and verification workflow over local AirframeCore data.
-
-**Rationale:**
-The human-facing app must demonstrate the core product value: status awareness, review, human verification, metrics, and audit visibility.
-
-**Scope:**
-- Application shell.
-- Dashboard summary sections.
-- Project detail view.
-- Verification queue and review flow.
-- Human accept/reject/request-evidence actions.
-- Sprint and epic read views.
-- Metrics view.
-- Audit view.
-- Primary accessibility checks.
-
-**Out of Scope:**
-- GitHub-specific UI.
-- Advanced customization.
-- Release polish.
-
-**Acceptance Criteria:**
-1. AgileCockpit launches and displays local workspace dashboard data.
-2. User can open a ready-for-verification item.
-3. User can accept, reject, or request evidence through AirframeCore.
-4. Dashboard and audit views update after the operation.
-5. Primary flows have accessibility labels and keyboard-accessible controls.
-
-### Related Sprints
-
-| Sprint | Goal | Status |
-| ------ | ---- | ------ |
-
-### Related Tasks
-
-| Task | Title | Status |
-| ---- | ----- | ------ |
-| T-0029 | Implement AgileCockpit application shell | Backlog |
-| T-0030 | Implement dashboard summary UI | Backlog |
-| T-0031 | Implement verification queue and review flow | Backlog |
-| T-0032 | Implement human verification actions | Backlog |
-| T-0033 | Implement sprint and epic read views | Backlog |
-| T-0034 | Implement metrics and audit views | Backlog |
-| T-0035 | Add primary accessibility and UI tests | Backlog |
-
-### Related Issues
-
-| Issue | Title | Status |
-| ----- | ----- | ------ |
-
-### Notes
-
-UI view models may adapt AirframeCore entities but must not own canonical state.
-
----
-
-## EP-007: GitHub Backend MVP
-
-**Status:** Draft  
-**Owner:** HumanOwner  
-**Start Date:** TBD  
-**Target Close Date:** TBD  
-**Close Date:** TBD  
-
-**Goal:**
-Add GitHub-backed project support behind AirframeCore backend adapters without changing client domain vocabulary.
-
-**Rationale:**
-GitHub is the expected first real backend and must be integrated without coupling AICockpit or AgileCockpit directly to provider-specific behavior.
-
-**Scope:**
-- GitHub backend adapter capability map.
-- GitHub configuration and credential handling.
-- Mapping for issues, tasks, sprints, epics, evidence, and audit references where practical.
-- CLI backend status/error behavior.
-- App backend status/error behavior.
-- Mocked or test-repository verification.
-
-**Out of Scope:**
-- Support for Linear, Jira, Plane, or SQLite.
-- Full GitHub Projects feature coverage beyond MVP.
-
-**Acceptance Criteria:**
-1. AirframeCore can read and write MVP work item data through GitHub adapter APIs.
-2. AICockpit commands work against GitHub-backed projects without command vocabulary changes.
-3. AgileCockpit displays GitHub-backed data through canonical models.
-4. Backend failures are surfaced as failures, not successful domain operations.
-5. Tests or mocks cover GitHub mapping behavior.
-
-### Related Sprints
-
-| Sprint | Goal | Status |
-| ------ | ---- | ------ |
-
-### Related Tasks
-
-| Task | Title | Status |
-| ---- | ----- | ------ |
-| T-0036 | Implement GitHub backend capability map and configuration | Backlog |
-| T-0037 | Implement GitHub issue/task mapping | Backlog |
-| T-0038 | Implement GitHub sprint/epic/evidence mapping | Backlog |
-| T-0039 | Integrate GitHub backend with AICockpit | Backlog |
-| T-0040 | Integrate GitHub backend status with AgileCockpit | Backlog |
-
-### Related Issues
-
-| Issue | Title | Status |
-| ----- | ----- | ------ |
-
-### Notes
-
-Local backend behavior should remain the reference for canonical semantics.
-
----
-
 ## EP-008: Verification, Hardening, and Release Candidate
 
-**Status:** Draft  
-**Owner:** HumanOwner  
-**Start Date:** TBD  
-**Target Close Date:** TBD  
-**Close Date:** TBD  
+**Status:** Active
+**Owner:** HumanOwner
+**Start Date:** 2026-06-04
+**Target Close Date:** TBD
+**Close Date:** TBD
 
 **Goal:**
 Harden the MVP into a release-candidate-quality system with stable verification evidence and documentation.
@@ -285,6 +94,7 @@ The MVP must be repeatable, testable, and understandable enough for ongoing Agil
 **Out of Scope:**
 - New major features after feature freeze.
 - Additional backend providers.
+- Live GitHub authentication and API operations unless explicitly pulled into release-candidate hardening scope.
 
 **Acceptance Criteria:**
 1. AirframeCore tests pass.
@@ -298,6 +108,7 @@ The MVP must be repeatable, testable, and understandable enough for ongoing Agil
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
+| SP-008 | Verification, Hardening, and Release Candidate Planning | Planning |
 
 ### Related Tasks
 
@@ -317,7 +128,9 @@ The MVP must be repeatable, testable, and understandable enough for ongoing Agil
 ### Notes
 
 This Epic should avoid scope expansion and focus on confidence, repeatability, and documentation.
+EP-008 activated on 2026-06-04.
+SP-008 planning opened on 2026-06-04 with T-0041 through T-0045.
 
 ---
 
-*Last Updated: 2026-06-03 (SP-005 closed)*
+*Last Updated: 2026-06-04 (EP-007 closed and EP-008 planning opened)*

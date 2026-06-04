@@ -393,6 +393,48 @@ public struct AirframeTaskPacket: Codable, Equatable, Sendable {
     }
 }
 
+public enum AirframeHumanVerificationAction: String, Codable, Equatable, Sendable {
+    case accept
+    case reject
+    case requestMoreEvidence
+
+    public var operationID: AirframeID {
+        switch self {
+        case .accept:
+            AirframeID("OP-HUMAN-ACCEPT-WORK")
+        case .reject:
+            AirframeID("OP-HUMAN-REJECT-WORK")
+        case .requestMoreEvidence:
+            AirframeID("OP-HUMAN-REQUEST-EVIDENCE")
+        }
+    }
+
+    public var resultingStatus: AirframeWorkStatus {
+        switch self {
+        case .accept:
+            .implementedVerified
+        case .reject, .requestMoreEvidence:
+            .active
+        }
+    }
+}
+
+public struct AirframeHumanVerificationResult: Codable, Equatable, Sendable {
+    public let action: AirframeHumanVerificationAction
+    public let workItem: AirframeWorkItem
+    public let decision: AirframeAuthorityDecision
+
+    public init(
+        action: AirframeHumanVerificationAction,
+        workItem: AirframeWorkItem,
+        decision: AirframeAuthorityDecision
+    ) {
+        self.action = action
+        self.workItem = workItem
+        self.decision = decision
+    }
+}
+
 public struct AirframeDashboardSummary: Codable, Equatable, Sendable {
     public let totalWorkItemCount: Int
     public let activeTaskCount: Int
