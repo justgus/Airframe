@@ -89,6 +89,67 @@ public struct AirframeProjectContext: Equatable, Sendable {
     }
 }
 
+public struct AirframeRuntimeConfigurationResolver {
+    public let environment: [String: String]
+    public let currentDirectoryURL: URL
+    public let fileManager: FileManager
+    public let loader: AirframeConfigurationLoader
+
+    public init(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath),
+        fileManager: FileManager = .default,
+        loader: AirframeConfigurationLoader = AirframeConfigurationLoader()
+    ) {
+        self.environment = environment
+        self.currentDirectoryURL = currentDirectoryURL
+        self.fileManager = fileManager
+        self.loader = loader
+    }
+
+    public func configurationURL(explicitPath: String? = nil) -> URL? {
+        if let explicitPath, !explicitPath.isEmpty {
+            return URL(filePath: explicitPath)
+        }
+        if let environmentPath = environment["AIRFRAME_CONFIG_PATH"], !environmentPath.isEmpty {
+            return URL(filePath: environmentPath)
+        }
+
+        let localURL = currentDirectoryURL
+            .appending(path: ".airframe")
+            .appending(path: "airframe-workspace.json")
+        guard fileManager.fileExists(atPath: localURL.path) else {
+            return nil
+        }
+        return localURL
+    }
+
+    public func storeURL(explicitPath: String? = nil) -> URL {
+        if let explicitPath, !explicitPath.isEmpty {
+            return URL(filePath: explicitPath)
+        }
+        if let environmentPath = environment["AIRFRAME_STORE_PATH"], !environmentPath.isEmpty {
+            return URL(filePath: environmentPath)
+        }
+
+        return currentDirectoryURL
+            .appending(path: ".airframe")
+            .appending(path: "airframe-local-backend.json")
+    }
+
+    public func loadConfiguration(explicitPath: String? = nil) throws(AirframeConfigurationError) -> AirframeWorkspaceConfiguration {
+        guard let configurationURL = configurationURL(explicitPath: explicitPath) else {
+            return try loader.loadSampleConfiguration()
+        }
+        return try loader.load(from: configurationURL)
+    }
+
+    public func loadContext(explicitPath: String? = nil) throws(AirframeConfigurationError) -> AirframeProjectContext {
+        let configuration = try loadConfiguration(explicitPath: explicitPath)
+        return try loader.context(for: configuration)
+    }
+}
+
 public enum AirframeConfigurationDiagnosticSeverity: String, Codable, Equatable, Sendable {
     case ok
     case warning
@@ -310,6 +371,10 @@ public struct AirframeConfigurationLoader: Sendable {
 
     public func loadSampleContext() throws(AirframeConfigurationError) -> AirframeProjectContext {
         let configuration = try loadSampleConfiguration()
+        return try context(for: configuration)
+    }
+
+    public func context(for configuration: AirframeWorkspaceConfiguration) throws(AirframeConfigurationError) -> AirframeProjectContext {
         guard let project = configuration.defaultProject else {
             throw .invalidConfiguration("Default project \(configuration.defaultProjectID.rawValue) is not defined.")
         }

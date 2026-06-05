@@ -7,7 +7,9 @@ struct AgileCockpitApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(
-                model: (try? AgileCockpitDashboardModel.sample()) ?? AgileCockpitApp.fallbackModel()
+                model: (try? AgileCockpitDashboardModel.configured())
+                    ?? (try? AgileCockpitDashboardModel.sample())
+                    ?? AgileCockpitApp.fallbackModel()
             )
         }
     }

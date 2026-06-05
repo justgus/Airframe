@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "workspace": {
+    "id": {
+      "rawValue": "WS-AIRFRAME-LIVE"
+    },
+    "name": "Airframe Live Demo",
+    "rootPath": "."
+  },
+  "projects": [
+    {
+      "id": {
+        "rawValue": "PRJ-AIRFRAME"
+      },
+      "name": "Agile Airframe",
+      "repository": "justgus/Airframe",
+      "activeSprintID": {
+        "rawValue": "SP-009"
+      },
+      "activeEpicID": {
+        "rawValue": "EP-009"
+      }
+    }
+  ],
+  "defaultProjectID": {
+    "rawValue": "PRJ-AIRFRAME"
+  },
+  "backend": {
+    "kind": "github-fixture",
+    "location": "justgus/Airframe"
+  }
+}

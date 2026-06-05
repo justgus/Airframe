@@ -30,15 +30,21 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **5 unverified Tasks**
 
-No Tasks are awaiting human verification.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0046 | #46 | Define live demo workspace configuration contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0047 | #47 | Implement AICockpit runtime configuration selection | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0048 | #48 | Implement AgileCockpit runtime configuration selection | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0049 | #49 | Add Airframe live demo project configuration and usage docs | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0050 | #50 | Verify Slice 1 live project identity and fallback behavior | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **45 verified Tasks** | Next available: **T-0046**
+Currently: **45 verified Tasks** | Next available: **T-0051**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -90,12 +96,12 @@ Currently: **45 verified Tasks** | Next available: **T-0046**
 
 ## Statistics
 
-- **Total Tasks:** 45
+- **Total Tasks:** 50
 - **Backlog:** 0
 - **Active:** 0
-- **Unverified:** 0
+- **Unverified:** 5
 - **Verified:** 45
 - **Closed:** 0
-- **Next available:** T-0046
+- **Next available:** T-0051
 
-*Last Updated: 2026-06-04 (SP-008 verified and closed)*
+*Last Updated: 2026-06-04 (T-0046 through T-0050 implemented and awaiting verification)*

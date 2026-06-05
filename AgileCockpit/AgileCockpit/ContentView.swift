@@ -108,6 +108,32 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
+    static func configured(
+        configurationURL: URL? = nil,
+        storeURL: URL? = nil,
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath)
+    ) throws -> AgileCockpitDashboardModel {
+        let resolver = AirframeRuntimeConfigurationResolver(
+            environment: environment,
+            currentDirectoryURL: currentDirectoryURL
+        )
+        guard resolver.configurationURL(explicitPath: configurationURL?.path) != nil else {
+            throw AirframeConfigurationError.missingFile(".airframe/airframe-workspace.json")
+        }
+
+        let context = try resolver.loadContext(explicitPath: configurationURL?.path)
+        let resolvedStoreURL = resolver.storeURL(explicitPath: storeURL?.path)
+        let backend = try configuredBackend(for: context, storeURL: resolvedStoreURL)
+        let reviewer = try humanReviewerContext(projectID: context.project.id)
+
+        return try AgileCockpitDashboardModel(
+            context: context,
+            backend: backend,
+            reviewerContext: reviewer
+        )
+    }
+
     var projectStatusText: String {
         "\(context.projectName) | \(context.project.repository)"
     }
@@ -266,6 +292,25 @@ final class AgileCockpitDashboardModel: ObservableObject {
             allowedProjectIDs: [projectID]
         )
         return try AirframeCertifiedContext(actor: actor, credential: credential, targetProjectID: projectID)
+    }
+
+    private static func configuredBackend(
+        for context: AirframeProjectContext,
+        storeURL: URL
+    ) throws -> any AirframeBackend {
+        switch AirframeBackendKind(rawValue: context.configuration.backend.kind) {
+        case .localFixture:
+            return AirframeLocalFilesystemBackend(storeURL: storeURL)
+        case .githubFixture:
+            return AirframeGitHubFixtureBackend(
+                storeURL: storeURL,
+                configuration: AirframeGitHubBackendConfiguration(repositorySlug: context.project.repository)
+            )
+        case .githubIssues:
+            throw AirframeConfigurationError.invalidConfiguration("github-issues requires a live adapter; use github-fixture for Slice 1 runtime configuration.")
+        case nil:
+            throw AirframeConfigurationError.invalidConfiguration("Unsupported backend \(context.configuration.backend.kind).")
+        }
     }
 
     private static let sampleRecords: [AirframeLocalWorkRecord] = [

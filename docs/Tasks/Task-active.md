@@ -10,4 +10,6 @@ No Tasks are actively being implemented.
 
 ---
 
-*Last Updated: 2026-06-03 (SP-005 implementation complete)*
+T-0046 through T-0050 were implemented on 2026-06-04 and moved to [Task-unverified.md](Task-unverified.md).
+
+*Last Updated: 2026-06-04 (SP-009 implementation complete)*

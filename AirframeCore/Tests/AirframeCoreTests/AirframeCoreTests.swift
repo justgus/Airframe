@@ -301,6 +301,50 @@ import Foundation
     #expect(diagnostics.issues.isEmpty)
 }
 
+@Test func runtimeConfigurationResolverLoadsExplicitLiveConfigurationAndStorePath() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCoreRuntimeResolver-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: ".airframe"),
+        withIntermediateDirectories: true
+    )
+    let configurationURL = rootURL.appending(path: ".airframe").appending(path: "airframe-workspace.json")
+    try liveConfigurationData.write(to: configurationURL)
+
+    let resolver = AirframeRuntimeConfigurationResolver(
+        environment: [:],
+        currentDirectoryURL: rootURL
+    )
+    let context = try resolver.loadContext()
+    let diagnostics = AirframeConfigurationLoader().diagnostics(for: context.configuration)
+
+    #expect(context.workspaceName == "Airframe Live Demo")
+    #expect(context.project.activeSprintID == AirframeID("SP-009"))
+    #expect(context.project.activeEpicID == AirframeID("EP-009"))
+    #expect(diagnostics.status == .ok)
+    #expect(resolver.storeURL().path.hasSuffix(".airframe/airframe-local-backend.json"))
+}
+
+@Test func runtimeConfigurationResolverPrefersEnvironmentPaths() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCoreRuntimeEnvironment-\(UUID().uuidString)")
+    let configURL = rootURL.appending(path: "live-config.json")
+    let storeURL = rootURL.appending(path: "custom-store.json")
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    try liveConfigurationData.write(to: configURL)
+
+    let resolver = AirframeRuntimeConfigurationResolver(
+        environment: [
+            "AIRFRAME_CONFIG_PATH": configURL.path,
+            "AIRFRAME_STORE_PATH": storeURL.path
+        ],
+        currentDirectoryURL: URL(filePath: "/tmp/unused-airframe-runtime")
+    )
+
+    #expect(try resolver.loadContext().workspaceName == "Airframe Live Demo")
+    #expect(resolver.storeURL() == storeURL)
+}
+
 @Test func missingConfigurationReturnsStructuredError() {
     let missingURL = URL(filePath: "/tmp/airframe-missing-config.json")
 
@@ -741,3 +785,30 @@ private func localTaskRecord(
         protectedPaths: protectedPaths
     )
 }
+
+private let liveConfigurationData = Data(
+    """
+    {
+      "schemaVersion": 1,
+      "workspace": {
+        "id": { "rawValue": "WS-AIRFRAME-LIVE" },
+        "name": "Airframe Live Demo",
+        "rootPath": "."
+      },
+      "projects": [
+        {
+          "id": { "rawValue": "PRJ-AIRFRAME" },
+          "name": "Agile Airframe",
+          "repository": "justgus/Airframe",
+          "activeSprintID": { "rawValue": "SP-009" },
+          "activeEpicID": { "rawValue": "EP-009" }
+        }
+      ],
+      "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },
+      "backend": {
+        "kind": "github-fixture",
+        "location": "justgus/Airframe"
+      }
+    }
+    """.utf8
+)

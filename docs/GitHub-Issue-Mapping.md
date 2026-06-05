@@ -61,9 +61,14 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0043 | #43 | EP-008 | Harden AgileCockpit accessibility and UI flows |
 | T-0044 | #44 | EP-008 | Add configuration diagnostics and failure handling |
 | T-0045 | #45 | EP-008 | Write release candidate verification documentation |
+| T-0046 | #46 | EP-009 | Define live demo workspace configuration contract |
+| T-0047 | #47 | EP-009 | Implement AICockpit runtime configuration selection |
+| T-0048 | #48 | EP-009 | Implement AgileCockpit runtime configuration selection |
+| T-0049 | #49 | EP-009 | Add Airframe live demo project configuration and usage docs |
+| T-0050 | #50 | EP-009 | Verify Slice 1 live project identity and fallback behavior |
 
 ## Current Issue Mapping
 
 No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
 
-*Last Updated: 2026-06-01 (GitHub Task issue creation)*
+*Last Updated: 2026-06-04 (T-0046 through T-0050 mapped to GitHub issues #46 through #50)*

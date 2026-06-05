@@ -40,9 +40,9 @@ public enum AICockpitCommand {
             return AICockpitCommandResult(exitCode: 0, standardOutput: AirframeCoreInfo.current.summary)
         }
 
-        if arguments == ["context"] {
+        if parsed.positionals == ["context"] {
             do {
-                let context = try AirframeConfigurationLoader().loadSampleContext()
+                let context = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 return AICockpitCommandResult(
                     exitCode: 0,
                     standardOutput: contextText(for: context)
@@ -57,7 +57,7 @@ public enum AICockpitCommand {
 
         if parsed.positionals == ["config", "diagnose"] {
             do {
-                let configuration = try AirframeConfigurationLoader().loadSampleConfiguration()
+                let configuration = try parsed.runtimeResolver.loadConfiguration(explicitPath: parsed.value(for: "--config"))
                 let diagnostics = AirframeConfigurationLoader().diagnostics(for: configuration)
                 return AICockpitCommandResult(
                     exitCode: diagnostics.isValid ? 0 : 78,
@@ -86,9 +86,9 @@ public enum AICockpitCommand {
             }
         }
 
-        if arguments == ["authority", "demo-denied"] {
+        if parsed.positionals == ["authority", "demo-denied"] {
             do {
-                let context = try AirframeConfigurationLoader().loadSampleContext()
+                let context = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 let certifiedContext = try sampleLLMContext(projectID: context.project.id)
                 let operation = AirframeOperation(
                     id: AirframeID("OP-ACCEPT-WORK"),
@@ -154,7 +154,7 @@ public enum AICockpitCommand {
 
                 let id = AirframeID(try parsed.requiredValue(for: "--id"))
                 let title = try parsed.requiredValue(for: "--title")
-                let projectContext = try AirframeConfigurationLoader().loadSampleContext()
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 let record = AirframeLocalWorkRecord(
                     workItem: AirframeWorkItem(
                         id: id,
@@ -305,16 +305,16 @@ public enum AICockpitCommand {
         Usage:
           aicockpit --help
           aicockpit version
-          aicockpit context
-          aicockpit config diagnose [--output markdown|json]
-          aicockpit authority demo-denied
-          aicockpit project summary [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
-          aicockpit task propose --id T-XXXX --title title [--backend local-fixture|github-fixture] [--store path]
-          aicockpit issue propose --id I-XXXX --title title [--backend local-fixture|github-fixture] [--store path]
-          aicockpit task next [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
-          aicockpit task packet T-XXXX [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
-          aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--backend local-fixture|github-fixture] [--store path]
-          aicockpit work ready T-XXXX [--backend local-fixture|github-fixture] [--store path]
+          aicockpit context [--config path]
+          aicockpit config diagnose [--config path] [--output markdown|json]
+          aicockpit authority demo-denied [--config path]
+          aicockpit project summary [--config path] [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit task propose --id T-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit issue propose --id I-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit task next [--config path] [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit task packet T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit work ready T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path]
 
         Linked Core:
           \(AirframeCoreInfo.current.summary)
@@ -373,7 +373,7 @@ public enum AICockpitCommand {
         body: (any AirframeBackend, AirframeCertifiedContext) throws -> String
     ) -> AICockpitCommandResult {
         do {
-            let context = try AirframeConfigurationLoader().loadSampleContext()
+            let context = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
             let certifiedContext = try sampleLLMContext(projectID: context.project.id)
             let backend = try parsed.backend(projectContext: context)
             return AICockpitCommandResult(
@@ -492,11 +492,12 @@ private struct AICockpitArguments {
         self.options = options
     }
 
+    var runtimeResolver: AirframeRuntimeConfigurationResolver {
+        AirframeRuntimeConfigurationResolver()
+    }
+
     var storeURL: URL {
-        if let path = value(for: "--store") {
-            return URL(filePath: path)
-        }
-        return URL(filePath: ".airframe/airframe-local-backend.json")
+        runtimeResolver.storeURL(explicitPath: value(for: "--store"))
     }
 
     func backend(projectContext: AirframeProjectContext) throws -> any AirframeBackend {

@@ -11,13 +11,13 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **None**
+Currently: **SP-009 Review**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **8 Sprints** | Next available: **SP-009**
+Currently: **9 Sprints** | Next available: **SP-010**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -29,14 +29,15 @@ Currently: **8 Sprints** | Next available: **SP-009**
 | SP-006 | AgileCockpit Dashboard MVP Integration | EP-006 | T-0029, T-0030, T-0031, T-0032, T-0033, T-0034, T-0035 | None | Closed |
 | SP-007 | GitHub Backend MVP | EP-007 | T-0036, T-0037, T-0038, T-0039, T-0040 | None | Closed |
 | SP-008 | Verification, Hardening, and Release Candidate | EP-008 | T-0041, T-0042, T-0043, T-0044, T-0045 | None | Closed |
+| SP-009 | Live Demo Runtime Configuration | EP-009 | T-0046, T-0047, T-0048, T-0049, T-0050 | None | Review |
 
 ## Statistics
 
-- **Total Sprints:** 8
+- **Total Sprints:** 9
 - **Planning:** 0
 - **Active:** 0
-- **Review:** 0
+- **Review:** 1
 - **Closed:** 8
-- **Next available:** SP-009
+- **Next available:** SP-010
 
-*Last Updated: 2026-06-04 (SP-008 closed)*
+*Last Updated: 2026-06-04 (SP-009 in review pending human verification)*

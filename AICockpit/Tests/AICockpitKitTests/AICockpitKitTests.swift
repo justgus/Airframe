@@ -66,6 +66,38 @@ import Foundation
     #expect(result.standardOutput.contains("Active Sprint: None"))
 }
 
+@Test func contextCommandSupportsExplicitRuntimeConfiguration() throws {
+    let config = try temporaryLiveConfigurationPath()
+
+    let result = AICockpitCommand.response(arguments: [
+        "context",
+        "--config", config
+    ])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("Workspace: Airframe Live Demo (WS-AIRFRAME-LIVE)"))
+    #expect(result.standardOutput.contains("Project: Agile Airframe (PRJ-AIRFRAME)"))
+    #expect(result.standardOutput.contains("Repository: justgus/Airframe"))
+    #expect(result.standardOutput.contains("Active Epic: EP-009"))
+    #expect(result.standardOutput.contains("Active Sprint: SP-009"))
+}
+
+@Test func configDiagnoseSupportsExplicitRuntimeConfiguration() throws {
+    let config = try temporaryLiveConfigurationPath()
+
+    let result = AICockpitCommand.response(arguments: [
+        "config", "diagnose",
+        "--config", config,
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"workspaceID\" : {"))
+    #expect(result.standardOutput.contains("\"rawValue\" : \"WS-AIRFRAME-LIVE\""))
+    #expect(result.standardOutput.contains("\"backendKind\" : \"github-fixture\""))
+    #expect(result.standardOutput.contains("\"backendLocation\" : \"justgus\\/Airframe\""))
+}
+
 @Test func deniedAuthorityCommandReturnsReasonCode() {
     let result = AICockpitCommand.response(arguments: ["authority", "demo-denied"])
 
@@ -215,6 +247,27 @@ import Foundation
     #expect(summary.standardOutput.contains("\"rawValue\" : \"T-9039\""))
 }
 
+@Test func taskProposalUsesRuntimeConfigSprintEpicDefaultsAndStore() throws {
+    let config = try temporaryLiveConfigurationPath()
+    let store = temporaryStorePath()
+    let proposed = AICockpitCommand.response(arguments: [
+        "task", "propose",
+        "--config", config,
+        "--store", store,
+        "--id", "T-9047",
+        "--title", "Use runtime config defaults"
+    ])
+    let packet = AICockpitCommand.response(arguments: [
+        "task", "packet", "T-9047",
+        "--config", config,
+        "--store", store
+    ])
+
+    #expect(proposed.exitCode == 0)
+    #expect(packet.exitCode == 0)
+    #expect(packet.standardOutput.contains("Use runtime config defaults"))
+}
+
 @Test func missingRequiredOptionReturnsUsageError() {
     let result = AICockpitCommand.response(arguments: [
         "task", "propose",
@@ -246,4 +299,39 @@ private func temporaryStorePath() -> String {
         .appending(path: UUID().uuidString)
         .appending(path: "airframe-local-backend.json")
         .path
+}
+
+private func temporaryLiveConfigurationPath() throws -> String {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AICockpitLiveConfig")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    let configURL = rootURL.appending(path: "airframe-workspace.json")
+    try Data(
+        """
+        {
+          "schemaVersion": 1,
+          "workspace": {
+            "id": { "rawValue": "WS-AIRFRAME-LIVE" },
+            "name": "Airframe Live Demo",
+            "rootPath": "."
+          },
+          "projects": [
+            {
+              "id": { "rawValue": "PRJ-AIRFRAME" },
+              "name": "Agile Airframe",
+              "repository": "justgus/Airframe",
+              "activeSprintID": { "rawValue": "SP-009" },
+              "activeEpicID": { "rawValue": "EP-009" }
+            }
+          ],
+          "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },
+          "backend": {
+            "kind": "github-fixture",
+            "location": "justgus/Airframe"
+          }
+        }
+        """.utf8
+    ).write(to: configURL)
+    return configURL.path
 }
