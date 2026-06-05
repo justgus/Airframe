@@ -111,8 +111,8 @@ From the repository root, these commands should report:
 - workspace `Airframe Live Demo`;
 - project `Agile Airframe`;
 - repository `justgus/Airframe`;
-- active sprint `SP-009`;
-- active epic `EP-009`;
+- active sprint `None` after SP-009 closeout, or the currently active sprint once the next slice is opened;
+- active epic `None` after EP-009 closeout, or the currently active epic once the next slice is opened;
 - backend `github-fixture` at `justgus/Airframe`.
 
 AgileCockpit can use the same configuration by launching with:
