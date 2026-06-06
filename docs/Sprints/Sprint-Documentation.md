@@ -11,13 +11,13 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **None**
+Currently: **SP-010**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **9 Sprints** | Next available: **SP-010**
+Currently: **10 Sprints** | Next available: **SP-011**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -30,14 +30,15 @@ Currently: **9 Sprints** | Next available: **SP-010**
 | SP-007 | GitHub Backend MVP | EP-007 | T-0036, T-0037, T-0038, T-0039, T-0040 | None | Closed |
 | SP-008 | Verification, Hardening, and Release Candidate | EP-008 | T-0041, T-0042, T-0043, T-0044, T-0045 | None | Closed |
 | SP-009 | Live Demo Runtime Configuration | EP-009 | T-0046, T-0047, T-0048, T-0049, T-0050 | None | Closed |
+| SP-010 | Read-Only GitHub Issues Adapter | EP-010 | T-0051, T-0052, T-0053, T-0054, T-0055 | None | Review |
 
 ## Statistics
 
-- **Total Sprints:** 9
+- **Total Sprints:** 10
 - **Planning:** 0
 - **Active:** 0
-- **Review:** 0
+- **Review:** 1
 - **Closed:** 9
-- **Next available:** SP-010
+- **Next available:** SP-011
 
-*Last Updated: 2026-06-04 (SP-009 closed)*
+*Last Updated: 2026-06-06 (SP-010 implementation complete)*

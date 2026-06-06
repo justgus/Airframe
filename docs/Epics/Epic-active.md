@@ -6,7 +6,7 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ## EP-010: Read-Only GitHub Adapter
 
-**Status:** Draft  
+**Status:** Active  
 **Owner:** Human / Airframe Planning  
 **Start Date:** 2026-06-05  
 **Target Close Date:** TBD  
@@ -46,11 +46,17 @@ Airframe needs a read-only live GitHub issue adapter before the live demo can sh
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
+| SP-010 | Implement read-only live GitHub issue access through `gh` and map issues into Airframe work records. | Review |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
+| T-0051 | Define live GitHub issue transport and failure contract | Implemented - Not Verified |
+| T-0052 | Implement read-only GitHub issue listing backend | Implemented - Not Verified |
+| T-0053 | Implement GitHub issue-to-work-record parsing | Implemented - Not Verified |
+| T-0054 | Wire github-issues into AICockpit commands | Implemented - Not Verified |
+| T-0055 | Verify read-only GitHub adapter behavior and docs | Implemented - Not Verified |
 
 ### Related Issues
 
@@ -64,4 +70,4 @@ Airframe needs a read-only live GitHub issue adapter before the live demo can sh
 
 ---
 
-*Last Updated: 2026-06-05 (EP-010 drafted)*
+*Last Updated: 2026-06-06 (SP-010 implementation complete)*

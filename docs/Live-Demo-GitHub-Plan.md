@@ -146,6 +146,14 @@ aicockpit project summary --backend github-issues --output json
 aicockpit task packet T-0045 --backend github-issues
 ```
 
+Implementation status as of 2026-06-06:
+
+- SP-010 implemented the read-only `github-issues` backend through the `gh` CLI transport.
+- AirframeCore maps live GitHub issues into Airframe work records using explicit `Airframe Type:` and `Airframe ID:` body metadata plus status, sprint, and epic labels.
+- `github-issues` reports read-only capabilities: project summary and task packet are supported; work item creation, updates, evidence attachment, workflow transitions, and human verification are not supported.
+- Live read-only verification reported 55 mapped work items from `justgus/Airframe`: 50 verified tasks and 5 active SP-010 tasks.
+- `.airframe/airframe-workspace.json` remains on `github-fixture` by default until Slice 3 makes AgileCockpit live project views explicitly GitHub-backed.
+
 ### Slice 3: AgileCockpit Live Project View
 
 Goal: AgileCockpit shows the same live Airframe project state as AICockpit.

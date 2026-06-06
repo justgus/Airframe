@@ -308,11 +308,11 @@ public enum AICockpitCommand {
           aicockpit context [--config path]
           aicockpit config diagnose [--config path] [--output markdown|json]
           aicockpit authority demo-denied [--config path]
-          aicockpit project summary [--config path] [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit project summary [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit issue propose --id I-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit task next [--config path] [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
-          aicockpit task packet T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path] [--output markdown|json]
+          aicockpit task next [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit task packet T-XXXX [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit work ready T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path]
 
@@ -513,7 +513,9 @@ private struct AICockpitArguments {
                 configuration: AirframeGitHubBackendConfiguration(repositorySlug: projectContext.project.repository)
             )
         case .githubIssues:
-            throw AICockpitCommandError.invalidArguments("github-issues requires a live adapter; use github-fixture for deterministic CLI operations")
+            return AirframeGitHubIssuesBackend(
+                configuration: AirframeGitHubBackendConfiguration(repositorySlug: projectContext.project.repository)
+            )
         case nil:
             throw AICockpitCommandError.invalidArguments("unsupported backend \(requestedKind)")
         }

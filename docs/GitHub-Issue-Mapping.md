@@ -66,9 +66,14 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0048 | #48 | EP-009 | Implement AgileCockpit runtime configuration selection |
 | T-0049 | #49 | EP-009 | Add Airframe live demo project configuration and usage docs |
 | T-0050 | #50 | EP-009 | Verify Slice 1 live project identity and fallback behavior |
+| T-0051 | #51 | EP-010 | Define live GitHub issue transport and failure contract |
+| T-0052 | #52 | EP-010 | Implement read-only GitHub issue listing backend |
+| T-0053 | #53 | EP-010 | Implement GitHub issue-to-work-record parsing |
+| T-0054 | #54 | EP-010 | Wire github-issues into AICockpit commands |
+| T-0055 | #55 | EP-010 | Verify read-only GitHub adapter behavior and docs |
 
 ## Current Issue Mapping
 
 No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
 
-*Last Updated: 2026-06-04 (T-0046 through T-0050 mapped to GitHub issues #46 through #50)*
+*Last Updated: 2026-06-06 (T-0051 through T-0055 mapped to GitHub issues #51 through #55)*

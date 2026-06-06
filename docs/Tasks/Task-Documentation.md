@@ -30,7 +30,15 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **5 unverified Tasks**
+
+| Task | GitHub Issue | Title | Sprint | Status |
+| ---- | ------------ | ----- | ------ | ------ |
+| T-0051 | #51 | Define live GitHub issue transport and failure contract | SP-010 | Implemented - Not Verified |
+| T-0052 | #52 | Implement read-only GitHub issue listing backend | SP-010 | Implemented - Not Verified |
+| T-0053 | #53 | Implement GitHub issue-to-work-record parsing | SP-010 | Implemented - Not Verified |
+| T-0054 | #54 | Wire github-issues into AICockpit commands | SP-010 | Implemented - Not Verified |
+| T-0055 | #55 | Verify read-only GitHub adapter behavior and docs | SP-010 | Implemented - Not Verified |
 
 No Tasks are awaiting human verification.
 
@@ -38,7 +46,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **50 verified Tasks** | Next available: **T-0051**
+Currently: **50 verified Tasks** | Next available: **T-0056**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -95,12 +103,12 @@ Currently: **50 verified Tasks** | Next available: **T-0051**
 
 ## Statistics
 
-- **Total Tasks:** 50
+- **Total Tasks:** 55
 - **Backlog:** 0
 - **Active:** 0
-- **Unverified:** 0
+- **Unverified:** 5
 - **Verified:** 50
 - **Closed:** 0
-- **Next available:** T-0051
+- **Next available:** T-0056
 
-*Last Updated: 2026-06-04 (T-0046 through T-0050 verified and SP-009 closed)*
+*Last Updated: 2026-06-06 (SP-010 implemented and awaiting human verification)*

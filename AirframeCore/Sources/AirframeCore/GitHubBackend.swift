@@ -62,6 +62,102 @@ public struct AirframeGitHubIssueRecord: Codable, Equatable, Sendable {
     }
 }
 
+public protocol AirframeGitHubIssueTransport: Sendable {
+    func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord]
+    func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord
+}
+
+public struct AirframeGitHubCLITransport: AirframeGitHubIssueTransport {
+    public init() {}
+
+    public func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        let data = try runGitHubCLI(arguments: [
+            "issue", "list",
+            "--repo", configuration.slug,
+            "--state", "all",
+            "--limit", "100",
+            "--json", "number,title,state,labels,body"
+        ])
+        return try decodeIssues(from: data)
+    }
+
+    public func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
+        let data = try runGitHubCLI(arguments: [
+            "issue", "view", "\(number)",
+            "--repo", configuration.slug,
+            "--json", "number,title,state,labels,body"
+        ])
+        return try decodeIssue(from: data)
+    }
+
+    private func runGitHubCLI(arguments: [String]) throws -> Data {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["gh"] + arguments
+
+        let output = Pipe()
+        let error = Pipe()
+        process.standardOutput = output
+        process.standardError = error
+
+        do {
+            try process.run()
+        } catch {
+            throw AirframeBackendError.githubAccessFailed("Unable to launch gh CLI: \(error.localizedDescription)")
+        }
+
+        process.waitUntilExit()
+        let outputData = output.fileHandleForReading.readDataToEndOfFile()
+        let errorData = error.fileHandleForReading.readDataToEndOfFile()
+
+        guard process.terminationStatus == 0 else {
+            let message = String(decoding: errorData, as: UTF8.self)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            throw AirframeBackendError.githubAccessFailed(message.isEmpty ? "gh exited with status \(process.terminationStatus)" : message)
+        }
+
+        return outputData
+    }
+
+    private func decodeIssues(from data: Data) throws -> [AirframeGitHubIssueRecord] {
+        do {
+            return try JSONDecoder().decode([GitHubIssueDTO].self, from: data).map(\.record)
+        } catch {
+            throw AirframeBackendError.githubAccessFailed("Could not decode gh issue list output: \(error.localizedDescription)")
+        }
+    }
+
+    private func decodeIssue(from data: Data) throws -> AirframeGitHubIssueRecord {
+        do {
+            return try JSONDecoder().decode(GitHubIssueDTO.self, from: data).record
+        } catch {
+            throw AirframeBackendError.githubAccessFailed("Could not decode gh issue view output: \(error.localizedDescription)")
+        }
+    }
+}
+
+private struct GitHubIssueDTO: Decodable {
+    let number: Int
+    let title: String
+    let state: String
+    let labels: [GitHubLabelDTO]
+    let body: String?
+
+    var record: AirframeGitHubIssueRecord {
+        AirframeGitHubIssueRecord(
+            number: number,
+            title: title,
+            state: state.lowercased(),
+            labels: labels.map(\.name),
+            body: body ?? ""
+        )
+    }
+}
+
+private struct GitHubLabelDTO: Decodable {
+    let name: String
+}
+
 public struct AirframeGitHubIssueMapper: Sendable {
     public let configuration: AirframeGitHubBackendConfiguration
 
@@ -82,19 +178,27 @@ public struct AirframeGitHubIssueMapper: Sendable {
 
     public func record(from issue: AirframeGitHubIssueRecord) -> AirframeLocalWorkRecord {
         let labels = Set(issue.labels)
-        let kind: AirframeWorkItemKind = labels.contains(configuration.issueLabel) ? .issue : .task
+        let kind = workItemKind(from: issue, labels: labels)
         let idPrefix = kind == .issue ? "I" : "T"
+        let id = metadataValue("Airframe ID", in: issue.body)
+            ?? airframeSectionValue("id", in: issue.body)
+            ?? prefixedID(in: issue.title)
+            ?? "\(idPrefix)-\(String(format: "%04d", issue.number))"
         let status = status(from: labels, state: issue.state)
         return AirframeLocalWorkRecord(
             workItem: AirframeWorkItem(
-                id: AirframeID("\(idPrefix)-\(String(format: "%04d", issue.number))"),
+                id: AirframeID(id),
                 kind: kind,
-                title: issue.title,
+                title: normalizedTitle(issue.title),
                 status: status,
                 githubIssue: issue.number
             ),
-            epicID: firstIDLabel(prefix: "epic-", labels: labels).map(AirframeID.init),
-            sprintID: firstIDLabel(prefix: "sprint-", labels: labels).map(AirframeID.init),
+            epicID: firstIDLabel(prefix: "epic-", labels: labels).map(AirframeID.init)
+                ?? metadataValue("Epic", in: issue.body).map(AirframeID.init)
+                ?? airframeSectionValue("epic", in: issue.body).flatMap(optionalAirframeID),
+            sprintID: firstIDLabel(prefix: "sprint-", labels: labels).map(AirframeID.init)
+                ?? metadataValue("Sprint", in: issue.body).map(AirframeID.init)
+                ?? airframeSectionValue("sprint", in: issue.body).flatMap(optionalAirframeID),
             priority: priority(from: labels),
             acceptanceCriteria: section("Acceptance Criteria", in: issue.body),
             scope: section("Scope", in: issue.body),
@@ -111,6 +215,16 @@ public struct AirframeGitHubIssueMapper: Sendable {
             guard parts.count == 3 else { return nil }
             return AirframeEvidence(id: AirframeID(parts[0]), summary: parts[1], artifact: parts[2])
         }
+    }
+
+    private func workItemKind(from issue: AirframeGitHubIssueRecord, labels: Set<String>) -> AirframeWorkItemKind {
+        if let type = metadataValue("Airframe Type", in: issue.body)?.lowercased() {
+            return type == "issue" ? .issue : .task
+        }
+        if let id = metadataValue("Airframe ID", in: issue.body) ?? airframeSectionValue("id", in: issue.body) {
+            return id.hasPrefix("I-") ? .issue : .task
+        }
+        return labels.contains(configuration.issueLabel) ? .issue : .task
     }
 
     private func labels(for record: AirframeLocalWorkRecord) -> [String] {
@@ -174,9 +288,6 @@ public struct AirframeGitHubIssueMapper: Sendable {
     }
 
     private func status(from labels: Set<String>, state: String) -> AirframeWorkStatus {
-        if state == "closed" || labels.contains("status-closed") {
-            return .closed
-        }
         if labels.contains("status-verified") {
             return .implementedVerified
         }
@@ -185,6 +296,9 @@ public struct AirframeGitHubIssueMapper: Sendable {
         }
         if labels.contains("status-active") {
             return .active
+        }
+        if state == "closed" || labels.contains("status-closed") {
+            return .closed
         }
         return .backlog
     }
@@ -197,6 +311,42 @@ public struct AirframeGitHubIssueMapper: Sendable {
             return .low
         }
         return .medium
+    }
+
+    private func metadataValue(_ key: String, in body: String) -> String? {
+        for line in body.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard trimmed.hasPrefix("\(key):") else { continue }
+            let value = trimmed.dropFirst(key.count + 1).trimmingCharacters(in: .whitespaces)
+            return value.isEmpty ? nil : value
+        }
+        return nil
+    }
+
+    private func airframeSectionValue(_ key: String, in body: String) -> String? {
+        for line in section("Airframe", in: body) {
+            let parts = line.split(separator: ":", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
+            guard parts.count == 2, parts[0].lowercased() == key.lowercased(), parts[1] != "None" else { continue }
+            return parts[1]
+        }
+        return nil
+    }
+
+    private func prefixedID(in title: String) -> String? {
+        guard title.hasPrefix("[") else { return nil }
+        guard let end = title.firstIndex(of: "]") else { return nil }
+        let candidate = String(title[title.index(after: title.startIndex)..<end])
+        return candidate.range(of: #"^[TI]-[0-9]{4}$"#, options: .regularExpression) == nil ? nil : candidate
+    }
+
+    private func normalizedTitle(_ title: String) -> String {
+        guard let id = prefixedID(in: title) else { return title }
+        let prefix = "[\(id)]"
+        return title.hasPrefix(prefix) ? title.dropFirst(prefix.count).trimmingCharacters(in: .whitespaces) : title
+    }
+
+    private func optionalAirframeID(_ value: String) -> AirframeID? {
+        value == "None" ? nil : AirframeID(value)
     }
 
     private func firstIDLabel(prefix: String, labels: Set<String>) -> String? {
@@ -304,6 +454,117 @@ public final class AirframeGitHubFixtureBackend: @unchecked Sendable, AirframeBa
             let evidence = try self.evidence(for: record.workItem.id)
             return mapper.issue(from: record, evidence: evidence)
         }
+    }
+}
+
+public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBackend {
+    public let capabilities: AirframeBackendCapabilities = .githubIssuesReadOnly
+    public let configuration: AirframeGitHubBackendConfiguration
+
+    private let transport: any AirframeGitHubIssueTransport
+    private let mapper: AirframeGitHubIssueMapper
+
+    public init(
+        configuration: AirframeGitHubBackendConfiguration,
+        transport: any AirframeGitHubIssueTransport = AirframeGitHubCLITransport()
+    ) {
+        self.configuration = configuration
+        self.transport = transport
+        self.mapper = AirframeGitHubIssueMapper(configuration: configuration)
+    }
+
+    public func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
+        try transport.listIssues(configuration: configuration)
+            .filter(isAirframeWorkIssue)
+            .map(mapper.record(from:))
+            .sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+    }
+
+    public func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
+        try listWorkRecords().first { $0.workItem.id == id }
+    }
+
+    public func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        throw AirframeBackendError.readOnlyBackend("work item creation")
+    }
+
+    public func updateWorkItem(_ workItem: AirframeWorkItem) throws {
+        throw AirframeBackendError.readOnlyBackend("work item updates")
+    }
+
+    public func transitionWorkItem(
+        id: AirframeID,
+        to status: AirframeWorkStatus,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws {
+        throw AirframeBackendError.readOnlyBackend("workflow transitions")
+    }
+
+    public func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws {
+        throw AirframeBackendError.readOnlyBackend("evidence attachment")
+    }
+
+    public func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
+        guard let record = try workRecord(id: workItemID), let issueNumber = record.workItem.githubIssue else {
+            throw AirframeBackendError.missingWorkItem(workItemID)
+        }
+        return try mapper.evidence(from: transport.issue(number: issueNumber, configuration: configuration))
+    }
+
+    public func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
+        guard let record = try workRecord(id: workItemID), let issueNumber = record.workItem.githubIssue else {
+            throw AirframeBackendError.missingWorkItem(workItemID)
+        }
+        let issue = try transport.issue(number: issueNumber, configuration: configuration)
+        return AirframeTaskPacket(
+            workItem: record.workItem,
+            objective: record.workItem.title,
+            scope: record.scope,
+            acceptanceCriteria: record.acceptanceCriteria,
+            constraints: record.constraints,
+            evidenceRequirements: record.evidenceRequirements,
+            protectedPaths: record.protectedPaths,
+            reportFormat: record.reportFormat,
+            existingEvidence: mapper.evidence(from: issue)
+        )
+    }
+
+    public func applyHumanVerification(
+        action: AirframeHumanVerificationAction,
+        to workItemID: AirframeID,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeHumanVerificationResult {
+        throw AirframeBackendError.readOnlyBackend("human verification")
+    }
+
+    public func dashboardSummary() throws -> AirframeDashboardSummary {
+        let records = try listWorkRecords()
+        let workItems = records.map(\.workItem)
+        let tasks = workItems.filter { $0.kind == .task }
+        let nextTask = tasks
+            .filter { $0.status == .active }
+            .sorted { $0.id.rawValue < $1.id.rawValue }
+            .first
+        return AirframeDashboardSummary(
+            totalWorkItemCount: workItems.count,
+            activeTaskCount: tasks.filter { $0.status == .active }.count,
+            unverifiedTaskCount: tasks.filter { $0.status == .implementedNotVerified }.count,
+            verifiedTaskCount: tasks.filter { $0.status == .implementedVerified }.count,
+            issueCount: workItems.filter { $0.kind == .issue }.count,
+            nextTask: nextTask,
+            recentEvidenceCount: 0
+        )
+    }
+
+    private func isAirframeWorkIssue(_ issue: AirframeGitHubIssueRecord) -> Bool {
+        let labels = Set(issue.labels)
+        return labels.contains(configuration.taskLabel)
+            || labels.contains(configuration.issueLabel)
+            || issue.body.contains("Airframe ID:")
+            || issue.body.contains("- id: T-")
+            || issue.body.contains("- id: I-")
     }
 }
 

@@ -37,16 +37,16 @@ Currently: **10 Epics** | Next available: **EP-011**
 | EP-007 | GitHub Backend MVP | Closed | 2026-06-04 | 2026-06-04 |
 | EP-008 | Verification, Hardening, and Release Candidate | Closed | 2026-06-04 | 2026-06-04 |
 | EP-009 | Live Demonstration Runtime Configuration | Closed | 2026-06-04 | 2026-06-04 |
-| EP-010 | Read-Only GitHub Adapter | Draft | 2026-06-05 | TBD |
+| EP-010 | Read-Only GitHub Adapter | Active | 2026-06-05 | TBD |
 
 ## Statistics
 
 - **Total Epics:** 10
 - **Proposed:** 0
-- **Draft:** 1
-- **Active:** 0
+- **Draft:** 0
+- **Active:** 1
 - **Complete pending close:** 0
 - **Closed:** 9
 - **Next available:** EP-011
 
-*Last Updated: 2026-06-05 (EP-010 drafted)*
+*Last Updated: 2026-06-06 (SP-010 planning opened)*

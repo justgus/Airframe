@@ -57,6 +57,19 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
         supportsSprintEpicMapping: true,
         supportsEvidenceReferences: true
     )
+
+    public static let githubIssuesReadOnly = AirframeBackendCapabilities(
+        backendKind: "github-issues",
+        supportsCreateWorkItem: false,
+        supportsUpdateWorkItem: false,
+        supportsEvidenceAttachment: false,
+        supportsTaskPacket: true,
+        supportsDashboardSummary: true,
+        supportsGitHubIssues: true,
+        supportsGitHubLabels: true,
+        supportsSprintEpicMapping: true,
+        supportsEvidenceReferences: true
+    )
 }
 
 public enum AirframeBackendError: Error, Equatable, CustomStringConvertible, Sendable {
@@ -70,6 +83,8 @@ public enum AirframeBackendError: Error, Equatable, CustomStringConvertible, Sen
     case unwritableStore(String)
     case decodingFailed(String)
     case encodingFailed(String)
+    case githubAccessFailed(String)
+    case readOnlyBackend(String)
 
     public var description: String {
         switch self {
@@ -93,6 +108,10 @@ public enum AirframeBackendError: Error, Equatable, CustomStringConvertible, Sen
             "Local backend decoding failed: \(message)"
         case .encodingFailed(let message):
             "Local backend encoding failed: \(message)"
+        case .githubAccessFailed(let message):
+            "GitHub issue access failed: \(message)"
+        case .readOnlyBackend(let operation):
+            "GitHub issues backend is read-only and does not support \(operation)."
         }
     }
 }

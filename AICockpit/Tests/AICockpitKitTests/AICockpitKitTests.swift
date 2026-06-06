@@ -11,7 +11,7 @@ import Foundation
     #expect(help.contains("aicockpit config diagnose"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
-    #expect(help.contains("--backend local-fixture|github-fixture"))
+    #expect(help.contains("--backend local-fixture|github-fixture|github-issues"))
 }
 
 @Test func configDiagnoseReturnsStableMarkdownContract() {
@@ -245,6 +245,22 @@ import Foundation
     #expect(summary.standardOutput.contains("\"backendKind\" : \"github-fixture\""))
     #expect(summary.standardOutput.contains("\"supportsGitHubIssues\" : true"))
     #expect(summary.standardOutput.contains("\"rawValue\" : \"T-9039\""))
+}
+
+@Test func githubIssuesBackendRejectsMutatingCommandsThroughAICockpit() {
+    let result = AICockpitCommand.response(arguments: [
+        "task", "propose",
+        "--backend", "github-issues",
+        "--id", "T-9054",
+        "--title", "Attempt read-only mutation",
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 78)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"code\" : \"backendCommandFailed\""))
+    #expect(result.standardOutput.contains("read-only"))
+    #expect(result.standardOutput.contains("work item creation"))
 }
 
 @Test func taskProposalUsesRuntimeConfigSprintEpicDefaultsAndStore() throws {

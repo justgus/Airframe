@@ -661,6 +661,65 @@ import Foundation
     #expect(roundTrippedTask.workItem.githubIssue == 37)
 }
 
+@Test func githubIssueMapperPrefersAirframeBodyMetadataOverIssueNumber() {
+    let mapper = AirframeGitHubIssueMapper(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe")
+    )
+    let issue = AirframeGitHubIssueRecord(
+        number: 51,
+        title: "[T-0051] Define live GitHub issue transport and failure contract",
+        labels: ["airframe-task", "status-active", "epic-EP-010", "sprint-SP-010", "priority-high"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0051
+        Epic: EP-010
+        Sprint: SP-010
+        Priority: High
+        Status: Active
+
+        ## Scope
+        - Define the read-only gh CLI transport contract.
+
+        ## Acceptance Criteria
+        - GitHub access failure cases have explicit Airframe-facing error messages.
+        """
+    )
+
+    let record = mapper.record(from: issue)
+
+    #expect(record.workItem.id == AirframeID("T-0051"))
+    #expect(record.workItem.title == "Define live GitHub issue transport and failure contract")
+    #expect(record.workItem.githubIssue == 51)
+    #expect(record.epicID == AirframeID("EP-010"))
+    #expect(record.sprintID == AirframeID("SP-010"))
+    #expect(record.priority == .high)
+    #expect(record.scope == ["Define the read-only gh CLI transport contract."])
+    #expect(record.acceptanceCriteria == ["GitHub access failure cases have explicit Airframe-facing error messages."])
+}
+
+@Test func githubIssueMapperKeepsVerifiedStatusForClosedVerifiedIssues() {
+    let mapper = AirframeGitHubIssueMapper(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe")
+    )
+    let issue = AirframeGitHubIssueRecord(
+        number: 45,
+        title: "[T-0045] Write release candidate verification documentation",
+        state: "closed",
+        labels: ["airframe-task", "status-verified", "epic-EP-008", "sprint-SP-008"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0045
+        Epic: EP-008
+        Sprint: SP-008
+        """
+    )
+
+    let record = mapper.record(from: issue)
+
+    #expect(record.workItem.id == AirframeID("T-0045"))
+    #expect(record.workItem.status == .implementedVerified)
+}
+
 @Test func githubIssueMapperMapsSprintEpicEvidenceAndAuditReferences() {
     let mapper = AirframeGitHubIssueMapper(
         configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe")
@@ -696,6 +755,66 @@ import Foundation
     #expect(roundTrippedEvidence == evidence)
 }
 
+@Test func githubIssuesBackendMapsReadOnlyLiveIssuesThroughCanonicalAPIs() throws {
+    let transport = StubGitHubIssueTransport(issues: [
+        AirframeGitHubIssueRecord(
+            number: 51,
+            title: "[T-0051] Define live GitHub issue transport and failure contract",
+            labels: ["airframe-task", "status-active", "epic-EP-010", "sprint-SP-010"],
+            body: """
+            Airframe Type: Task
+            Airframe ID: T-0051
+            Epic: EP-010
+            Sprint: SP-010
+
+            ## Scope
+            - Define gh transport behavior.
+
+            ## Acceptance Criteria
+            - Read-only commands map live issues.
+
+            ## Evidence
+            - EV-0051-001 | Core tests passed | swift test --package-path AirframeCore
+            """
+        ),
+        AirframeGitHubIssueRecord(
+            number: 99,
+            title: "Unmapped GitHub issue",
+            labels: [],
+            body: ""
+        )
+    ])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport
+    )
+
+    let records = try backend.listWorkRecords()
+    let packet = try backend.taskPacket(for: AirframeID("T-0051"))
+    let summary = try backend.dashboardSummary()
+
+    #expect(backend.capabilities.backendKind == "github-issues")
+    #expect(!backend.capabilities.supportsCreateWorkItem)
+    #expect(records.map(\.workItem.id) == [AirframeID("T-0051")])
+    #expect(packet.workItem.id == AirframeID("T-0051"))
+    #expect(packet.existingEvidence.first?.id == AirframeID("EV-0051-001"))
+    #expect(summary.totalWorkItemCount == 1)
+    #expect(summary.activeTaskCount == 1)
+    #expect(summary.nextTask?.id == AirframeID("T-0051"))
+}
+
+@Test func githubIssuesBackendRejectsMutationsWithReadOnlyError() throws {
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: StubGitHubIssueTransport(issues: [])
+    )
+    let record = localTaskRecord(id: "T-0051", title: "Define live GitHub issue transport")
+
+    #expect(throws: AirframeBackendError.readOnlyBackend("work item creation")) {
+        try backend.createWorkRecord(record)
+    }
+}
+
 @Test func githubFixtureBackendUsesCanonicalBackendAPIs() throws {
     let storeURL = FileManager.default.temporaryDirectory
         .appending(path: "AirframeCoreTests")
@@ -722,6 +841,21 @@ import Foundation
     #expect(summary.nextTask?.id == AirframeID("T-0039"))
     #expect(issues.first?.labels.contains("airframe-task") == true)
     #expect(issues.first?.body.contains("EV-0039-001") == true)
+}
+
+private struct StubGitHubIssueTransport: AirframeGitHubIssueTransport {
+    let issues: [AirframeGitHubIssueRecord]
+
+    func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        issues
+    }
+
+    func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
+        guard let issue = issues.first(where: { $0.number == number }) else {
+            throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
+        }
+        return issue
+    }
 }
 
 private func certifiedContext(
