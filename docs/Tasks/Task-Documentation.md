@@ -30,15 +30,7 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **5 unverified Tasks**
-
-| Task | GitHub Issue | Title | Sprint | Status |
-| ---- | ------------ | ----- | ------ | ------ |
-| T-0051 | #51 | Define live GitHub issue transport and failure contract | SP-010 | Implemented - Not Verified |
-| T-0052 | #52 | Implement read-only GitHub issue listing backend | SP-010 | Implemented - Not Verified |
-| T-0053 | #53 | Implement GitHub issue-to-work-record parsing | SP-010 | Implemented - Not Verified |
-| T-0054 | #54 | Wire github-issues into AICockpit commands | SP-010 | Implemented - Not Verified |
-| T-0055 | #55 | Verify read-only GitHub adapter behavior and docs | SP-010 | Implemented - Not Verified |
+Currently: **0 unverified Tasks**
 
 No Tasks are awaiting human verification.
 
@@ -46,7 +38,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **50 verified Tasks** | Next available: **T-0056**
+Currently: **55 verified Tasks** | Next available: **T-0056**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -100,15 +92,20 @@ Currently: **50 verified Tasks** | Next available: **T-0056**
 | T-0048 | #48 | Implement AgileCockpit runtime configuration selection | [Task-verified-0046-0050.md](Verified/Task-verified-0046-0050.md) | Implemented - Verified |
 | T-0049 | #49 | Add Airframe live demo project configuration and usage docs | [Task-verified-0046-0050.md](Verified/Task-verified-0046-0050.md) | Implemented - Verified |
 | T-0050 | #50 | Verify Slice 1 live project identity and fallback behavior | [Task-verified-0046-0050.md](Verified/Task-verified-0046-0050.md) | Implemented - Verified |
+| T-0051 | #51 | Define live GitHub issue transport and failure contract | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
+| T-0052 | #52 | Implement read-only GitHub issue listing backend | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
+| T-0053 | #53 | Implement GitHub issue-to-work-record parsing | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
+| T-0054 | #54 | Wire github-issues into AICockpit commands | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
+| T-0055 | #55 | Verify read-only GitHub adapter behavior and docs | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 55
 - **Backlog:** 0
 - **Active:** 0
-- **Unverified:** 5
-- **Verified:** 50
+- **Unverified:** 0
+- **Verified:** 55
 - **Closed:** 0
 - **Next available:** T-0056
 
-*Last Updated: 2026-06-06 (SP-010 implemented and awaiting human verification)*
+*Last Updated: 2026-06-06 (T-0051 through T-0055 verified and SP-010 closed)*
