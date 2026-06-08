@@ -38,7 +38,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **55 verified Tasks** | Next available: **T-0056**
+Currently: **60 verified Tasks** | Next available: **T-0061**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -97,15 +97,20 @@ Currently: **55 verified Tasks** | Next available: **T-0056**
 | T-0053 | #53 | Implement GitHub issue-to-work-record parsing | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
 | T-0054 | #54 | Wire github-issues into AICockpit commands | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
 | T-0055 | #55 | Verify read-only GitHub adapter behavior and docs | [Task-verified-0051-0055.md](Verified/Task-verified-0051-0055.md) | Implemented - Verified |
+| T-0056 | #56 | Wire AgileCockpit live backend configuration | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
+| T-0057 | #59 | Load live GitHub dashboard counts in AgileCockpit | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
+| T-0058 | #57 | Show live sprint and epic planning state | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
+| T-0059 | #60 | Show live implemented-not-verified work | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
+| T-0060 | #58 | Verify AgileCockpit live project view behavior | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
 
 ## Statistics
 
-- **Total Tasks:** 55
+- **Total Tasks:** 60
 - **Backlog:** 0
 - **Active:** 0
 - **Unverified:** 0
-- **Verified:** 55
+- **Verified:** 60
 - **Closed:** 0
-- **Next available:** T-0056
+- **Next available:** T-0061
 
-*Last Updated: 2026-06-06 (T-0051 through T-0055 verified and SP-010 closed)*
+*Last Updated: 2026-06-08 (T-0056 through T-0060 verified and SP-011 closed)*

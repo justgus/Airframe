@@ -71,9 +71,14 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0053 | #53 | EP-010 | Implement GitHub issue-to-work-record parsing |
 | T-0054 | #54 | EP-010 | Wire github-issues into AICockpit commands |
 | T-0055 | #55 | EP-010 | Verify read-only GitHub adapter behavior and docs |
+| T-0056 | #56 | EP-011 | Wire AgileCockpit live backend configuration |
+| T-0057 | #59 | EP-011 | Load live GitHub dashboard counts in AgileCockpit |
+| T-0058 | #57 | EP-011 | Show live sprint and epic planning state |
+| T-0059 | #60 | EP-011 | Show live implemented-not-verified work |
+| T-0060 | #58 | EP-011 | Verify AgileCockpit live project view behavior |
 
 ## Current Issue Mapping
 
 No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
 
-*Last Updated: 2026-06-06 (T-0051 through T-0055 mapped to GitHub issues #51 through #55)*
+*Last Updated: 2026-06-08 (T-0056 through T-0060 mapped to GitHub issues #56 through #60)*

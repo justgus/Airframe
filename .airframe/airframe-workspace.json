@@ -22,7 +22,7 @@
     "rawValue": "PRJ-AIRFRAME"
   },
   "backend": {
-    "kind": "github-fixture",
+    "kind": "github-issues",
     "location": "justgus/Airframe"
   }
 }

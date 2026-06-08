@@ -17,7 +17,7 @@ See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **10 Sprints** | Next available: **SP-011**
+Currently: **11 Sprints** | Next available: **SP-012**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -31,14 +31,15 @@ Currently: **10 Sprints** | Next available: **SP-011**
 | SP-008 | Verification, Hardening, and Release Candidate | EP-008 | T-0041, T-0042, T-0043, T-0044, T-0045 | None | Closed |
 | SP-009 | Live Demo Runtime Configuration | EP-009 | T-0046, T-0047, T-0048, T-0049, T-0050 | None | Closed |
 | SP-010 | Read-Only GitHub Issues Adapter | EP-010 | T-0051, T-0052, T-0053, T-0054, T-0055 | None | Closed |
+| SP-011 | AgileCockpit Live Project View Planning | EP-011 | T-0056, T-0057, T-0058, T-0059, T-0060 | None | Closed |
 
 ## Statistics
 
-- **Total Sprints:** 10
+- **Total Sprints:** 11
 - **Planning:** 0
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 10
-- **Next available:** SP-011
+- **Closed:** 11
+- **Next available:** SP-012
 
-*Last Updated: 2026-06-06 (SP-010 closed)*
+*Last Updated: 2026-06-08 (SP-011 verified and closed)*

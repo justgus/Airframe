@@ -36,12 +36,53 @@ import Foundation
     )
 
     #expect(model.context.workspaceName == "Airframe Live Demo")
-    #expect(model.context.project.activeSprintID == AirframeID("SP-009"))
-    #expect(model.context.project.activeEpicID == AirframeID("EP-009"))
+    #expect(model.context.project.activeSprintID == AirframeID("SP-011"))
+    #expect(model.context.project.activeEpicID == AirframeID("EP-011"))
     #expect(model.projectStatusText.contains("justgus/Airframe"))
     #expect(model.backendStatusText.contains("github-fixture"))
     #expect(model.configurationDiagnostics.status == .ok)
     #expect(model.statusMessage == "Loaded github-fixture Airframe workspace.")
+}
+
+@MainActor
+@Test func agileCockpitConfiguredDashboardUsesGitHubIssuesBackend() throws {
+    let configURL = try temporaryLiveConfigurationURL(backendKind: "github-issues")
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:],
+        githubIssueTransport: StubGitHubIssueTransport(issues: liveGitHubIssues)
+    )
+
+    #expect(model.context.workspaceName == "Airframe Live Demo")
+    #expect(model.context.project.activeSprintID == AirframeID("SP-011"))
+    #expect(model.context.project.activeEpicID == AirframeID("EP-011"))
+    #expect(model.projectStatusText.contains("justgus/Airframe"))
+    #expect(model.backendStatusText.contains("github-issues"))
+    #expect(model.statusMessage == "Loaded github-issues Airframe workspace.")
+    #expect(model.summary.activeTaskCount == 1)
+    #expect(model.summary.unverifiedTaskCount == 1)
+    #expect(model.readyRecords.map(\.workItem.id) == [AirframeID("T-0059")])
+    #expect(model.sprintRecords.map(\.workItem.id) == [AirframeID("T-0056"), AirframeID("T-0059")])
+    #expect(model.epicRecords.map(\.workItem.id) == [AirframeID("T-0056"), AirframeID("T-0059")])
+}
+
+@MainActor
+@Test func agileCockpitLiveFailurePreservesProjectIdentityWithoutSampleFallback() throws {
+    let context = try AirframeConfigurationLoader().context(
+        for: try AirframeConfigurationLoader().load(data: liveConfigurationData(backendKind: "github-issues"))
+    )
+    let model = AgileCockpitDashboardModel.unavailable(
+        context: context,
+        error: AirframeBackendError.githubAccessFailed("gh authentication required")
+    )
+
+    #expect(model.context.workspaceName == "Airframe Live Demo")
+    #expect(model.projectStatusText.contains("justgus/Airframe"))
+    #expect(model.backendStatusText.contains("github-issues"))
+    #expect(model.statusMessage.contains("Live project load failed"))
+    #expect(model.statusMessage.contains("gh authentication required"))
+    #expect(model.records.isEmpty)
+    #expect(model.summary.totalWorkItemCount == 0)
 }
 
 @MainActor
@@ -95,13 +136,18 @@ import Foundation
     #expect(model.auditRows.first?.action == "OP-READ-DASHBOARD")
 }
 
-private func temporaryLiveConfigurationURL() throws -> URL {
+private func temporaryLiveConfigurationURL(backendKind: String = "github-fixture") throws -> URL {
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AgileCockpitLiveConfig")
         .appending(path: UUID().uuidString)
     try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
     let configURL = rootURL.appending(path: "airframe-workspace.json")
-    try Data(
+    try liveConfigurationData(backendKind: backendKind).write(to: configURL)
+    return configURL
+}
+
+private func liveConfigurationData(backendKind: String) -> Data {
+    Data(
         """
         {
           "schemaVersion": 1,
@@ -115,17 +161,68 @@ private func temporaryLiveConfigurationURL() throws -> URL {
               "id": { "rawValue": "PRJ-AIRFRAME" },
               "name": "Agile Airframe",
               "repository": "justgus/Airframe",
-              "activeSprintID": { "rawValue": "SP-009" },
-              "activeEpicID": { "rawValue": "EP-009" }
+              "activeSprintID": { "rawValue": "SP-011" },
+              "activeEpicID": { "rawValue": "EP-011" }
             }
           ],
           "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },
           "backend": {
-            "kind": "github-fixture",
+            "kind": "\(backendKind)",
             "location": "justgus/Airframe"
           }
         }
         """.utf8
-    ).write(to: configURL)
-    return configURL
+    )
+}
+
+private let liveGitHubIssues = [
+    AirframeGitHubIssueRecord(
+        number: 56,
+        title: "[T-0056] Wire AgileCockpit live backend configuration",
+        labels: ["airframe-task", "status-active", "epic-EP-011", "sprint-SP-011"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0056
+        Epic: EP-011
+        Sprint: SP-011
+
+        ## Acceptance Criteria
+        - AgileCockpit launched in live mode displays repository justgus/Airframe.
+        """
+    ),
+    AirframeGitHubIssueRecord(
+        number: 59,
+        title: "[T-0059] Show live implemented-not-verified work",
+        labels: ["airframe-task", "status-unverified", "epic-EP-011", "sprint-SP-011"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0059
+        Epic: EP-011
+        Sprint: SP-011
+
+        ## Acceptance Criteria
+        - Live implemented-not-verified mapped work appears in the verification view when present.
+        """
+    ),
+    AirframeGitHubIssueRecord(
+        number: 99,
+        title: "Unmapped GitHub issue",
+        labels: [],
+        body: ""
+    )
+]
+
+private struct StubGitHubIssueTransport: AirframeGitHubIssueTransport {
+    let issues: [AirframeGitHubIssueRecord]
+
+    func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        issues
+    }
+
+    func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
+        guard let issue = issues.first(where: { $0.number == number }) else {
+            throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
+        }
+        return issue
+    }
 }

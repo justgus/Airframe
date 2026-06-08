@@ -10,6 +10,6 @@ No Tasks are currently in backlog.
 
 ---
 
-T-0046 through T-0050 were implemented and moved to [Task-unverified.md](Task-unverified.md) on 2026-06-04.
+T-0056 through T-0060 were human-verified on 2026-06-08 and moved to [Verified/Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md).
 
-*Last Updated: 2026-06-04 (SP-009 implemented and awaiting verification)*
+*Last Updated: 2026-06-08 (SP-011 verified and closed)*

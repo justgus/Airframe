@@ -112,7 +112,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         configurationURL: URL? = nil,
         storeURL: URL? = nil,
         environment: [String: String] = ProcessInfo.processInfo.environment,
-        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath)
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath),
+        githubIssueTransport: (any AirframeGitHubIssueTransport)? = nil
     ) throws -> AgileCockpitDashboardModel {
         let resolver = AirframeRuntimeConfigurationResolver(
             environment: environment,
@@ -124,7 +125,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
         let context = try resolver.loadContext(explicitPath: configurationURL?.path)
         let resolvedStoreURL = resolver.storeURL(explicitPath: storeURL?.path)
-        let backend = try configuredBackend(for: context, storeURL: resolvedStoreURL)
+        let backend = try configuredBackend(
+            for: context,
+            storeURL: resolvedStoreURL,
+            githubIssueTransport: githubIssueTransport
+        )
         let reviewer = try humanReviewerContext(projectID: context.project.id)
 
         return try AgileCockpitDashboardModel(
@@ -132,6 +137,44 @@ final class AgileCockpitDashboardModel: ObservableObject {
             backend: backend,
             reviewerContext: reviewer
         )
+    }
+
+    static func launch(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath)
+    ) -> AgileCockpitDashboardModel {
+        let resolver = AirframeRuntimeConfigurationResolver(
+            environment: environment,
+            currentDirectoryURL: currentDirectoryURL
+        )
+
+        guard resolver.configurationURL() != nil else {
+            return (try? sample()) ?? fallback(message: "Sample workspace unavailable.")
+        }
+
+        do {
+            return try configured(environment: environment, currentDirectoryURL: currentDirectoryURL)
+        } catch {
+            if let context = try? resolver.loadContext() {
+                return unavailable(context: context, error: error)
+            }
+            return fallback(message: "Configuration load failed: \(error)")
+        }
+    }
+
+    static func unavailable(context: AirframeProjectContext, error: Error) -> AgileCockpitDashboardModel {
+        let backend = AgileCockpitUnavailableBackend(
+            capabilities: capabilities(for: context.configuration.backend.kind),
+            error: error
+        )
+        let reviewer = (try? humanReviewerContext(projectID: context.project.id)) ?? fallbackReviewer(projectID: context.project.id)
+        let model = try! AgileCockpitDashboardModel(
+            context: context,
+            backend: backend,
+            reviewerContext: reviewer
+        )
+        model.statusMessage = "Live project load failed: \(error)"
+        return model
     }
 
     var projectStatusText: String {
@@ -296,7 +339,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private static func configuredBackend(
         for context: AirframeProjectContext,
-        storeURL: URL
+        storeURL: URL,
+        githubIssueTransport: (any AirframeGitHubIssueTransport)?
     ) throws -> any AirframeBackend {
         switch AirframeBackendKind(rawValue: context.configuration.backend.kind) {
         case .localFixture:
@@ -307,10 +351,78 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 configuration: AirframeGitHubBackendConfiguration(repositorySlug: context.project.repository)
             )
         case .githubIssues:
-            throw AirframeConfigurationError.invalidConfiguration("github-issues requires a live adapter; use github-fixture for Slice 1 runtime configuration.")
+            return AirframeGitHubIssuesBackend(
+                configuration: AirframeGitHubBackendConfiguration(repositorySlug: context.project.repository),
+                transport: githubIssueTransport ?? AirframeGitHubCLITransport()
+            )
         case nil:
             throw AirframeConfigurationError.invalidConfiguration("Unsupported backend \(context.configuration.backend.kind).")
         }
+    }
+
+    private static func capabilities(for backendKind: String) -> AirframeBackendCapabilities {
+        switch AirframeBackendKind(rawValue: backendKind) {
+        case .localFixture:
+            .localFilesystem
+        case .githubFixture:
+            .githubFixture
+        case .githubIssues:
+            .githubIssuesReadOnly
+        case nil:
+            AirframeBackendCapabilities(
+                backendKind: backendKind,
+                supportsCreateWorkItem: false,
+                supportsUpdateWorkItem: false,
+                supportsEvidenceAttachment: false,
+                supportsTaskPacket: false,
+                supportsDashboardSummary: false
+            )
+        }
+    }
+
+    private static func fallback(message: String) -> AgileCockpitDashboardModel {
+        let project = AirframeProject(
+            id: AirframeID("PRJ-UNAVAILABLE"),
+            name: "Unavailable Project",
+            repository: "unknown",
+            activeSprintID: nil,
+            activeEpicID: nil
+        )
+        let configuration = AirframeWorkspaceConfiguration(
+            schemaVersion: 1,
+            workspace: AirframeWorkspace(
+                id: AirframeID("WS-UNAVAILABLE"),
+                name: "Unavailable Workspace",
+                rootPath: "."
+            ),
+            projects: [project],
+            defaultProjectID: project.id,
+            backend: AirframeBackendReference(kind: "unavailable", location: "unavailable")
+        )
+        let model = unavailable(context: AirframeProjectContext(configuration: configuration, project: project), error: AirframeConfigurationError.invalidConfiguration(message))
+        model.statusMessage = message
+        return model
+    }
+
+    private static func fallbackReviewer(projectID: AirframeID) -> AirframeCertifiedContext {
+        let actor = AirframeActor(
+            id: AirframeID("ACTOR-FALLBACK-REVIEWER"),
+            displayName: "Fallback Reviewer",
+            authorityClass: .humanReviewer,
+            credentialSource: .xcodeSession
+        )
+        let credential = AirframeCredentialContext(
+            credentialID: AirframeID("CRED-FALLBACK-REVIEWER"),
+            actorID: actor.id,
+            credentialSource: .xcodeSession,
+            executionProjectID: projectID,
+            allowedProjectIDs: [projectID]
+        )
+        return try! AirframeCertifiedContext(
+            actor: actor,
+            credential: credential,
+            targetProjectID: projectID
+        )
     }
 
     private static let sampleRecords: [AirframeLocalWorkRecord] = [
@@ -345,6 +457,75 @@ final class AgileCockpitDashboardModel: ObservableObject {
             scope: ["AgileCockpit", "AirframeCore"],
             constraints: ["Keep canonical workflow and authority decisions in AirframeCore."],
             evidenceRequirements: ["Record app, Core, and UI verification commands."]
+        )
+    }
+}
+
+private final class AgileCockpitUnavailableBackend: @unchecked Sendable, AirframeBackend {
+    let capabilities: AirframeBackendCapabilities
+
+    private let error: Error
+
+    init(capabilities: AirframeBackendCapabilities, error: Error) {
+        self.capabilities = capabilities
+        self.error = error
+    }
+
+    func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
+        []
+    }
+
+    func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
+        nil
+    }
+
+    func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func updateWorkItem(_ workItem: AirframeWorkItem) throws {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func transitionWorkItem(
+        id: AirframeID,
+        to status: AirframeWorkStatus,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func applyHumanVerification(
+        action: AirframeHumanVerificationAction,
+        to workItemID: AirframeID,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeHumanVerificationResult {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
+    func dashboardSummary() throws -> AirframeDashboardSummary {
+        AirframeDashboardSummary(
+            totalWorkItemCount: 0,
+            activeTaskCount: 0,
+            unverifiedTaskCount: 0,
+            verifiedTaskCount: 0,
+            issueCount: 0,
+            nextTask: nil,
+            recentEvidenceCount: 0
         )
     }
 }

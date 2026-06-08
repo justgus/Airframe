@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Epics. Epics are implementation milest
 
 ## Active Epics
 
-Currently: **EP-011**
+Currently: **None**
 
 See: [Epic-active.md](Epic-active.md)
 
@@ -38,16 +38,16 @@ Currently: **11 Epics** | Next available: **EP-012**
 | EP-008 | Verification, Hardening, and Release Candidate | Closed | 2026-06-04 | 2026-06-04 |
 | EP-009 | Live Demonstration Runtime Configuration | Closed | 2026-06-04 | 2026-06-04 |
 | EP-010 | Read-Only GitHub Adapter | Closed | 2026-06-05 | 2026-06-06 |
-| EP-011 | AgileCockpit Live Project View | Draft | 2026-06-06 | TBD |
+| EP-011 | AgileCockpit Live Project View | Closed | 2026-06-06 | 2026-06-08 |
 
 ## Statistics
 
 - **Total Epics:** 11
 - **Proposed:** 0
-- **Draft:** 1
+- **Draft:** 0
 - **Active:** 0
 - **Complete pending close:** 0
-- **Closed:** 10
+- **Closed:** 11
 - **Next available:** EP-012
 
-*Last Updated: 2026-06-06 (EP-010 closed and EP-011 drafted)*
+*Last Updated: 2026-06-08 (EP-011 verified and closed)*
