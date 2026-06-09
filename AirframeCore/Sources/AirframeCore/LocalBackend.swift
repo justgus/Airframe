@@ -11,6 +11,8 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
     public let supportsGitHubLabels: Bool
     public let supportsSprintEpicMapping: Bool
     public let supportsEvidenceReferences: Bool
+    public let supportsGitHubIssueComments: Bool
+    public let supportsGitHubStatusMutations: Bool
 
     public init(
         backendKind: String = "local-fixture",
@@ -22,7 +24,9 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
         supportsGitHubIssues: Bool = false,
         supportsGitHubLabels: Bool = false,
         supportsSprintEpicMapping: Bool = false,
-        supportsEvidenceReferences: Bool = false
+        supportsEvidenceReferences: Bool = false,
+        supportsGitHubIssueComments: Bool = false,
+        supportsGitHubStatusMutations: Bool = false
     ) {
         self.backendKind = backendKind
         self.supportsCreateWorkItem = supportsCreateWorkItem
@@ -34,6 +38,8 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
         self.supportsGitHubLabels = supportsGitHubLabels
         self.supportsSprintEpicMapping = supportsSprintEpicMapping
         self.supportsEvidenceReferences = supportsEvidenceReferences
+        self.supportsGitHubIssueComments = supportsGitHubIssueComments
+        self.supportsGitHubStatusMutations = supportsGitHubStatusMutations
     }
 
     public static let localFilesystem = AirframeBackendCapabilities(
@@ -69,6 +75,21 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
         supportsGitHubLabels: true,
         supportsSprintEpicMapping: true,
         supportsEvidenceReferences: true
+    )
+
+    public static let githubIssuesControlledMutations = AirframeBackendCapabilities(
+        backendKind: "github-issues",
+        supportsCreateWorkItem: false,
+        supportsUpdateWorkItem: false,
+        supportsEvidenceAttachment: false,
+        supportsTaskPacket: true,
+        supportsDashboardSummary: true,
+        supportsGitHubIssues: true,
+        supportsGitHubLabels: true,
+        supportsSprintEpicMapping: true,
+        supportsEvidenceReferences: true,
+        supportsGitHubIssueComments: true,
+        supportsGitHubStatusMutations: true
     )
 }
 

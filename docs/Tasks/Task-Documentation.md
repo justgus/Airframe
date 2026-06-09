@@ -34,17 +34,17 @@ Currently: **5 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0061 | #61 | Define project-local demo artifact layout | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0062 | #65 | Install aicockpit into the project-local demo layout | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0063 | #64 | Install AgileCockpit.app into the project-local demo layout | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0064 | #63 | Document project-local demo installation and verification | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0065 | #62 | Verify project-local installation without manual Cockpit launch | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0066 | #66 | Define controlled GitHub mutation authority contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0067 | #67 | Add GitHub issue comment mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0068 | #68 | Add controlled GitHub status label transition support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0069 | #69 | Wire explicit mutation commands and UI affordances | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0070 | #70 | Verify controlled mutation safety and documentation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **60 verified Tasks** | Next available: **T-0066**
+Currently: **65 verified Tasks** | Next available: **T-0071**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -108,15 +108,20 @@ Currently: **60 verified Tasks** | Next available: **T-0066**
 | T-0058 | #57 | Show live sprint and epic planning state | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
 | T-0059 | #60 | Show live implemented-not-verified work | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
 | T-0060 | #58 | Verify AgileCockpit live project view behavior | [Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md) | Implemented - Verified |
+| T-0061 | #61 | Define project-local demo artifact layout | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
+| T-0062 | #65 | Install aicockpit into the project-local demo layout | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
+| T-0063 | #64 | Install AgileCockpit.app into the project-local demo layout | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
+| T-0064 | #63 | Document project-local demo installation and verification | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
+| T-0065 | #62 | Verify project-local installation without manual Cockpit launch | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
 
 ## Statistics
 
-- **Total Tasks:** 65
+- **Total Tasks:** 70
 - **Backlog:** 0
 - **Active:** 0
 - **Unverified:** 5
-- **Verified:** 60
+- **Verified:** 65
 - **Closed:** 0
-- **Next available:** T-0066
+- **Next available:** T-0071
 
-*Last Updated: 2026-06-09 (T-0061 through T-0065 implemented for SP-012)*
+*Last Updated: 2026-06-09 (T-0066 through T-0070 implemented for SP-013)*

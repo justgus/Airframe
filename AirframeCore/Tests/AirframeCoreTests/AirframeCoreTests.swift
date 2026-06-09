@@ -815,6 +815,113 @@ import Foundation
     }
 }
 
+@Test func githubIssuesBackendRequiresApprovalBeforeControlledCommentWrites() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [controlledMutationIssue()])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    #expect(throws: AirframeBackendError.requiresConfirmation(.requiresConfirmation)) {
+        try backend.addIssueComment(
+            to: AirframeID("T-0067"),
+            body: "Evidence is ready.",
+            approval: nil,
+            context: try certifiedContext(authorityClass: .llmAgent),
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        )
+    }
+    #expect(transport.comments.isEmpty)
+}
+
+@Test func githubIssuesBackendAddsApprovedEvidenceCommentAndAuditResult() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [controlledMutationIssue()])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    let result = try backend.attachEvidenceComment(
+        AirframeEvidence(
+            id: AirframeID("EV-0067-001"),
+            summary: "Controlled mutation tests passed",
+            artifact: "swift test --package-path AirframeCore"
+        ),
+        to: AirframeID("T-0067"),
+        approval: AirframeGitHubMutationApproval(
+            isApproved: true,
+            approvedBy: "Human",
+            reason: "SP-013 verification"
+        ),
+        context: try certifiedContext(authorityClass: .llmAgent),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(result.mutation == "githubEvidenceComment")
+    #expect(result.githubIssue == 67)
+    #expect(result.auditEvent.action == "OP-GITHUB-EVIDENCE-COMMENT")
+    #expect(transport.comments.count == 1)
+    #expect(transport.comments.first?.body.contains("EV-0067-001") == true)
+}
+
+@Test func githubIssuesBackendTransitionsStatusLabelsAfterApproval() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [controlledMutationIssue()])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    let result = try backend.transitionGitHubStatus(
+        workItemID: AirframeID("T-0067"),
+        to: .implementedNotVerified,
+        approval: AirframeGitHubMutationApproval(
+            isApproved: true,
+            approvedBy: "Human",
+            reason: "Mark ready"
+        ),
+        context: try certifiedContext(authorityClass: .llmAgent),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(result.workItem.status == .implementedNotVerified)
+    #expect(transport.statusTransitions == [
+        RecordingGitHubIssueTransport.StatusTransition(
+            issueNumber: 67,
+            removedLabels: ["status-active"],
+            addedLabel: "status-unverified"
+        )
+    ])
+}
+
+@Test func githubIssuesBackendDeniesLLMVerifiedStatusTransition() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [
+        controlledMutationIssue(statusLabel: "status-unverified")
+    ])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    #expect(throws: AirframeBackendError.authorityDenied(.authorityClassNotPermitted)) {
+        try backend.transitionGitHubStatus(
+            workItemID: AirframeID("T-0067"),
+            to: .implementedVerified,
+            approval: AirframeGitHubMutationApproval(
+                isApproved: true,
+                approvedBy: "Human",
+                reason: "AICockpit must not verify"
+            ),
+            context: try certifiedContext(authorityClass: .llmAgent),
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        )
+    }
+    #expect(transport.statusTransitions.isEmpty)
+}
+
 @Test func githubFixtureBackendUsesCanonicalBackendAPIs() throws {
     let storeURL = FileManager.default.temporaryDirectory
         .appending(path: "AirframeCoreTests")
@@ -855,6 +962,75 @@ private struct StubGitHubIssueTransport: AirframeGitHubIssueTransport {
             throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
         }
         return issue
+    }
+}
+
+private func controlledMutationIssue(statusLabel: String = "status-active") -> AirframeGitHubIssueRecord {
+    AirframeGitHubIssueRecord(
+        number: 67,
+        title: "[T-0067] Add GitHub issue comment mutation support",
+        labels: ["airframe-task", statusLabel, "epic-EP-013", "sprint-SP-013"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0067
+        Epic: EP-013
+        Sprint: SP-013
+        """
+    )
+}
+
+private final class RecordingGitHubIssueTransport: @unchecked Sendable, AirframeGitHubIssueTransport {
+    struct Comment: Equatable {
+        let issueNumber: Int
+        let body: String
+    }
+
+    struct StatusTransition: Equatable {
+        let issueNumber: Int
+        let removedLabels: [String]
+        let addedLabel: String
+    }
+
+    let issues: [AirframeGitHubIssueRecord]
+    private(set) var comments: [Comment] = []
+    private(set) var statusTransitions: [StatusTransition] = []
+
+    init(issues: [AirframeGitHubIssueRecord]) {
+        self.issues = issues
+    }
+
+    func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        issues
+    }
+
+    func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
+        guard let issue = issues.first(where: { $0.number == number }) else {
+            throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
+        }
+        return issue
+    }
+
+    func addComment(
+        issueNumber: Int,
+        body: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        comments.append(Comment(issueNumber: issueNumber, body: body))
+    }
+
+    func replaceStatusLabel(
+        issueNumber: Int,
+        removing oldStatusLabels: [String],
+        adding newStatusLabel: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        statusTransitions.append(
+            StatusTransition(
+                issueNumber: issueNumber,
+                removedLabels: oldStatusLabels,
+                addedLabel: newStatusLabel
+            )
+        )
     }
 }
 

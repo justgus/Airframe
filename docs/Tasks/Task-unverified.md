@@ -6,41 +6,41 @@ Currently: **5 unverified Tasks**
 
 ---
 
-## T-0061 through T-0065: SP-012 Project-Local Installation
+## T-0066 through T-0070: SP-013 Controlled GitHub Mutations
 
 **Status:** Implemented - Not Verified
-**Sprint:** SP-012
-**Epic:** EP-012
+**Sprint:** SP-013
+**Epic:** EP-013
 **Date Implemented:** 2026-06-09
 **Date Verified:** TBD
 
 | Task | GitHub Issue | Title | Status |
 | ---- | ------------ | ----- | ------ |
-| T-0061 | #61 | Define project-local demo artifact layout | Implemented - Not Verified |
-| T-0062 | #65 | Install aicockpit into the project-local demo layout | Implemented - Not Verified |
-| T-0063 | #64 | Install AgileCockpit.app into the project-local demo layout | Implemented - Not Verified |
-| T-0064 | #63 | Document project-local demo installation and verification | Implemented - Not Verified |
-| T-0065 | #62 | Verify project-local installation without manual Cockpit launch | Implemented - Not Verified |
+| T-0066 | #66 | Define controlled GitHub mutation authority contract | Implemented - Not Verified |
+| T-0067 | #67 | Add GitHub issue comment mutation support | Implemented - Not Verified |
+| T-0068 | #68 | Add controlled GitHub status label transition support | Implemented - Not Verified |
+| T-0069 | #69 | Wire explicit mutation commands and UI affordances | Implemented - Not Verified |
+| T-0070 | #70 | Verify controlled mutation safety and documentation | Implemented - Not Verified |
 
 ## Implementation Summary
 
-- Added `scripts/install-live-demo.sh` to build `aicockpit` with SwiftPM and copy it to `demos/LiveDemo/bin/aicockpit`.
-- Added `scripts/install-live-demo.sh` to build `AgileCockpit.app` with Xcode into project-local DerivedData and copy it to `demos/LiveDemo/Applications/AgileCockpit.app`.
-- Added `scripts/verify-sp012.sh` to install artifacts, check artifact presence, run installed CLI diagnostics, run an installed CLI live `github-issues` project summary, and run AgileCockpit automated tests.
-- Added `demos/LiveDemo/README.md` with layout, install, verification, and deferred manual launch instructions.
-- Updated `.gitignore` so generated demo artifacts and build products remain project-local but untracked.
+- Added controlled GitHub mutation approval/result models and backend capability flags.
+- Extended the GitHub issue transport with explicit comment and status-label mutation operations.
+- Added approval-gated GitHub issue comment, evidence comment, and status label transition APIs.
+- Added explicit AICockpit commands for `github comment`, `github evidence-comment`, and `github status`.
+- Documented the controlled mutation contract in [../Controlled-GitHub-Mutations.md](../Controlled-GitHub-Mutations.md).
+- Added `scripts/verify-sp013.sh` for controlled mutation safety verification.
 
 ## Verification Evidence
 
-- `scripts/install-live-demo.sh` passed on 2026-06-09 and produced:
-  - `demos/LiveDemo/bin/aicockpit`
-  - `demos/LiveDemo/Applications/AgileCockpit.app`
-- `scripts/verify-sp012.sh` passed on 2026-06-09.
-- Installed CLI configuration diagnostics reported backend `github-issues` at `justgus/Airframe`.
-- Installed CLI live project summary reported backend `github-issues`, `totalWorkItemCount: 65`, and `verifiedTaskCount: 60`.
-- AgileCockpit automated tests passed under `demos/LiveDemo/DerivedData`.
+- `scripts/verify-sp013.sh` passed on 2026-06-09.
+- `swift test --package-path AirframeCore` passed on 2026-06-09.
+- `swift test --package-path AICockpit` passed on 2026-06-09.
+- `xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'platform=macOS' test` passed on rerun 2026-06-09.
+- Missing approval check for `aicockpit github comment` failed before live GitHub lookup/write with a confirmation requirement.
+- T-0061 through T-0065 were human-verified on 2026-06-09 and moved to [Verified/Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md).
 - T-0056 through T-0060 were human-verified on 2026-06-08 and moved to [Verified/Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md).
 
 ---
 
-*Last Updated: 2026-06-09 (T-0061 through T-0065 implemented for SP-012)*
+*Last Updated: 2026-06-09 (T-0066 through T-0070 implemented for SP-013)*

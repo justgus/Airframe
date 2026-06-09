@@ -10,6 +10,6 @@ No Tasks are actively being implemented.
 
 ---
 
-T-0056 through T-0060 were human-verified on 2026-06-08 and moved to [Verified/Task-verified-0056-0060.md](Verified/Task-verified-0056-0060.md).
+T-0066 through T-0070 were implemented on 2026-06-09 and moved to [Task-unverified.md](Task-unverified.md).
 
-*Last Updated: 2026-06-08 (SP-011 verified and closed)*
+*Last Updated: 2026-06-09 (SP-013 implemented and awaiting verification)*

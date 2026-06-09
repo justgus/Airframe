@@ -296,6 +296,37 @@ public struct AirframeEvidence: Codable, Equatable, Sendable {
     }
 }
 
+public struct AirframeGitHubMutationApproval: Codable, Equatable, Sendable {
+    public let isApproved: Bool
+    public let approvedBy: String
+    public let reason: String
+
+    public init(isApproved: Bool, approvedBy: String, reason: String) {
+        self.isApproved = isApproved
+        self.approvedBy = approvedBy
+        self.reason = reason
+    }
+}
+
+public struct AirframeGitHubMutationResult: Codable, Equatable, Sendable {
+    public let workItem: AirframeWorkItem
+    public let githubIssue: Int
+    public let mutation: String
+    public let auditEvent: AirframeAuditEvent
+
+    public init(
+        workItem: AirframeWorkItem,
+        githubIssue: Int,
+        mutation: String,
+        auditEvent: AirframeAuditEvent
+    ) {
+        self.workItem = workItem
+        self.githubIssue = githubIssue
+        self.mutation = mutation
+        self.auditEvent = auditEvent
+    }
+}
+
 public struct AirframeVerificationGate: Codable, Equatable, Sendable {
     public let id: AirframeID
     public let name: String

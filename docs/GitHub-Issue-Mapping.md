@@ -81,9 +81,14 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0063 | #64 | EP-012 | Install AgileCockpit.app into the project-local demo layout |
 | T-0064 | #63 | EP-012 | Document project-local demo installation and verification |
 | T-0065 | #62 | EP-012 | Verify project-local installation without manual Cockpit launch |
+| T-0066 | #66 | EP-013 | Define controlled GitHub mutation authority contract |
+| T-0067 | #67 | EP-013 | Add GitHub issue comment mutation support |
+| T-0068 | #68 | EP-013 | Add controlled GitHub status label transition support |
+| T-0069 | #69 | EP-013 | Wire explicit mutation commands and UI affordances |
+| T-0070 | #70 | EP-013 | Verify controlled mutation safety and documentation |
 
 ## Current Issue Mapping
 
 No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
 
-*Last Updated: 2026-06-08 (T-0061 through T-0065 mapped to GitHub issues #61 through #65)*
+*Last Updated: 2026-06-09 (T-0066 through T-0070 mapped to GitHub issues #66 through #70)*

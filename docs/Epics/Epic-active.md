@@ -4,60 +4,62 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ---
 
-## EP-012: Project-Local Installation
+## EP-013: Controlled GitHub Mutations
 
 **Status:** Complete-pending-close
 **Owner:** Human / Airframe Planning
-**Start Date:** 2026-06-08
+**Start Date:** 2026-06-09
 **Target Close Date:** TBD
 **Close Date:** TBD
 
 ## Goal
 
-Implement Slice 4 of the Live Demo GitHub Plan so Airframe demo artifacts can be installed and launched from a project-local location without changing global system state.
+Implement Slice 5 of the Live Demo GitHub Plan so Airframe can optionally demonstrate controlled GitHub write operations after read-only behavior is verified.
 
 ## Rationale
 
-Airframe now has live read-only GitHub-backed behavior in AICockpit and AgileCockpit. The next demo slice needs a repeatable local installation layout so the live demo can be run from the repository without installing into `/Applications`, `/usr/local/bin`, shell startup files, or other global locations.
+Airframe currently reads live GitHub issue state through a read-only `github-issues` backend. Slice 5 needs write support that preserves Airframe authority boundaries: writes must be explicit, auditable, disabled by default, and subject to user approval before live mutation.
 
 ## Scope
 
-- Define and create a project-local demo artifact layout under `demos/LiveDemo/`.
-- Include a project-local `aicockpit` executable artifact.
-- Include a project-local `AgileCockpit.app` artifact.
-- Document repeatable build, install, and launch commands.
-- Verify installed artifacts run against `.airframe/airframe-workspace.json` with backend `github-issues`.
+- Define the authority, approval, and audit contract for controlled GitHub mutations.
+- Add explicit GitHub issue comment and evidence-comment support.
+- Add bounded GitHub status label transition support.
+- Expose mutation paths only through explicit commands or human-facing actions.
+- Verify default-disabled behavior, approval paths, audit evidence, and documentation.
 
 ## Out of Scope
 
-- Global installation into `/Applications`, `/usr/local/bin`, shell startup files, or package managers.
-- Controlled GitHub mutation support from Slice 5.
+- Silent or implicit GitHub writes during read-only commands.
 - Long-lived credential storage in Airframe-generated files.
-- Changing Airframe workflow authority or GitHub backend semantics.
+- AICockpit performing human-only acceptance operations.
+- Bulk issue edits, project board automation, pull request mutations, or repository writes outside GitHub Issues.
+- Closing GitHub issues without explicit human approval.
 
 ## Acceptance Criteria
 
-1. Project-local demo artifacts exist under `demos/LiveDemo/` or another explicitly approved project-local path.
-2. The installed `aicockpit` artifact can run a live `github-issues` project summary from the project-local layout.
-3. The installed `AgileCockpit.app` artifact can be launched from the project-local layout.
-4. `demos/LiveDemo/README.md` documents repeatable build, install, launch, and verification commands.
-5. The implementation does not write to global install locations.
+1. Controlled GitHub mutations are disabled by default or require an explicit opt-in path.
+2. Each mutation command/action is explicit about the GitHub write it performs.
+3. Comment/evidence-comment writes are auditable and tied to an Airframe work item.
+4. Status label transitions are bounded to Airframe workflow status labels and preserve local authority rules.
+5. Verification proves read-only commands still perform no GitHub mutations.
+6. Documentation states approval, audit, and credential expectations for live write demonstrations.
 
 ### Related Sprints
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-012 | Project-local installation for Slice 4 | Review |
+| SP-013 | Plan and implement controlled GitHub mutation work for Slice 5 | Review |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0061 | Define project-local demo artifact layout | Implemented - Not Verified |
-| T-0062 | Install aicockpit into the project-local demo layout | Implemented - Not Verified |
-| T-0063 | Install AgileCockpit.app into the project-local demo layout | Implemented - Not Verified |
-| T-0064 | Document project-local demo installation and verification | Implemented - Not Verified |
-| T-0065 | Verify project-local installation without manual Cockpit launch | Implemented - Not Verified |
+| T-0066 | Define controlled GitHub mutation authority contract | Implemented - Not Verified |
+| T-0067 | Add GitHub issue comment mutation support | Implemented - Not Verified |
+| T-0068 | Add controlled GitHub status label transition support | Implemented - Not Verified |
+| T-0069 | Wire explicit mutation commands and UI affordances | Implemented - Not Verified |
+| T-0070 | Verify controlled mutation safety and documentation | Implemented - Not Verified |
 
 ### Related Issues
 
@@ -66,15 +68,12 @@ Airframe now has live read-only GitHub-backed behavior in AICockpit and AgileCoc
 
 ### Notes
 
-- Source plan: [Live Demo GitHub Plan](../Live-Demo-GitHub-Plan.md), Slice 4.
-- Proposed layout from the source plan:
-  - `demos/LiveDemo/bin/aicockpit`
-  - `demos/LiveDemo/Applications/AgileCockpit.app`
-  - `demos/LiveDemo/README.md`
-- Manual AICockpit and AgileCockpit runs are deferred until all slices are complete; SP-012 verification should use tests and command evidence.
-- T-0061 through T-0065 were created with mapped GitHub Issues on 2026-06-08.
-- SP-012 implementation passed `scripts/verify-sp012.sh` on 2026-06-09 and is awaiting human verification.
+- Source plan: [Live Demo GitHub Plan](../Live-Demo-GitHub-Plan.md), Slice 5.
+- Candidate write operations are issue comments, evidence comments, status label updates, moving issues to verified, and issue closure.
+- User approval remains required before live demonstration writes.
+- GitHub issues #66 through #70 were created for T-0066 through T-0070 on 2026-06-09 and moved to Active when SP-013 opened.
+- SP-013 implementation passed `scripts/verify-sp013.sh` and AgileCockpit tests on 2026-06-09 and is awaiting human verification.
 
 ---
 
-*Last Updated: 2026-06-09 (SP-012 implemented and awaiting verification)*
+*Last Updated: 2026-06-09 (SP-013 implemented and awaiting verification)*

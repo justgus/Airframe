@@ -10,6 +10,6 @@ No Tasks are currently in the backlog.
 
 ---
 
-T-0061 through T-0065 were implemented on 2026-06-09 and moved to [Task-unverified.md](Task-unverified.md).
+T-0066 through T-0070 were moved to active SP-013 implementation on 2026-06-09.
 
-*Last Updated: 2026-06-09 (T-0061 through T-0065 implemented for SP-012)*
+*Last Updated: 2026-06-09 (T-0066 through T-0070 moved to active SP-013 implementation)*

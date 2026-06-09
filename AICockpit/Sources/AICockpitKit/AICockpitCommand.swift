@@ -261,6 +261,99 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals.count == 3 && parsed.positionals[0] == "github" && parsed.positionals[1] == "comment" {
+            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed, controlledMutationsEnabled: true) { backend, context in
+                guard let githubBackend = backend as? AirframeGitHubIssuesBackend else {
+                    throw AICockpitCommandError.invalidArguments("github comment requires backend github-issues")
+                }
+                let result = try githubBackend.addIssueComment(
+                    to: AirframeID(parsed.positionals[2]),
+                    body: try parsed.requiredValue(for: "--body"),
+                    approval: try parsed.githubMutationApproval(),
+                    context: context,
+                    targetProjectID: context.targetProjectID
+                )
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: "ok",
+                        kind: "githubIssueComment",
+                        message: "GitHub issue comment created",
+                        backendCapabilities: githubBackend.capabilities,
+                        workItem: result.workItem,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
+                        evidence: [],
+                        mutationResult: result
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3 && parsed.positionals[0] == "github" && parsed.positionals[1] == "evidence-comment" {
+            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed, controlledMutationsEnabled: true) { backend, context in
+                guard let githubBackend = backend as? AirframeGitHubIssuesBackend else {
+                    throw AICockpitCommandError.invalidArguments("github evidence-comment requires backend github-issues")
+                }
+                let evidence = AirframeEvidence(
+                    id: AirframeID(try parsed.requiredValue(for: "--id")),
+                    summary: try parsed.requiredValue(for: "--summary"),
+                    artifact: try parsed.requiredValue(for: "--artifact")
+                )
+                let result = try githubBackend.attachEvidenceComment(
+                    evidence,
+                    to: AirframeID(parsed.positionals[2]),
+                    approval: try parsed.githubMutationApproval(),
+                    context: context,
+                    targetProjectID: context.targetProjectID
+                )
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: "ok",
+                        kind: "githubEvidenceComment",
+                        message: "GitHub evidence comment created",
+                        backendCapabilities: githubBackend.capabilities,
+                        workItem: result.workItem,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
+                        evidence: [evidence],
+                        mutationResult: result
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3 && parsed.positionals[0] == "github" && parsed.positionals[1] == "status" {
+            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed, controlledMutationsEnabled: true) { backend, context in
+                guard let githubBackend = backend as? AirframeGitHubIssuesBackend else {
+                    throw AICockpitCommandError.invalidArguments("github status requires backend github-issues")
+                }
+                let status = try parsed.requiredStatus(for: "--to")
+                let result = try githubBackend.transitionGitHubStatus(
+                    workItemID: AirframeID(parsed.positionals[2]),
+                    to: status,
+                    approval: try parsed.githubMutationApproval(),
+                    context: context,
+                    targetProjectID: context.targetProjectID
+                )
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: "ok",
+                        kind: "githubStatusLabelTransition",
+                        message: "GitHub status label transitioned",
+                        backendCapabilities: githubBackend.capabilities,
+                        workItem: result.workItem,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
+                        evidence: [],
+                        mutationResult: result
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
         if parsed.positionals.count == 3 && parsed.positionals[0] == "work" && parsed.positionals[1] == "ready" {
             return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, context in
                 let workItemID = AirframeID(parsed.positionals[2])
@@ -315,6 +408,9 @@ public enum AICockpitCommand {
           aicockpit task packet T-XXXX [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit work ready T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit github comment T-XXXX --body text --approve --approved-by name [--config path] [--backend github-issues] [--output markdown|json]
+          aicockpit github evidence-comment T-XXXX --id EV-XXXX --summary text --artifact path --approve --approved-by name [--config path] [--backend github-issues] [--output markdown|json]
+          aicockpit github status T-XXXX --to active|unverified|verified|backlog|closed --approve --approved-by name [--config path] [--backend github-issues] [--output markdown|json]
 
         Linked Core:
           \(AirframeCoreInfo.current.summary)
@@ -370,12 +466,16 @@ public enum AICockpitCommand {
     private static func executeBackendCommand(
         outputFormat: AICockpitOutputFormat,
         parsed: AICockpitArguments,
+        controlledMutationsEnabled: Bool = false,
         body: (any AirframeBackend, AirframeCertifiedContext) throws -> String
     ) -> AICockpitCommandResult {
         do {
             let context = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
             let certifiedContext = try sampleLLMContext(projectID: context.project.id)
-            let backend = try parsed.backend(projectContext: context)
+            let backend = try parsed.backend(
+                projectContext: context,
+                controlledMutationsEnabled: controlledMutationsEnabled
+            )
             return AICockpitCommandResult(
                 exitCode: 0,
                 standardOutput: try body(backend, certifiedContext)
@@ -500,7 +600,10 @@ private struct AICockpitArguments {
         runtimeResolver.storeURL(explicitPath: value(for: "--store"))
     }
 
-    func backend(projectContext: AirframeProjectContext) throws -> any AirframeBackend {
+    func backend(
+        projectContext: AirframeProjectContext,
+        controlledMutationsEnabled: Bool = false
+    ) throws -> any AirframeBackend {
         let requestedKind = value(for: "--backend")
             ?? value(for: "--provider")
             ?? projectContext.configuration.backend.kind
@@ -514,7 +617,8 @@ private struct AICockpitArguments {
             )
         case .githubIssues:
             return AirframeGitHubIssuesBackend(
-                configuration: AirframeGitHubBackendConfiguration(repositorySlug: projectContext.project.repository)
+                configuration: AirframeGitHubBackendConfiguration(repositorySlug: projectContext.project.repository),
+                controlledMutationsEnabled: controlledMutationsEnabled
             )
         case nil:
             throw AICockpitCommandError.invalidArguments("unsupported backend \(requestedKind)")
@@ -535,6 +639,35 @@ private struct AICockpitArguments {
         }
         return value
     }
+
+    func githubMutationApproval() throws -> AirframeGitHubMutationApproval {
+        guard value(for: "--approve") == "true" else {
+            throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+        }
+        let approvedBy = value(for: "--approved-by") ?? "human"
+        return AirframeGitHubMutationApproval(
+            isApproved: true,
+            approvedBy: approvedBy,
+            reason: value(for: "--approval-reason") ?? "Explicit CLI approval"
+        )
+    }
+
+    func requiredStatus(for option: String) throws -> AirframeWorkStatus {
+        switch try requiredValue(for: option) {
+        case "backlog":
+            return .backlog
+        case "active":
+            return .active
+        case "unverified", "implemented-not-verified":
+            return .implementedNotVerified
+        case "verified", "implemented-verified":
+            return .implementedVerified
+        case "closed":
+            return .closed
+        case let value:
+            throw AICockpitCommandError.invalidArguments("unsupported status \(value)")
+        }
+    }
 }
 
 private struct AICockpitCommandEnvelope: Codable, Equatable {
@@ -547,6 +680,7 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     let dashboardSummary: AirframeDashboardSummary?
     var configurationDiagnostics: AirframeConfigurationDiagnostics? = nil
     let evidence: [AirframeEvidence]
+    var mutationResult: AirframeGitHubMutationResult? = nil
 
     var markdown: String {
         var lines = [
@@ -640,6 +774,17 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
         if !evidence.isEmpty {
             lines.append(contentsOf: ["", "## Evidence"])
             lines.append(contentsOf: evidence.map { "- \($0.id.rawValue): \($0.summary) (\($0.artifact))" })
+        }
+
+        if let mutationResult {
+            lines.append(contentsOf: [
+                "",
+                "## GitHub Mutation",
+                "- mutation: \(mutationResult.mutation)",
+                "- issue: #\(mutationResult.githubIssue)",
+                "- audit: \(mutationResult.auditEvent.id.rawValue)",
+                "- action: \(mutationResult.auditEvent.action)"
+            ])
         }
 
         return lines.joined(separator: "\n")

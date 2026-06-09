@@ -11,6 +11,7 @@ import Foundation
     #expect(help.contains("aicockpit config diagnose"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
+    #expect(help.contains("aicockpit github comment"))
     #expect(help.contains("--backend local-fixture|github-fixture|github-issues"))
 }
 
@@ -261,6 +262,20 @@ import Foundation
     #expect(result.standardOutput.contains("\"code\" : \"backendCommandFailed\""))
     #expect(result.standardOutput.contains("read-only"))
     #expect(result.standardOutput.contains("work item creation"))
+}
+
+@Test func githubIssueCommentRequiresExplicitApprovalBeforeLiveLookup() {
+    let result = AICockpitCommand.response(arguments: [
+        "github", "comment", "T-0067",
+        "--backend", "github-issues",
+        "--body", "Evidence is ready.",
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 78)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"code\" : \"backendCommandFailed\""))
+    #expect(result.standardOutput.contains("requires confirmation"))
 }
 
 @Test func taskProposalUsesRuntimeConfigSprintEpicDefaultsAndStore() throws {

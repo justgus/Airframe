@@ -65,6 +65,36 @@ public struct AirframeGitHubIssueRecord: Codable, Equatable, Sendable {
 public protocol AirframeGitHubIssueTransport: Sendable {
     func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord]
     func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord
+    func addComment(
+        issueNumber: Int,
+        body: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws
+    func replaceStatusLabel(
+        issueNumber: Int,
+        removing oldStatusLabels: [String],
+        adding newStatusLabel: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws
+}
+
+public extension AirframeGitHubIssueTransport {
+    func addComment(
+        issueNumber: Int,
+        body: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        throw AirframeBackendError.readOnlyBackend("GitHub issue comments")
+    }
+
+    func replaceStatusLabel(
+        issueNumber: Int,
+        removing oldStatusLabels: [String],
+        adding newStatusLabel: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        throw AirframeBackendError.readOnlyBackend("GitHub status label transitions")
+    }
 }
 
 public struct AirframeGitHubCLITransport: AirframeGitHubIssueTransport {
@@ -88,6 +118,38 @@ public struct AirframeGitHubCLITransport: AirframeGitHubIssueTransport {
             "--json", "number,title,state,labels,body"
         ])
         return try decodeIssue(from: data)
+    }
+
+    public func addComment(
+        issueNumber: Int,
+        body: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        _ = try runGitHubCLI(arguments: [
+            "issue", "comment", "\(issueNumber)",
+            "--repo", configuration.slug,
+            "--body", body
+        ])
+    }
+
+    public func replaceStatusLabel(
+        issueNumber: Int,
+        removing oldStatusLabels: [String],
+        adding newStatusLabel: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        for label in oldStatusLabels where label != newStatusLabel {
+            _ = try runGitHubCLI(arguments: [
+                "issue", "edit", "\(issueNumber)",
+                "--repo", configuration.slug,
+                "--remove-label", label
+            ])
+        }
+        _ = try runGitHubCLI(arguments: [
+            "issue", "edit", "\(issueNumber)",
+            "--repo", configuration.slug,
+            "--add-label", newStatusLabel
+        ])
     }
 
     private func runGitHubCLI(arguments: [String]) throws -> Data {
@@ -458,7 +520,7 @@ public final class AirframeGitHubFixtureBackend: @unchecked Sendable, AirframeBa
 }
 
 public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBackend {
-    public let capabilities: AirframeBackendCapabilities = .githubIssuesReadOnly
+    public let capabilities: AirframeBackendCapabilities
     public let configuration: AirframeGitHubBackendConfiguration
 
     private let transport: any AirframeGitHubIssueTransport
@@ -466,11 +528,13 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
 
     public init(
         configuration: AirframeGitHubBackendConfiguration,
-        transport: any AirframeGitHubIssueTransport = AirframeGitHubCLITransport()
+        transport: any AirframeGitHubIssueTransport = AirframeGitHubCLITransport(),
+        controlledMutationsEnabled: Bool = false
     ) {
         self.configuration = configuration
         self.transport = transport
         self.mapper = AirframeGitHubIssueMapper(configuration: configuration)
+        self.capabilities = controlledMutationsEnabled ? .githubIssuesControlledMutations : .githubIssuesReadOnly
     }
 
     public func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
@@ -539,6 +603,144 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
         throw AirframeBackendError.readOnlyBackend("human verification")
     }
 
+    public func addIssueComment(
+        to workItemID: AirframeID,
+        body: String,
+        approval: AirframeGitHubMutationApproval?,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeGitHubMutationResult {
+        let record = try approvedMutationRecord(
+            workItemID: workItemID,
+            approval: approval,
+            context: context,
+            targetProjectID: targetProjectID,
+            operation: AirframeOperation(
+                id: AirframeID("OP-GITHUB-ISSUE-COMMENT"),
+                category: .evidence,
+                requiresConfirmation: true
+            )
+        )
+        let issueNumber = try githubIssueNumber(for: record)
+        try transport.addComment(issueNumber: issueNumber, body: body, configuration: configuration)
+        return mutationResult(
+            record: record,
+            issueNumber: issueNumber,
+            mutation: "githubIssueComment",
+            action: "OP-GITHUB-ISSUE-COMMENT",
+            context: context,
+            targetProjectID: targetProjectID
+        )
+    }
+
+    public func attachEvidenceComment(
+        _ evidence: AirframeEvidence,
+        to workItemID: AirframeID,
+        approval: AirframeGitHubMutationApproval?,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeGitHubMutationResult {
+        let body = """
+        Airframe Evidence
+        Work Item: \(workItemID.rawValue)
+        Evidence: \(evidence.id.rawValue)
+        Summary: \(evidence.summary)
+        Artifact: \(evidence.artifact)
+        """
+        let record = try approvedMutationRecord(
+            workItemID: workItemID,
+            approval: approval,
+            context: context,
+            targetProjectID: targetProjectID,
+            operation: AirframeOperation(
+                id: AirframeID("OP-GITHUB-EVIDENCE-COMMENT"),
+                category: .evidence,
+                requiresConfirmation: true
+            )
+        )
+        let issueNumber = try githubIssueNumber(for: record)
+        try transport.addComment(issueNumber: issueNumber, body: body, configuration: configuration)
+        return mutationResult(
+            record: record,
+            issueNumber: issueNumber,
+            mutation: "githubEvidenceComment",
+            action: "OP-GITHUB-EVIDENCE-COMMENT",
+            context: context,
+            targetProjectID: targetProjectID
+        )
+    }
+
+    public func transitionGitHubStatus(
+        workItemID: AirframeID,
+        to status: AirframeWorkStatus,
+        approval: AirframeGitHubMutationApproval?,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeGitHubMutationResult {
+        let record = try approvedMutationRecord(
+            workItemID: workItemID,
+            approval: approval,
+            context: context,
+            targetProjectID: targetProjectID,
+            operation: AirframeOperation(
+                id: operationID(for: status),
+                category: operationCategory(for: status),
+                requiresConfirmation: true
+            )
+        )
+        let transition = AirframeWorkflowTransition(
+            workItemID: workItemID,
+            kind: record.workItem.kind,
+            fromStatus: record.workItem.status,
+            toStatus: status,
+            operation: AirframeOperation(
+                id: operationID(for: status),
+                category: operationCategory(for: status),
+                requiresConfirmation: false
+            )
+        )
+        let workflowDecision = AirframeWorkflowTransitionEvaluator().evaluate(
+            context: context,
+            transition: transition,
+            targetProjectID: targetProjectID
+        )
+        switch workflowDecision {
+        case .allowed:
+            break
+        case .denied(let reason, _) where reason == .invalidTransition:
+            throw AirframeBackendError.invalidTransition(from: record.workItem.status, to: status)
+        case .denied(_, let authorityReason):
+            throw AirframeBackendError.authorityDenied(authorityReason)
+        case .requiresConfirmation(let reason):
+            throw AirframeBackendError.requiresConfirmation(reason)
+        }
+
+        let issue = try transport.issue(number: try githubIssueNumber(for: record), configuration: configuration)
+        let statusLabels = issue.labels.filter { $0.hasPrefix("status-") }
+        let issueNumber = try githubIssueNumber(for: record)
+        try transport.replaceStatusLabel(
+            issueNumber: issueNumber,
+            removing: statusLabels,
+            adding: statusLabel(for: status),
+            configuration: configuration
+        )
+        let updatedWorkItem = AirframeWorkItem(
+            id: record.workItem.id,
+            kind: record.workItem.kind,
+            title: record.workItem.title,
+            status: status,
+            githubIssue: record.workItem.githubIssue
+        )
+        return mutationResult(
+            record: record.updating(workItem: updatedWorkItem),
+            issueNumber: issueNumber,
+            mutation: "githubStatusLabelTransition",
+            action: operationID(for: status).rawValue,
+            context: context,
+            targetProjectID: targetProjectID
+        )
+    }
+
     public func dashboardSummary() throws -> AirframeDashboardSummary {
         let records = try listWorkRecords()
         let workItems = records.map(\.workItem)
@@ -565,6 +767,108 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
             || issue.body.contains("Airframe ID:")
             || issue.body.contains("- id: T-")
             || issue.body.contains("- id: I-")
+    }
+
+    private func approvedMutationRecord(
+        workItemID: AirframeID,
+        approval: AirframeGitHubMutationApproval?,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID,
+        operation: AirframeOperation
+    ) throws -> AirframeLocalWorkRecord {
+        guard capabilities.supportsGitHubIssueComments || capabilities.supportsGitHubStatusMutations else {
+            throw AirframeBackendError.readOnlyBackend("controlled GitHub mutations")
+        }
+        guard approval?.isApproved == true else {
+            throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+        }
+        let decision = AirframeAuthorityEvaluator().evaluate(
+            context: context,
+            operation: AirframeOperation(
+                id: operation.id,
+                category: operation.category,
+                requiresConfirmation: false
+            ),
+            targetProjectID: targetProjectID
+        )
+        guard decision.isAllowed else {
+            throw AirframeBackendError.authorityDenied(decision.reason)
+        }
+        guard let record = try workRecord(id: workItemID) else {
+            throw AirframeBackendError.missingWorkItem(workItemID)
+        }
+        return record
+    }
+
+    private func githubIssueNumber(for record: AirframeLocalWorkRecord) throws -> Int {
+        guard let issueNumber = record.workItem.githubIssue else {
+            throw AirframeBackendError.missingWorkItem(record.workItem.id)
+        }
+        return issueNumber
+    }
+
+    private func mutationResult(
+        record: AirframeLocalWorkRecord,
+        issueNumber: Int,
+        mutation: String,
+        action: String,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) -> AirframeGitHubMutationResult {
+        AirframeGitHubMutationResult(
+            workItem: record.workItem,
+            githubIssue: issueNumber,
+            mutation: mutation,
+            auditEvent: AirframeAuditEventFactory().makeEvent(
+                id: AirframeID("AUD-\(action)-\(record.workItem.id.rawValue)"),
+                context: context,
+                action: action,
+                workItemID: record.workItem.id,
+                decision: .allowed(),
+                targetProjectID: targetProjectID
+            )
+        )
+    }
+
+    private func statusLabel(for status: AirframeWorkStatus) -> String {
+        switch status {
+        case .backlog:
+            "status-backlog"
+        case .active:
+            "status-active"
+        case .implementedNotVerified:
+            "status-unverified"
+        case .implementedVerified:
+            "status-verified"
+        case .closed:
+            "status-closed"
+        }
+    }
+
+    private func operationID(for status: AirframeWorkStatus) -> AirframeID {
+        switch status {
+        case .backlog:
+            AirframeID("OP-GITHUB-MOVE-BACKLOG")
+        case .active:
+            AirframeID("OP-GITHUB-MOVE-ACTIVE")
+        case .implementedNotVerified:
+            AirframeID("OP-GITHUB-MARK-READY")
+        case .implementedVerified:
+            AirframeID("OP-HUMAN-VERIFY")
+        case .closed:
+            AirframeID("OP-GITHUB-CLOSE-WORK")
+        }
+    }
+
+    private func operationCategory(for status: AirframeWorkStatus) -> AirframeOperationCategory {
+        switch status {
+        case .implementedVerified:
+            .humanAcceptance
+        case .closed:
+            .destructive
+        default:
+            .workflowTransition
+        }
     }
 }
 
