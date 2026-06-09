@@ -11,13 +11,13 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **None**
+Currently: **SP-012**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **11 Sprints** | Next available: **SP-012**
+Currently: **12 Sprints** | Next available: **SP-013**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -32,14 +32,15 @@ Currently: **11 Sprints** | Next available: **SP-012**
 | SP-009 | Live Demo Runtime Configuration | EP-009 | T-0046, T-0047, T-0048, T-0049, T-0050 | None | Closed |
 | SP-010 | Read-Only GitHub Issues Adapter | EP-010 | T-0051, T-0052, T-0053, T-0054, T-0055 | None | Closed |
 | SP-011 | AgileCockpit Live Project View Planning | EP-011 | T-0056, T-0057, T-0058, T-0059, T-0060 | None | Closed |
+| SP-012 | Project-Local Installation | EP-012 | T-0061, T-0062, T-0063, T-0064, T-0065 | None | Review |
 
 ## Statistics
 
-- **Total Sprints:** 11
+- **Total Sprints:** 12
 - **Planning:** 0
 - **Active:** 0
-- **Review:** 0
+- **Review:** 1
 - **Closed:** 11
-- **Next available:** SP-012
+- **Next available:** SP-013
 
-*Last Updated: 2026-06-08 (SP-011 verified and closed)*
+*Last Updated: 2026-06-09 (SP-012 implemented and awaiting verification)*

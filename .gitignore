@@ -14,6 +14,12 @@ DerivedData/
 .build/
 .swiftpm/
 
+# Project-local live demo build products
+demos/LiveDemo/.build/
+demos/LiveDemo/DerivedData/
+demos/LiveDemo/bin/aicockpit
+demos/LiveDemo/Applications/
+
 # Xcode user-local state
 *.xcuserstate
 *.xcscmblueprint

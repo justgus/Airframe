@@ -16,7 +16,7 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 Currently: **0 backlog Tasks**
 
-No Tasks are currently in backlog.
+No Tasks are currently in the backlog.
 
 See: [Task-backlog.md](Task-backlog.md)
 
@@ -30,15 +30,21 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **5 unverified Tasks**
 
-No Tasks are awaiting human verification.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0061 | #61 | Define project-local demo artifact layout | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0062 | #65 | Install aicockpit into the project-local demo layout | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0063 | #64 | Install AgileCockpit.app into the project-local demo layout | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0064 | #63 | Document project-local demo installation and verification | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0065 | #62 | Verify project-local installation without manual Cockpit launch | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **60 verified Tasks** | Next available: **T-0061**
+Currently: **60 verified Tasks** | Next available: **T-0066**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -105,12 +111,12 @@ Currently: **60 verified Tasks** | Next available: **T-0061**
 
 ## Statistics
 
-- **Total Tasks:** 60
+- **Total Tasks:** 65
 - **Backlog:** 0
 - **Active:** 0
-- **Unverified:** 0
+- **Unverified:** 5
 - **Verified:** 60
 - **Closed:** 0
-- **Next available:** T-0061
+- **Next available:** T-0066
 
-*Last Updated: 2026-06-08 (T-0056 through T-0060 verified and SP-011 closed)*
+*Last Updated: 2026-06-09 (T-0061 through T-0065 implemented for SP-012)*
