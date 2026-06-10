@@ -11,13 +11,13 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-014**
+Currently: **SP-015**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## All Sprints
 
-Currently: **14 Sprints** | Next available: **SP-015**
+Currently: **15 Sprints** | Next available: **SP-016**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -34,15 +34,16 @@ Currently: **14 Sprints** | Next available: **SP-015**
 | SP-011 | AgileCockpit Live Project View Planning | EP-011 | T-0056, T-0057, T-0058, T-0059, T-0060 | None | Closed |
 | SP-012 | Project-Local Installation | EP-012 | T-0061, T-0062, T-0063, T-0064, T-0065 | None | Closed |
 | SP-013 | Controlled GitHub Mutation Planning | EP-013 | T-0066, T-0067, T-0068, T-0069, T-0070 | None | Closed |
-| SP-014 | End-to-End Live Demo Rehearsal | EP-014 | T-0071, T-0072, T-0073, T-0074, T-0075 | None | Review |
+| SP-014 | End-to-End Live Demo Rehearsal | EP-014 | T-0071, T-0072, T-0073, T-0074, T-0075 | None | Closed |
+| SP-015 | Human Planning Controls for Agile Artifacts | EP-015 | T-0076, T-0077, T-0078, T-0079, T-0080 | None | Active |
 
 ## Statistics
 
-- **Total Sprints:** 14
+- **Total Sprints:** 15
 - **Planning:** 0
-- **Active:** 0
-- **Review:** 1
-- **Closed:** 13
-- **Next available:** SP-015
+- **Active:** 1
+- **Review:** 0
+- **Closed:** 14
+- **Next available:** SP-016
 
-*Last Updated: 2026-06-10 (SP-014 implemented and awaiting verification)*
+*Last Updated: 2026-06-10 (SP-015 activated)*

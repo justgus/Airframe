@@ -22,29 +22,29 @@ See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **0 active Tasks**
+Currently: **5 active Tasks**
 
-No Tasks are actively being implemented.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0076 | #77 | Define AgileCockpit planning operation contract | [Task-active.md](Task-active.md) | Active |
+| T-0077 | #79 | Add AirframeCore planning APIs for artifact operations | [Task-active.md](Task-active.md) | Active |
+| T-0078 | #80 | Implement AgileCockpit task and issue planning UI | [Task-active.md](Task-active.md) | Active |
+| T-0079 | #78 | Implement AgileCockpit sprint and epic management UI | [Task-active.md](Task-active.md) | Active |
+| T-0080 | #76 | Verify planning management workflow and documentation | [Task-active.md](Task-active.md) | Active |
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **5 unverified Tasks**
+Currently: **0 unverified Tasks**
 
-| Task | GitHub Issue | Title | File | Status |
-| ---- | ------------ | ----- | ---- | ------ |
-| T-0071 | #71 | Define Slice 6 end-to-end demo script and success criteria | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0072 | #75 | Rehearse project-local AICockpit live GitHub workflow | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0073 | #72 | Rehearse AgileCockpit live project review workflow | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0074 | #74 | Verify controlled GitHub write demo with explicit approval | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0075 | #73 | Document final live demo runbook and rollback notes | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+No Tasks are currently awaiting human verification.
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **70 verified Tasks** | Next available: **T-0076**
+Currently: **75 verified Tasks** | Next available: **T-0081**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -118,15 +118,20 @@ Currently: **70 verified Tasks** | Next available: **T-0076**
 | T-0068 | #68 | Add controlled GitHub status label transition support | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
 | T-0069 | #69 | Wire explicit mutation commands and UI affordances | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
 | T-0070 | #70 | Verify controlled mutation safety and documentation | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
+| T-0071 | #71 | Define Slice 6 end-to-end demo script and success criteria | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
+| T-0072 | #75 | Rehearse project-local AICockpit live GitHub workflow | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
+| T-0073 | #72 | Rehearse AgileCockpit live project review workflow | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
+| T-0074 | #74 | Verify controlled GitHub write demo with explicit approval | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
+| T-0075 | #73 | Document final live demo runbook and rollback notes | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
 
 ## Statistics
 
-- **Total Tasks:** 75
+- **Total Tasks:** 80
 - **Backlog:** 0
-- **Active:** 0
-- **Unverified:** 5
-- **Verified:** 70
+- **Active:** 5
+- **Unverified:** 0
+- **Verified:** 75
 - **Closed:** 0
-- **Next available:** T-0076
+- **Next available:** T-0081
 
-*Last Updated: 2026-06-10 (T-0071 through T-0075 implemented for SP-014)*
+*Last Updated: 2026-06-10 (SP-015 activated with T-0076 through T-0080)*

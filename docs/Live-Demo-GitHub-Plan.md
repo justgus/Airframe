@@ -215,7 +215,7 @@ Rules:
 
 ### Slice 6: End-to-End Live Demo Rehearsal
 
-Status: Implemented and awaiting verification on 2026-06-10 through EP-014 / SP-014.
+Status: Closed on 2026-06-10 through EP-014 / SP-014.
 
 Goal: prove the installed project-local demo can run a full Airframe live workflow against `justgus/Airframe`, including read-only discovery, AgileCockpit review, and explicitly approved GitHub mutation paths, without relying on fixture-backed behavior or global install state.
 
@@ -239,6 +239,34 @@ Rules:
 - do not rely on fixture-backed behavior for live demo claims;
 - keep all GitHub mutations explicit, approved, and auditable;
 - document expected outputs and rollback steps before final rehearsal closeout.
+
+### Slice 7: AgileCockpit Planning Management
+
+Status: Active on 2026-06-10 through EP-015 / SP-015.
+
+Goal: make AgileCockpit the human-facing surface for managing Epics, Sprints, Tasks, and Issues instead of only viewing them.
+
+Planned records:
+
+- Epic: EP-015, AgileCockpit Planning Management
+- Sprint: SP-015, Human Planning Controls for Agile Artifacts
+- Tasks: T-0076 through T-0080
+
+Deliverables:
+
+- AgileCockpit planning operation contract;
+- AirframeCore planning APIs for artifact operations;
+- AgileCockpit task and issue planning UI;
+- AgileCockpit sprint and epic management UI;
+- planning workflow verification and documentation.
+
+Rules:
+
+- route planning operations through AirframeCore;
+- keep AICockpit agent-facing and barred from human-only closeout actions;
+- require explicit confirmation for sensitive human planning actions;
+- surface backend capability limits clearly;
+- keep GitHub mutations explicit, approved, and auditable.
 
 ## 6. Demo Script
 

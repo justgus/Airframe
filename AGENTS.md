@@ -46,6 +46,22 @@ The user owns the project direction and approval boundary. Codex must not turn b
 
 - Preserve AirframeCore as the canonical source for workflow policy, authority evaluation, backend capabilities, configuration diagnostics, and work record semantics.
 - AICockpit is the agent-facing CLI and must not perform human-only acceptance operations.
+- Use AICockpit as the primary interface for Agile Artifact discovery and agent-allowed workflow actions before directly editing `docs/Tasks/`, `docs/Issues/`, `docs/Sprints/`, `docs/Epics/`, or related GitHub issue state.
+- For Agile Artifact work, first inspect context and project state with direct AICockpit commands, normally:
+
+```sh
+swift run --package-path AICockpit aicockpit context --config .airframe/airframe-workspace.json
+swift run --package-path AICockpit aicockpit project summary --config .airframe/airframe-workspace.json --backend github-issues --output json
+```
+
+- For assigned Task work, retrieve the task packet through AICockpit before implementation, normally:
+
+```sh
+swift run --package-path AICockpit aicockpit task packet T-XXXX --config .airframe/airframe-workspace.json --backend github-issues --output json
+```
+
+- Codex may use AICockpit for read-only discovery, task packets, evidence attachment or evidence comments, and explicitly approved workflow transitions. Codex must not use AICockpit or any other tool to perform human-only acceptance, human verification, sprint closure, epic closure, issue closure, or workflow policy changes.
+- If AICockpit does not support a needed Agile Artifact mutation, Codex must state the capability gap and request approval before directly editing Agile Artifact Markdown or mutating GitHub.
 - AgileCockpit is the human-facing review surface and may expose human verification actions through AirframeCore.
 - Live GitHub access is not assumed. Fixture-backed GitHub behavior is distinct from live GitHub Issues integration.
 - A live demonstration project must be planned before implementation. The plan must specify repository/project target, local clone or remote source, backend mode, credential expectations, install locations, seeded data, and verification criteria.
@@ -55,4 +71,3 @@ The user owns the project direction and approval boundary. Codex must not turn b
 - Keep status updates concise and concrete.
 - When a user correction identifies a process failure, acknowledge it directly and adjust behavior immediately.
 - Do not spend tokens defending a mistaken action. State current state, what changed, and what approval is needed next.
-

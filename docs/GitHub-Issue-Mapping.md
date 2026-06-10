@@ -91,9 +91,14 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0073 | #72 | EP-014 | Rehearse AgileCockpit live project review workflow |
 | T-0074 | #74 | EP-014 | Verify controlled GitHub write demo with explicit approval |
 | T-0075 | #73 | EP-014 | Document final live demo runbook and rollback notes |
+| T-0076 | #77 | EP-015 | Define AgileCockpit planning operation contract |
+| T-0077 | #79 | EP-015 | Add AirframeCore planning APIs for artifact operations |
+| T-0078 | #80 | EP-015 | Implement AgileCockpit task and issue planning UI |
+| T-0079 | #78 | EP-015 | Implement AgileCockpit sprint and epic management UI |
+| T-0080 | #76 | EP-015 | Verify planning management workflow and documentation |
 
 ## Current Issue Mapping
 
 No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
 
-*Last Updated: 2026-06-10 (T-0071 through T-0075 mapped to GitHub issues #71 through #75)*
+*Last Updated: 2026-06-10 (T-0076 through T-0080 mapped to GitHub issues #76 through #80)*
