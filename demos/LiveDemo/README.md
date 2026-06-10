@@ -34,10 +34,10 @@ That configuration should identify repository `justgus/Airframe` and backend `gi
 
 ## Verify
 
-Run the SP-012 verification command:
+Run the SP-014 verification command:
 
 ```sh
-scripts/verify-sp012.sh
+scripts/verify-sp014.sh
 ```
 
 The verification flow:
@@ -47,7 +47,11 @@ The verification flow:
 - checks `demos/LiveDemo/Applications/AgileCockpit.app` exists;
 - runs configuration diagnostics through the installed `aicockpit`;
 - runs a live `github-issues` project summary through the installed `aicockpit`;
+- runs live `github-issues` next-task and task-packet checks;
+- verifies a controlled GitHub write command fails without explicit approval;
 - runs automated AgileCockpit tests without requiring a manual app launch.
+
+See [../../docs/Live-Demo-Runbook.md](../../docs/Live-Demo-Runbook.md) for the full Slice 6 rehearsal runbook.
 
 ## Manual Launch Later
 

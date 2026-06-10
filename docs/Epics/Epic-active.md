@@ -4,76 +4,68 @@ Draft, Active, and Complete-pending-close Epics are listed here.
 
 ---
 
-## EP-013: Controlled GitHub Mutations
+## EP-014: Live Demo Rehearsal and Readiness
 
 **Status:** Complete-pending-close
 **Owner:** Human / Airframe Planning
-**Start Date:** 2026-06-09
+**Start Date:** 2026-06-10
 **Target Close Date:** TBD
 **Close Date:** TBD
 
 ## Goal
 
-Implement Slice 5 of the Live Demo GitHub Plan so Airframe can optionally demonstrate controlled GitHub write operations after read-only behavior is verified.
+Prove the installed project-local demo can run a full Airframe live workflow against `justgus/Airframe`, including read-only discovery, AgileCockpit review, and explicitly approved GitHub mutation paths, without relying on fixture-backed behavior or global install state.
 
 ## Rationale
 
-Airframe currently reads live GitHub issue state through a read-only `github-issues` backend. Slice 5 needs write support that preserves Airframe authority boundaries: writes must be explicit, auditable, disabled by default, and subject to user approval before live mutation.
+Slices 1 through 5 established runtime configuration, live GitHub issue reads, AgileCockpit live views, project-local installation, and controlled GitHub mutations. Slice 6 should rehearse the full demo as an integrated workflow and capture the final runbook before the live demonstration is treated as ready.
 
 ## Scope
 
-- Define the authority, approval, and audit contract for controlled GitHub mutations.
-- Add explicit GitHub issue comment and evidence-comment support.
-- Add bounded GitHub status label transition support.
-- Expose mutation paths only through explicit commands or human-facing actions.
-- Verify default-disabled behavior, approval paths, audit evidence, and documentation.
+- Define the Slice 6 demo script, success criteria, constraints, and rollback expectations.
+- Rehearse project-local AICockpit live GitHub workflow commands.
+- Rehearse AgileCockpit live project review using the installed project-local app.
+- Verify a controlled GitHub write demonstration with explicit approval and audit evidence.
+- Document the final live demo runbook, expected outputs, known limitations, and rollback notes.
 
 ## Out of Scope
 
-- Silent or implicit GitHub writes during read-only commands.
-- Long-lived credential storage in Airframe-generated files.
-- AICockpit performing human-only acceptance operations.
-- Bulk issue edits, project board automation, pull request mutations, or repository writes outside GitHub Issues.
-- Closing GitHub issues without explicit human approval.
+- Global installation into `/Applications`, `/usr/local/bin`, shell startup files, or package managers.
+- Silent or implicit GitHub writes.
+- Fixture-backed behavior presented as live GitHub behavior.
+- New workflow authority semantics beyond the approved controlled mutation contract.
+- Project board, pull request, or repository mutations outside GitHub Issues.
 
 ## Acceptance Criteria
 
-1. Controlled GitHub mutations are disabled by default or require an explicit opt-in path.
-2. Each mutation command/action is explicit about the GitHub write it performs.
-3. Comment/evidence-comment writes are auditable and tied to an Airframe work item.
-4. Status label transitions are bounded to Airframe workflow status labels and preserve local authority rules.
-5. Verification proves read-only commands still perform no GitHub mutations.
-6. Documentation states approval, audit, and credential expectations for live write demonstrations.
+1. Slice 6 has a concrete demo script with success criteria and rollback notes.
+2. AICockpit runs against the project-local install and live `github-issues` backend.
+3. AgileCockpit displays live project review state from the project-local install.
+4. Controlled GitHub write demonstration requires explicit approval and records audit evidence.
+5. Final runbook documents expected commands, outputs, approval checkpoints, limitations, and cleanup.
 
 ### Related Sprints
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-013 | Plan and implement controlled GitHub mutation work for Slice 5 | Review |
+| SP-014 | Rehearse the end-to-end live demo for Slice 6 | Review |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0066 | Define controlled GitHub mutation authority contract | Implemented - Not Verified |
-| T-0067 | Add GitHub issue comment mutation support | Implemented - Not Verified |
-| T-0068 | Add controlled GitHub status label transition support | Implemented - Not Verified |
-| T-0069 | Wire explicit mutation commands and UI affordances | Implemented - Not Verified |
-| T-0070 | Verify controlled mutation safety and documentation | Implemented - Not Verified |
-
-### Related Issues
-
-| Issue | Title | Status |
-| ----- | ----- | ------ |
+| T-0071 | Define Slice 6 end-to-end demo script and success criteria | Implemented - Not Verified |
+| T-0072 | Rehearse project-local AICockpit live GitHub workflow | Implemented - Not Verified |
+| T-0073 | Rehearse AgileCockpit live project review workflow | Implemented - Not Verified |
+| T-0074 | Verify controlled GitHub write demo with explicit approval | Implemented - Not Verified |
+| T-0075 | Document final live demo runbook and rollback notes | Implemented - Not Verified |
 
 ### Notes
 
-- Source plan: [Live Demo GitHub Plan](../Live-Demo-GitHub-Plan.md), Slice 5.
-- Candidate write operations are issue comments, evidence comments, status label updates, moving issues to verified, and issue closure.
-- User approval remains required before live demonstration writes.
-- GitHub issues #66 through #70 were created for T-0066 through T-0070 on 2026-06-09 and moved to Active when SP-013 opened.
-- SP-013 implementation passed `scripts/verify-sp013.sh` and AgileCockpit tests on 2026-06-09 and is awaiting human verification.
+- Source plan: [Live Demo GitHub Plan](../Live-Demo-GitHub-Plan.md), Slice 6.
+- GitHub issues #71 through #75 were created for T-0071 through T-0075 on 2026-06-10 and opened as active SP-014 work.
+- SP-014 implementation passed `scripts/verify-sp014.sh`, `swift test --package-path AirframeCore`, and `swift test --package-path AICockpit` on 2026-06-10 and is awaiting human verification.
 
 ---
 
-*Last Updated: 2026-06-09 (SP-013 implemented and awaiting verification)*
+*Last Updated: 2026-06-10 (SP-014 implemented and awaiting verification)*

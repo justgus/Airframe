@@ -34,17 +34,17 @@ Currently: **5 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0066 | #66 | Define controlled GitHub mutation authority contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0067 | #67 | Add GitHub issue comment mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0068 | #68 | Add controlled GitHub status label transition support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0069 | #69 | Wire explicit mutation commands and UI affordances | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0070 | #70 | Verify controlled mutation safety and documentation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0071 | #71 | Define Slice 6 end-to-end demo script and success criteria | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0072 | #75 | Rehearse project-local AICockpit live GitHub workflow | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0073 | #72 | Rehearse AgileCockpit live project review workflow | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0074 | #74 | Verify controlled GitHub write demo with explicit approval | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0075 | #73 | Document final live demo runbook and rollback notes | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **65 verified Tasks** | Next available: **T-0071**
+Currently: **70 verified Tasks** | Next available: **T-0076**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -113,15 +113,20 @@ Currently: **65 verified Tasks** | Next available: **T-0071**
 | T-0063 | #64 | Install AgileCockpit.app into the project-local demo layout | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
 | T-0064 | #63 | Document project-local demo installation and verification | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
 | T-0065 | #62 | Verify project-local installation without manual Cockpit launch | [Task-verified-0061-0065.md](Verified/Task-verified-0061-0065.md) | Implemented - Verified |
+| T-0066 | #66 | Define controlled GitHub mutation authority contract | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
+| T-0067 | #67 | Add GitHub issue comment mutation support | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
+| T-0068 | #68 | Add controlled GitHub status label transition support | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
+| T-0069 | #69 | Wire explicit mutation commands and UI affordances | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
+| T-0070 | #70 | Verify controlled mutation safety and documentation | [Task-verified-0066-0070.md](Verified/Task-verified-0066-0070.md) | Implemented - Verified |
 
 ## Statistics
 
-- **Total Tasks:** 70
+- **Total Tasks:** 75
 - **Backlog:** 0
 - **Active:** 0
 - **Unverified:** 5
-- **Verified:** 65
+- **Verified:** 70
 - **Closed:** 0
-- **Next available:** T-0071
+- **Next available:** T-0076
 
-*Last Updated: 2026-06-09 (T-0066 through T-0070 implemented for SP-013)*
+*Last Updated: 2026-06-10 (T-0071 through T-0075 implemented for SP-014)*

@@ -86,9 +86,14 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0068 | #68 | EP-013 | Add controlled GitHub status label transition support |
 | T-0069 | #69 | EP-013 | Wire explicit mutation commands and UI affordances |
 | T-0070 | #70 | EP-013 | Verify controlled mutation safety and documentation |
+| T-0071 | #71 | EP-014 | Define Slice 6 end-to-end demo script and success criteria |
+| T-0072 | #75 | EP-014 | Rehearse project-local AICockpit live GitHub workflow |
+| T-0073 | #72 | EP-014 | Rehearse AgileCockpit live project review workflow |
+| T-0074 | #74 | EP-014 | Verify controlled GitHub write demo with explicit approval |
+| T-0075 | #73 | EP-014 | Document final live demo runbook and rollback notes |
 
 ## Current Issue Mapping
 
 No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
 
-*Last Updated: 2026-06-09 (T-0066 through T-0070 mapped to GitHub issues #66 through #70)*
+*Last Updated: 2026-06-10 (T-0071 through T-0075 mapped to GitHub issues #71 through #75)*

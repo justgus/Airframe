@@ -157,10 +157,33 @@ public struct AirframeGitHubCLITransport: AirframeGitHubIssueTransport {
         process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
         process.arguments = ["gh"] + arguments
 
-        let output = Pipe()
-        let error = Pipe()
-        process.standardOutput = output
-        process.standardError = error
+        let fileManager = FileManager.default
+        let temporaryDirectory = fileManager.temporaryDirectory
+        let invocationID = UUID().uuidString
+        let outputURL = temporaryDirectory.appendingPathComponent("airframe-gh-\(invocationID).stdout")
+        let errorURL = temporaryDirectory.appendingPathComponent("airframe-gh-\(invocationID).stderr")
+
+        _ = fileManager.createFile(atPath: outputURL.path, contents: nil)
+        _ = fileManager.createFile(atPath: errorURL.path, contents: nil)
+
+        let outputHandle: FileHandle
+        let errorHandle: FileHandle
+        do {
+            outputHandle = try FileHandle(forWritingTo: outputURL)
+            errorHandle = try FileHandle(forWritingTo: errorURL)
+        } catch {
+            throw AirframeBackendError.githubAccessFailed("Unable to prepare gh output capture: \(error.localizedDescription)")
+        }
+
+        process.standardOutput = outputHandle
+        process.standardError = errorHandle
+
+        defer {
+            try? outputHandle.close()
+            try? errorHandle.close()
+            try? fileManager.removeItem(at: outputURL)
+            try? fileManager.removeItem(at: errorURL)
+        }
 
         do {
             try process.run()
@@ -169,8 +192,11 @@ public struct AirframeGitHubCLITransport: AirframeGitHubIssueTransport {
         }
 
         process.waitUntilExit()
-        let outputData = output.fileHandleForReading.readDataToEndOfFile()
-        let errorData = error.fileHandleForReading.readDataToEndOfFile()
+        try? outputHandle.close()
+        try? errorHandle.close()
+
+        let outputData = (try? Data(contentsOf: outputURL)) ?? Data()
+        let errorData = (try? Data(contentsOf: errorURL)) ?? Data()
 
         guard process.terminationStatus == 0 else {
             let message = String(decoding: errorData, as: UTF8.self)

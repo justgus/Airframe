@@ -1,6 +1,6 @@
 # Controlled GitHub Mutations
 
-**Status:** Active implementation contract for EP-013 / SP-013.
+**Status:** Completed implementation contract for EP-013 / SP-013.
 
 ## Purpose
 

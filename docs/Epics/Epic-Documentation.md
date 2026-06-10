@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Epics. Epics are implementation milest
 
 ## Active Epics
 
-Currently: **EP-013**
+Currently: **EP-014**
 
 See: [Epic-active.md](Epic-active.md)
 
@@ -24,7 +24,7 @@ See: [Epic-backlog.md](Epic-backlog.md)
 
 ## All Epics
 
-Currently: **13 Epics** | Next available: **EP-014**
+Currently: **14 Epics** | Next available: **EP-015**
 
 | Epic | Title | Status | Start | Close |
 | ---- | ----- | ------ | ----- | ----- |
@@ -40,16 +40,17 @@ Currently: **13 Epics** | Next available: **EP-014**
 | EP-010 | Read-Only GitHub Adapter | Closed | 2026-06-05 | 2026-06-06 |
 | EP-011 | AgileCockpit Live Project View | Closed | 2026-06-06 | 2026-06-08 |
 | EP-012 | Project-Local Installation | Closed | 2026-06-08 | 2026-06-09 |
-| EP-013 | Controlled GitHub Mutations | Complete-pending-close | 2026-06-09 | TBD |
+| EP-013 | Controlled GitHub Mutations | Closed | 2026-06-09 | 2026-06-10 |
+| EP-014 | Live Demo Rehearsal and Readiness | Complete-pending-close | 2026-06-10 | TBD |
 
 ## Statistics
 
-- **Total Epics:** 13
+- **Total Epics:** 14
 - **Proposed:** 0
 - **Draft:** 0
 - **Active:** 0
 - **Complete pending close:** 1
-- **Closed:** 12
-- **Next available:** EP-014
+- **Closed:** 13
+- **Next available:** EP-015
 
-*Last Updated: 2026-06-09 (EP-013 implemented and awaiting verification)*
+*Last Updated: 2026-06-10 (EP-014 implemented and awaiting verification)*

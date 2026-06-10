@@ -194,6 +194,8 @@ Installation commands should be documented and repeatable. Global installation i
 
 ### Slice 5: Controlled GitHub Mutations
 
+Status: Completed and verified on 2026-06-10 through EP-013 / SP-013.
+
 Goal: optionally demonstrate write support after read-only behavior is verified.
 
 Candidate write operations:
@@ -210,6 +212,33 @@ Rules:
 - each mutation must be explicit in the command name or flag;
 - user approval required before live demonstration writes;
 - audit record required for every write.
+
+### Slice 6: End-to-End Live Demo Rehearsal
+
+Status: Implemented and awaiting verification on 2026-06-10 through EP-014 / SP-014.
+
+Goal: prove the installed project-local demo can run a full Airframe live workflow against `justgus/Airframe`, including read-only discovery, AgileCockpit review, and explicitly approved GitHub mutation paths, without relying on fixture-backed behavior or global install state.
+
+Planned records:
+
+- Epic: EP-014, Live Demo Rehearsal and Readiness
+- Sprint: SP-014, End-to-End Live Demo Rehearsal
+- Tasks: T-0071 through T-0075
+
+Deliverables:
+
+- final Slice 6 demo script and success criteria;
+- project-local AICockpit live GitHub workflow rehearsal;
+- AgileCockpit live project review rehearsal;
+- controlled GitHub write demo verification with explicit approval;
+- final live demo runbook and rollback notes.
+
+Rules:
+
+- use project-local installed artifacts;
+- do not rely on fixture-backed behavior for live demo claims;
+- keep all GitHub mutations explicit, approved, and auditable;
+- document expected outputs and rollback steps before final rehearsal closeout.
 
 ## 6. Demo Script
 
