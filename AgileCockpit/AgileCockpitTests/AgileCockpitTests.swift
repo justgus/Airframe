@@ -127,6 +127,34 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitRefreshesFromBackendSourceOfTruth() throws {
+    let context = try AirframeConfigurationLoader().context(
+        for: try AirframeConfigurationLoader().load(data: liveConfigurationData(backendKind: "local-fixture"))
+    )
+    let storeURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitRefreshStore")
+        .appending(path: UUID().uuidString)
+        .appending(path: "airframe-local-backend.json")
+    let backend = AirframeLocalFilesystemBackend(storeURL: storeURL)
+    let firstRecord = localTaskRecord(id: "T-9100", title: "Initial refresh task")
+    try backend.createWorkRecord(firstRecord)
+
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id)
+    )
+
+    #expect(model.activeRecords.map(\.workItem.id) == [AirframeID("T-9100")])
+
+    try backend.createWorkRecord(localTaskRecord(id: "T-9101", title: "External refresh task"))
+    model.refreshFromExternalChange()
+
+    #expect(model.activeRecords.map(\.workItem.id) == [AirframeID("T-9100"), AirframeID("T-9101")])
+    #expect(model.statusMessage == "Refreshed from Airframe state.")
+}
+
+@MainActor
 @Test func agileCockpitShowsSprintEpicMetricsAndAuditRows() throws {
     let model = try AgileCockpitDashboardModel.sample()
 
@@ -172,6 +200,42 @@ private func liveConfigurationData(backendKind: String) -> Data {
           }
         }
         """.utf8
+    )
+}
+
+private func reviewerContext(projectID: AirframeID) throws -> AirframeCertifiedContext {
+    let actor = AirframeActor(
+        id: AirframeID("ACTOR-REFRESH-TESTER"),
+        displayName: "Refresh Tester",
+        authorityClass: .humanReviewer,
+        credentialSource: .xcodeSession
+    )
+    let credential = AirframeCredentialContext(
+        credentialID: AirframeID("CRED-REFRESH-TESTER"),
+        actorID: actor.id,
+        credentialSource: .xcodeSession,
+        executionProjectID: projectID,
+        allowedProjectIDs: [projectID]
+    )
+    return try AirframeCertifiedContext(actor: actor, credential: credential, targetProjectID: projectID)
+}
+
+private func localTaskRecord(id: String, title: String) -> AirframeLocalWorkRecord {
+    AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID(id),
+            kind: .task,
+            title: title,
+            status: .active,
+            githubIssue: Int(id.dropFirst(2))
+        ),
+        epicID: AirframeID("EP-016"),
+        sprintID: AirframeID("SP-016"),
+        priority: .high,
+        acceptanceCriteria: ["Refresh state is loaded from the backend."],
+        scope: ["AgileCockpit"],
+        constraints: ["Do not trust notification payloads as state."],
+        evidenceRequirements: ["AgileCockpit refresh test passes."]
     )
 }
 

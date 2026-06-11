@@ -2,6 +2,9 @@ import AirframeCore
 import Combine
 import Foundation
 import SwiftUI
+#if os(macOS)
+import Darwin
+#endif
 
 enum AgileCockpitSection: String, CaseIterable, Identifiable {
     case dashboard = "Dashboard"
@@ -41,6 +44,9 @@ final class AgileCockpitDashboardModel: ObservableObject {
     private let backend: any AirframeBackend
     private let reviewerContext: AirframeCertifiedContext
     private var auditStore: AirframeAuditEventStore
+    private var refreshObserver: NSObjectProtocol?
+    private var fileWatchSources: [DispatchSourceFileSystemObject] = []
+    private var pendingRefreshWorkItem: DispatchWorkItem?
 
     init(
         coreInfo: AirframeCoreInfo = .current,
@@ -48,7 +54,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         backend: any AirframeBackend,
         reviewerContext: AirframeCertifiedContext,
         auditStore: AirframeAuditEventStore = AirframeAuditEventStore(),
-        selectedSection: AgileCockpitSection = .dashboard
+        selectedSection: AgileCockpitSection = .dashboard,
+        observedURLs: [URL] = []
     ) throws {
         self.coreInfo = coreInfo
         self.context = context
@@ -63,6 +70,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.auditRows = auditStore.events.map(Self.auditRow)
         self.selectedWorkItemID = loadedRecords.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
+        startRefreshObservation(observedURLs: observedURLs)
+    }
+
+    deinit {
+        refreshObserver.map { DistributedNotificationCenter.default().removeObserver($0) }
+        fileWatchSources.forEach { $0.cancel() }
+        pendingRefreshWorkItem?.cancel()
     }
 
     static func sample() throws -> AgileCockpitDashboardModel {
@@ -104,7 +118,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
             context: context,
             backend: backend,
             reviewerContext: reviewer,
-            auditStore: auditStore
+            auditStore: auditStore,
+            observedURLs: [storeURL]
         )
     }
 
@@ -119,7 +134,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             environment: environment,
             currentDirectoryURL: currentDirectoryURL
         )
-        guard resolver.configurationURL(explicitPath: configurationURL?.path) != nil else {
+        guard let resolvedConfigurationURL = resolver.configurationURL(explicitPath: configurationURL?.path) else {
             throw AirframeConfigurationError.missingFile(".airframe/airframe-workspace.json")
         }
 
@@ -135,7 +150,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return try AgileCockpitDashboardModel(
             context: context,
             backend: backend,
-            reviewerContext: reviewer
+            reviewerContext: reviewer,
+            observedURLs: [resolvedConfigurationURL, resolvedStoreURL]
         )
     }
 
@@ -259,6 +275,15 @@ final class AgileCockpitDashboardModel: ObservableObject {
         apply(.requestMoreEvidence)
     }
 
+    func refreshFromExternalChange(message: String = "Refreshed from Airframe state.") {
+        do {
+            try reload(selecting: selectedWorkItemID)
+            statusMessage = message
+        } catch {
+            statusMessage = "Refresh failed: \(error)"
+        }
+    }
+
     private func apply(_ action: AirframeHumanVerificationAction) {
         guard let id = selectedRecord?.workItem.id else {
             statusMessage = "No ready work is selected."
@@ -292,6 +317,60 @@ final class AgileCockpitDashboardModel: ObservableObject {
         summary = try backend.dashboardSummary()
         auditRows = auditStore.events.map(Self.auditRow)
         selectedWorkItemID = id ?? records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
+    }
+
+    private func startRefreshObservation(observedURLs: [URL]) {
+        refreshObserver = DistributedNotificationCenter.default().addObserver(
+            forName: AirframeRefreshNotification.name,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.scheduleRefresh(message: "Refresh notification received.")
+            }
+        }
+
+        startFileObservation(observedURLs: observedURLs)
+    }
+
+    private func startFileObservation(observedURLs: [URL]) {
+        #if os(macOS)
+        let watchURLs = Set(observedURLs.map(Self.watchURL))
+        for url in watchURLs {
+            let descriptor = open(url.path, O_EVTONLY)
+            guard descriptor >= 0 else { continue }
+
+            let source = DispatchSource.makeFileSystemObjectSource(
+                fileDescriptor: descriptor,
+                eventMask: [.write, .delete, .rename, .extend, .attrib],
+                queue: .main
+            )
+            source.setEventHandler { [weak self] in
+                self?.scheduleRefresh(message: "Airframe files changed; refreshed.")
+            }
+            source.setCancelHandler {
+                close(descriptor)
+            }
+            fileWatchSources.append(source)
+            source.resume()
+        }
+        #endif
+    }
+
+    private func scheduleRefresh(message: String) {
+        pendingRefreshWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.refreshFromExternalChange(message: message)
+        }
+        pendingRefreshWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: workItem)
+    }
+
+    private static func watchURL(for url: URL) -> URL {
+        if FileManager.default.fileExists(atPath: url.path) {
+            return url
+        }
+        return url.deletingLastPathComponent()
     }
 
     private func recordsWithStatus(_ status: AirframeWorkStatus) -> [AirframeLocalWorkRecord] {

@@ -10,6 +10,11 @@ import Foundation
     #expect(info.summary == "AirframeCore 0.1.0")
 }
 
+@Test func refreshNotificationDefinesStableMessageContract() {
+    #expect(AirframeRefreshNotification.message == "refresh")
+    #expect(AirframeRefreshNotification.name.rawValue == "com.airframe.agilecockpit.refresh")
+}
+
 @Test func domainModelsProvideSharedWorkVocabulary() {
     let task = AirframeWorkItem(
         id: AirframeID("T-0007"),

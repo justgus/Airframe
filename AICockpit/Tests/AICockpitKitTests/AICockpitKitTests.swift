@@ -1,5 +1,5 @@
 import Testing
-import AICockpitKit
+@testable import AICockpitKit
 import Foundation
 
 @Test func helpTextIncludesCommandNameAndCoreIdentity() {
@@ -133,6 +133,7 @@ import Foundation
 
 @Test func issueProposeSupportsJSONOutput() {
     let store = temporaryStorePath()
+    let refreshNotifier = SpyRefreshNotifier()
 
     let result = AICockpitCommand.response(arguments: [
         "issue", "propose",
@@ -140,12 +141,38 @@ import Foundation
         "--id", "I-9001",
         "--title", "Unexpected local backend failure",
         "--output", "json"
-    ])
+    ], refreshNotifier: refreshNotifier)
 
     #expect(result.exitCode == 0)
     #expect(result.standardError.isEmpty)
     #expect(result.standardOutput.contains("\"kind\" : \"issueProposal\""))
     #expect(result.standardOutput.contains("\"rawValue\" : \"I-9001\""))
+    #expect(refreshNotifier.postCount == 1)
+}
+
+@Test func readOnlyCommandDoesNotPostRefreshNotification() {
+    let refreshNotifier = SpyRefreshNotifier()
+
+    let result = AICockpitCommand.response(arguments: [
+        "project", "summary",
+        "--store", temporaryStorePath()
+    ], refreshNotifier: refreshNotifier)
+
+    #expect(result.exitCode == 0)
+    #expect(refreshNotifier.postCount == 0)
+}
+
+@Test func failedMutationDoesNotPostRefreshNotification() {
+    let refreshNotifier = SpyRefreshNotifier()
+
+    let result = AICockpitCommand.response(arguments: [
+        "task", "propose",
+        "--store", temporaryStorePath(),
+        "--id", "T-9005"
+    ], refreshNotifier: refreshNotifier)
+
+    #expect(result.exitCode == 64)
+    #expect(refreshNotifier.postCount == 0)
 }
 
 @Test func taskNextReturnsFirstActiveTask() {
@@ -365,4 +392,12 @@ private func temporaryLiveConfigurationPath() throws -> String {
         """.utf8
     ).write(to: configURL)
     return configURL.path
+}
+
+private final class SpyRefreshNotifier: AICockpitRefreshNotifying {
+    private(set) var postCount = 0
+
+    func postRefresh() {
+        postCount += 1
+    }
 }

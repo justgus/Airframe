@@ -29,6 +29,13 @@ public enum AICockpitCommand {
     }
 
     public static func response(arguments: [String]) -> AICockpitCommandResult {
+        response(arguments: arguments, refreshNotifier: AirframeDistributedRefreshNotifier())
+    }
+
+    static func response(
+        arguments: [String],
+        refreshNotifier: any AICockpitRefreshNotifying
+    ) -> AICockpitCommandResult {
         let parsed = AICockpitArguments(arguments)
         let outputFormat = parsed.value(for: "--output").flatMap(AICockpitOutputFormat.init(rawValue:)) ?? .markdown
 
@@ -137,7 +144,11 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals == ["task", "propose"] || parsed.positionals == ["issue", "propose"] {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, context in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
                 let kind: AirframeWorkItemKind = parsed.positionals[0] == "task" ? .task : .issue
                 let operation = AirframeOperation(
                     id: AirframeID(kind == .task ? "OP-PROPOSE-TASK" : "OP-PROPOSE-ISSUE"),
@@ -228,7 +239,11 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals.count == 3 && parsed.positionals[0] == "evidence" && parsed.positionals[1] == "attach" {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, context in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
                 let operation = AirframeOperation(id: AirframeID("OP-ATTACH-EVIDENCE"), category: .evidence)
                 let decision = AirframeAuthorityEvaluator().evaluate(
                     context: context,
@@ -262,7 +277,12 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals.count == 3 && parsed.positionals[0] == "github" && parsed.positionals[1] == "comment" {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed, controlledMutationsEnabled: true) { backend, context in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
                 guard let githubBackend = backend as? AirframeGitHubIssuesBackend else {
                     throw AICockpitCommandError.invalidArguments("github comment requires backend github-issues")
                 }
@@ -291,7 +311,12 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals.count == 3 && parsed.positionals[0] == "github" && parsed.positionals[1] == "evidence-comment" {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed, controlledMutationsEnabled: true) { backend, context in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
                 guard let githubBackend = backend as? AirframeGitHubIssuesBackend else {
                     throw AICockpitCommandError.invalidArguments("github evidence-comment requires backend github-issues")
                 }
@@ -325,7 +350,12 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals.count == 3 && parsed.positionals[0] == "github" && parsed.positionals[1] == "status" {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed, controlledMutationsEnabled: true) { backend, context in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
                 guard let githubBackend = backend as? AirframeGitHubIssuesBackend else {
                     throw AICockpitCommandError.invalidArguments("github status requires backend github-issues")
                 }
@@ -355,7 +385,11 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals.count == 3 && parsed.positionals[0] == "work" && parsed.positionals[1] == "ready" {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, context in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
                 let workItemID = AirframeID(parsed.positionals[2])
                 try backend.transitionWorkItem(
                     id: workItemID,
@@ -467,6 +501,7 @@ public enum AICockpitCommand {
         outputFormat: AICockpitOutputFormat,
         parsed: AICockpitArguments,
         controlledMutationsEnabled: Bool = false,
+        refreshNotifier: (any AICockpitRefreshNotifying)? = nil,
         body: (any AirframeBackend, AirframeCertifiedContext) throws -> String
     ) -> AICockpitCommandResult {
         do {
@@ -476,10 +511,9 @@ public enum AICockpitCommand {
                 projectContext: context,
                 controlledMutationsEnabled: controlledMutationsEnabled
             )
-            return AICockpitCommandResult(
-                exitCode: 0,
-                standardOutput: try body(backend, certifiedContext)
-            )
+            let output = try body(backend, certifiedContext)
+            refreshNotifier?.postRefresh()
+            return AICockpitCommandResult(exitCode: 0, standardOutput: output)
         } catch AICockpitCommandError.denied(let decision, let operation) {
             return AICockpitCommandResult(
                 exitCode: 77,
@@ -551,6 +585,16 @@ public enum AICockpitCommand {
         case .markdown:
             return envelope.markdown
         }
+    }
+}
+
+protocol AICockpitRefreshNotifying {
+    func postRefresh()
+}
+
+private struct AirframeDistributedRefreshNotifier: AICockpitRefreshNotifying {
+    func postRefresh() {
+        AirframeRefreshNotification.postRefresh()
     }
 }
 
