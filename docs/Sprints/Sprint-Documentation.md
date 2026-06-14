@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-019**
+Currently: **None**
 
 See: [Sprint-active.md](Sprint-active.md)
 
@@ -21,6 +21,17 @@ See: [Sprint-active.md](Sprint-active.md)
 Currently: **None**
 
 See: [Sprint-backlog.md](Sprint-backlog.md)
+
+## Review Sprints
+
+Currently: **2 review Sprints**
+
+| Sprint | Title | Epic | File | Status |
+| ------ | ----- | ---- | ---- | ------ |
+| SP-017 | Workflow Status Dashboard | EP-017 | [Review/Sprint-SP-017.md](Review/Sprint-SP-017.md) | Review |
+| SP-018 | AICockpit Work Item Mutation Support | EP-017 | [Review/Sprint-SP-018.md](Review/Sprint-SP-018.md) | Review |
+
+See: [Review/Sprint-SP-017.md](Review/Sprint-SP-017.md) | [Review/Sprint-SP-018.md](Review/Sprint-SP-018.md)
 
 ## All Sprints
 
@@ -46,16 +57,16 @@ Currently: **19 Sprints** | Next available: **SP-020**
 | SP-016 | Refresh Synchronization for AgileCockpit | EP-016 | T-0081, T-0082, T-0083, T-0084, T-0085 | None | Closed |
 | SP-017 | Workflow Status Dashboard | EP-017 | T-0086, T-0087, T-0088, T-0089, T-0090 | None | Review |
 | SP-018 | AICockpit Work Item Mutation Support | EP-017 | T-0091, T-0092, T-0093, T-0094, T-0095 | None | Review |
-| SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Active |
+| SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Closed |
 
 ## Statistics
 
 - **Total Sprints:** 19
 - **Backlog:** 0
 - **Planning:** 0
-- **Active:** 1
+- **Active:** 0
 - **Review:** 2
-- **Closed:** 16
+- **Closed:** 17
 - **Next available:** SP-020
 
-*Last Updated: 2026-06-14 (SP-019 activated)*
+*Last Updated: 2026-06-14 (SP-019 closed manually)*
