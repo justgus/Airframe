@@ -1,6 +1,6 @@
 # Active Issues
 
-Issues listed here are assigned to a Sprint and actively being investigated or fixed.
+Issues listed here are assigned to a Sprint and are either being fixed or awaiting human verification.
 
 ---
 
@@ -122,7 +122,7 @@ The detail pane now renders the full source text for the selected local artifact
 
 ## I-0003: Status drill-down detail pane uses incomplete fallback text for Tasks and Issues
 
-**Status:** In Progress
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #103
 **Platform:** macOS
 **Component:** AgileCockpit
@@ -130,7 +130,7 @@ The detail pane now renders the full source text for the selected local artifact
 **Epic:** EP-017
 **Sprint:** SP-017
 **Date Identified:** 2026-06-13
-**Fix Date:** TBD
+**Fix Date:** 2026-06-14
 **Verification Date:** TBD
 
 **Description:**
@@ -154,16 +154,18 @@ Task and Issue details may show only synthesized backend fields such as ID, kind
 - The dashboard drill-down cannot serve as a reliable work product reference for Tasks and Issues.
 
 **Root Cause Analysis:**
-Pending implementation.
+Dashboard detail text was keyed from backend records first. For Task and Issue records that live inside aggregate Markdown files, the dashboard could fall back to synthesized record fields instead of extracting the matching Markdown section.
 
 **Resolution:**
-Pending implementation. Planned fix: index local Task and Issue artifact Markdown by Airframe ID, preserve per-heading sections for aggregate files, use full summary files for verified task batches that only list task IDs in tables, and retain synthetic fallback only when no local source text exists.
+Indexed local Task and Issue aggregate Markdown files by Airframe ID, preserved each matching heading section as the dashboard detail payload, used verified task batch files as the detail source for verified task rows, and retained synthesized fallback text only when no local artifact text exists.
 
 **Files Affected:**
-- TBD
+- `AgileCockpit/AgileCockpit/ContentView.swift`: Added section-based local artifact records for Task and Issue aggregate files and merged artifact detail text ahead of backend fallback detail text.
+- `AgileCockpit/AgileCockpitTests/AgileCockpitTests.swift`: Added regression coverage for Issue section detail text, Task section detail text, and verified Task batch detail text.
 
 **Evidence:**
-- Pending implementation.
+- `xcodebuild test -quiet -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-06-14.
+- `xcodebuild test -quiet -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitUITests` passed on 2026-06-14.
 
 **Verification:**
 1. Open a dashboard status drill-down containing `I-0002`.
@@ -181,7 +183,7 @@ Pending implementation. Planned fix: index local Task and Issue artifact Markdow
 
 ## I-0004: Status drill-down detail scroll position is retained across item selection
 
-**Status:** In Progress
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #104
 **Platform:** macOS
 **Component:** AgileCockpit
@@ -189,7 +191,7 @@ Pending implementation. Planned fix: index local Task and Issue artifact Markdow
 **Epic:** EP-017
 **Sprint:** SP-017
 **Date Identified:** 2026-06-13
-**Fix Date:** TBD
+**Fix Date:** 2026-06-14
 **Verification Date:** TBD
 
 **Description:**
@@ -214,16 +216,17 @@ The detail pane can remain scrolled to the bottom or another prior offset after 
 - The detail refresh appears incomplete or stale because the pane does not present the beginning of the newly selected text.
 
 **Root Cause Analysis:**
-Pending implementation.
+The status drill-down detail view reused the same SwiftUI scroll view identity across different selected work items, so SwiftUI could preserve the previous scroll offset when the detail text changed.
 
 **Resolution:**
-Pending implementation. Planned fix: make the detail scroll view selection-aware, either by assigning identity scoped to the selected work item or by using an explicit `ScrollViewReader` top anchor when `record.workItem.id` changes.
+Scoped the detail view identity to the selected work item ID so selecting a different item reconstructs the detail scroll view at the top of the newly selected content.
 
 **Files Affected:**
-- TBD
+- `AgileCockpit/AgileCockpit/ContentView.swift`: Added selection-scoped identity to `WorkDetail` for dashboard status detail rendering.
 
 **Evidence:**
-- Pending implementation.
+- `xcodebuild test -quiet -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-06-14.
+- `xcodebuild test -quiet -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitUITests` passed on 2026-06-14.
 
 **Verification:**
 1. Open a dashboard status drill-down with multiple work products.
@@ -236,4 +239,4 @@ Pending implementation. Planned fix: make the detail scroll view selection-aware
 - SP-017
 - T-0089
 
-*Last Updated: 2026-06-13 (I-0003 and I-0004 assigned to SP-017)*
+*Last Updated: 2026-06-14 (I-0003 and I-0004 resolved pending human verification)*
