@@ -158,10 +158,326 @@ import Foundation
 @Test func agileCockpitShowsSprintEpicMetricsAndAuditRows() throws {
     let model = try AgileCockpitDashboardModel.sample()
 
-    #expect(model.sprintRecords.count == 0)
-    #expect(model.epicRecords.count == 0)
-    #expect(model.metrics.map(\.id) == ["active", "ready", "verified", "issues", "evidence"])
+    #expect(model.statusTiles.map(\.id) == ["epics", "sprints", "tasks", "issues"])
+    #expect(model.statusTiles.first { $0.id == "epics" }?.rows.map(\.title) == ["Proposed", "Draft", "Backlog", "Active", "Complete", "Closed"])
+    #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.map(\.title) == ["Backlog", "Planning", "Active", "Review", "Closed"])
+    #expect(model.statusTiles.first { $0.id == "tasks" }?.rows.map(\.title) == ["Backlog", "Active", "Implemented", "Verified", "Closed"])
+    #expect(model.statusTiles.first { $0.id == "issues" }?.rows.first { $0.title == "Backlog" }?.count == 1)
     #expect(model.auditRows.first?.action == "OP-READ-DASHBOARD")
+}
+
+@MainActor
+@Test func agileCockpitStatusDrillDownDoesNotPreselectWorkItem() throws {
+    let model = try AgileCockpitDashboardModel.sample()
+    let issueTile = try #require(model.statusTiles.first { $0.id == "issues" })
+    let backlogRow = try #require(issueTile.rows.first { $0.title == "Backlog" })
+
+    model.showStatusItems(tile: issueTile, row: backlogRow)
+
+    #expect(model.selectedStatusSelection?.id == backlogRow.id)
+    #expect(model.selectedStatusWorkItemID == nil)
+    #expect(model.selectedStatusRecord == nil)
+}
+
+@MainActor
+@Test func agileCockpitStatusDetailShowsFullLocalArtifactFileContents() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitDetailDocs")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-017: Workflow Status Dashboard and Mutation Authority
+
+    **Status:** Active
+    **Goal:**
+    Show the full file contents in the detail pane.
+
+    **Rationale:**
+    The detail pane should expose the whole local artifact text.
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+
+    let backend = AirframeLocalFilesystemBackend(
+        storeURL: rootURL.appending(path: "airframe-local-backend.json")
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id),
+        artifactRootURL: rootURL
+    )
+    let epicTile = try #require(model.statusTiles.first { $0.id == "epics" })
+    let activeRow = try #require(epicTile.rows.first { $0.title == "Active" })
+
+    model.showStatusItems(tile: epicTile, row: activeRow)
+    model.selectedStatusWorkItemID = try #require(activeRow.workItems.first?.id)
+
+    #expect(model.selectedStatusDetailText == """
+    # Active Epics
+
+    ## EP-017: Workflow Status Dashboard and Mutation Authority
+
+    **Status:** Active
+    **Goal:**
+    Show the full file contents in the detail pane.
+
+    **Rationale:**
+    The detail pane should expose the whole local artifact text.
+    """)
+}
+
+@MainActor
+@Test func agileCockpitStatusDetailUsesIssueArtifactSection() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitIssueDetailDocs")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Issues"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Issues
+
+    ## I-0002: Status drill-down detail pane omits full work product text
+
+    **Status:** Resolved - Not Verified
+    **GitHub Issue:** #102
+    **Severity:** Medium
+    **Epic:** EP-017
+    **Sprint:** SP-017
+
+    **Root Cause Analysis:**
+    The detail pane was built from a partial field summary.
+
+    **Verification:**
+    Confirm the detail pane shows the complete issue section.
+
+    ## I-0003: Status drill-down detail pane uses incomplete fallback text
+
+    **Status:** In Progress
+    **GitHub Issue:** #103
+    **Severity:** High
+    **Epic:** EP-017
+    **Sprint:** SP-017
+
+    **Description:**
+    This issue should not be included in the I-0002 detail text.
+    """.write(to: rootURL.appending(path: "docs/Issues/Issue-active.md"), atomically: true, encoding: .utf8)
+
+    let backend = AirframeLocalFilesystemBackend(
+        storeURL: rootURL.appending(path: "airframe-local-backend.json")
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id),
+        artifactRootURL: rootURL
+    )
+    let issueTile = try #require(model.statusTiles.first { $0.id == "issues" })
+    let resolvedRow = try #require(issueTile.rows.first { $0.title == "Resolved" })
+
+    model.showStatusItems(tile: issueTile, row: resolvedRow)
+    model.selectedStatusWorkItemID = AirframeID("I-0002")
+
+    let detailText = try #require(model.selectedStatusDetailText)
+    #expect(detailText.contains("## I-0002: Status drill-down detail pane omits full work product text"))
+    #expect(detailText.contains("**Root Cause Analysis:**"))
+    #expect(detailText.contains("**Verification:**"))
+    #expect(!detailText.contains("## I-0003:"))
+}
+
+@MainActor
+@Test func agileCockpitStatusDetailUsesTaskArtifactSection() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitTaskDetailDocs")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Tasks"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Task Backlog
+
+    ## T-0091: Define AICockpit work item mutation command contract
+
+    **Status:** Backlog
+    **GitHub Issue:** #91
+    **Priority:** High
+    **Epic:** EP-017
+    **Sprint Assigned:** SP-018
+
+    **Acceptance Criteria:**
+    1. Commands are defined for creating and updating work items.
+
+    **Evidence:**
+    - TBD
+
+    ## T-0092: Implement AICockpit local work item mutation support
+
+    **Status:** Backlog
+    **GitHub Issue:** #92
+    **Priority:** High
+    **Epic:** EP-017
+    **Sprint Assigned:** SP-018
+
+    **Acceptance Criteria:**
+    1. Local mutation support is implemented.
+    """.write(to: rootURL.appending(path: "docs/Tasks/Task-backlog.md"), atomically: true, encoding: .utf8)
+
+    let backend = AirframeLocalFilesystemBackend(
+        storeURL: rootURL.appending(path: "airframe-local-backend.json")
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id),
+        artifactRootURL: rootURL
+    )
+    let taskTile = try #require(model.statusTiles.first { $0.id == "tasks" })
+    let backlogRow = try #require(taskTile.rows.first { $0.title == "Backlog" })
+
+    model.showStatusItems(tile: taskTile, row: backlogRow)
+    model.selectedStatusWorkItemID = AirframeID("T-0091")
+
+    let detailText = try #require(model.selectedStatusDetailText)
+    #expect(detailText.contains("## T-0091: Define AICockpit work item mutation command contract"))
+    #expect(detailText.contains("**Acceptance Criteria:**"))
+    #expect(detailText.contains("**Evidence:**"))
+    #expect(!detailText.contains("## T-0092:"))
+}
+
+@MainActor
+@Test func agileCockpitStatusDetailUsesVerifiedTaskBatchArtifact() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitVerifiedTaskDetailDocs")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Tasks/Verified"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # T-0081 through T-0085: SP-016 Refresh Synchronization
+
+    **Status:** Implemented - Verified
+    **Sprint:** SP-016
+    **Epic:** EP-016
+
+    | Task | GitHub Issue | Title | Status |
+    | ---- | ------------ | ----- | ------ |
+    | T-0081 | #81 | Define refresh synchronization contract | Implemented - Verified |
+    | T-0082 | #82 | Add shared refresh notification primitive | Implemented - Verified |
+
+    ## Verification Evidence
+
+    - Focused tests passed.
+    """.write(to: rootURL.appending(path: "docs/Tasks/Verified/Task-verified-0081-0085.md"), atomically: true, encoding: .utf8)
+
+    let backend = AirframeLocalFilesystemBackend(
+        storeURL: rootURL.appending(path: "airframe-local-backend.json")
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id),
+        artifactRootURL: rootURL
+    )
+    let taskTile = try #require(model.statusTiles.first { $0.id == "tasks" })
+    let verifiedRow = try #require(taskTile.rows.first { $0.title == "Verified" })
+
+    model.showStatusItems(tile: taskTile, row: verifiedRow)
+    model.selectedStatusWorkItemID = AirframeID("T-0081")
+
+    let detailText = try #require(model.selectedStatusDetailText)
+    #expect(verifiedRow.workItems.map(\.id).contains(AirframeID("T-0081")))
+    #expect(detailText.contains("# T-0081 through T-0085: SP-016 Refresh Synchronization"))
+    #expect(detailText.contains("## Verification Evidence"))
+}
+
+@MainActor
+@Test func agileCockpitStatusTilesIncludeLocalEpicAndSprintArtifacts() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitArtifactDocs")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics/Closed"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints/Closed"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-017: Workflow Status Dashboard and Mutation Authority
+
+    **Status:** Active
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Sprint Backlog
+
+    ## SP-018: AICockpit Work Item Mutation Support
+
+    **Status:** Backlog
+    **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
+
+    ## SP-019: AgileCockpit Human Verification Mutations
+
+    **Status:** Backlog
+    **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-backlog.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-017: Workflow Status Dashboard
+
+    **Status:** Active
+    **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # EP-016: Refresh Synchronization
+
+    **Status:** Closed
+    """.write(to: rootURL.appending(path: "docs/Epics/Closed/Epic-EP-016.md"), atomically: true, encoding: .utf8)
+    try """
+    # SP-016: Refresh Synchronization
+
+    **Status:** Closed
+    **Epic:** EP-016: Refresh Synchronization
+    """.write(to: rootURL.appending(path: "docs/Sprints/Closed/Sprint-SP-016.md"), atomically: true, encoding: .utf8)
+
+    let backend = AirframeLocalFilesystemBackend(
+        storeURL: rootURL.appending(path: "airframe-local-backend.json")
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id),
+        artifactRootURL: rootURL
+    )
+
+    #expect(model.statusTiles.first { $0.id == "epics" }?.rows.first { $0.title == "Active" }?.count == 1)
+    #expect(model.statusTiles.first { $0.id == "epics" }?.rows.first { $0.title == "Closed" }?.count == 1)
+    #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Active" }?.count == 1)
+    #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Backlog" }?.count == 2)
+    #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Closed" }?.count == 1)
 }
 
 private func temporaryLiveConfigurationURL(backendKind: String = "github-fixture") throws -> URL {

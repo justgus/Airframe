@@ -5,12 +5,13 @@ Sprints are fixed execution windows that group Tasks and Issues into a focused b
 ## Lifecycle
 
 ```text
-Planning -> Active -> Review -> Closed
+Backlog -> Planning -> Active -> Review -> Closed
 ```
 
 ## Statuses
 
-- **Planning**: Sprint goal and candidate work are being assembled.
+- **Backlog**: Sprint is identified but not fully defined or ready to activate.
+- **Planning**: Sprint is defined and ready to activate, but has not started.
 - **Active**: Sprint is in progress.
 - **Review**: Sprint work is complete or time-boxed; verification and carry-forward decisions are pending.
 - **Closed**: Human-approved closure is complete and retrospective is recorded.
@@ -37,7 +38,7 @@ docs/Sprints/
 ```markdown
 ## SP-XXX: [Sprint Title]
 
-**Status:** Planning / Active / Review / Closed
+**Status:** Backlog / Planning / Active / Review / Closed
 **Epic:** [EP-XXX: Epic Title or None]
 **Goal:** [One or two sentences]
 **Start Date:** YYYY-MM-DD
@@ -80,5 +81,6 @@ docs/Sprints/
 
 - Update `Sprint-Documentation.md` whenever a Sprint is created, activated, reviewed, closed, or has assignment changes.
 - Update assigned Task and Issue records when Sprint assignment changes.
+- Keep backlogged and planning Sprints in `Sprint-active.md` until the Sprint is closed.
 - Keep at most one active Sprint in `Sprint-active.md`.
 - Archive closed Sprints under `Closed/`.

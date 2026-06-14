@@ -6,18 +6,25 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Organization
 
+- **Sprint-backlog.md**: Sprints attached to an Epic but not yet planned or activated.
 - **Sprint-active.md**: The current Sprint, if one exists.
 - **Closed/**: Archived closed Sprints, one file per Sprint.
 
 ## Current Sprint Record
 
-Currently: **SP-015**
+Currently: **SP-017**
 
 See: [Sprint-active.md](Sprint-active.md)
 
+## Sprint Backlog
+
+Currently: **SP-018, SP-019**
+
+See: [Sprint-backlog.md](Sprint-backlog.md)
+
 ## All Sprints
 
-Currently: **15 Sprints** | Next available: **SP-016**
+Currently: **19 Sprints** | Next available: **SP-020**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -35,15 +42,20 @@ Currently: **15 Sprints** | Next available: **SP-016**
 | SP-012 | Project-Local Installation | EP-012 | T-0061, T-0062, T-0063, T-0064, T-0065 | None | Closed |
 | SP-013 | Controlled GitHub Mutation Planning | EP-013 | T-0066, T-0067, T-0068, T-0069, T-0070 | None | Closed |
 | SP-014 | End-to-End Live Demo Rehearsal | EP-014 | T-0071, T-0072, T-0073, T-0074, T-0075 | None | Closed |
-| SP-015 | Human Planning Controls for Agile Artifacts | EP-015 | T-0076, T-0077, T-0078, T-0079, T-0080 | None | Active |
+| SP-015 | Human Planning Controls for Agile Artifacts | EP-015 | T-0076, T-0077, T-0078, T-0079, T-0080 | None | Closed |
+| SP-016 | Refresh Synchronization for AgileCockpit | EP-016 | T-0081, T-0082, T-0083, T-0084, T-0085 | None | Closed |
+| SP-017 | Workflow Status Dashboard | EP-017 | T-0086, T-0087, T-0088, T-0089, T-0090 | None | Active |
+| SP-018 | AICockpit Work Item Mutation Support | EP-017 | T-0091, T-0092, T-0093, T-0094, T-0095 | None | Backlog |
+| SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Backlog |
 
 ## Statistics
 
-- **Total Sprints:** 15
+- **Total Sprints:** 19
+- **Backlog:** 2
 - **Planning:** 0
 - **Active:** 1
 - **Review:** 0
-- **Closed:** 14
-- **Next available:** SP-016
+- **Closed:** 16
+- **Next available:** SP-020
 
-*Last Updated: 2026-06-10 (SP-015 activated)*
+*Last Updated: 2026-06-12 (SP-017 tasks implemented pending human verification)*

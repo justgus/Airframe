@@ -95,10 +95,26 @@ public struct AirframeWorkflowTransitionEvaluator: Sendable {
             default:
                 false
             }
-        case .sprint, .epic:
+        case .sprint:
             switch (from, to) {
-            case (.backlog, .active),
-                 (.active, .closed):
+            case (.backlog, .planning),
+                 (.planning, .active),
+                 (.active, .review),
+                 (.review, .closed),
+                 (.review, .backlog):
+                true
+            default:
+                false
+            }
+        case .epic:
+            switch (from, to) {
+            case (.proposed, .draft),
+                 (.draft, .backlog),
+                 (.backlog, .active),
+                 (.active, .complete),
+                 (.complete, .closed),
+                 (.active, .backlog),
+                 (.complete, .backlog):
                 true
             default:
                 false

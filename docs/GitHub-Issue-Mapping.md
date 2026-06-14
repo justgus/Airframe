@@ -96,9 +96,31 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0078 | #80 | EP-015 | Implement AgileCockpit task and issue planning UI |
 | T-0079 | #78 | EP-015 | Implement AgileCockpit sprint and epic management UI |
 | T-0080 | #76 | EP-015 | Verify planning management workflow and documentation |
+| T-0086 | #86 | EP-017 | Reconcile Agile artifact workflow documentation and process guardrails |
+| T-0087 | #87 | EP-017 | Define artifact-specific status presentation model |
+| T-0088 | #88 | EP-017 | Replace dashboard metrics with workflow status tiles |
+| T-0089 | #89 | EP-017 | Add interactive dashboard status drill-down |
+| T-0090 | #90 | EP-017 | Verify dashboard workflow and integrate draft patch |
+| T-0091 | #91 | EP-017 | Define AICockpit work item mutation command contract |
+| T-0092 | #92 | EP-017 | Implement AICockpit local work item mutation support |
+| T-0093 | #93 | EP-017 | Implement controlled GitHub work item mutation support |
+| T-0094 | #94 | EP-017 | Add AICockpit Sprint and Epic planning mutation support |
+| T-0095 | #95 | EP-017 | Verify AICockpit mutation authority boundaries |
+| T-0096 | #96 | EP-017 | Define AgileCockpit human mutation authority contract |
+| T-0097 | #97 | EP-017 | Implement AgileCockpit local verification mutations |
+| T-0098 | #98 | EP-017 | Implement AgileCockpit controlled GitHub verification mutations |
+| T-0099 | #99 | EP-017 | Add human verification UI flows for Tasks and Issues |
+| T-0100 | #100 | EP-017 | Verify AICockpit and AgileCockpit authority separation |
 
 ## Current Issue Mapping
 
-No Airframe Issues are currently defined. Next local Issue ID: `I-0001`.
+| Airframe Issue | GitHub Issue | Epic | Title |
+| -------------- | ------------ | ---- | ----- |
+| I-0001 | #101 | EP-017 | Dashboard status drill-down shows stray blue selection rectangle |
+| I-0002 | #102 | EP-017 | Status drill-down detail pane omits full work product text |
+| I-0003 | #103 | EP-017 | Status drill-down detail pane uses incomplete fallback text for Tasks and Issues |
+| I-0004 | #104 | EP-017 | Status drill-down detail scroll position is retained across item selection |
 
-*Last Updated: 2026-06-10 (T-0076 through T-0080 mapped to GitHub issues #76 through #80)*
+Next local Issue ID: `I-0005`.
+
+*Last Updated: 2026-06-13 (I-0003 and I-0004 mapped to GitHub issues #103 and #104)*

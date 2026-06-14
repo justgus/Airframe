@@ -17,6 +17,11 @@ Backlog -> Active -> Implemented - Not Verified -> Implemented - Verified
 - **Implemented - Verified**: User has explicitly verified the task.
 - **Closed**: User has directed that the task should not proceed.
 
+## Display Labels
+
+- **Implemented** means **Implemented - Not Verified**.
+- **Verified** means **Implemented - Verified**.
+
 ## GitHub Issue Mapping
 
 Every Airframe Task must have exactly one GitHub Issue number. Every GitHub Issue used for Task tracking must identify exactly one Airframe Task ID.

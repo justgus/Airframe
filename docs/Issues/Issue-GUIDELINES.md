@@ -5,17 +5,22 @@ Issues track bugs, regressions, and unintended behavior in Agile Airframe. Plann
 ## Lifecycle
 
 ```text
-Backlog -> Active -> Resolved - Not Verified -> Resolved - Verified
+Backlog -> In Progress -> Resolved - Not Verified -> Resolved - Verified
         -> Closed
 ```
 
 ## Statuses
 
-- **Open**: Issue identified and in the backlog.
+- **Backlog**: Issue is defined but not assigned to an active Sprint or currently being worked.
 - **In Progress**: Issue assigned to a Sprint and being investigated or fixed.
 - **Resolved - Not Verified**: Fix is implemented and ready for human verification.
 - **Resolved - Verified**: User has explicitly verified the fix.
 - **Closed**: User has directed that the issue should be closed without verification.
+
+## Display Labels
+
+- **Resolved** means **Resolved - Not Verified**.
+- **Verified** means **Resolved - Verified**.
 
 ## GitHub Issue Mapping
 
@@ -59,7 +64,7 @@ docs/Issues/
 ```markdown
 ## I-XXXX: [Title]
 
-**Status:** Open / In Progress / Resolved - Not Verified / Resolved - Verified / Closed
+**Status:** Backlog / In Progress / Resolved - Not Verified / Resolved - Verified / Closed
 **GitHub Issue:** #NNN
 **Platform:** macOS / iOS / visionOS / All platforms / Not applicable
 **Component:** [Affected component]
@@ -108,5 +113,5 @@ docs/Issues/
 
 - Update `Issue-Documentation.md` when an Issue is created, assigned, resolved, verified, or closed.
 - Keep active unresolved Issues in `Issue-active.md`.
-- Keep unassigned open Issues in `Issue-backlog.md`.
+- Keep backlogged Issues in `Issue-backlog.md`.
 - Move verified and closed records into the appropriate archive folders.

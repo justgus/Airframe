@@ -16,24 +16,39 @@ public enum AirframeWorkItemKind: String, Codable, Equatable, Sendable {
 }
 
 public enum AirframeWorkStatus: String, Codable, Equatable, Sendable {
+    case proposed
+    case draft
     case backlog
+    case planning
     case active
+    case review
     case implementedNotVerified
     case implementedVerified
+    case complete
     case closed
 }
 
 extension AirframeWorkStatus: CustomStringConvertible {
     public var description: String {
         switch self {
+        case .proposed:
+            "Proposed"
+        case .draft:
+            "Draft"
         case .backlog:
             "Backlog"
+        case .planning:
+            "Planning"
         case .active:
             "Active"
+        case .review:
+            "Review"
         case .implementedNotVerified:
             "Implemented - Not Verified"
         case .implementedVerified:
             "Implemented - Verified"
+        case .complete:
+            "Complete"
         case .closed:
             "Closed"
         }
@@ -491,6 +506,144 @@ public struct AirframeDashboardSummary: Codable, Equatable, Sendable {
         self.issueCount = issueCount
         self.nextTask = nextTask
         self.recentEvidenceCount = recentEvidenceCount
+    }
+}
+
+public struct AirframeDashboardStatusRow: Codable, Equatable, Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    public let symbol: String
+    public let status: AirframeWorkStatus
+    public let count: Int
+    public let workItems: [AirframeWorkItem]
+
+    public init(
+        id: String,
+        title: String,
+        symbol: String,
+        status: AirframeWorkStatus,
+        count: Int,
+        workItems: [AirframeWorkItem]
+    ) {
+        self.id = id
+        self.title = title
+        self.symbol = symbol
+        self.status = status
+        self.count = count
+        self.workItems = workItems
+    }
+}
+
+public struct AirframeDashboardStatusTile: Codable, Equatable, Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    public let kind: AirframeWorkItemKind
+    public let rows: [AirframeDashboardStatusRow]
+
+    public init(
+        id: String,
+        title: String,
+        kind: AirframeWorkItemKind,
+        rows: [AirframeDashboardStatusRow]
+    ) {
+        self.id = id
+        self.title = title
+        self.kind = kind
+        self.rows = rows
+    }
+}
+
+public struct AirframeDashboardStatusSummary: Codable, Equatable, Sendable {
+    public let tiles: [AirframeDashboardStatusTile]
+
+    public init(tiles: [AirframeDashboardStatusTile]) {
+        self.tiles = tiles
+    }
+
+    public init(records: [AirframeLocalWorkRecord]) {
+        let workItemsByKind = Dictionary(grouping: records.map(\.workItem), by: \.kind)
+        self.tiles = [
+            Self.tile(
+                id: "epics",
+                title: "Epics",
+                kind: .epic,
+                workItems: workItemsByKind[.epic, default: []],
+                statuses: [
+                    (.proposed, "Proposed", "🔵"),
+                    (.draft, "Draft", "🔵"),
+                    (.backlog, "Backlog", "⚪"),
+                    (.active, "Active", "🟡"),
+                    (.complete, "Complete", "🟢"),
+                    (.closed, "Closed", "✅")
+                ]
+            ),
+            Self.tile(
+                id: "sprints",
+                title: "Sprints",
+                kind: .sprint,
+                workItems: workItemsByKind[.sprint, default: []],
+                statuses: [
+                    (.backlog, "Backlog", "⚪"),
+                    (.planning, "Planning", "🔵"),
+                    (.active, "Active", "🟡"),
+                    (.review, "Review", "🟣"),
+                    (.closed, "Closed", "✅")
+                ]
+            ),
+            Self.tile(
+                id: "tasks",
+                title: "Tasks",
+                kind: .task,
+                workItems: workItemsByKind[.task, default: []],
+                statuses: [
+                    (.backlog, "Backlog", "⚪"),
+                    (.active, "Active", "🟡"),
+                    (.implementedNotVerified, "Implemented", "🟢"),
+                    (.implementedVerified, "Verified", "✅"),
+                    (.closed, "Closed", "✅")
+                ]
+            ),
+            Self.tile(
+                id: "issues",
+                title: "Issues",
+                kind: .issue,
+                workItems: workItemsByKind[.issue, default: []],
+                statuses: [
+                    (.backlog, "Backlog", "⚪"),
+                    (.active, "In Progress", "🟡"),
+                    (.implementedNotVerified, "Resolved", "🟢"),
+                    (.implementedVerified, "Verified", "✅"),
+                    (.closed, "Closed", "✅")
+                ]
+            )
+        ]
+    }
+
+    public static var empty: AirframeDashboardStatusSummary {
+        AirframeDashboardStatusSummary(records: [])
+    }
+
+    private static func tile(
+        id: String,
+        title: String,
+        kind: AirframeWorkItemKind,
+        workItems: [AirframeWorkItem],
+        statuses: [(AirframeWorkStatus, String, String)]
+    ) -> AirframeDashboardStatusTile {
+        let itemsByStatus = Dictionary(grouping: workItems, by: \.status)
+        let rows = statuses.map { status, title, symbol in
+            let matchingItems = itemsByStatus[status, default: []]
+                .sorted { $0.id.rawValue < $1.id.rawValue }
+            return AirframeDashboardStatusRow(
+                id: "\(id)-\(status.rawValue)",
+                title: title,
+                symbol: symbol,
+                status: status,
+                count: matchingItems.count,
+                workItems: matchingItems
+            )
+        }
+        return AirframeDashboardStatusTile(id: id, title: title, kind: kind, rows: rows)
     }
 }
 

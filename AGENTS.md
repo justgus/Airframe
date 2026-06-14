@@ -45,6 +45,11 @@ The user owns the project direction and approval boundary. Codex must not turn b
 ## Airframe Project Conventions
 
 - Preserve AirframeCore as the canonical source for workflow policy, authority evaluation, backend capabilities, configuration diagnostics, and work record semantics.
+- Use artifact-specific workflow labels in human-facing Agile Artifact work:
+  - Epics: Proposed, Draft, Backlog, Active, Complete, Closed.
+  - Sprints: Backlog, Planning, Active, Review, Closed.
+  - Tasks: Backlog, Active, Implemented, Verified, Closed, where Implemented means Implemented - Not Verified and Verified means Implemented - Verified.
+  - Issues: Backlog, In Progress, Resolved, Verified, Closed, where Resolved means Resolved - Not Verified and Verified means Resolved - Verified.
 - AICockpit is the agent-facing CLI and must not perform human-only acceptance operations.
 - Use AICockpit as the primary interface for Agile Artifact discovery and agent-allowed workflow actions before directly editing `docs/Tasks/`, `docs/Issues/`, `docs/Sprints/`, `docs/Epics/`, or related GitHub issue state.
 - For Agile Artifact work, first inspect context and project state with direct AICockpit commands, normally:

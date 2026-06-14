@@ -470,14 +470,24 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
 
     private func operationID(for status: AirframeWorkStatus) -> AirframeID {
         switch status {
+        case .proposed:
+            AirframeID("OP-PROPOSE-WORK")
+        case .draft:
+            AirframeID("OP-DRAFT-WORK")
         case .backlog:
             AirframeID("OP-RETURN-TO-BACKLOG")
+        case .planning:
+            AirframeID("OP-PLAN-WORK")
         case .active:
             AirframeID("OP-ACTIVATE-WORK")
+        case .review:
+            AirframeID("OP-REVIEW-WORK")
         case .implementedNotVerified:
             AirframeID("OP-READY-FOR-VERIFICATION")
         case .implementedVerified:
             AirframeID("OP-HUMAN-VERIFY")
+        case .complete:
+            AirframeID("OP-COMPLETE-WORK")
         case .closed:
             AirframeID("OP-CLOSE-WORK")
         }

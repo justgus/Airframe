@@ -616,6 +616,26 @@ import Foundation
     #expect(summary.recentEvidenceCount == 1)
 }
 
+@Test func dashboardStatusSummaryGroupsArtifactSpecificStatusRows() {
+    let records = [
+        localWorkRecord(id: "EP-0001", kind: .epic, title: "Defined epic", status: .backlog),
+        localWorkRecord(id: "SP-0001", kind: .sprint, title: "Planned sprint", status: .planning),
+        localWorkRecord(id: "T-0001", kind: .task, title: "Implemented task", status: .implementedNotVerified),
+        localWorkRecord(id: "I-0001", kind: .issue, title: "Resolved issue", status: .implementedNotVerified)
+    ]
+
+    let summary = AirframeDashboardStatusSummary(records: records)
+
+    #expect(summary.tiles.map(\.id) == ["epics", "sprints", "tasks", "issues"])
+    #expect(summary.tiles.first { $0.id == "epics" }?.rows.map(\.title) == ["Proposed", "Draft", "Backlog", "Active", "Complete", "Closed"])
+    #expect(summary.tiles.first { $0.id == "sprints" }?.rows.map(\.title) == ["Backlog", "Planning", "Active", "Review", "Closed"])
+    #expect(summary.tiles.first { $0.id == "tasks" }?.rows.map(\.title) == ["Backlog", "Active", "Implemented", "Verified", "Closed"])
+    #expect(summary.tiles.first { $0.id == "issues" }?.rows.map(\.title) == ["Backlog", "In Progress", "Resolved", "Verified", "Closed"])
+    #expect(summary.tiles.first { $0.id == "tasks" }?.rows.first { $0.title == "Implemented" }?.symbol == "🟢")
+    #expect(summary.tiles.first { $0.id == "tasks" }?.rows.first { $0.title == "Implemented" }?.count == 1)
+    #expect(summary.tiles.first { $0.id == "issues" }?.rows.first { $0.title == "Resolved" }?.workItems.first?.id == AirframeID("I-0001"))
+}
+
 @Test func githubBackendConfigurationAndCapabilitiesAreRepresented() {
     let reference = AirframeBackendReference(kind: "github-fixture", location: "justgus/Airframe")
     let configuration = reference.githubConfiguration
@@ -1098,6 +1118,23 @@ private func localTaskRecord(
         constraints: constraints,
         evidenceRequirements: evidenceRequirements,
         protectedPaths: protectedPaths
+    )
+}
+
+private func localWorkRecord(
+    id: String,
+    kind: AirframeWorkItemKind,
+    title: String,
+    status: AirframeWorkStatus
+) -> AirframeLocalWorkRecord {
+    AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID(id),
+            kind: kind,
+            title: title,
+            status: status,
+            githubIssue: Int(id.split(separator: "-").last.map(String.init) ?? "")
+        )
     )
 }
 

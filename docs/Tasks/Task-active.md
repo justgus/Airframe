@@ -10,6 +10,6 @@ No Tasks are currently active.
 
 ---
 
-T-0081 through T-0085 were implemented on 2026-06-11 and moved to [Task-unverified.md](Task-unverified.md).
+T-0086 through T-0090 were implemented on 2026-06-12 and moved to [Task-unverified.md](Task-unverified.md).
 
-*Last Updated: 2026-06-11 (SP-016 implementation ready for human verification)*
+*Last Updated: 2026-06-12 (T-0086 through T-0090 implemented pending human verification)*

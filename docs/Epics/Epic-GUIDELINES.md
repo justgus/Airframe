@@ -14,13 +14,14 @@ Epics are strategic bodies of work that span one or more Sprints and represent a
 ## Lifecycle
 
 ```text
-Proposed -> Draft -> Active -> Complete -> Closed
+Proposed -> Draft -> Backlog -> Active -> Complete -> Closed
 ```
 
 ## Statuses
 
 - **Proposed**: Queued in the backlog with rough scope.
 - **Draft**: Goal, scope, Tasks, Issues, and acceptance criteria are being defined.
+- **Backlog**: Fully defined but has no active Sprint, or partially delivered with remaining acceptance criteria dependent on backlogged or unverified work.
 - **Active**: One or more Sprints are executing against the Epic.
 - **Complete**: Work appears complete and is pending human closeout.
 - **Closed**: Human-approved closeout is complete.
@@ -48,7 +49,7 @@ docs/Epics/
 ```markdown
 ## EP-XXX: [Epic Title]
 
-**Status:** Proposed / Draft / Active / Complete / Closed
+**Status:** Proposed / Draft / Backlog / Active / Complete / Closed
 **Owner:** [Human owner or project role]
 **Start Date:** YYYY-MM-DD
 **Target Close Date:** YYYY-MM-DD
@@ -92,6 +93,6 @@ docs/Epics/
 ## Update Checklist
 
 - Update `Epic-Documentation.md` when an Epic is proposed, activated, completed, closed, or has related Sprint/Task/Issue changes.
-- Keep proposed Epics in `Epic-backlog.md`.
+- Keep Proposed and Backlog Epics in `Epic-backlog.md`.
 - Keep Draft, Active, and Complete Epics in `Epic-active.md`.
 - Archive closed Epics under `Closed/`.

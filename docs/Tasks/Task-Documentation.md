@@ -14,37 +14,48 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **0 backlog Tasks**
+Currently: **10 backlog Tasks**
 
-No Tasks are currently in the backlog.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0091 | #91 | Define AICockpit work item mutation command contract | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0092 | #92 | Implement AICockpit local work item mutation support | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0093 | #93 | Implement controlled GitHub work item mutation support | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0095 | #95 | Verify AICockpit mutation authority boundaries | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0096 | #96 | Define AgileCockpit human mutation authority contract | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0097 | #97 | Implement AgileCockpit local verification mutations | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-backlog.md](Task-backlog.md) | Backlog |
 
 See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **5 active Tasks**
+Currently: **0 active Tasks**
 
-| Task | GitHub Issue | Title | File | Status |
-| ---- | ------------ | ----- | ---- | ------ |
-| T-0076 | #77 | Define AgileCockpit planning operation contract | [Task-active.md](Task-active.md) | Active |
-| T-0077 | #79 | Add AirframeCore planning APIs for artifact operations | [Task-active.md](Task-active.md) | Active |
-| T-0078 | #80 | Implement AgileCockpit task and issue planning UI | [Task-active.md](Task-active.md) | Active |
-| T-0079 | #78 | Implement AgileCockpit sprint and epic management UI | [Task-active.md](Task-active.md) | Active |
-| T-0080 | #76 | Verify planning management workflow and documentation | [Task-active.md](Task-active.md) | Active |
+No Tasks are currently active.
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **5 unverified Tasks**
 
-No Tasks are currently awaiting human verification.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0086 | #86 | Reconcile Agile artifact workflow documentation and process guardrails | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0087 | #87 | Define artifact-specific status presentation model | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0088 | #88 | Replace dashboard metrics with workflow status tiles | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0089 | #89 | Add interactive dashboard status drill-down | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0090 | #90 | Verify dashboard workflow and integrate draft patch | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **75 verified Tasks** | Next available: **T-0081**
+Currently: **85 verified Tasks** | Next available: **T-0101**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -126,12 +137,12 @@ Currently: **75 verified Tasks** | Next available: **T-0081**
 
 ## Statistics
 
-- **Total Tasks:** 80
-- **Backlog:** 0
-- **Active:** 5
-- **Unverified:** 0
-- **Verified:** 75
+- **Total Tasks:** 100
+- **Backlog:** 10
+- **Active:** 0
+- **Unverified:** 5
+- **Verified:** 85
 - **Closed:** 0
-- **Next available:** T-0081
+- **Next available:** T-0101
 
-*Last Updated: 2026-06-10 (SP-015 activated with T-0076 through T-0080)*
+*Last Updated: 2026-06-12 (T-0086 through T-0090 implemented pending human verification)*

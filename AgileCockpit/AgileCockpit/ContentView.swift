@@ -13,12 +13,32 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
     case metrics = "Metrics & Audit"
 
     var id: String { rawValue }
+
+    var accessibilityID: String {
+        switch self {
+        case .dashboard:
+            "dashboard"
+        case .verification:
+            "verification"
+        case .planning:
+            "planning"
+        case .metrics:
+            "metrics"
+        }
+    }
 }
 
 struct AgileCockpitMetric: Equatable, Identifiable {
     let id: String
     let title: String
     let value: String
+}
+
+struct AgileCockpitStatusSelection: Equatable, Identifiable {
+    let tile: AirframeDashboardStatusTile
+    let row: AirframeDashboardStatusRow
+
+    var id: String { row.id }
 }
 
 struct AgileCockpitAuditRow: Equatable, Identifiable {
@@ -35,14 +55,19 @@ final class AgileCockpitDashboardModel: ObservableObject {
     let configurationDiagnostics: AirframeConfigurationDiagnostics
 
     @Published private(set) var records: [AirframeLocalWorkRecord]
+    @Published private(set) var dashboardRecords: [AirframeLocalWorkRecord]
+    @Published private(set) var dashboardDetailTextByID: [AirframeID: String]
     @Published private(set) var summary: AirframeDashboardSummary
     @Published private(set) var auditRows: [AgileCockpitAuditRow]
     @Published var selectedSection: AgileCockpitSection
     @Published var selectedWorkItemID: AirframeID?
+    @Published var selectedStatusSelection: AgileCockpitStatusSelection?
+    @Published var selectedStatusWorkItemID: AirframeID?
     @Published var statusMessage: String
 
     private let backend: any AirframeBackend
     private let reviewerContext: AirframeCertifiedContext
+    private let artifactRootURL: URL?
     private var auditStore: AirframeAuditEventStore
     private var refreshObserver: NSObjectProtocol?
     private var fileWatchSources: [DispatchSourceFileSystemObject] = []
@@ -55,20 +80,30 @@ final class AgileCockpitDashboardModel: ObservableObject {
         reviewerContext: AirframeCertifiedContext,
         auditStore: AirframeAuditEventStore = AirframeAuditEventStore(),
         selectedSection: AgileCockpitSection = .dashboard,
-        observedURLs: [URL] = []
+        observedURLs: [URL] = [],
+        artifactRootURL: URL? = nil
     ) throws {
         self.coreInfo = coreInfo
         self.context = context
         self.configurationDiagnostics = AirframeConfigurationLoader().diagnostics(for: context.configuration)
         self.backend = backend
         self.reviewerContext = reviewerContext
+        self.artifactRootURL = artifactRootURL
         self.auditStore = auditStore
         self.selectedSection = selectedSection
         let loadedRecords = try backend.listWorkRecords()
         self.records = loadedRecords
+        let dashboardData = Self.dashboardData(
+            backendRecords: loadedRecords,
+            artifactRootURL: artifactRootURL
+        )
+        self.dashboardRecords = dashboardData.records
+        self.dashboardDetailTextByID = dashboardData.detailTextByID
         self.summary = try backend.dashboardSummary()
         self.auditRows = auditStore.events.map(Self.auditRow)
         self.selectedWorkItemID = loadedRecords.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
+        self.selectedStatusSelection = nil
+        self.selectedStatusWorkItemID = nil
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         startRefreshObservation(observedURLs: observedURLs)
     }
@@ -119,7 +154,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
             backend: backend,
             reviewerContext: reviewer,
             auditStore: auditStore,
-            observedURLs: [storeURL]
+            observedURLs: [storeURL],
+            artifactRootURL: nil
         )
     }
 
@@ -151,7 +187,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
             context: context,
             backend: backend,
             reviewerContext: reviewer,
-            observedURLs: [resolvedConfigurationURL, resolvedStoreURL]
+            observedURLs: [resolvedConfigurationURL, resolvedStoreURL],
+            artifactRootURL: Self.artifactRootURL(
+                configurationURL: resolvedConfigurationURL,
+                context: context
+            )
         )
     }
 
@@ -255,12 +295,31 @@ final class AgileCockpitDashboardModel: ObservableObject {
         ]
     }
 
+    var statusTiles: [AirframeDashboardStatusTile] {
+        AirframeDashboardStatusSummary(records: dashboardRecords).tiles
+    }
+
     var sprintRecords: [AirframeLocalWorkRecord] {
         records.filter { $0.sprintID == context.project.activeSprintID }
     }
 
     var epicRecords: [AirframeLocalWorkRecord] {
         records.filter { $0.epicID == context.project.activeEpicID }
+    }
+
+    var selectedStatusRecord: AirframeLocalWorkRecord? {
+        guard let selectedStatusWorkItemID else { return nil }
+        return dashboardRecords.first { $0.workItem.id == selectedStatusWorkItemID }
+    }
+
+    var selectedStatusDetailText: String? {
+        guard let selectedStatusWorkItemID else { return nil }
+        return dashboardDetailTextByID[selectedStatusWorkItemID]
+    }
+
+    func showStatusItems(tile: AirframeDashboardStatusTile, row: AirframeDashboardStatusRow) {
+        selectedStatusSelection = AgileCockpitStatusSelection(tile: tile, row: row)
+        selectedStatusWorkItemID = nil
     }
 
     func acceptSelectedWork() {
@@ -314,9 +373,368 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private func reload(selecting id: AirframeID?) throws {
         records = try backend.listWorkRecords()
+        let dashboardData = Self.dashboardData(
+            backendRecords: records,
+            artifactRootURL: artifactRootURL
+        )
+        dashboardRecords = dashboardData.records
+        dashboardDetailTextByID = dashboardData.detailTextByID
         summary = try backend.dashboardSummary()
         auditRows = auditStore.events.map(Self.auditRow)
         selectedWorkItemID = id ?? records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
+        if let selectedStatusSelection {
+            let refreshedSummary = AirframeDashboardStatusSummary(records: dashboardRecords)
+            let refreshedSelection = refreshedSummary.tiles
+                .flatMap { tile in tile.rows.map { AgileCockpitStatusSelection(tile: tile, row: $0) } }
+                .first { $0.id == selectedStatusSelection.id }
+            self.selectedStatusSelection = refreshedSelection
+            if let selectedStatusWorkItemID,
+               dashboardRecords.contains(where: { $0.workItem.id == selectedStatusWorkItemID }) {
+                self.selectedStatusWorkItemID = selectedStatusWorkItemID
+            } else {
+                self.selectedStatusWorkItemID = refreshedSelection?.row.workItems.first?.id
+            }
+        }
+    }
+
+    private static func artifactRootURL(
+        configurationURL: URL,
+        context: AirframeProjectContext
+    ) -> URL {
+        let configuredRootPath = context.configuration.workspace.rootPath
+        if configuredRootPath.hasPrefix("/") {
+            return URL(filePath: configuredRootPath)
+        }
+        return configurationURL
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appending(path: configuredRootPath)
+            .standardizedFileURL
+    }
+
+    private static func dashboardData(
+        backendRecords: [AirframeLocalWorkRecord],
+        artifactRootURL: URL?
+    ) -> (records: [AirframeLocalWorkRecord], detailTextByID: [AirframeID: String]) {
+        guard let artifactRootURL else {
+            return (
+                records: backendRecords,
+                detailTextByID: Dictionary(
+                    uniqueKeysWithValues: backendRecords.map { ($0.workItem.id, detailText(for: $0)) }
+                )
+            )
+        }
+        let artifactRecords = localArtifactRecords(rootURL: artifactRootURL)
+        let backendIDs = Set(backendRecords.map(\.workItem.id))
+        var detailTextByID = Dictionary(
+            uniqueKeysWithValues: backendRecords.map { ($0.workItem.id, detailText(for: $0)) }
+        )
+        for artifactRecord in artifactRecords {
+            detailTextByID[artifactRecord.record.workItem.id] = artifactRecord.detailText
+        }
+        return (
+            records: backendRecords + artifactRecords.map(\.record).filter { !backendIDs.contains($0.workItem.id) },
+            detailTextByID: detailTextByID
+        )
+    }
+
+    private static func localArtifactRecords(rootURL: URL) -> [StatusDetailRecord] {
+        let files: [(URL, AirframeWorkItemKind)] = [
+            (rootURL.appending(path: "docs/Epics/Epic-backlog.md"), .epic),
+            (rootURL.appending(path: "docs/Epics/Epic-active.md"), .epic),
+            (rootURL.appending(path: "docs/Sprints/Sprint-backlog.md"), .sprint),
+            (rootURL.appending(path: "docs/Sprints/Sprint-active.md"), .sprint)
+        ]
+        let sectionedFiles: [(URL, AirframeWorkItemKind)] = [
+            (rootURL.appending(path: "docs/Tasks/Task-backlog.md"), .task),
+            (rootURL.appending(path: "docs/Tasks/Task-active.md"), .task),
+            (rootURL.appending(path: "docs/Tasks/Task-unverified.md"), .task),
+            (rootURL.appending(path: "docs/Issues/Issue-backlog.md"), .issue),
+            (rootURL.appending(path: "docs/Issues/Issue-active.md"), .issue)
+        ]
+        let closedFiles = markdownFiles(in: rootURL.appending(path: "docs/Epics/Closed"))
+            .map { ($0, AirframeWorkItemKind.epic) }
+            + markdownFiles(in: rootURL.appending(path: "docs/Sprints/Closed"))
+            .map { ($0, AirframeWorkItemKind.sprint) }
+        let verifiedTaskFiles = markdownFiles(in: rootURL.appending(path: "docs/Tasks/Verified"))
+
+        let fullFileRecords = (files + closedFiles).flatMap { fileURL, kind in
+            records(from: fileURL, kind: kind)
+        }
+        let sectionArtifactRecords = sectionedFiles.flatMap { fileURL, kind in
+            sectionRecords(from: fileURL, kind: kind)
+        }
+        let verifiedTaskRecords = verifiedTaskFiles.flatMap { fileURL in
+            tableTaskRecords(from: fileURL)
+        }
+        return fullFileRecords + sectionArtifactRecords + verifiedTaskRecords
+    }
+
+    private static func markdownFiles(in directoryURL: URL) -> [URL] {
+        guard let urls = try? FileManager.default.contentsOfDirectory(
+            at: directoryURL,
+            includingPropertiesForKeys: nil
+        ) else {
+            return []
+        }
+        return urls
+            .filter { $0.pathExtension == "md" }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+    }
+
+    private static func records(
+        from fileURL: URL,
+        kind: AirframeWorkItemKind
+    ) -> [StatusDetailRecord] {
+        guard let contents = try? String(contentsOf: fileURL, encoding: .utf8) else {
+            return []
+        }
+
+        var records: [StatusDetailRecord] = []
+        var currentID: AirframeID?
+        var currentTitle: String?
+        var currentStatus: AirframeWorkStatus?
+        var currentEpicID: AirframeID?
+
+        func flush() {
+            guard let currentID, let currentTitle, let currentStatus else {
+                return
+            }
+            records.append(
+                StatusDetailRecord(
+                    record: AirframeLocalWorkRecord(
+                        workItem: AirframeWorkItem(
+                            id: currentID,
+                            kind: kind,
+                            title: currentTitle,
+                            status: currentStatus
+                        ),
+                        epicID: kind == .sprint ? currentEpicID : nil,
+                        sprintID: nil,
+                        priority: .medium
+                    ),
+                    detailText: contents
+                )
+            )
+        }
+
+        for line in contents.components(separatedBy: .newlines) {
+            if line.hasPrefix("## ") || line.hasPrefix("# EP-") || line.hasPrefix("# SP-") {
+                flush()
+                currentStatus = nil
+                currentEpicID = nil
+                let heading = line.drop { $0 == "#" || $0 == " " }
+                let parts = heading.split(separator: ":", maxSplits: 1).map {
+                    String($0).trimmingCharacters(in: .whitespaces)
+                }
+                currentID = parts.first.map(AirframeID.init)
+                currentTitle = parts.count > 1 ? parts[1] : parts.first
+            } else if line.hasPrefix("**Status:**") {
+                currentStatus = status(from: line)
+            } else if kind == .sprint, line.hasPrefix("**Epic:**") {
+                currentEpicID = firstAirframeID(in: line, prefix: "EP-")
+            }
+        }
+
+        flush()
+        return records
+    }
+
+    private static func sectionRecords(
+        from fileURL: URL,
+        kind: AirframeWorkItemKind
+    ) -> [StatusDetailRecord] {
+        guard let contents = try? String(contentsOf: fileURL, encoding: .utf8) else {
+            return []
+        }
+
+        let lines = contents.components(separatedBy: .newlines)
+        let headingIndices = lines.indices.filter { index in
+            headingIDAndTitle(from: lines[index], kind: kind) != nil
+        }
+
+        return headingIndices.compactMap { startIndex in
+            guard let heading = headingIDAndTitle(from: lines[startIndex], kind: kind) else {
+                return nil
+            }
+            let endIndex = headingIndices.first { $0 > startIndex } ?? lines.endIndex
+            let sectionLines = Array(lines[startIndex..<endIndex])
+            let sectionText = sectionLines.joined(separator: "\n")
+            let status = sectionLines
+                .first { $0.hasPrefix("**Status:**") }
+                .map(status(from:)) ?? .backlog
+
+            return StatusDetailRecord(
+                record: AirframeLocalWorkRecord(
+                    workItem: AirframeWorkItem(
+                        id: heading.id,
+                        kind: kind,
+                        title: heading.title,
+                        status: status,
+                        githubIssue: sectionLines
+                            .first { $0.hasPrefix("**GitHub Issue:**") }
+                            .flatMap(githubIssueNumber(from:))
+                    ),
+                    epicID: sectionLines
+                        .first { $0.hasPrefix("**Epic:**") }
+                        .flatMap { firstAirframeID(in: $0, prefix: "EP-") },
+                    sprintID: sectionLines
+                        .first { $0.hasPrefix("**Sprint") }
+                        .flatMap { firstAirframeID(in: $0, prefix: "SP-") },
+                    priority: sectionLines
+                        .first { $0.hasPrefix("**Priority:**") || $0.hasPrefix("**Severity:**") }
+                        .map(priority(from:)) ?? .medium
+                ),
+                detailText: sectionText
+            )
+        }
+    }
+
+    private static func tableTaskRecords(from fileURL: URL) -> [StatusDetailRecord] {
+        guard let contents = try? String(contentsOf: fileURL, encoding: .utf8) else {
+            return []
+        }
+
+        return contents.components(separatedBy: .newlines).compactMap { line in
+            let columns = line
+                .split(separator: "|")
+                .map { String($0).trimmingCharacters(in: .whitespaces) }
+            guard columns.count >= 4,
+                  let id = columns.first,
+                  id.hasPrefix("T-"),
+                  let statusText = columns.last,
+                  statusText != "Status" else {
+                return nil
+            }
+
+            return StatusDetailRecord(
+                record: AirframeLocalWorkRecord(
+                    workItem: AirframeWorkItem(
+                        id: AirframeID(id),
+                        kind: .task,
+                        title: columns[2],
+                        status: status(from: statusText),
+                        githubIssue: githubIssueNumber(from: columns[1])
+                    ),
+                    priority: .medium
+                ),
+                detailText: contents
+            )
+        }
+    }
+
+    private static func headingIDAndTitle(
+        from line: String,
+        kind: AirframeWorkItemKind
+    ) -> (id: AirframeID, title: String)? {
+        guard line.hasPrefix("#") else { return nil }
+        let heading = line.drop { $0 == "#" || $0 == " " }
+        let parts = heading.split(separator: ":", maxSplits: 1).map {
+            String($0).trimmingCharacters(in: .whitespaces)
+        }
+        guard let rawID = parts.first,
+              rawID.hasPrefix(idPrefix(for: kind)),
+              rawID.split(separator: " ").count == 1 else {
+            return nil
+        }
+        return (AirframeID(rawID), parts.count > 1 ? parts[1] : rawID)
+    }
+
+    private static func idPrefix(for kind: AirframeWorkItemKind) -> String {
+        switch kind {
+        case .task:
+            "T-"
+        case .issue:
+            "I-"
+        case .sprint:
+            "SP-"
+        case .epic:
+            "EP-"
+        }
+    }
+
+    private static func status(from line: String) -> AirframeWorkStatus {
+        let normalized = line
+            .replacingOccurrences(of: "**Status:**", with: "")
+            .trimmingCharacters(in: .whitespaces)
+            .lowercased()
+        if normalized.contains("implemented - verified")
+            || normalized.contains("resolved - verified") {
+            return .implementedVerified
+        }
+        if normalized.contains("implemented")
+            || normalized.contains("resolved") {
+            return .implementedNotVerified
+        }
+        if normalized.contains("proposed") { return .proposed }
+        if normalized.contains("draft") { return .draft }
+        if normalized.contains("planning") { return .planning }
+        if normalized.contains("review") { return .review }
+        if normalized.contains("complete") { return .complete }
+        if normalized.contains("closed") { return .closed }
+        if normalized.contains("active") || normalized.contains("in progress") { return .active }
+        return .backlog
+    }
+
+    private static func firstAirframeID(in line: String, prefix: String) -> AirframeID? {
+        line
+            .split { !$0.isLetter && !$0.isNumber && $0 != "-" }
+            .map(String.init)
+            .first { $0.hasPrefix(prefix) }
+            .map(AirframeID.init)
+    }
+
+    private static func githubIssueNumber(from line: String) -> Int? {
+        line
+            .split { !$0.isNumber }
+            .compactMap { Int($0) }
+            .first
+    }
+
+    private static func priority(from line: String) -> AirframeWorkPriority {
+        let normalized = line.lowercased()
+        if normalized.contains("high") { return .high }
+        if normalized.contains("low") { return .low }
+        return .medium
+    }
+
+    private static func detailText(for record: AirframeLocalWorkRecord) -> String {
+        var lines: [String] = []
+        lines.append("ID: \(record.workItem.id.rawValue)")
+        lines.append("Kind: \(record.workItem.kind.rawValue)")
+        lines.append("Title: \(record.workItem.title)")
+        lines.append("Status: \(record.workItem.status.description)")
+        lines.append("Priority: \(record.priority.description)")
+        lines.append("GitHub Issue: \(record.workItem.githubIssue.map(String.init) ?? "None")")
+        lines.append("Epic: \(record.epicID?.rawValue ?? "None")")
+        lines.append("Sprint: \(record.sprintID?.rawValue ?? "None")")
+        lines.append("")
+        lines.append("Acceptance Criteria:")
+        appendBlock(record.acceptanceCriteria, to: &lines)
+        lines.append("")
+        lines.append("Scope:")
+        appendBlock(record.scope, to: &lines)
+        lines.append("")
+        lines.append("Constraints:")
+        appendBlock(record.constraints, to: &lines)
+        lines.append("")
+        lines.append("Evidence Requirements:")
+        appendBlock(record.evidenceRequirements, to: &lines)
+        lines.append("")
+        lines.append("Protected Paths:")
+        appendBlock(record.protectedPaths, to: &lines)
+        lines.append("")
+        lines.append("Report Format:")
+        lines.append(record.reportFormat)
+        return lines.joined(separator: "\n")
+    }
+
+    private static func appendBlock(_ values: [String], to lines: inout [String]) {
+        if values.isEmpty {
+            lines.append("None recorded.")
+        } else {
+            lines.append(contentsOf: values.map { "- \($0)" })
+        }
     }
 
     private func startRefreshObservation(observedURLs: [URL]) {
@@ -510,24 +928,26 @@ final class AgileCockpitDashboardModel: ObservableObject {
         sampleRecord(id: "T-0043", title: "Harden AgileCockpit accessibility and UI flows", status: .backlog),
         sampleRecord(id: "T-0044", title: "Add configuration diagnostics and failure handling", status: .backlog, priority: .medium),
         sampleRecord(id: "T-0045", title: "Write release candidate verification documentation", status: .backlog, priority: .medium),
-        sampleRecord(id: "T-0040", title: "Integrate GitHub backend status with AgileCockpit", status: .implementedVerified, sprintID: AirframeID("SP-007"), epicID: AirframeID("EP-007"))
+        sampleRecord(id: "T-0040", title: "Integrate GitHub backend status with AgileCockpit", status: .implementedVerified, sprintID: AirframeID("SP-007"), epicID: AirframeID("EP-007")),
+        sampleRecord(id: "I-0001", title: "Dashboard status rows need issue counts", kind: .issue, status: .backlog)
     ]
 
     private static func sampleRecord(
         id: String,
         title: String,
+        kind: AirframeWorkItemKind = .task,
         status: AirframeWorkStatus,
         priority: AirframeWorkPriority = .high,
-        sprintID: AirframeID = AirframeID("SP-008"),
-        epicID: AirframeID = AirframeID("EP-008")
+        sprintID: AirframeID? = AirframeID("SP-008"),
+        epicID: AirframeID? = AirframeID("EP-008")
     ) -> AirframeLocalWorkRecord {
         AirframeLocalWorkRecord(
             workItem: AirframeWorkItem(
                 id: AirframeID(id),
-                kind: .task,
+                kind: kind,
                 title: title,
                 status: status,
-                githubIssue: Int(id.dropFirst(2))
+                githubIssue: githubIssue(for: id, kind: kind)
             ),
             epicID: epicID,
             sprintID: sprintID,
@@ -537,6 +957,19 @@ final class AgileCockpitDashboardModel: ObservableObject {
             constraints: ["Keep canonical workflow and authority decisions in AirframeCore."],
             evidenceRequirements: ["Record app, Core, and UI verification commands."]
         )
+    }
+
+    private static func numericSuffix(from id: String) -> Int? {
+        Int(id.split(separator: "-").last.map(String.init) ?? "")
+    }
+
+    private static func githubIssue(for id: String, kind: AirframeWorkItemKind) -> Int? {
+        switch kind {
+        case .task, .issue:
+            numericSuffix(from: id)
+        case .sprint, .epic:
+            nil
+        }
     }
 }
 
@@ -620,7 +1053,9 @@ struct ContentView: View {
         NavigationSplitView {
             List(selection: $model.selectedSection) {
                 ForEach(AgileCockpitSection.allCases) { section in
-                    Text(section.rawValue).tag(section)
+                    Text(section.rawValue)
+                        .tag(section)
+                        .accessibilityIdentifier("agile-cockpit-nav-\(section.accessibilityID)")
                 }
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
@@ -643,6 +1078,9 @@ struct ContentView: View {
             }
         }
         .frame(minWidth: 920, minHeight: 640)
+        .popover(item: $model.selectedStatusSelection, arrowEdge: .top) { selection in
+            StatusDrillDownView(model: model, selection: selection)
+        }
     }
 
     private var header: some View {
@@ -692,7 +1130,7 @@ struct ContentView: View {
 
     private var dashboardView: some View {
         VStack(alignment: .leading, spacing: 18) {
-            metricStrip
+            statusTileGrid
             dashboardSection("Recently Done", records: model.verifiedRecords)
             dashboardSection("Active", records: model.activeRecords)
             dashboardSection("Ready for Verification", records: model.readyRecords)
@@ -718,6 +1156,8 @@ struct ContentView: View {
                         WorkRow(record: record)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(record.workItem.id.rawValue) \(record.workItem.title)")
                     .accessibilityIdentifier("agile-cockpit-queue-\(record.workItem.id.rawValue)")
                 }
                 if model.readyRecords.isEmpty {
@@ -782,7 +1222,7 @@ struct ContentView: View {
 
     private var metricsView: some View {
         VStack(alignment: .leading, spacing: 18) {
-            metricStrip
+            statusTileGrid
             Text("Audit")
                 .font(.headline)
             ForEach(model.auditRows) { row in
@@ -800,22 +1240,45 @@ struct ContentView: View {
         .accessibilityIdentifier("agile-cockpit-metrics-audit")
     }
 
-    private var metricStrip: some View {
-        HStack(spacing: 12) {
-            ForEach(model.metrics) { metric in
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(metric.title)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(metric.value)
-                        .font(.title2)
-                        .monospacedDigit()
+    private var statusTileGrid: some View {
+        HStack(alignment: .top, spacing: 6) {
+            ForEach(model.statusTiles) { tile in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(tile.title)
+                        .font(.headline)
+                    ForEach(tile.rows) { row in
+                        Button {
+                            model.showStatusItems(tile: tile, row: row)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(row.symbol)
+                                    .font(.caption)
+                                    .frame(width: 18, alignment: .leading)
+                                Text(row.title)
+                                    .font(.caption2)
+                                    .lineLimit(1)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .accessibilityIdentifier("agile-cockpit-status-\(row.id)")
+                                Text("\(row.count)")
+                                    .font(.caption2)
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 22, alignment: .trailing)
+                            }
+                            .contentShape(Rectangle())
+                            .accessibilityIdentifier("agile-cockpit-status-\(row.id)")
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(row.symbol) \(row.title) \(row.count)")
+                        .accessibilityIdentifier("agile-cockpit-status-\(row.id)")
+                    }
                 }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(6)
+                .frame(width: 138, alignment: .topLeading)
                 .background(Color.secondary.opacity(0.08))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                .accessibilityIdentifier("agile-cockpit-metric-\(metric.id)")
+                .accessibilityIdentifier("agile-cockpit-status-tile-\(tile.id)")
             }
         }
     }
@@ -848,6 +1311,11 @@ struct ContentView: View {
     }
 }
 
+private struct StatusDetailRecord {
+    let record: AirframeLocalWorkRecord
+    let detailText: String
+}
+
 private struct WorkRow: View {
     let record: AirframeLocalWorkRecord
 
@@ -857,10 +1325,11 @@ private struct WorkRow: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .frame(width: 64, alignment: .leading)
+                .accessibilityIdentifier("agile-cockpit-work-row-id-\(record.workItem.id.rawValue)")
             Text(record.workItem.title)
                 .lineLimit(2)
             Spacer()
-            Text(record.workItem.status.description)
+            Text(displayStatus)
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Text(record.priority.description)
@@ -868,6 +1337,104 @@ private struct WorkRow: View {
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
+    }
+
+    private var displayStatus: String {
+        switch (record.workItem.kind, record.workItem.status) {
+        case (.task, .implementedNotVerified):
+            "Implemented"
+        case (.task, .implementedVerified):
+            "Verified"
+        case (.issue, .active):
+            "In Progress"
+        case (.issue, .implementedNotVerified):
+            "Resolved"
+        case (.issue, .implementedVerified):
+            "Verified"
+        default:
+            record.workItem.status.description
+        }
+    }
+}
+
+private struct StatusDrillDownView: View {
+    @ObservedObject var model: AgileCockpitDashboardModel
+    let selection: AgileCockpitStatusSelection
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 18) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("\(selection.tile.title) - \(selection.row.title)")
+                    .font(.headline)
+                if selection.row.workItems.isEmpty {
+                    Text("None")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 4) {
+                            ForEach(selection.row.workItems, id: \.id.rawValue) { item in
+                                Button {
+                                    model.selectedStatusWorkItemID = item.id
+                                } label: {
+                                    HStack {
+                                        Text(item.id.rawValue)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .frame(width: 76, alignment: .leading)
+                                        Text(item.title)
+                                            .lineLimit(2)
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 4)
+                                    .background {
+                                        if let selectedID = model.selectedStatusWorkItemID, selectedID == item.id {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color.accentColor.opacity(0.18))
+                                        }
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .focusable(false)
+                                .accessibilityIdentifier("agile-cockpit-status-item-\(item.id.rawValue)")
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 440)
+                }
+            }
+            .frame(width: 300, alignment: .leading)
+
+            Divider()
+
+            if let record = model.selectedStatusRecord,
+               let detailText = model.selectedStatusDetailText {
+                WorkDetail(record: record, detailText: detailText)
+                    .id(record.workItem.id.rawValue)
+            } else {
+                Text("Select an item to view details.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(20)
+        .frame(minWidth: 720, minHeight: 420)
+        .accessibilityIdentifier("agile-cockpit-status-drilldown")
+    }
+}
+
+private struct WorkDetail: View {
+    let record: AirframeLocalWorkRecord
+    let detailText: String
+
+    var body: some View {
+        ScrollView {
+            Text(verbatim: detailText)
+                .font(.system(.body, design: .monospaced))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textSelection(.enabled)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityIdentifier("agile-cockpit-status-detail-\(record.workItem.id.rawValue)")
     }
 }
 

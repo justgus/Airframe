@@ -362,20 +362,45 @@ public struct AirframeGitHubIssueMapper: Sendable {
 
     private func statusLabel(_ status: AirframeWorkStatus) -> String {
         switch status {
+        case .proposed:
+            "proposed"
+        case .draft:
+            "draft"
         case .backlog:
             "backlog"
+        case .planning:
+            "planning"
         case .active:
             "active"
+        case .review:
+            "review"
         case .implementedNotVerified:
             "unverified"
         case .implementedVerified:
             "verified"
+        case .complete:
+            "complete"
         case .closed:
             "closed"
         }
     }
 
     private func status(from labels: Set<String>, state: String) -> AirframeWorkStatus {
+        if labels.contains("status-proposed") {
+            return .proposed
+        }
+        if labels.contains("status-draft") {
+            return .draft
+        }
+        if labels.contains("status-planning") {
+            return .planning
+        }
+        if labels.contains("status-review") {
+            return .review
+        }
+        if labels.contains("status-complete") {
+            return .complete
+        }
         if labels.contains("status-verified") {
             return .implementedVerified
         }
@@ -858,14 +883,24 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
 
     private func statusLabel(for status: AirframeWorkStatus) -> String {
         switch status {
+        case .proposed:
+            "status-proposed"
+        case .draft:
+            "status-draft"
         case .backlog:
             "status-backlog"
+        case .planning:
+            "status-planning"
         case .active:
             "status-active"
+        case .review:
+            "status-review"
         case .implementedNotVerified:
             "status-unverified"
         case .implementedVerified:
             "status-verified"
+        case .complete:
+            "status-complete"
         case .closed:
             "status-closed"
         }
@@ -873,14 +908,24 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
 
     private func operationID(for status: AirframeWorkStatus) -> AirframeID {
         switch status {
+        case .proposed:
+            AirframeID("OP-GITHUB-PROPOSE-WORK")
+        case .draft:
+            AirframeID("OP-GITHUB-DRAFT-WORK")
         case .backlog:
             AirframeID("OP-GITHUB-MOVE-BACKLOG")
+        case .planning:
+            AirframeID("OP-GITHUB-PLAN-WORK")
         case .active:
             AirframeID("OP-GITHUB-MOVE-ACTIVE")
+        case .review:
+            AirframeID("OP-GITHUB-REVIEW-WORK")
         case .implementedNotVerified:
             AirframeID("OP-GITHUB-MARK-READY")
         case .implementedVerified:
             AirframeID("OP-HUMAN-VERIFY")
+        case .complete:
+            AirframeID("OP-GITHUB-COMPLETE-WORK")
         case .closed:
             AirframeID("OP-GITHUB-CLOSE-WORK")
         }

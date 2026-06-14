@@ -14,19 +14,19 @@ final class AgileCockpitUITests: XCTestCase {
         let app = launchApp()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
         XCTAssertTrue(element("agile-cockpit-dashboard", in: app).waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Tasks"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Active"].firstMatch.waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Ready"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(labeledElement("🟢 Implemented 1", in: app).waitForExistence(timeout: 5))
     }
 
     func testVerificationWorkflowControlsAreAccessible() throws {
         let app = launchApp()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
 
-        selectNavigationItem("Verification", in: app)
+        selectNavigationItem("verification", in: app)
 
         XCTAssertTrue(element("agile-cockpit-verification", in: app).waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Verification Queue"].firstMatch.waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Harden CLI output and error contracts"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Accept"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Reject"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Request More Evidence"].firstMatch.waitForExistence(timeout: 5))
@@ -43,16 +43,16 @@ final class AgileCockpitUITests: XCTestCase {
         app.descendants(matching: .any)[identifier].firstMatch
     }
 
-    private func selectNavigationItem(_ title: String, in app: XCUIApplication) {
-        let button = app.buttons[title].firstMatch
-        if button.waitForExistence(timeout: 2) {
-            button.click()
-            return
-        }
+    private func labeledElement(_ label: String, in app: XCUIApplication) -> XCUIElement {
+        app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@", label))
+            .firstMatch
+    }
 
-        let text = app.staticTexts[title].firstMatch
-        if text.waitForExistence(timeout: 2) {
-            text.click()
-        }
+    private func selectNavigationItem(_ identifier: String, in app: XCUIApplication) {
+        app.activate()
+        let navItem = element("agile-cockpit-nav-\(identifier)", in: app)
+        XCTAssertTrue(navItem.waitForExistence(timeout: 5))
+        navItem.click()
     }
 }
