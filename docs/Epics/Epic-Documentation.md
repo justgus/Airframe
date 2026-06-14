@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Epics. Epics are implementation milest
 
 ## Active Epics
 
-Currently: **EP-017**
+Currently: **None**
 
 See: [Epic-active.md](Epic-active.md)
 
@@ -44,16 +44,16 @@ Currently: **17 Epics** | Next available: **EP-018**
 | EP-014 | Live Demo Rehearsal and Readiness | Closed | 2026-06-10 | 2026-06-10 |
 | EP-015 | AgileCockpit Planning Management | Closed | 2026-06-10 | 2026-06-10 |
 | EP-016 | AICockpit to AgileCockpit Refresh Synchronization | Closed | 2026-06-11 | 2026-06-11 |
-| EP-017 | Workflow Status Dashboard and Mutation Authority | Active | 2026-06-12 | TBD |
+| EP-017 | Workflow Status Dashboard and Mutation Authority | Closed | 2026-06-12 | 2026-06-14 |
 
 ## Statistics
 
 - **Total Epics:** 17
 - **Proposed:** 0
 - **Draft:** 0
-- **Active:** 1
+- **Active:** 0
 - **Complete pending close:** 0
-- **Closed:** 16
+- **Closed:** 17
 - **Next available:** EP-018
 
-*Last Updated: 2026-06-12 (EP-017 activated)*
+*Last Updated: 2026-06-14 (EP-017 closed manually)*
