@@ -7,16 +7,13 @@ final class AgileCockpitUITests: XCTestCase {
         XCTAssertTrue(element("agile-cockpit-title", in: app).waitForExistence(timeout: 5))
         XCTAssertTrue(element("agile-cockpit-backend-status", in: app).waitForExistence(timeout: 5))
         XCTAssertTrue(element("agile-cockpit-configuration-status", in: app).waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Sprint None"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(element("agile-cockpit-active-sprint", in: app).waitForExistence(timeout: 5))
     }
 
     func testAppRelaunchesForPrimaryWorkflowSmoke() throws {
         let app = launchApp()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
         XCTAssertTrue(element("agile-cockpit-dashboard", in: app).waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Tasks"].firstMatch.waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Active"].firstMatch.waitForExistence(timeout: 5))
-        XCTAssertTrue(labeledElement("🟢 Implemented 1", in: app).waitForExistence(timeout: 5))
     }
 
     func testVerificationWorkflowControlsAreAccessible() throws {

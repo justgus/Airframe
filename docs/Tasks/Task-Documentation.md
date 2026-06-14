@@ -14,20 +14,9 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **10 backlog Tasks**
+Currently: **0 backlog Tasks**
 
-| Task | GitHub Issue | Title | File | Status |
-| ---- | ------------ | ----- | ---- | ------ |
-| T-0091 | #91 | Define AICockpit work item mutation command contract | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0092 | #92 | Implement AICockpit local work item mutation support | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0093 | #93 | Implement controlled GitHub work item mutation support | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0095 | #95 | Verify AICockpit mutation authority boundaries | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0096 | #96 | Define AgileCockpit human mutation authority contract | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0097 | #97 | Implement AgileCockpit local verification mutations | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-backlog.md](Task-backlog.md) | Backlog |
+No Tasks are currently backlogged.
 
 See: [Task-backlog.md](Task-backlog.md)
 
@@ -41,7 +30,7 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **5 unverified Tasks**
+Currently: **15 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -50,6 +39,16 @@ Currently: **5 unverified Tasks**
 | T-0088 | #88 | Replace dashboard metrics with workflow status tiles | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0089 | #89 | Add interactive dashboard status drill-down | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0090 | #90 | Verify dashboard workflow and integrate draft patch | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0091 | #91 | Define AICockpit work item mutation command contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0092 | #92 | Implement AICockpit local work item mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0093 | #93 | Implement controlled GitHub work item mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0095 | #95 | Verify AICockpit mutation authority boundaries | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0096 | #96 | Define AgileCockpit human mutation authority contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0097 | #97 | Implement AgileCockpit local verification mutations | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
@@ -138,11 +137,11 @@ Currently: **85 verified Tasks** | Next available: **T-0101**
 ## Statistics
 
 - **Total Tasks:** 100
-- **Backlog:** 10
+- **Backlog:** 0
 - **Active:** 0
-- **Unverified:** 5
+- **Unverified:** 15
 - **Verified:** 85
 - **Closed:** 0
 - **Next available:** T-0101
 
-*Last Updated: 2026-06-12 (T-0086 through T-0090 implemented pending human verification)*
+*Last Updated: 2026-06-14 (T-0096 through T-0100 implemented pending human verification)*

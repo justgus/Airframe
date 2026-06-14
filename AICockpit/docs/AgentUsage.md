@@ -18,6 +18,8 @@ Use `--config path` to select an Airframe workspace configuration file. If omitt
 
 ## Commands
 
+Mutation command contracts for SP-018 are defined in [MutationCommandContract.md](MutationCommandContract.md).
+
 ```sh
 aicockpit --help
 aicockpit version
@@ -26,6 +28,18 @@ aicockpit config diagnose [--config path] [--output markdown|json]
 aicockpit project summary [--config path] [--store path] [--output markdown|json]
 aicockpit task propose --id T-XXXX --title "Title" [--config path] [--store path]
 aicockpit issue propose --id I-XXXX --title "Title" [--config path] [--store path]
+aicockpit task create --id T-XXXX --title "Title" [--status backlog|active] [--config path] [--store path]
+aicockpit issue create --id I-XXXX --title "Title" [--status backlog|active] [--config path] [--store path]
+aicockpit sprint create --id SP-XXXX --title "Title" [--status backlog|planning] [--config path] [--store path]
+aicockpit epic create --id EP-XXXX --title "Title" [--status proposed|draft|backlog] [--config path] [--store path]
+aicockpit task update T-XXXX [--title "Title"] [--status backlog|active|implemented] [--config path] [--store path]
+aicockpit issue update I-XXXX [--title "Title"] [--status backlog|active|resolved] [--config path] [--store path]
+aicockpit sprint update SP-XXXX [--title "Title"] [--status backlog|planning|active|review] [--config path] [--store path]
+aicockpit epic update EP-XXXX [--title "Title"] [--status proposed|draft|backlog|active|complete] [--config path] [--store path]
+aicockpit task status T-XXXX --to backlog|active|implemented [--config path] [--store path]
+aicockpit issue status I-XXXX --to backlog|active|resolved [--config path] [--store path]
+aicockpit sprint status SP-XXXX --to backlog|planning|active|review [--config path] [--store path]
+aicockpit epic status EP-XXXX --to proposed|draft|backlog|active|complete [--config path] [--store path]
 aicockpit task next [--config path] [--store path] [--output markdown|json]
 aicockpit task packet T-XXXX [--config path] [--store path] [--output markdown|json]
 aicockpit evidence attach T-XXXX --id EV-XXXX --summary "Summary" --artifact "Artifact" [--config path] [--store path]

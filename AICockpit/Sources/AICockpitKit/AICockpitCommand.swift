@@ -147,6 +147,7 @@ public enum AICockpitCommand {
             return executeBackendCommand(
                 outputFormat: outputFormat,
                 parsed: parsed,
+                controlledMutationsEnabled: true,
                 refreshNotifier: refreshNotifier
             ) { backend, context in
                 let kind: AirframeWorkItemKind = parsed.positionals[0] == "task" ? .task : .issue
@@ -183,6 +184,28 @@ public enum AICockpitCommand {
                     evidenceRequirements: parsed.repeatedValues(for: "--evidence-required"),
                     protectedPaths: parsed.repeatedValues(for: "--protected-path")
                 )
+                if let githubBackend = backend as? AirframeGitHubIssuesBackend {
+                    let result = try githubBackend.createGitHubWorkRecord(
+                        record,
+                        approval: try parsed.githubMutationApproval(),
+                        context: context,
+                        targetProjectID: context.targetProjectID
+                    )
+                    return try render(
+                        AICockpitCommandEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)Creation",
+                            message: "\(kind.rawValue.capitalized) created",
+                            backendCapabilities: githubBackend.capabilities,
+                            workItem: result.workItem,
+                            taskPacket: nil,
+                            dashboardSummary: nil,
+                            evidence: [],
+                            mutationResult: result
+                        ),
+                        as: outputFormat
+                    )
+                }
                 try backend.createWorkRecord(record)
                 return try render(
                     AICockpitCommandEnvelope(
@@ -193,6 +216,254 @@ public enum AICockpitCommand {
                     workItem: record.workItem,
                     taskPacket: nil,
                     dashboardSummary: nil,
+                        evidence: []
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 2,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "create" {
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
+                let operation = AirframeOperation(
+                    id: AirframeID("OP-CREATE-\(kind.rawValue.uppercased())"),
+                    category: .proposal
+                )
+                let decision = AirframeAuthorityEvaluator().evaluate(
+                    context: context,
+                    operation: operation,
+                    targetProjectID: context.targetProjectID
+                )
+                guard decision.isAllowed else {
+                    throw AICockpitCommandError.denied(decision, operation)
+                }
+
+                let id = AirframeID(try parsed.requiredValue(for: "--id"))
+                try validateID(id, for: kind)
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let status = try parsed.optionalCommandStatus(
+                    for: "--status",
+                    kind: kind,
+                    defaultStatus: defaultCreateStatus(for: kind)
+                )
+                let record = AirframeLocalWorkRecord(
+                    workItem: AirframeWorkItem(
+                        id: id,
+                        kind: kind,
+                        title: try parsed.requiredValue(for: "--title"),
+                        status: status,
+                        githubIssue: parsed.value(for: "--github").flatMap(Int.init)
+                    ),
+                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? defaultEpicID(for: kind, projectContext: projectContext),
+                    sprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? defaultSprintID(for: kind, projectContext: projectContext),
+                    priority: parsed.priorityValue,
+                    acceptanceCriteria: parsed.repeatedValues(for: "--acceptance"),
+                    scope: parsed.repeatedValues(for: "--scope"),
+                    constraints: parsed.repeatedValues(for: "--constraint"),
+                    evidenceRequirements: parsed.repeatedValues(for: "--evidence-required"),
+                    protectedPaths: parsed.repeatedValues(for: "--protected-path")
+                )
+                if let githubBackend = backend as? AirframeGitHubIssuesBackend {
+                    let result = try githubBackend.createGitHubWorkRecord(
+                        record,
+                        approval: try parsed.githubMutationApproval(),
+                        context: context,
+                        targetProjectID: context.targetProjectID
+                    )
+                    return try render(
+                        AICockpitCommandEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)Creation",
+                            message: "\(kind.rawValue.capitalized) created",
+                            backendCapabilities: githubBackend.capabilities,
+                            workItem: result.workItem,
+                            taskPacket: nil,
+                            dashboardSummary: nil,
+                            evidence: [],
+                            mutationResult: result
+                        ),
+                        as: outputFormat
+                    )
+                }
+                try backend.createWorkRecord(record)
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: "ok",
+                        kind: "\(kind.rawValue)Creation",
+                        message: "\(kind.rawValue.capitalized) created",
+                        backendCapabilities: backend.capabilities,
+                        workItem: record.workItem,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
+                        evidence: []
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "update" {
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
+                let operation = AirframeOperation(
+                    id: AirframeID("OP-UPDATE-\(kind.rawValue.uppercased())"),
+                    category: .workflowTransition
+                )
+                let decision = AirframeAuthorityEvaluator().evaluate(
+                    context: context,
+                    operation: operation,
+                    targetProjectID: context.targetProjectID
+                )
+                guard decision.isAllowed else {
+                    throw AICockpitCommandError.denied(decision, operation)
+                }
+
+                let workItemID = AirframeID(parsed.positionals[2])
+                try validateID(workItemID, for: kind)
+                let githubApproval = backend is AirframeGitHubIssuesBackend ? try parsed.githubMutationApproval() : nil
+                guard let existing = try backend.workRecord(id: workItemID) else {
+                    throw AirframeBackendError.missingWorkItem(workItemID)
+                }
+                guard existing.workItem.kind == kind else {
+                    throw AirframeBackendError.unsupportedWorkItemKind(existing.workItem.kind)
+                }
+                let newStatus = try parsed.optionalCommandStatus(
+                    for: "--status",
+                    kind: kind,
+                    defaultStatus: existing.workItem.status
+                )
+                if newStatus != existing.workItem.status {
+                    try validateWorkflowTransition(
+                        id: workItemID,
+                        kind: kind,
+                        from: existing.workItem.status,
+                        to: newStatus,
+                        context: context,
+                        targetProjectID: context.targetProjectID
+                    )
+                }
+                let updatedWorkItem = AirframeWorkItem(
+                    id: existing.workItem.id,
+                    kind: kind,
+                    title: parsed.value(for: "--title") ?? existing.workItem.title,
+                    status: newStatus,
+                    githubIssue: parsed.value(for: "--github").flatMap(Int.init) ?? existing.workItem.githubIssue
+                )
+                let updatedRecord = AirframeLocalWorkRecord(
+                    workItem: updatedWorkItem,
+                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? existing.epicID,
+                    sprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? existing.sprintID,
+                    priority: parsed.priorityValue(defaultingTo: existing.priority),
+                    acceptanceCriteria: replacementOrExisting(parsed.repeatedValues(for: "--acceptance"), existing.acceptanceCriteria),
+                    scope: replacementOrExisting(parsed.repeatedValues(for: "--scope"), existing.scope),
+                    constraints: replacementOrExisting(parsed.repeatedValues(for: "--constraint"), existing.constraints),
+                    evidenceRequirements: replacementOrExisting(parsed.repeatedValues(for: "--evidence-required"), existing.evidenceRequirements),
+                    protectedPaths: replacementOrExisting(parsed.repeatedValues(for: "--protected-path"), existing.protectedPaths),
+                    reportFormat: parsed.value(for: "--report-format") ?? existing.reportFormat
+                )
+                if let githubBackend = backend as? AirframeGitHubIssuesBackend {
+                    let result = try githubBackend.updateGitHubWorkRecord(
+                        updatedRecord,
+                        approval: githubApproval,
+                        context: context,
+                        targetProjectID: context.targetProjectID
+                    )
+                    return try render(
+                        AICockpitCommandEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)Update",
+                            message: "\(kind.rawValue.capitalized) updated",
+                            backendCapabilities: githubBackend.capabilities,
+                            workItem: result.workItem,
+                            taskPacket: nil,
+                            dashboardSummary: nil,
+                            evidence: [],
+                            mutationResult: result
+                        ),
+                        as: outputFormat
+                    )
+                }
+                try backend.updateWorkRecord(updatedRecord)
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: "ok",
+                        kind: "\(kind.rawValue)Update",
+                        message: "\(kind.rawValue.capitalized) updated",
+                        backendCapabilities: backend.capabilities,
+                        workItem: updatedWorkItem,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
+                        evidence: []
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "status" {
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
+                let workItemID = AirframeID(parsed.positionals[2])
+                try validateID(workItemID, for: kind)
+                let status = try parsed.requiredCommandStatus(for: "--to", kind: kind)
+                if let githubBackend = backend as? AirframeGitHubIssuesBackend {
+                    let result = try githubBackend.transitionGitHubStatus(
+                        workItemID: workItemID,
+                        to: status,
+                        approval: try parsed.githubMutationApproval(),
+                        context: context,
+                        targetProjectID: context.targetProjectID
+                    )
+                    return try render(
+                        AICockpitCommandEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)Status",
+                            message: "\(kind.rawValue.capitalized) status updated",
+                            backendCapabilities: githubBackend.capabilities,
+                            workItem: result.workItem,
+                            taskPacket: nil,
+                            dashboardSummary: nil,
+                            evidence: [],
+                            mutationResult: result
+                        ),
+                        as: outputFormat
+                    )
+                }
+                try backend.transitionWorkItem(
+                    id: workItemID,
+                    to: status,
+                    context: context,
+                    targetProjectID: context.targetProjectID
+                )
+                let workItem = try backend.workRecord(id: workItemID)?.workItem
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: "ok",
+                        kind: "\(kind.rawValue)Status",
+                        message: "\(kind.rawValue.capitalized) status updated",
+                        backendCapabilities: backend.capabilities,
+                        workItem: workItem,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
                         evidence: []
                     ),
                     as: outputFormat
@@ -438,6 +709,12 @@ public enum AICockpitCommand {
           aicockpit project summary [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit issue propose --id I-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit task create --id T-XXXX --title title [--status backlog|active] [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit issue create --id I-XXXX --title title [--status backlog|active] [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit sprint create --id SP-XXXX --title title [--status backlog|planning] [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit epic create --id EP-XXXX --title title [--status proposed|draft|backlog] [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit task|issue|sprint|epic update ID [--title title] [--status value] [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit task|issue|sprint|epic status ID --to value [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit task next [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task packet T-XXXX [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend local-fixture|github-fixture] [--store path]
@@ -473,6 +750,136 @@ public enum AICockpitCommand {
         actor: \(actorID.rawValue)
         project: \(projectID.rawValue)
         """
+    }
+
+    private static func workItemKind(commandName: String) -> AirframeWorkItemKind? {
+        switch commandName {
+        case "task":
+            .task
+        case "issue":
+            .issue
+        case "sprint":
+            .sprint
+        case "epic":
+            .epic
+        default:
+            nil
+        }
+    }
+
+    private static func validateID(_ id: AirframeID, for kind: AirframeWorkItemKind) throws {
+        let prefix = switch kind {
+        case .task:
+            "T-"
+        case .issue:
+            "I-"
+        case .sprint:
+            "SP-"
+        case .epic:
+            "EP-"
+        }
+        guard id.rawValue.hasPrefix(prefix) else {
+            throw AICockpitCommandError.invalidArguments("\(kind.rawValue) id must start with \(prefix)")
+        }
+    }
+
+    private static func defaultCreateStatus(for kind: AirframeWorkItemKind) -> AirframeWorkStatus {
+        switch kind {
+        case .task, .issue, .sprint:
+            .backlog
+        case .epic:
+            .proposed
+        }
+    }
+
+    private static func defaultEpicID(
+        for kind: AirframeWorkItemKind,
+        projectContext: AirframeProjectContext
+    ) -> AirframeID? {
+        switch kind {
+        case .task, .issue, .sprint:
+            projectContext.project.activeEpicID
+        case .epic:
+            nil
+        }
+    }
+
+    private static func defaultSprintID(
+        for kind: AirframeWorkItemKind,
+        projectContext: AirframeProjectContext
+    ) -> AirframeID? {
+        switch kind {
+        case .task, .issue:
+            projectContext.project.activeSprintID
+        case .sprint, .epic:
+            nil
+        }
+    }
+
+    private static func replacementOrExisting<T>(_ replacement: [T], _ existing: [T]) -> [T] {
+        replacement.isEmpty ? existing : replacement
+    }
+
+    private static func validateWorkflowTransition(
+        id: AirframeID,
+        kind: AirframeWorkItemKind,
+        from: AirframeWorkStatus,
+        to status: AirframeWorkStatus,
+        context: AirframeCertifiedContext,
+        targetProjectID: AirframeID
+    ) throws {
+        let operation = AirframeOperation(
+            id: operationID(for: status),
+            category: status == .implementedVerified ? .humanAcceptance : .workflowTransition
+        )
+        let transition = AirframeWorkflowTransition(
+            workItemID: id,
+            kind: kind,
+            fromStatus: from,
+            toStatus: status,
+            operation: operation
+        )
+        let decision = AirframeWorkflowTransitionEvaluator().evaluate(
+            context: context,
+            transition: transition,
+            targetProjectID: targetProjectID
+        )
+        switch decision {
+        case .allowed:
+            return
+        case .requiresConfirmation(let reason):
+            throw AirframeBackendError.requiresConfirmation(reason)
+        case .denied(let reason, let authorityReason):
+            if reason == .invalidTransition {
+                throw AirframeBackendError.invalidTransition(from: from, to: status)
+            }
+            throw AirframeBackendError.authorityDenied(authorityReason)
+        }
+    }
+
+    private static func operationID(for status: AirframeWorkStatus) -> AirframeID {
+        switch status {
+        case .proposed:
+            AirframeID("OP-PROPOSE-WORK")
+        case .draft:
+            AirframeID("OP-DRAFT-WORK")
+        case .backlog:
+            AirframeID("OP-RETURN-TO-BACKLOG")
+        case .planning:
+            AirframeID("OP-PLAN-WORK")
+        case .active:
+            AirframeID("OP-ACTIVATE-WORK")
+        case .review:
+            AirframeID("OP-REVIEW-WORK")
+        case .implementedNotVerified:
+            AirframeID("OP-READY-FOR-VERIFICATION")
+        case .implementedVerified:
+            AirframeID("OP-HUMAN-VERIFY")
+        case .complete:
+            AirframeID("OP-COMPLETE-WORK")
+        case .closed:
+            AirframeID("OP-CLOSE-WORK")
+        }
     }
 
     private static func sampleLLMContext(projectID: AirframeID) throws -> AirframeCertifiedContext {
@@ -677,6 +1084,16 @@ private struct AICockpitArguments {
         options[option] ?? []
     }
 
+    var priorityValue: AirframeWorkPriority {
+        priorityValue(defaultingTo: .medium)
+    }
+
+    func priorityValue(defaultingTo defaultValue: AirframeWorkPriority) -> AirframeWorkPriority {
+        value(for: "--priority")
+            .or(value(for: "--severity"))
+            .flatMap(AirframeWorkPriority.init(rawValue:)) ?? defaultValue
+    }
+
     func requiredValue(for option: String) throws -> String {
         guard let value = value(for: option), !value.isEmpty else {
             throw AICockpitCommandError.invalidArguments("missing required option \(option)")
@@ -711,6 +1128,51 @@ private struct AICockpitArguments {
         case let value:
             throw AICockpitCommandError.invalidArguments("unsupported status \(value)")
         }
+    }
+
+    func optionalCommandStatus(
+        for option: String,
+        kind: AirframeWorkItemKind,
+        defaultStatus: AirframeWorkStatus
+    ) throws -> AirframeWorkStatus {
+        guard value(for: option) != nil else { return defaultStatus }
+        return try requiredCommandStatus(for: option, kind: kind)
+    }
+
+    func requiredCommandStatus(for option: String, kind: AirframeWorkItemKind) throws -> AirframeWorkStatus {
+        let value = try requiredValue(for: option)
+        switch (kind, value) {
+        case (.task, "backlog"), (.issue, "backlog"), (.sprint, "backlog"), (.epic, "backlog"):
+            return .backlog
+        case (.task, "active"), (.issue, "active"), (.sprint, "active"), (.epic, "active"):
+            return .active
+        case (.task, "implemented"), (.task, "unverified"), (.task, "implemented-not-verified"):
+            return .implementedNotVerified
+        case (.issue, "resolved"), (.issue, "unverified"), (.issue, "resolved-not-verified"):
+            return .implementedNotVerified
+        case (.sprint, "planning"):
+            return .planning
+        case (.sprint, "review"):
+            return .review
+        case (.epic, "proposed"):
+            return .proposed
+        case (.epic, "draft"):
+            return .draft
+        case (.epic, "complete"):
+            return .complete
+        case (_, "verified"), (_, "implemented-verified"), (_, "resolved-verified"):
+            throw AICockpitCommandError.invalidArguments("\(kind.rawValue) verification is human-only")
+        case (_, "closed"):
+            throw AICockpitCommandError.invalidArguments("\(kind.rawValue) closure is human-only")
+        case let (_, unsupported):
+            throw AICockpitCommandError.invalidArguments("unsupported \(kind.rawValue) status \(unsupported)")
+        }
+    }
+}
+
+private extension Optional {
+    func or(_ fallback: Wrapped?) -> Wrapped? {
+        self ?? fallback
     }
 }
 

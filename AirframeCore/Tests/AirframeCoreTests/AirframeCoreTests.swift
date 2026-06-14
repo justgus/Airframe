@@ -921,6 +921,94 @@ import Foundation
     ])
 }
 
+@Test func githubIssuesBackendCreatesTaskIssueAfterApproval() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+    let record = localTaskRecord(id: "T-0093", title: "Implement controlled GitHub mutation support")
+
+    let result = try backend.createGitHubWorkRecord(
+        record,
+        approval: AirframeGitHubMutationApproval(
+            isApproved: true,
+            approvedBy: "Human",
+            reason: "SP-018 GitHub create"
+        ),
+        context: try certifiedContext(authorityClass: .llmAgent),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(result.mutation == "githubWorkItemCreation")
+    #expect(result.workItem.id == AirframeID("T-0093"))
+    #expect(transport.createdIssues.count == 1)
+    #expect(transport.createdIssues.first?.title == "[T-0093] Implement controlled GitHub mutation support")
+    #expect(transport.createdIssues.first?.labels.contains("airframe-task") == true)
+    #expect(transport.createdIssues.first?.labels.contains("status-active") == true)
+}
+
+@Test func githubIssuesBackendRequiresApprovalBeforeCreateTransportCall() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    #expect(throws: AirframeBackendError.requiresConfirmation(.requiresConfirmation)) {
+        try backend.createGitHubWorkRecord(
+            localTaskRecord(id: "T-0093", title: "Implement controlled GitHub mutation support"),
+            approval: nil,
+            context: try certifiedContext(authorityClass: .llmAgent),
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        )
+    }
+    #expect(transport.createdIssues.isEmpty)
+}
+
+@Test func githubIssuesBackendUpdatesIssueFieldsAndLabelsAfterApproval() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [controlledMutationIssue()])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+    let updated = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0067"),
+            kind: .task,
+            title: "Updated controlled GitHub mutation support",
+            status: .implementedNotVerified,
+            githubIssue: 67
+        ),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-018"),
+        priority: .low,
+        acceptanceCriteria: ["GitHub issue updates are controlled."]
+    )
+
+    let result = try backend.updateGitHubWorkRecord(
+        updated,
+        approval: AirframeGitHubMutationApproval(
+            isApproved: true,
+            approvedBy: "Human",
+            reason: "SP-018 GitHub update"
+        ),
+        context: try certifiedContext(authorityClass: .llmAgent),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(result.mutation == "githubWorkItemUpdate")
+    #expect(result.workItem.status == .implementedNotVerified)
+    #expect(transport.updatedIssues.count == 1)
+    #expect(transport.updatedIssues.first?.title == "[T-0067] Updated controlled GitHub mutation support")
+    #expect(transport.updatedIssues.first?.removedLabels.contains("status-active") == true)
+    #expect(transport.updatedIssues.first?.addedLabels.contains("status-unverified") == true)
+    #expect(transport.updatedIssues.first?.addedLabels.contains("sprint-SP-018") == true)
+}
+
 @Test func githubIssuesBackendDeniesLLMVerifiedStatusTransition() throws {
     let transport = RecordingGitHubIssueTransport(issues: [
         controlledMutationIssue(statusLabel: "status-unverified")
@@ -940,6 +1028,55 @@ import Foundation
                 approvedBy: "Human",
                 reason: "AICockpit must not verify"
             ),
+            context: try certifiedContext(authorityClass: .llmAgent),
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        )
+    }
+    #expect(transport.statusTransitions.isEmpty)
+}
+
+@Test func githubIssuesBackendAppliesHumanVerificationWithReviewerContext() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [
+        controlledMutationIssue(statusLabel: "status-unverified")
+    ])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    let result = try backend.applyHumanVerification(
+        action: .accept,
+        to: AirframeID("T-0067"),
+        context: try certifiedContext(authorityClass: .humanReviewer),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(result.workItem.status == .implementedVerified)
+    #expect(result.decision.isAllowed)
+    #expect(transport.statusTransitions == [
+        RecordingGitHubIssueTransport.StatusTransition(
+            issueNumber: 67,
+            removedLabels: ["status-unverified"],
+            addedLabel: "status-verified"
+        )
+    ])
+}
+
+@Test func githubIssuesBackendDeniesHumanVerificationForLLMContext() throws {
+    let transport = RecordingGitHubIssueTransport(issues: [
+        controlledMutationIssue(statusLabel: "status-unverified")
+    ])
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    #expect(throws: AirframeBackendError.authorityDenied(.authorityClassNotPermitted)) {
+        try backend.applyHumanVerification(
+            action: .accept,
+            to: AirframeID("T-0067"),
             context: try certifiedContext(authorityClass: .llmAgent),
             targetProjectID: AirframeID("PRJ-AIRFRAME")
         )
@@ -1016,9 +1153,25 @@ private final class RecordingGitHubIssueTransport: @unchecked Sendable, Airframe
         let addedLabel: String
     }
 
-    let issues: [AirframeGitHubIssueRecord]
+    struct CreatedIssue: Equatable {
+        let title: String
+        let body: String
+        let labels: [String]
+    }
+
+    struct UpdatedIssue: Equatable {
+        let issueNumber: Int
+        let title: String?
+        let body: String?
+        let removedLabels: [String]
+        let addedLabels: [String]
+    }
+
+    private var issues: [AirframeGitHubIssueRecord]
     private(set) var comments: [Comment] = []
     private(set) var statusTransitions: [StatusTransition] = []
+    private(set) var createdIssues: [CreatedIssue] = []
+    private(set) var updatedIssues: [UpdatedIssue] = []
 
     init(issues: [AirframeGitHubIssueRecord]) {
         self.issues = issues
@@ -1033,6 +1186,43 @@ private final class RecordingGitHubIssueTransport: @unchecked Sendable, Airframe
             throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
         }
         return issue
+    }
+
+    func createIssue(
+        title: String,
+        body: String,
+        labels: [String],
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws -> AirframeGitHubIssueRecord {
+        let issueNumber = issues.count + 1
+        let issue = AirframeGitHubIssueRecord(
+            number: issueNumber,
+            title: title,
+            labels: labels,
+            body: body
+        )
+        createdIssues.append(CreatedIssue(title: title, body: body, labels: labels))
+        issues.append(issue)
+        return issue
+    }
+
+    func updateIssue(
+        issueNumber: Int,
+        title: String?,
+        body: String?,
+        removing oldLabels: [String],
+        adding newLabels: [String],
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        updatedIssues.append(
+            UpdatedIssue(
+                issueNumber: issueNumber,
+                title: title,
+                body: body,
+                removedLabels: oldLabels,
+                addedLabels: newLabels
+            )
+        )
     }
 
     func addComment(

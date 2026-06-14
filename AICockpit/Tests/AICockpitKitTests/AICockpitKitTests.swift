@@ -275,7 +275,164 @@ import Foundation
     #expect(summary.standardOutput.contains("\"rawValue\" : \"T-9039\""))
 }
 
-@Test func githubIssuesBackendRejectsMutatingCommandsThroughAICockpit() {
+@Test func localTaskCreateUpdateAndStatusCommandsMutateRecord() {
+    let store = temporaryStorePath()
+    let created = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--store", store,
+        "--id", "T-9101",
+        "--title", "Create local task",
+        "--status", "backlog",
+        "--epic", "EP-017",
+        "--sprint", "SP-018",
+        "--priority", "high",
+        "--output", "json"
+    ])
+    let activated = AICockpitCommand.response(arguments: [
+        "task", "status", "T-9101",
+        "--store", store,
+        "--to", "active",
+        "--output", "json"
+    ])
+    let updated = AICockpitCommand.response(arguments: [
+        "task", "update", "T-9101",
+        "--store", store,
+        "--title", "Updated local task",
+        "--priority", "low",
+        "--acceptance", "Updated acceptance",
+        "--output", "json"
+    ])
+    let packet = AICockpitCommand.response(arguments: [
+        "task", "packet", "T-9101",
+        "--store", store,
+        "--output", "json"
+    ])
+
+    #expect(created.exitCode == 0)
+    #expect(created.standardOutput.contains("\"kind\" : \"taskCreation\""))
+    #expect(created.standardOutput.contains("\"status\" : \"backlog\""))
+    #expect(activated.exitCode == 0)
+    #expect(activated.standardOutput.contains("\"status\" : \"active\""))
+    #expect(updated.exitCode == 0)
+    #expect(updated.standardOutput.contains("Updated local task"))
+    #expect(packet.standardOutput.contains("Updated acceptance"))
+}
+
+@Test func localIssueCreateUpdateAndStatusCommandsMutateRecord() {
+    let store = temporaryStorePath()
+    let created = AICockpitCommand.response(arguments: [
+        "issue", "create",
+        "--store", store,
+        "--id", "I-9101",
+        "--title", "Create local issue",
+        "--severity", "high"
+    ])
+    let activated = AICockpitCommand.response(arguments: [
+        "issue", "status", "I-9101",
+        "--store", store,
+        "--to", "active"
+    ])
+    let resolved = AICockpitCommand.response(arguments: [
+        "issue", "status", "I-9101",
+        "--store", store,
+        "--to", "resolved",
+        "--output", "json"
+    ])
+
+    #expect(created.exitCode == 0)
+    #expect(created.standardOutput.contains("kind: issueCreation"))
+    #expect(activated.exitCode == 0)
+    #expect(resolved.exitCode == 0)
+    #expect(resolved.standardOutput.contains("\"status\" : \"implementedNotVerified\""))
+}
+
+@Test func localSprintAndEpicPlanningCreateCommandsAreSupported() {
+    let store = temporaryStorePath()
+    let sprint = AICockpitCommand.response(arguments: [
+        "sprint", "create",
+        "--store", store,
+        "--id", "SP-9101",
+        "--title", "Planning sprint",
+        "--status", "planning",
+        "--epic", "EP-017",
+        "--output", "json"
+    ])
+    let epic = AICockpitCommand.response(arguments: [
+        "epic", "create",
+        "--store", store,
+        "--id", "EP-9101",
+        "--title", "Planning epic",
+        "--status", "draft",
+        "--output", "json"
+    ])
+
+    #expect(sprint.exitCode == 0)
+    #expect(sprint.standardOutput.contains("\"kind\" : \"sprintCreation\""))
+    #expect(sprint.standardOutput.contains("\"status\" : \"planning\""))
+    #expect(epic.exitCode == 0)
+    #expect(epic.standardOutput.contains("\"kind\" : \"epicCreation\""))
+    #expect(epic.standardOutput.contains("\"status\" : \"draft\""))
+}
+
+@Test func aicockpitRejectsHumanOnlyStatusCommands() {
+    let store = temporaryStorePath()
+    _ = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--store", store,
+        "--id", "T-9102",
+        "--title", "Human only task",
+        "--status", "active"
+    ])
+
+    let verified = AICockpitCommand.response(arguments: [
+        "task", "status", "T-9102",
+        "--store", store,
+        "--to", "verified",
+        "--output", "json"
+    ])
+    let closed = AICockpitCommand.response(arguments: [
+        "sprint", "create",
+        "--store", store,
+        "--id", "SP-9102",
+        "--title", "Human only sprint",
+        "--status", "closed",
+        "--output", "json"
+    ])
+
+    #expect(verified.exitCode == 64)
+    #expect(verified.standardOutput.contains("verification is human-only"))
+    #expect(closed.exitCode == 64)
+    #expect(closed.standardOutput.contains("closure is human-only"))
+}
+
+@Test func updateStatusRejectsInvalidWorkflowTransitionWithoutMutation() {
+    let store = temporaryStorePath()
+    _ = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--store", store,
+        "--id", "T-9103",
+        "--title", "Invalid transition task",
+        "--status", "backlog"
+    ])
+
+    let result = AICockpitCommand.response(arguments: [
+        "task", "update", "T-9103",
+        "--store", store,
+        "--status", "implemented",
+        "--output", "json"
+    ])
+    let packet = AICockpitCommand.response(arguments: [
+        "task", "packet", "T-9103",
+        "--store", store,
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 78)
+    #expect(result.standardOutput.contains("Invalid workflow transition"))
+    #expect(packet.standardOutput.contains("\"status\" : \"backlog\""))
+}
+
+@Test func githubIssuesBackendRequiresApprovalForLegacyProposeMutation() {
     let result = AICockpitCommand.response(arguments: [
         "task", "propose",
         "--backend", "github-issues",
@@ -287,8 +444,7 @@ import Foundation
     #expect(result.exitCode == 78)
     #expect(result.standardError.isEmpty)
     #expect(result.standardOutput.contains("\"code\" : \"backendCommandFailed\""))
-    #expect(result.standardOutput.contains("read-only"))
-    #expect(result.standardOutput.contains("work item creation"))
+    #expect(result.standardOutput.contains("requires confirmation"))
 }
 
 @Test func githubIssueCommentRequiresExplicitApprovalBeforeLiveLookup() {
@@ -296,6 +452,21 @@ import Foundation
         "github", "comment", "T-0067",
         "--backend", "github-issues",
         "--body", "Evidence is ready.",
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 78)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"code\" : \"backendCommandFailed\""))
+    #expect(result.standardOutput.contains("requires confirmation"))
+}
+
+@Test func githubIssueCreateRequiresExplicitApprovalBeforeLiveMutation() {
+    let result = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--backend", "github-issues",
+        "--id", "T-9104",
+        "--title", "Attempt unapproved live create",
         "--output", "json"
     ])
 

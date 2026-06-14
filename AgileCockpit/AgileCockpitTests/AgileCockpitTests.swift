@@ -127,6 +127,78 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitAcceptsReadyIssueThroughLocalBackend() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let storeURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitIssueVerificationStore")
+        .appending(path: UUID().uuidString)
+        .appending(path: "airframe-local-backend.json")
+    let backend = AirframeLocalFilesystemBackend(storeURL: storeURL)
+    try backend.createWorkRecord(
+        AirframeLocalWorkRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("I-9100"),
+                kind: .issue,
+                title: "Resolved issue awaiting verification",
+                status: .implementedNotVerified,
+                githubIssue: 9100
+            ),
+            epicID: AirframeID("EP-017"),
+            sprintID: AirframeID("SP-019"),
+            priority: .high
+        )
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id)
+    )
+
+    model.selectedWorkItemID = AirframeID("I-9100")
+    model.acceptSelectedWork()
+
+    #expect(model.verifiedRecords.map(\.workItem.id).contains(AirframeID("I-9100")))
+    #expect(model.auditRows.last?.action == "OP-HUMAN-ACCEPT-WORK")
+    #expect(model.statusMessage.contains("I-9100 accepted"))
+}
+
+@MainActor
+@Test func agileCockpitAppliesGitHubVerificationWithHumanReviewerContext() throws {
+    let configURL = try temporaryLiveConfigurationURL(backendKind: "github-issues")
+    let transport = RecordingGitHubIssueTransport(issues: [
+        AirframeGitHubIssueRecord(
+            number: 59,
+            title: "[T-0059] Show live implemented-not-verified work",
+            labels: ["airframe-task", "status-unverified", "epic-EP-011", "sprint-SP-011"],
+            body: """
+            Airframe Type: Task
+            Airframe ID: T-0059
+            Epic: EP-011
+            Sprint: SP-011
+            """
+        )
+    ])
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:],
+        githubIssueTransport: transport
+    )
+
+    model.selectedWorkItemID = AirframeID("T-0059")
+    model.acceptSelectedWork()
+
+    #expect(model.verifiedRecords.map(\.workItem.id).contains(AirframeID("T-0059")))
+    #expect(transport.statusTransitions == [
+        RecordingGitHubIssueTransport.StatusTransition(
+            issueNumber: 59,
+            removedLabels: ["status-unverified"],
+            addedLabel: "status-verified"
+        )
+    ])
+    #expect(model.auditRows.last?.action == "OP-HUMAN-ACCEPT-WORK")
+}
+
+@MainActor
 @Test func agileCockpitRefreshesFromBackendSourceOfTruth() throws {
     let context = try AirframeConfigurationLoader().context(
         for: try AirframeConfigurationLoader().load(data: liveConfigurationData(backendKind: "local-fixture"))
@@ -604,5 +676,58 @@ private struct StubGitHubIssueTransport: AirframeGitHubIssueTransport {
             throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
         }
         return issue
+    }
+}
+
+private final class RecordingGitHubIssueTransport: @unchecked Sendable, AirframeGitHubIssueTransport {
+    struct StatusTransition: Equatable {
+        let issueNumber: Int
+        let removedLabels: [String]
+        let addedLabel: String
+    }
+
+    private var issues: [AirframeGitHubIssueRecord]
+    private(set) var statusTransitions: [StatusTransition] = []
+
+    init(issues: [AirframeGitHubIssueRecord]) {
+        self.issues = issues
+    }
+
+    func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        issues
+    }
+
+    func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
+        guard let issue = issues.first(where: { $0.number == number }) else {
+            throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
+        }
+        return issue
+    }
+
+    func replaceStatusLabel(
+        issueNumber: Int,
+        removing oldStatusLabels: [String],
+        adding newStatusLabel: String,
+        configuration: AirframeGitHubBackendConfiguration
+    ) throws {
+        statusTransitions.append(
+            StatusTransition(
+                issueNumber: issueNumber,
+                removedLabels: oldStatusLabels,
+                addedLabel: newStatusLabel
+            )
+        )
+        guard let index = issues.firstIndex(where: { $0.number == issueNumber }) else {
+            throw AirframeBackendError.githubAccessFailed("missing stub issue #\(issueNumber)")
+        }
+        let issue = issues[index]
+        let labels = issue.labels.filter { !oldStatusLabels.contains($0) } + [newStatusLabel]
+        issues[index] = AirframeGitHubIssueRecord(
+            number: issue.number,
+            title: issue.title,
+            state: issue.state,
+            labels: labels,
+            body: issue.body
+        )
     }
 }

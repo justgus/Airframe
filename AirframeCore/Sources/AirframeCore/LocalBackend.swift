@@ -143,6 +143,7 @@ public protocol AirframeBackend {
     func listWorkRecords() throws -> [AirframeLocalWorkRecord]
     func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord?
     func createWorkRecord(_ record: AirframeLocalWorkRecord) throws
+    func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws
     func updateWorkItem(_ workItem: AirframeWorkItem) throws
     func transitionWorkItem(
         id: AirframeID,
@@ -214,15 +215,20 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
     }
 
     public func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
-        guard record.workItem.kind == .task || record.workItem.kind == .issue else {
-            throw AirframeBackendError.unsupportedWorkItemKind(record.workItem.kind)
-        }
-
         try withMutableLockedState { state in
             guard !state.records.contains(where: { $0.workItem.id == record.workItem.id }) else {
                 throw AirframeBackendError.duplicateWorkItem(record.workItem.id)
             }
             state.records.append(record)
+        }
+    }
+
+    public func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        try withMutableLockedState { state in
+            guard let index = state.records.firstIndex(where: { $0.workItem.id == record.workItem.id }) else {
+                throw AirframeBackendError.missingWorkItem(record.workItem.id)
+            }
+            state.records[index] = record
         }
     }
 

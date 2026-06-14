@@ -850,7 +850,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         case .githubIssues:
             return AirframeGitHubIssuesBackend(
                 configuration: AirframeGitHubBackendConfiguration(repositorySlug: context.project.repository),
-                transport: githubIssueTransport ?? AirframeGitHubCLITransport()
+                transport: githubIssueTransport ?? AirframeGitHubCLITransport(),
+                controlledMutationsEnabled: true
             )
         case nil:
             throw AirframeConfigurationError.invalidConfiguration("Unsupported backend \(context.configuration.backend.kind).")
@@ -995,6 +996,10 @@ private final class AgileCockpitUnavailableBackend: @unchecked Sendable, Airfram
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
+    func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        throw AirframeBackendError.githubAccessFailed("\(error)")
+    }
+
     func updateWorkItem(_ workItem: AirframeWorkItem) throws {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
@@ -1133,7 +1138,7 @@ struct ContentView: View {
             statusTileGrid
             dashboardSection("Recently Done", records: model.verifiedRecords)
             dashboardSection("Active", records: model.activeRecords)
-            dashboardSection("Ready for Verification", records: model.readyRecords)
+            dashboardSection("Ready for Verification", records: model.readyRecords, showsVerificationActions: true)
             dashboardSection("Blocked", records: model.blockedRecords)
             dashboardSection("Upcoming", records: model.upcomingRecords)
             if let nextTask = model.summary.nextTask {
@@ -1283,7 +1288,11 @@ struct ContentView: View {
         }
     }
 
-    private func dashboardSection(_ title: String, records: [AirframeLocalWorkRecord]) -> some View {
+    private func dashboardSection(
+        _ title: String,
+        records: [AirframeLocalWorkRecord],
+        showsVerificationActions: Bool = false
+    ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
@@ -1292,7 +1301,30 @@ struct ContentView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(records, id: \.workItem.id.rawValue) { record in
-                    WorkRow(record: record)
+                    VStack(alignment: .leading, spacing: 4) {
+                        WorkRow(record: record)
+                        if showsVerificationActions {
+                            HStack(spacing: 8) {
+                                Button("Accept") {
+                                    model.selectedWorkItemID = record.workItem.id
+                                    model.acceptSelectedWork()
+                                }
+                                .accessibilityIdentifier("agile-cockpit-dashboard-accept-\(record.workItem.id.rawValue)")
+                                Button("Reject") {
+                                    model.selectedWorkItemID = record.workItem.id
+                                    model.rejectSelectedWork()
+                                }
+                                .accessibilityIdentifier("agile-cockpit-dashboard-reject-\(record.workItem.id.rawValue)")
+                                Button("Request More Evidence") {
+                                    model.selectedWorkItemID = record.workItem.id
+                                    model.requestMoreEvidenceForSelectedWork()
+                                }
+                                .accessibilityIdentifier("agile-cockpit-dashboard-request-evidence-\(record.workItem.id.rawValue)")
+                            }
+                            .buttonStyle(.borderless)
+                            .font(.caption)
+                        }
+                    }
                 }
             }
         }
