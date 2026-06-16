@@ -2,78 +2,9 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **12 backlog Tasks**
+Currently: **9 backlog Tasks**
 
 ---
-
-## T-0104: Add Epic Acceptance Criteria tab to the planning panel
-
-**Status:** Backlog
-**GitHub Issue:** TBD
-**Component:** AgileCockpit
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-021
-**Date Requested:** 2026-06-14
-**Date Implemented:** TBD
-**Date Verified:** TBD
-
-**Rationale:**
-Reviewers need a dedicated place to inspect Epic acceptance criteria rather than inferring them from task lists.
-
-**Acceptance Criteria:**
-1. The Sprint & Epic panel exposes a tab for Epic acceptance criteria.
-2. The tab is reachable from the existing planning navigation.
-3. The tab is usable without leaving the planning section.
-
-**Evidence:**
-- TBD
-
-## T-0105: Add verification actions for Epic acceptance criteria
-
-**Status:** Backlog
-**GitHub Issue:** TBD
-**Component:** AgileCockpit / AirframeCore
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-021
-**Date Requested:** 2026-06-14
-**Date Implemented:** TBD
-**Date Verified:** TBD
-
-**Rationale:**
-The criteria tab must let the human reviewer mark each Epic acceptance criterion as verified with auditable state changes.
-
-**Acceptance Criteria:**
-1. Each acceptance criterion can be marked verified from the UI.
-2. Verification updates the underlying planning state.
-3. Verification writes an audit record or equivalent trace.
-
-**Evidence:**
-- TBD
-
-## T-0106: Add accessibility, selection, and evidence behavior for the criteria tab
-
-**Status:** Backlog
-**GitHub Issue:** TBD
-**Component:** AgileCockpit
-**Priority:** Medium
-**Epic:** EP-018
-**Sprint Assigned:** SP-021
-**Date Requested:** 2026-06-14
-**Date Implemented:** TBD
-**Date Verified:** TBD
-
-**Rationale:**
-The new tab needs to be readable and navigable in the same way the rest of AgileCockpit is.
-
-**Acceptance Criteria:**
-1. The criteria list has stable selection behavior.
-2. The criteria list is accessible through keyboard and assistive technologies.
-3. Verification context and evidence are visible before action.
-
-**Evidence:**
-- TBD
 
 ## T-0107: Gate Sprint close on verified Tasks and Issues
 
@@ -284,4 +215,4 @@ Closeout must continue to work in the local workspace without relying on a serve
 
 ---
 
-*Last Updated: 2026-06-15 (T-0101 through T-0103 activated for SP-020)*
+*Last Updated: 2026-06-16 (T-0104 through T-0106 activated for SP-021)*

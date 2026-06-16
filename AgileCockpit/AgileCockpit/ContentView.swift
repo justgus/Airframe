@@ -28,6 +28,25 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
     }
 }
 
+enum AgileCockpitPlanningTab: String, CaseIterable, Identifiable {
+    case sprintWork = "Sprint Work"
+    case epicCriteria = "Epic Criteria"
+    case epicWork = "Epic Work"
+
+    var id: String { rawValue }
+
+    var accessibilityID: String {
+        switch self {
+        case .sprintWork:
+            "sprint-work"
+        case .epicCriteria:
+            "epic-criteria"
+        case .epicWork:
+            "epic-work"
+        }
+    }
+}
+
 struct AgileCockpitMetric: Equatable, Identifiable {
     let id: String
     let title: String
@@ -63,6 +82,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published var selectedWorkItemID: AirframeID?
     @Published var selectedStatusSelection: AgileCockpitStatusSelection?
     @Published var selectedStatusWorkItemID: AirframeID?
+    @Published var selectedPlanningTab: AgileCockpitPlanningTab
+    @Published var selectedEpicCriterionID: AirframeID?
     @Published var statusMessage: String
 
     private let backend: any AirframeBackend
@@ -104,6 +125,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedWorkItemID = loadedRecords.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
         self.selectedStatusSelection = nil
         self.selectedStatusWorkItemID = nil
+        self.selectedPlanningTab = .sprintWork
+        self.selectedEpicCriterionID = nil
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         startRefreshObservation(observedURLs: observedURLs)
     }
@@ -237,6 +260,10 @@ final class AgileCockpitDashboardModel: ObservableObject {
         "\(context.projectName) | \(context.project.repository)"
     }
 
+    var appStatusText: String {
+        "Agile Cockpit | \(context.workspaceName)"
+    }
+
     var backendStatusText: String {
         let capabilities = backend.capabilities
         let githubStatus = capabilities.supportsGitHubIssues ? "GitHub issue mapping on" : "GitHub issue mapping off"
@@ -314,6 +341,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
+    var activeSprintRecord: AirframeLocalWorkRecord? {
+        guard let activeSprintID = context.project.activeSprintID else { return nil }
+        return dashboardRecords.first {
+            $0.workItem.kind == .sprint && $0.workItem.id == activeSprintID
+        }
+    }
+
     var epicAcceptanceCriteriaSummary: AirframeEpicAcceptanceCriteriaSummary? {
         guard let activeEpicID = context.project.activeEpicID else { return nil }
         let criteria = activeEpicRecord?.acceptanceCriteria.enumerated().map { index, text in
@@ -338,6 +372,15 @@ final class AgileCockpitDashboardModel: ObservableObject {
         epicAcceptanceCriteriaSummary.map(AirframeEpicCloseEligibility.init(criteriaSummary:))
     }
 
+    var selectedEpicAcceptanceCriterion: AirframeEpicAcceptanceCriterion? {
+        guard let summary = epicAcceptanceCriteriaSummary else { return nil }
+        if let selectedEpicCriterionID,
+           let selected = summary.criteria.first(where: { $0.id == selectedEpicCriterionID }) {
+            return selected
+        }
+        return summary.criteria.first
+    }
+
     var selectedStatusRecord: AirframeLocalWorkRecord? {
         guard let selectedStatusWorkItemID else { return nil }
         return dashboardRecords.first { $0.workItem.id == selectedStatusWorkItemID }
@@ -351,6 +394,125 @@ final class AgileCockpitDashboardModel: ObservableObject {
     func showStatusItems(tile: AirframeDashboardStatusTile, row: AirframeDashboardStatusRow) {
         selectedStatusSelection = AgileCockpitStatusSelection(tile: tile, row: row)
         selectedStatusWorkItemID = nil
+    }
+
+    func selectEpicAcceptanceCriterion(_ criterion: AirframeEpicAcceptanceCriterion) {
+        selectedEpicCriterionID = criterion.id
+    }
+
+    func verifySelectedEpicAcceptanceCriterion() {
+        guard let criterion = selectedEpicAcceptanceCriterion else {
+            statusMessage = "No Epic acceptance criterion is selected."
+            return
+        }
+        guard !criterion.isVerified else {
+            statusMessage = "\(criterion.id.rawValue) is already verified."
+            return
+        }
+        guard let artifactRootURL else {
+            statusMessage = "Epic criteria verification requires a local Airframe artifact workspace."
+            return
+        }
+        guard let activeEpicID = context.project.activeEpicID else {
+            statusMessage = "No active Epic is configured."
+            return
+        }
+
+        let epicFileURL = artifactRootURL.appending(path: "docs/Epics/Epic-active.md")
+        do {
+            let contents = try String(contentsOf: epicFileURL, encoding: .utf8)
+            let updatedContents = try Self.markEpicAcceptanceCriterionVerified(
+                criterion.id,
+                epicID: activeEpicID,
+                in: contents
+            )
+            try updatedContents.write(to: epicFileURL, atomically: true, encoding: .utf8)
+            auditStore.record(
+                id: AirframeID("AUD-AGILE-\(auditStore.events.count + 1)"),
+                context: reviewerContext,
+                action: "OP-HUMAN-VERIFY-EPIC-CRITERION",
+                workItemID: criterion.id,
+                decision: .allowed(),
+                targetProjectID: context.project.id
+            )
+            try reload(selecting: selectedWorkItemID)
+            selectedEpicCriterionID = criterion.id
+            statusMessage = "\(criterion.id.rawValue) verified."
+        } catch {
+            statusMessage = "Epic criteria verification failed: \(error)"
+        }
+    }
+
+    func closeActiveSprint() {
+        guard let activeSprintID = context.project.activeSprintID else {
+            statusMessage = "No active Sprint is configured."
+            return
+        }
+        guard let eligibility = sprintCloseEligibility else {
+            statusMessage = "Sprint close eligibility is unavailable."
+            return
+        }
+        guard eligibility.eligibility.isEligible else {
+            statusMessage = "Sprint \(activeSprintID.rawValue) cannot close: \(eligibility.eligibility.blockingReasons.joined(separator: " "))"
+            return
+        }
+        guard let artifactRootURL else {
+            statusMessage = "Sprint close requires a local Airframe artifact workspace."
+            return
+        }
+
+        let sprintFileURL = artifactRootURL.appending(path: "docs/Sprints/Sprint-active.md")
+        do {
+            let contents = try String(contentsOf: sprintFileURL, encoding: .utf8)
+            let updatedContents = try Self.replacingArtifactStatus(
+                for: activeSprintID,
+                kind: .sprint,
+                with: .review,
+                in: contents
+            )
+            try updatedContents.write(to: sprintFileURL, atomically: true, encoding: .utf8)
+            recordCloseAudit(action: "OP-HUMAN-CLOSE-SPRINT", workItemID: activeSprintID)
+            try reload(selecting: selectedWorkItemID)
+            statusMessage = "Sprint \(activeSprintID.rawValue) close accepted: moved to Review."
+        } catch {
+            statusMessage = "Sprint close failed: \(error)"
+        }
+    }
+
+    func closeActiveEpic() {
+        guard let activeEpicID = context.project.activeEpicID else {
+            statusMessage = "No active Epic is configured."
+            return
+        }
+        guard let eligibility = epicCloseEligibility else {
+            statusMessage = "Epic close eligibility is unavailable."
+            return
+        }
+        guard eligibility.eligibility.isEligible else {
+            statusMessage = "Epic \(activeEpicID.rawValue) cannot close: \(eligibility.eligibility.blockingReasons.joined(separator: " "))"
+            return
+        }
+        guard let artifactRootURL else {
+            statusMessage = "Epic close requires a local Airframe artifact workspace."
+            return
+        }
+
+        let epicFileURL = artifactRootURL.appending(path: "docs/Epics/Epic-active.md")
+        do {
+            let contents = try String(contentsOf: epicFileURL, encoding: .utf8)
+            let updatedContents = try Self.replacingArtifactStatus(
+                for: activeEpicID,
+                kind: .epic,
+                with: .closed,
+                in: contents
+            )
+            try updatedContents.write(to: epicFileURL, atomically: true, encoding: .utf8)
+            recordCloseAudit(action: "OP-HUMAN-CLOSE-EPIC", workItemID: activeEpicID)
+            try reload(selecting: selectedWorkItemID)
+            statusMessage = "Epic \(activeEpicID.rawValue) closed."
+        } catch {
+            statusMessage = "Epic close failed: \(error)"
+        }
     }
 
     func acceptSelectedWork() {
@@ -372,6 +534,104 @@ final class AgileCockpitDashboardModel: ObservableObject {
         } catch {
             statusMessage = "Refresh failed: \(error)"
         }
+    }
+
+    private enum EpicCriterionUpdateError: Error, CustomStringConvertible {
+        case criterionNotFound(String)
+
+        var description: String {
+            switch self {
+            case .criterionNotFound(let id):
+                "Could not find acceptance criterion \(id)."
+            }
+        }
+    }
+
+    static func markEpicAcceptanceCriterionVerified(
+        _ criterionID: AirframeID,
+        epicID: AirframeID,
+        in contents: String
+    ) throws -> String {
+        let targetIndex = criterionIndex(from: criterionID)
+        var lines = contents.components(separatedBy: .newlines)
+        guard let epicStart = lines.firstIndex(where: { line in
+            headingIDAndTitle(from: line, kind: .epic)?.id == epicID
+        }) else {
+            throw EpicCriterionUpdateError.criterionNotFound(criterionID.rawValue)
+        }
+        let epicEnd = lines.indices.first { index in
+            index > epicStart && headingIDAndTitle(from: lines[index], kind: .epic) != nil
+        } ?? lines.endIndex
+        guard let criteriaHeading = lines[epicStart..<epicEnd].firstIndex(where: { line in
+            normalizedHeading(line) == "acceptance criteria"
+        }) else {
+            throw EpicCriterionUpdateError.criterionNotFound(criterionID.rawValue)
+        }
+
+        var criteriaIndex = 0
+        for lineIndex in lines.indices where lineIndex > criteriaHeading && lineIndex < epicEnd {
+            let line = lines[lineIndex]
+            if line.hasPrefix("##") || line.hasPrefix("**") {
+                break
+            }
+            guard markdownListItem(from: line) != nil else {
+                continue
+            }
+            criteriaIndex += 1
+            guard criteriaIndex == targetIndex else {
+                continue
+            }
+            lines[lineIndex] = verifiedCriterionLine(from: line)
+            return lines.joined(separator: "\n")
+        }
+
+        throw EpicCriterionUpdateError.criterionNotFound(criterionID.rawValue)
+    }
+
+    private enum ArtifactStatusUpdateError: Error, CustomStringConvertible {
+        case workItemNotFound(String)
+
+        var description: String {
+            switch self {
+            case .workItemNotFound(let id):
+                "Could not find work item \(id)."
+            }
+        }
+    }
+
+    static func replacingArtifactStatus(
+        for workItemID: AirframeID,
+        kind: AirframeWorkItemKind,
+        with status: AirframeWorkStatus,
+        in contents: String
+    ) throws -> String {
+        var lines = contents.components(separatedBy: .newlines)
+        guard let start = lines.firstIndex(where: { line in
+            headingIDAndTitle(from: line, kind: kind)?.id == workItemID
+        }) else {
+            throw ArtifactStatusUpdateError.workItemNotFound(workItemID.rawValue)
+        }
+        let end = lines.indices.first { index in
+            index > start && headingIDAndTitle(from: lines[index], kind: kind) != nil
+        } ?? lines.endIndex
+
+        if let statusIndex = lines[start..<end].firstIndex(where: { $0.hasPrefix("**Status:**") }) {
+            lines[statusIndex] = "**Status:** \(status.description)"
+        } else {
+            lines.insert("**Status:** \(status.description)", at: min(start + 1, lines.endIndex))
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    private func recordCloseAudit(action: String, workItemID: AirframeID) {
+        auditStore.record(
+            id: AirframeID("AUD-AGILE-\(auditStore.events.count + 1)"),
+            context: reviewerContext,
+            action: action,
+            workItemID: workItemID,
+            decision: .allowed(),
+            targetProjectID: context.project.id
+        )
     }
 
     private func apply(_ action: AirframeHumanVerificationAction) {
@@ -786,6 +1046,33 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
 
         return text.isEmpty ? nil : text
+    }
+
+    private static func criterionIndex(from criterionID: AirframeID) -> Int {
+        Int(criterionID.rawValue.split(separator: "-").last ?? "") ?? 1
+    }
+
+    private static func verifiedCriterionLine(from line: String) -> String {
+        if line.contains("[x]") || line.contains("[X]") {
+            return line
+        }
+        if line.contains("[ ]") {
+            return line.replacingOccurrences(of: "[ ]", with: "[x]")
+        }
+
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        let leadingWhitespace = String(line.prefix { $0 == " " || $0 == "\t" })
+        if trimmed.hasPrefix("- ") {
+            return "\(leadingWhitespace)- [x] \(trimmed.dropFirst(2))"
+        }
+        if trimmed.hasPrefix("* ") {
+            return "\(leadingWhitespace)* [x] \(trimmed.dropFirst(2))"
+        }
+        let parts = trimmed.split(separator: ".", maxSplits: 1).map(String.init)
+        if parts.count == 2, Int(parts[0]) != nil {
+            return "\(leadingWhitespace)\(parts[0]). [x] \(parts[1].trimmingCharacters(in: .whitespaces))"
+        }
+        return line
     }
 
     private static func epicAcceptanceCriterion(
@@ -1204,12 +1491,16 @@ struct ContentView: View {
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Agile Cockpit")
+                Text(model.context.projectName)
                     .font(.title)
-                    .accessibilityIdentifier("agile-cockpit-title")
-                Text(model.projectStatusText)
+                    .accessibilityIdentifier("agile-cockpit-project-title")
+                Text(model.context.project.repository)
                     .foregroundStyle(.secondary)
                     .accessibilityIdentifier("agile-cockpit-project")
+                Text(model.appStatusText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-title")
                 Text(model.backendStatusText)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1327,16 +1618,52 @@ struct ContentView: View {
 
     private var planningView: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Sprint \(model.activeSprintText)")
-                .font(.headline)
-                .accessibilityIdentifier("agile-cockpit-sprint-view")
+            planningTabPicker
             closeEligibilitySection
-            dashboardSection("Sprint Work", records: model.sprintRecords)
-            Text("Epic \(model.activeEpicText)")
-                .font(.headline)
-                .accessibilityIdentifier("agile-cockpit-epic-view")
-            epicAcceptanceCriteriaSection
-            dashboardSection("Epic Work", records: model.epicRecords)
+            planningTabContent
+        }
+        .accessibilityIdentifier("agile-cockpit-planning")
+    }
+
+    private var planningTabPicker: some View {
+        Picker("Sprint and Epic View", selection: $model.selectedPlanningTab) {
+            ForEach(AgileCockpitPlanningTab.allCases) { tab in
+                Text(tab.rawValue)
+                    .tag(tab)
+                    .accessibilityIdentifier("agile-cockpit-planning-tab-\(tab.accessibilityID)")
+            }
+        }
+        .pickerStyle(.segmented)
+        .accessibilityIdentifier("agile-cockpit-planning-tabs")
+    }
+
+    @ViewBuilder
+    private var planningTabContent: some View {
+        switch model.selectedPlanningTab {
+        case .sprintWork:
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Sprint \(model.activeSprintText)")
+                    .font(.headline)
+                    .accessibilityIdentifier("agile-cockpit-sprint-view")
+                dashboardSection("Sprint Work", records: model.sprintRecords)
+            }
+            .accessibilityIdentifier("agile-cockpit-planning-sprint-work")
+        case .epicCriteria:
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Epic \(model.activeEpicText)")
+                    .font(.headline)
+                    .accessibilityIdentifier("agile-cockpit-epic-view")
+                epicAcceptanceCriteriaSection
+            }
+            .accessibilityIdentifier("agile-cockpit-planning-epic-criteria")
+        case .epicWork:
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Epic \(model.activeEpicText)")
+                    .font(.headline)
+                    .accessibilityIdentifier("agile-cockpit-epic-view")
+                dashboardSection("Epic Work", records: model.epicRecords)
+            }
+            .accessibilityIdentifier("agile-cockpit-planning-epic-work")
         }
     }
 
@@ -1353,6 +1680,16 @@ struct ContentView: View {
                         : sprintEligibility.eligibility.blockingReasons.joined(separator: " ")
                 )
                 .accessibilityIdentifier("agile-cockpit-sprint-close-eligibility")
+                Button("Close Sprint") {
+                    model.closeActiveSprint()
+                }
+                .disabled(!sprintEligibility.eligibility.isEligible)
+                .accessibilityHint(
+                    sprintEligibility.eligibility.isEligible
+                        ? "Moves the active Sprint to Review."
+                        : "All assigned Tasks and Issues must be verified before close."
+                )
+                .accessibilityIdentifier("agile-cockpit-close-sprint")
             }
             if let epicEligibility = model.epicCloseEligibility {
                 eligibilityRow(
@@ -1363,13 +1700,23 @@ struct ContentView: View {
                         : epicEligibility.eligibility.blockingReasons.joined(separator: " ")
                 )
                 .accessibilityIdentifier("agile-cockpit-epic-close-eligibility")
+                Button("Close Epic") {
+                    model.closeActiveEpic()
+                }
+                .disabled(!epicEligibility.eligibility.isEligible)
+                .accessibilityHint(
+                    epicEligibility.eligibility.isEligible
+                        ? "Moves the active Epic to Closed."
+                        : "All Epic acceptance criteria must be verified before close."
+                )
+                .accessibilityIdentifier("agile-cockpit-close-epic")
             }
         }
         .accessibilityIdentifier("agile-cockpit-close-eligibility")
     }
 
     private var epicAcceptanceCriteriaSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Epic Acceptance Criteria")
                 .font(.headline)
             if let summary = model.epicAcceptanceCriteriaSummary, summary.hasCriteria {
@@ -1377,16 +1724,41 @@ struct ContentView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .accessibilityIdentifier("agile-cockpit-epic-criteria-summary")
-                ForEach(summary.criteria) { criterion in
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(criterion.isVerified ? "Verified" : "Unverified")
-                            .font(.caption)
-                            .foregroundStyle(criterion.isVerified ? .green : .secondary)
-                            .frame(width: 72, alignment: .leading)
-                        Text(criterion.text)
-                            .fixedSize(horizontal: false, vertical: true)
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(summary.criteria) { criterion in
+                            Button {
+                                model.selectEpicAcceptanceCriterion(criterion)
+                            } label: {
+                                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                    Text(criterion.isVerified ? "Verified" : "Unverified")
+                                        .font(.caption)
+                                        .foregroundStyle(criterion.isVerified ? .green : .secondary)
+                                        .frame(width: 72, alignment: .leading)
+                                    Text(criterion.text)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Spacer(minLength: 0)
+                                }
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 6)
+                                .background(
+                                    model.selectedEpicAcceptanceCriterion?.id == criterion.id
+                                        ? Color.accentColor.opacity(0.12)
+                                        : Color.clear
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("\(criterion.id.rawValue) \(criterion.isVerified ? "verified" : "unverified") \(criterion.text)")
+                            .accessibilityIdentifier("agile-cockpit-epic-criterion-\(criterion.id.rawValue)")
+                        }
                     }
-                    .accessibilityIdentifier("agile-cockpit-epic-criterion-\(criterion.id.rawValue)")
+                    .frame(maxWidth: 420, alignment: .leading)
+
+                    Divider()
+
+                    epicAcceptanceCriteriaDetail
                 }
             } else {
                 Text("No acceptance criteria are recorded.")
@@ -1395,6 +1767,44 @@ struct ContentView: View {
             }
         }
         .accessibilityIdentifier("agile-cockpit-epic-acceptance-criteria")
+    }
+
+    @ViewBuilder
+    private var epicAcceptanceCriteriaDetail: some View {
+        if let criterion = model.selectedEpicAcceptanceCriterion {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(criterion.id.rawValue)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-selected-epic-criterion-id")
+                Text(criterion.text)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("agile-cockpit-selected-epic-criterion-text")
+                LabeledContent("Status", value: criterion.isVerified ? "Verified" : "Unverified")
+                    .accessibilityIdentifier("agile-cockpit-selected-epic-criterion-status")
+                Text("Evidence")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("Verification is recorded in the Epic acceptance criteria checklist and audit log.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("agile-cockpit-selected-epic-criterion-evidence")
+                Button("Mark Verified") {
+                    model.verifySelectedEpicAcceptanceCriterion()
+                }
+                .disabled(criterion.isVerified)
+                .keyboardShortcut(.defaultAction)
+                .accessibilityIdentifier("agile-cockpit-verify-epic-criterion")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityIdentifier("agile-cockpit-epic-criterion-detail")
+        } else {
+            Text("Select an Epic acceptance criterion.")
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("agile-cockpit-epic-criterion-detail-empty")
+        }
     }
 
     private func eligibilityRow(

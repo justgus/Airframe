@@ -111,6 +111,12 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0098 | #98 | EP-017 | Implement AgileCockpit controlled GitHub verification mutations |
 | T-0099 | #99 | EP-017 | Add human verification UI flows for Tasks and Issues |
 | T-0100 | #100 | EP-017 | Verify AICockpit and AgileCockpit authority separation |
+| T-0101 | #105 | EP-018 | Define Epic acceptance criteria verification model |
+| T-0102 | #106 | EP-018 | Extend planning model for Epic and Sprint close eligibility |
+| T-0103 | #107 | EP-018 | Add Epic acceptance-criteria loading and summary rendering |
+| T-0104 | #108 | EP-018 | Add Epic Acceptance Criteria tab to the planning panel |
+| T-0105 | #110 | EP-018 | Add verification actions for Epic acceptance criteria |
+| T-0106 | #109 | EP-018 | Add accessibility, selection, and evidence behavior for the criteria tab |
 
 ## Current Issue Mapping
 
@@ -120,7 +126,9 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | I-0002 | #102 | EP-017 | Status drill-down detail pane omits full work product text |
 | I-0003 | #103 | EP-017 | Status drill-down detail pane uses incomplete fallback text for Tasks and Issues |
 | I-0004 | #104 | EP-017 | Status drill-down detail scroll position is retained across item selection |
+| I-0005 | #111 | EP-018 | AgileCockpit header emphasizes app identity over project identity |
+| I-0006 | #112 | EP-018 | AgileCockpit cannot run concurrent project instances |
 
-Next local Issue ID: `I-0005`.
+Next local Issue ID: `I-0007`.
 
-*Last Updated: 2026-06-13 (I-0003 and I-0004 mapped to GitHub issues #103 and #104)*
+*Last Updated: 2026-06-16 (I-0005 and I-0006 mapped to GitHub issues #111 and #112)*

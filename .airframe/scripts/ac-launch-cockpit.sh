@@ -13,7 +13,7 @@ if [[ ! -d "$APP" ]]; then
 fi
 
 echo "Launching AgileCockpit with Airframe workspace config..."
-open --fresh \
+open -n --fresh \
   --env "AIRFRAME_CONFIG_PATH=$AC_CONFIG" \
   --env "AIRFRAME_STORE_PATH=$STORE" \
   "$APP"

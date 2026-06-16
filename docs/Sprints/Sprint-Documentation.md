@@ -12,19 +12,18 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-020**
+Currently: **None**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## Sprint Backlog
 
-Currently: **4 backlog Sprints**
+Currently: **3 backlog Sprints**
 
 See: [Sprint-backlog.md](Sprint-backlog.md)
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-022 | Sprint and Epic Close Gating | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
@@ -65,8 +64,8 @@ Currently: **24 Sprints** | Next available: **SP-025**
 | SP-017 | Workflow Status Dashboard | EP-017 | T-0086, T-0087, T-0088, T-0089, T-0090 | None | Review |
 | SP-018 | AICockpit Work Item Mutation Support | EP-017 | T-0091, T-0092, T-0093, T-0094, T-0095 | None | Review |
 | SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Closed |
-| SP-020 | Epic Acceptance-Criteria Model and Eligibility | EP-018 | T-0101, T-0102, T-0103 | None | Active |
-| SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | T-0104, T-0105, T-0106 | None | Backlog |
+| SP-020 | Epic Acceptance-Criteria Model and Eligibility | EP-018 | T-0101, T-0102, T-0103 | None | Closed |
+| SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | T-0104, T-0105, T-0106 | I-0005, I-0006 | Closed |
 | SP-022 | Sprint and Epic Close Gating | EP-018 | T-0107, T-0108, T-0109 | None | Backlog |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | None | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Backlog |
@@ -74,11 +73,11 @@ Currently: **24 Sprints** | Next available: **SP-025**
 ## Statistics
 
 - **Total Sprints:** 24
-- **Backlog:** 4
+- **Backlog:** 3
 - **Planning:** 0
-- **Active:** 1
+- **Active:** 0
 - **Review:** 2
-- **Closed:** 17
+- **Closed:** 19
 - **Next available:** SP-025
 
-*Last Updated: 2026-06-15 (SP-020 activated for EP-018)*
+*Last Updated: 2026-06-16 (SP-021 closed and archived)*

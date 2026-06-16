@@ -36,10 +36,11 @@ See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **0 verified Issues** | Next available: **I-0005**
+Currently: **2 verified Issues** | Next available: **I-0007**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
+| I-0005-I-0006 | I-0005, I-0006 | [Issue-verified-0005-0006.md](Verified/Issue-verified-0005-0006.md) | Resolved - Verified |
 
 ## Closed Issues
 
@@ -50,12 +51,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 4
+- **Total Issues:** 6
 - **Backlogged:** 0
 - **Active/In Progress:** 0
 - **Resolved - Not Verified:** 4
-- **Verified:** 0
+- **Verified:** 2
 - **Closed:** 0
-- **Next available:** I-0005
+- **Next available:** I-0007
 
-*Last Updated: 2026-06-14 (I-0003 and I-0004 resolved pending human verification)*
+*Last Updated: 2026-06-16 (I-0005 and I-0006 verified by human direction)*

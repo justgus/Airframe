@@ -8,4 +8,4 @@ Issues listed here are open and not assigned to a Sprint.
 
 ---
 
-*Last Updated: 2026-06-01 (Initial setup)*
+*Last Updated: 2026-06-16 (I-0005 and I-0006 verified by human direction)*

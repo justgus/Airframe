@@ -442,8 +442,8 @@ The system must prove agent-facing and human-facing mutation authority are separ
 - `swift test --package-path AICockpit` passed on 2026-06-14.
 - `xcodebuild test -quiet -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-06-14.
 
----
-
 T-0081 through T-0085 were human-verified on 2026-06-11 and moved to [Verified/Task-verified-0081-0085.md](Verified/Task-verified-0081-0085.md).
 
-*Last Updated: 2026-06-14 (T-0096 through T-0100 implemented pending human verification)*
+T-0104 through T-0106 were human-verified on 2026-06-16 and moved to [Verified/Task-verified-0104-0106.md](Verified/Task-verified-0104-0106.md).
+
+*Last Updated: 2026-06-16 (T-0104 through T-0106 verified by human direction)*

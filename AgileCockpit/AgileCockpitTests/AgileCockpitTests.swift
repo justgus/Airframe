@@ -16,6 +16,7 @@ import Foundation
     #expect(model.context.project.activeSprintID == nil)
     #expect(model.context.project.activeEpicID == nil)
     #expect(model.projectStatusText.contains("justgus/Airframe"))
+    #expect(model.appStatusText == "Agile Cockpit | Airframe")
     #expect(model.backendStatusText.contains("github-fixture"))
     #expect(model.backendStatusText.contains("GitHub issue mapping on"))
     #expect(model.configurationDiagnostics.status == .ok)
@@ -39,9 +40,97 @@ import Foundation
     #expect(model.context.project.activeSprintID == AirframeID("SP-011"))
     #expect(model.context.project.activeEpicID == AirframeID("EP-011"))
     #expect(model.projectStatusText.contains("justgus/Airframe"))
+    #expect(model.appStatusText == "Agile Cockpit | Airframe Live Demo")
     #expect(model.backendStatusText.contains("github-fixture"))
     #expect(model.configurationDiagnostics.status == .ok)
     #expect(model.statusMessage == "Loaded github-fixture Airframe workspace.")
+}
+
+@MainActor
+@Test func agileCockpitPlanningNavigationIncludesDedicatedEpicCriteriaTab() throws {
+    let configURL = try temporaryLiveConfigurationURL()
+    let storeURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitPlanningTabs")
+        .appending(path: UUID().uuidString)
+        .appending(path: "airframe-local-backend.json")
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        storeURL: storeURL,
+        environment: [:]
+    )
+
+    #expect(AgileCockpitPlanningTab.allCases.map(\.rawValue) == ["Sprint Work", "Epic Criteria", "Epic Work"])
+    #expect(AgileCockpitPlanningTab.epicCriteria.accessibilityID == "epic-criteria")
+    #expect(model.selectedPlanningTab == .sprintWork)
+
+    model.selectedPlanningTab = .epicCriteria
+
+    #expect(model.selectedPlanningTab == .epicCriteria)
+}
+
+@MainActor
+@Test func agileCockpitMarksEpicCriterionVerifiedInMarkdownChecklist() throws {
+    let contents = """
+    # Active Epics
+
+    ## EP-018: AgileCockpit Sprint and Epic Status Controls
+
+    **Status:** Active
+
+    **Acceptance Criteria:**
+    1. [x] Existing verified criterion.
+    2. [ ] Criterion to verify.
+    3. Criterion without checkbox.
+    """
+
+    let updated = try AgileCockpitDashboardModel.markEpicAcceptanceCriterionVerified(
+        AirframeID("EP-018-AC-02"),
+        epicID: AirframeID("EP-018"),
+        in: contents
+    )
+
+    #expect(updated.contains("2. [x] Criterion to verify."))
+    #expect(updated.contains("1. [x] Existing verified criterion."))
+}
+
+@MainActor
+@Test func agileCockpitVerifiesSelectedEpicCriterionThroughLocalArtifactState() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-021",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-018: AgileCockpit Sprint and Epic Status Controls
+
+    **Status:** Active
+
+    **Acceptance Criteria:**
+    1. [ ] AgileCockpit shows Epic acceptance criteria in a dedicated tab.
+    2. [ ] A human can mark Epic acceptance criteria verified in the UI.
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+    let criterion = try #require(model.epicAcceptanceCriteriaSummary?.criteria.first)
+
+    model.selectEpicAcceptanceCriterion(criterion)
+    model.verifySelectedEpicAcceptanceCriterion()
+
+    let updated = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
+    #expect(updated.contains("1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated tab."))
+    #expect(model.epicAcceptanceCriteriaSummary?.verifiedCount == 1)
+    #expect(model.auditRows.last?.action == "OP-HUMAN-VERIFY-EPIC-CRITERION")
+    #expect(model.statusMessage == "EP-018-AC-01 verified.")
 }
 
 @MainActor
@@ -57,6 +146,7 @@ import Foundation
     #expect(model.context.project.activeSprintID == AirframeID("SP-011"))
     #expect(model.context.project.activeEpicID == AirframeID("EP-011"))
     #expect(model.projectStatusText.contains("justgus/Airframe"))
+    #expect(model.appStatusText == "Agile Cockpit | Airframe Live Demo")
     #expect(model.backendStatusText.contains("github-issues"))
     #expect(model.statusMessage == "Loaded github-issues Airframe workspace.")
     #expect(model.summary.activeTaskCount == 1)
@@ -633,6 +723,135 @@ import Foundation
     #expect(epicEligibility.eligibility.blockingReasons.contains("EP-018-AC-02 is not verified."))
 }
 
+@MainActor
+@Test func agileCockpitRejectsSprintCloseUntilAssignedTasksAndIssuesAreVerified() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintTaskStatus: "Implemented - Not Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Criterion is verified."]
+    )
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.sprintCloseEligibility?.eligibility.isEligible == false)
+
+    model.closeActiveSprint()
+
+    let sprintContents = try String(contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), encoding: .utf8)
+    #expect(sprintContents.contains("**Status:** Active"))
+    #expect(model.statusMessage.contains("Sprint SP-022 cannot close"))
+    #expect(model.statusMessage.contains("T-0107"))
+}
+
+@MainActor
+@Test func agileCockpitClosesSprintToReviewWhenAssignedTasksAndIssuesAreVerified() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Criterion is verified."]
+    )
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    model.closeActiveSprint()
+
+    let sprintContents = try String(contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), encoding: .utf8)
+    #expect(sprintContents.contains("**Status:** Review"))
+    #expect(model.activeSprintRecord?.workItem.status == .review)
+    #expect(model.auditRows.last?.action == "OP-HUMAN-CLOSE-SPRINT")
+    #expect(model.statusMessage == "Sprint SP-022 close accepted: moved to Review.")
+}
+
+@MainActor
+@Test func agileCockpitGatesEpicCloseOnVerifiedAcceptanceCriteria() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Verified criterion.", "[ ] Unverified criterion."]
+    )
+    let blockedModel = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    blockedModel.closeActiveEpic()
+
+    var epicContents = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
+    #expect(epicContents.contains("**Status:** Active"))
+    #expect(blockedModel.statusMessage.contains("Epic EP-018 cannot close"))
+    #expect(blockedModel.statusMessage.contains("EP-018-AC-02"))
+
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Verified criterion.", "[x] Now verified criterion."]
+    )
+    let eligibleModel = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    eligibleModel.closeActiveEpic()
+
+    epicContents = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
+    #expect(epicContents.contains("**Status:** Closed"))
+    #expect(eligibleModel.activeEpicRecord?.workItem.status == .closed)
+    #expect(eligibleModel.auditRows.last?.action == "OP-HUMAN-CLOSE-EPIC")
+    #expect(eligibleModel.statusMessage == "Epic EP-018 closed.")
+}
+
+@MainActor
+@Test func agileCockpitReplacesArtifactStatusInsideMatchingSectionOnly() throws {
+    let contents = """
+    # Active Epics
+
+    ## EP-017: Earlier Epic
+
+    **Status:** Active
+
+    ## EP-018: Target Epic
+
+    **Status:** Complete
+    """
+
+    let updated = try AgileCockpitDashboardModel.replacingArtifactStatus(
+        for: AirframeID("EP-018"),
+        kind: .epic,
+        with: .closed,
+        in: contents
+    )
+
+    #expect(updated.contains("## EP-017: Earlier Epic\n\n**Status:** Active"))
+    #expect(updated.contains("## EP-018: Target Epic\n\n**Status:** Closed"))
+}
+
 private func temporaryLiveConfigurationURL(backendKind: String = "github-fixture") throws -> URL {
     try temporaryLiveConfigurationURL(
         activeSprintID: "SP-011",
@@ -657,6 +876,73 @@ private func temporaryLiveConfigurationURL(
         backendKind: backendKind
     ).write(to: configURL)
     return configURL
+}
+
+private func writeCloseActionWorkspace(
+    rootURL: URL,
+    sprintTaskStatus: String,
+    sprintIssueStatus: String,
+    epicCriteria: [String]
+) throws {
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Tasks"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Issues"),
+        withIntermediateDirectories: true
+    )
+
+    let criteriaLines = epicCriteria.enumerated()
+        .map { index, criterion in "\(index + 1). \(criterion)" }
+        .joined(separator: "\n")
+    try """
+    # Active Epics
+
+    ## EP-018: AgileCockpit Sprint and Epic Status Controls
+
+    **Status:** Active
+
+    **Acceptance Criteria:**
+    \(criteriaLines)
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-022: Close Eligibility
+
+    **Status:** Active
+    **Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Tasks
+
+    ## T-0107: Gate Sprint close
+
+    **Status:** \(sprintTaskStatus)
+    **GitHub Issue:** #113
+    **Priority:** High
+    **Epic:** EP-018
+    **Sprint Assigned:** SP-022
+    """.write(to: rootURL.appending(path: "docs/Tasks/Task-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Issues
+
+    ## I-0007: Close feedback
+
+    **Status:** \(sprintIssueStatus)
+    **Severity:** Medium
+    **Epic:** EP-018
+    **Sprint Assigned:** SP-022
+    """.write(to: rootURL.appending(path: "docs/Issues/Issue-active.md"), atomically: true, encoding: .utf8)
 }
 
 private func liveConfigurationData(backendKind: String) -> Data {

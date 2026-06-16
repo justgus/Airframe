@@ -239,4 +239,8 @@ Scoped the detail view identity to the selected work item ID so selecting a diff
 - SP-017
 - T-0089
 
-*Last Updated: 2026-06-14 (I-0003 and I-0004 resolved pending human verification)*
+---
+
+I-0005 and I-0006 were human-verified in GitHub on 2026-06-16 and moved to [Verified/Issue-verified-0005-0006.md](Verified/Issue-verified-0005-0006.md).
+
+*Last Updated: 2026-06-16 (I-0005 and I-0006 verified by human direction)*

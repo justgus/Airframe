@@ -2,30 +2,9 @@
 
 Sprints listed here are attached to an Epic but are not yet in Planning, Active, Review, or Closed status.
 
-Currently: **4 backlog Sprints**
+Currently: **3 backlog Sprints**
 
 ---
-
-## SP-021: Epic Acceptance-Criteria Tab and Verification UI
-
-**Status:** Backlog
-**Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
-**Goal:** Add a dedicated Epic acceptance-criteria tab with human verification actions.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Candidate Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0104 | Add Epic Acceptance Criteria tab to the planning panel | High | Backlog |
-| T-0105 | Add verification actions for Epic acceptance criteria | High | Backlog |
-| T-0106 | Add accessibility, selection, and evidence behavior for the criteria tab | Medium | Backlog |
-
-### Candidate Issues
-
-None.
 
 ## SP-022: Sprint and Epic Close Gating
 
@@ -92,4 +71,4 @@ None.
 
 ---
 
-*Last Updated: 2026-06-15 (SP-020 activated)*
+*Last Updated: 2026-06-16 (SP-021 activated)*

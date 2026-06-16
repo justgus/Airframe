@@ -14,13 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **12 backlog Tasks**
+Currently: **9 backlog Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0104 | TBD | Add Epic Acceptance Criteria tab to the planning panel | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0105 | TBD | Add verification actions for Epic acceptance criteria | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0106 | TBD | Add accessibility, selection, and evidence behavior for the criteria tab | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0107 | TBD | Gate Sprint close on verified Tasks and Issues | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0108 | TBD | Gate Epic close on verified acceptance criteria | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0109 | TBD | Add close-action messaging and disabled-state behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
@@ -35,13 +32,10 @@ See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **3 active Tasks**
+Currently: **0 active Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0101 | #105 | Define Epic acceptance criteria verification model | [Task-active.md](Task-active.md) | Active |
-| T-0102 | #106 | Extend planning model for Epic and Sprint close eligibility | [Task-active.md](Task-active.md) | Active |
-| T-0103 | #107 | Add Epic acceptance-criteria loading and summary rendering | [Task-active.md](Task-active.md) | Active |
 
 See: [Task-active.md](Task-active.md)
 
@@ -71,7 +65,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **85 verified Tasks** | Next available: **T-0116**
+Currently: **91 verified Tasks** | Next available: **T-0116**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -150,15 +144,21 @@ Currently: **85 verified Tasks** | Next available: **T-0116**
 | T-0073 | #72 | Rehearse AgileCockpit live project review workflow | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
 | T-0074 | #74 | Verify controlled GitHub write demo with explicit approval | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
 | T-0075 | #73 | Document final live demo runbook and rollback notes | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
+| T-0101 | #105 | Define Epic acceptance criteria verification model | [Task-verified-0101-0103.md](Verified/Task-verified-0101-0103.md) | Implemented - Verified |
+| T-0102 | #106 | Extend planning model for Epic and Sprint close eligibility | [Task-verified-0101-0103.md](Verified/Task-verified-0101-0103.md) | Implemented - Verified |
+| T-0103 | #107 | Add Epic acceptance-criteria loading and summary rendering | [Task-verified-0101-0103.md](Verified/Task-verified-0101-0103.md) | Implemented - Verified |
+| T-0104 | #108 | Add Epic Acceptance Criteria tab to the planning panel | [Task-verified-0104-0106.md](Verified/Task-verified-0104-0106.md) | Implemented - Verified |
+| T-0105 | #110 | Add verification actions for Epic acceptance criteria | [Task-verified-0104-0106.md](Verified/Task-verified-0104-0106.md) | Implemented - Verified |
+| T-0106 | #109 | Add accessibility, selection, and evidence behavior for the criteria tab | [Task-verified-0104-0106.md](Verified/Task-verified-0104-0106.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 115
-- **Backlog:** 12
-- **Active:** 3
+- **Backlog:** 9
+- **Active:** 0
 - **Unverified:** 15
-- **Verified:** 85
+- **Verified:** 91
 - **Closed:** 0
 - **Next available:** T-0116
 
-*Last Updated: 2026-06-15 (T-0101 through T-0103 activated for SP-020)*
+*Last Updated: 2026-06-16 (T-0104 through T-0106 verified by human direction)*
