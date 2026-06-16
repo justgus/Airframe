@@ -14,17 +14,34 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **0 backlog Tasks**
+Currently: **12 backlog Tasks**
 
-No Tasks are currently backlogged.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0104 | TBD | Add Epic Acceptance Criteria tab to the planning panel | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0105 | TBD | Add verification actions for Epic acceptance criteria | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0106 | TBD | Add accessibility, selection, and evidence behavior for the criteria tab | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0107 | TBD | Gate Sprint close on verified Tasks and Issues | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0108 | TBD | Gate Epic close on verified acceptance criteria | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0109 | TBD | Add close-action messaging and disabled-state behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0112 | TBD | Rewrite sprint and epic index files on close | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0113 | TBD | Add tests for Epic acceptance-criteria verification | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0114 | TBD | Add tests for Sprint and Epic archive updates | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0115 | TBD | Add tests for offline local-only closeout behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
 
 See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **0 active Tasks**
+Currently: **3 active Tasks**
 
-No Tasks are currently active.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0101 | #105 | Define Epic acceptance criteria verification model | [Task-active.md](Task-active.md) | Active |
+| T-0102 | #106 | Extend planning model for Epic and Sprint close eligibility | [Task-active.md](Task-active.md) | Active |
+| T-0103 | #107 | Add Epic acceptance-criteria loading and summary rendering | [Task-active.md](Task-active.md) | Active |
 
 See: [Task-active.md](Task-active.md)
 
@@ -54,7 +71,7 @@ See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **85 verified Tasks** | Next available: **T-0101**
+Currently: **85 verified Tasks** | Next available: **T-0116**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -136,12 +153,12 @@ Currently: **85 verified Tasks** | Next available: **T-0101**
 
 ## Statistics
 
-- **Total Tasks:** 100
-- **Backlog:** 0
-- **Active:** 0
+- **Total Tasks:** 115
+- **Backlog:** 12
+- **Active:** 3
 - **Unverified:** 15
 - **Verified:** 85
 - **Closed:** 0
-- **Next available:** T-0101
+- **Next available:** T-0116
 
-*Last Updated: 2026-06-14 (T-0096 through T-0100 implemented pending human verification)*
+*Last Updated: 2026-06-15 (T-0101 through T-0103 activated for SP-020)*

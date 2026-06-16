@@ -40,6 +40,84 @@ import Foundation
     #expect(gate.requiredAuthorityClass == .humanOwner)
 }
 
+@Test func planningModelsTrackEpicCriteriaAndCloseEligibility() {
+    let summary = AirframeEpicAcceptanceCriteriaSummary(
+        epicID: AirframeID("EP-018"),
+        criteria: [
+            AirframeEpicAcceptanceCriterion(
+                id: AirframeID("EP-018-AC-01"),
+                text: "AgileCockpit shows Epic acceptance criteria.",
+                isVerified: true
+            ),
+            AirframeEpicAcceptanceCriterion(
+                id: AirframeID("EP-018-AC-02"),
+                text: "Sprint close is gated.",
+                isVerified: false
+            )
+        ]
+    )
+    let epicEligibility = AirframeEpicCloseEligibility(criteriaSummary: summary)
+    let sprintEligibility = AirframeSprintCloseEligibility(
+        sprintID: AirframeID("SP-020"),
+        assignedWorkItems: [
+            AirframeWorkItem(
+                id: AirframeID("T-0101"),
+                kind: .task,
+                title: "Define Epic acceptance criteria verification model",
+                status: .implementedVerified
+            ),
+            AirframeWorkItem(
+                id: AirframeID("T-0102"),
+                kind: .task,
+                title: "Extend planning model for Epic and Sprint close eligibility",
+                status: .active
+            )
+        ]
+    )
+
+    #expect(summary.totalCount == 2)
+    #expect(summary.verifiedCount == 1)
+    #expect(!summary.allCriteriaVerified)
+    #expect(!epicEligibility.eligibility.isEligible)
+    #expect(epicEligibility.eligibility.blockingReasons == ["EP-018-AC-02 is not verified."])
+    #expect(!sprintEligibility.eligibility.isEligible)
+    #expect(sprintEligibility.blockingWorkItems.map(\.id) == [AirframeID("T-0102")])
+}
+
+@Test func planningModelsAllowCloseWhenPrerequisitesAreVerified() {
+    let criteriaSummary = AirframeEpicAcceptanceCriteriaSummary(
+        epicID: AirframeID("EP-018"),
+        criteria: [
+            AirframeEpicAcceptanceCriterion(
+                id: AirframeID("EP-018-AC-01"),
+                text: "Criterion is verified.",
+                isVerified: true
+            )
+        ]
+    )
+    let sprintEligibility = AirframeSprintCloseEligibility(
+        sprintID: AirframeID("SP-020"),
+        assignedWorkItems: [
+            AirframeWorkItem(
+                id: AirframeID("T-0101"),
+                kind: .task,
+                title: "Verified task",
+                status: .implementedVerified
+            ),
+            AirframeWorkItem(
+                id: AirframeID("I-0001"),
+                kind: .issue,
+                title: "Verified issue",
+                status: .implementedVerified
+            )
+        ]
+    )
+
+    #expect(AirframeEpicCloseEligibility(criteriaSummary: criteriaSummary).eligibility.isEligible)
+    #expect(sprintEligibility.eligibility.isEligible)
+    #expect(sprintEligibility.blockingWorkItems.isEmpty)
+}
+
 @Test func certifiedContextBindsActorCredentialAndProjectScope() throws {
     let actor = AirframeActor(
         id: AirframeID("ACTOR-LLM"),

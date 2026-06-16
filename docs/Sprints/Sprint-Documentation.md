@@ -12,15 +12,22 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **None**
+Currently: **SP-020**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## Sprint Backlog
 
-Currently: **None**
+Currently: **4 backlog Sprints**
 
 See: [Sprint-backlog.md](Sprint-backlog.md)
+
+| Sprint | Title | Epic | File | Status |
+| ------ | ----- | ---- | ---- | ------ |
+| SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
+| SP-022 | Sprint and Epic Close Gating | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
+| SP-023 | Sprint and Epic Archive Workflow | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
+| SP-024 | Regression Coverage and Documentation Sync | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 
 ## Review Sprints
 
@@ -35,7 +42,7 @@ See: [Review/Sprint-SP-017.md](Review/Sprint-SP-017.md) | [Review/Sprint-SP-018.
 
 ## All Sprints
 
-Currently: **19 Sprints** | Next available: **SP-020**
+Currently: **24 Sprints** | Next available: **SP-025**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -58,15 +65,20 @@ Currently: **19 Sprints** | Next available: **SP-020**
 | SP-017 | Workflow Status Dashboard | EP-017 | T-0086, T-0087, T-0088, T-0089, T-0090 | None | Review |
 | SP-018 | AICockpit Work Item Mutation Support | EP-017 | T-0091, T-0092, T-0093, T-0094, T-0095 | None | Review |
 | SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Closed |
+| SP-020 | Epic Acceptance-Criteria Model and Eligibility | EP-018 | T-0101, T-0102, T-0103 | None | Active |
+| SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | T-0104, T-0105, T-0106 | None | Backlog |
+| SP-022 | Sprint and Epic Close Gating | EP-018 | T-0107, T-0108, T-0109 | None | Backlog |
+| SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | None | Backlog |
+| SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Backlog |
 
 ## Statistics
 
-- **Total Sprints:** 19
-- **Backlog:** 0
+- **Total Sprints:** 24
+- **Backlog:** 4
 - **Planning:** 0
-- **Active:** 0
+- **Active:** 1
 - **Review:** 2
 - **Closed:** 17
-- **Next available:** SP-020
+- **Next available:** SP-025
 
-*Last Updated: 2026-06-14 (SP-019 closed manually)*
+*Last Updated: 2026-06-15 (SP-020 activated for EP-018)*

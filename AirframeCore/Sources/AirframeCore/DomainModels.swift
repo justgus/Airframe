@@ -148,6 +148,123 @@ public struct AirframeLocalWorkRecord: Codable, Equatable, Sendable {
     }
 }
 
+public struct AirframeEpicAcceptanceCriterion: Codable, Equatable, Identifiable, Sendable {
+    public let id: AirframeID
+    public let text: String
+    public let isVerified: Bool
+
+    public init(
+        id: AirframeID,
+        text: String,
+        isVerified: Bool = false
+    ) {
+        self.id = id
+        self.text = text
+        self.isVerified = isVerified
+    }
+}
+
+public struct AirframeEpicAcceptanceCriteriaSummary: Codable, Equatable, Sendable {
+    public let epicID: AirframeID
+    public let criteria: [AirframeEpicAcceptanceCriterion]
+
+    public init(
+        epicID: AirframeID,
+        criteria: [AirframeEpicAcceptanceCriterion]
+    ) {
+        self.epicID = epicID
+        self.criteria = criteria
+    }
+
+    public var totalCount: Int {
+        criteria.count
+    }
+
+    public var verifiedCount: Int {
+        criteria.filter(\.isVerified).count
+    }
+
+    public var hasCriteria: Bool {
+        !criteria.isEmpty
+    }
+
+    public var allCriteriaVerified: Bool {
+        hasCriteria && verifiedCount == totalCount
+    }
+}
+
+public struct AirframeCloseEligibility: Codable, Equatable, Sendable {
+    public let isEligible: Bool
+    public let blockingReasons: [String]
+
+    public init(
+        isEligible: Bool,
+        blockingReasons: [String] = []
+    ) {
+        self.isEligible = isEligible
+        self.blockingReasons = blockingReasons
+    }
+
+    public static let eligible = AirframeCloseEligibility(isEligible: true)
+}
+
+public struct AirframeSprintCloseEligibility: Codable, Equatable, Sendable {
+    public let sprintID: AirframeID
+    public let eligibility: AirframeCloseEligibility
+    public let blockingWorkItems: [AirframeWorkItem]
+
+    public init(
+        sprintID: AirframeID,
+        assignedWorkItems: [AirframeWorkItem]
+    ) {
+        self.sprintID = sprintID
+        self.blockingWorkItems = assignedWorkItems.filter { workItem in
+            switch workItem.kind {
+            case .task, .issue:
+                workItem.status != .implementedVerified && workItem.status != .closed
+            case .sprint, .epic:
+                false
+            }
+        }.sorted { $0.id.rawValue < $1.id.rawValue }
+
+        if blockingWorkItems.isEmpty {
+            self.eligibility = .eligible
+        } else {
+            self.eligibility = AirframeCloseEligibility(
+                isEligible: false,
+                blockingReasons: blockingWorkItems.map {
+                    "\($0.id.rawValue) is \($0.status.description)"
+                }
+            )
+        }
+    }
+}
+
+public struct AirframeEpicCloseEligibility: Codable, Equatable, Sendable {
+    public let criteriaSummary: AirframeEpicAcceptanceCriteriaSummary
+    public let eligibility: AirframeCloseEligibility
+
+    public init(criteriaSummary: AirframeEpicAcceptanceCriteriaSummary) {
+        self.criteriaSummary = criteriaSummary
+        if criteriaSummary.allCriteriaVerified {
+            self.eligibility = .eligible
+        } else if criteriaSummary.criteria.isEmpty {
+            self.eligibility = AirframeCloseEligibility(
+                isEligible: false,
+                blockingReasons: ["No acceptance criteria are recorded."]
+            )
+        } else {
+            let unverified = criteriaSummary.criteria.filter { !$0.isVerified }
+            self.eligibility = AirframeCloseEligibility(
+                isEligible: false,
+                blockingReasons: unverified.map {
+                    "\($0.id.rawValue) is not verified."
+                }
+            )
+        }
+    }
+}
+
 public enum AirframeAuthorityClass: String, Codable, Equatable, Sendable {
     case humanOwner = "HumanOwner"
     case humanMaintainer = "HumanMaintainer"

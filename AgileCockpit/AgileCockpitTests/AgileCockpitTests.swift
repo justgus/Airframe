@@ -552,17 +552,122 @@ import Foundation
     #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Closed" }?.count == 1)
 }
 
+@MainActor
+@Test func agileCockpitLoadsEpicAcceptanceCriteriaAndCloseEligibilityFromLocalArtifacts() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-020",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Tasks"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-018: AgileCockpit Sprint and Epic Status Controls
+
+    **Status:** Active
+
+    **Acceptance Criteria:**
+    1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated panel.
+    2. [ ] A Sprint close action is enabled only after all Sprint Tasks and Issues are verified.
+    3. An Epic complete or close action is enabled only after all Epic acceptance criteria are verified.
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-020: Epic Acceptance-Criteria Model and Eligibility
+
+    **Status:** Active
+    **Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Tasks
+
+    ## T-0101: Define Epic acceptance criteria verification model
+
+    **Status:** Active
+    **GitHub Issue:** #105
+    **Priority:** High
+    **Epic:** EP-018
+    **Sprint Assigned:** SP-020
+
+    **Acceptance Criteria:**
+    1. The model can represent Epic acceptance criteria as individual verifiable items.
+
+    ## T-0102: Extend planning model for Epic and Sprint close eligibility
+
+    **Status:** Implemented - Verified
+    **GitHub Issue:** #106
+    **Priority:** High
+    **Epic:** EP-018
+    **Sprint Assigned:** SP-020
+    """.write(to: rootURL.appending(path: "docs/Tasks/Task-active.md"), atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+    let criteriaSummary = try #require(model.epicAcceptanceCriteriaSummary)
+    let sprintEligibility = try #require(model.sprintCloseEligibility)
+    let epicEligibility = try #require(model.epicCloseEligibility)
+
+    #expect(criteriaSummary.totalCount == 3)
+    #expect(criteriaSummary.verifiedCount == 1)
+    #expect(criteriaSummary.criteria.map(\.text).first == "AgileCockpit shows Epic acceptance criteria in a dedicated panel.")
+    #expect(model.sprintRecords.map(\.workItem.id) == [AirframeID("T-0101"), AirframeID("T-0102")])
+    #expect(!sprintEligibility.eligibility.isEligible)
+    #expect(sprintEligibility.blockingWorkItems.map(\.id) == [AirframeID("T-0101")])
+    #expect(!epicEligibility.eligibility.isEligible)
+    #expect(epicEligibility.eligibility.blockingReasons.contains("EP-018-AC-02 is not verified."))
+}
+
 private func temporaryLiveConfigurationURL(backendKind: String = "github-fixture") throws -> URL {
+    try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-011",
+        activeEpicID: "EP-011",
+        backendKind: backendKind
+    )
+}
+
+private func temporaryLiveConfigurationURL(
+    activeSprintID: String,
+    activeEpicID: String,
+    backendKind: String = "github-fixture"
+) throws -> URL {
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AgileCockpitLiveConfig")
         .appending(path: UUID().uuidString)
     try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
     let configURL = rootURL.appending(path: "airframe-workspace.json")
-    try liveConfigurationData(backendKind: backendKind).write(to: configURL)
+    try liveConfigurationData(
+        activeSprintID: activeSprintID,
+        activeEpicID: activeEpicID,
+        backendKind: backendKind
+    ).write(to: configURL)
     return configURL
 }
 
 private func liveConfigurationData(backendKind: String) -> Data {
+    liveConfigurationData(activeSprintID: "SP-011", activeEpicID: "EP-011", backendKind: backendKind)
+}
+
+private func liveConfigurationData(
+    activeSprintID: String,
+    activeEpicID: String,
+    backendKind: String
+) -> Data {
     Data(
         """
         {
@@ -577,8 +682,8 @@ private func liveConfigurationData(backendKind: String) -> Data {
               "id": { "rawValue": "PRJ-AIRFRAME" },
               "name": "Agile Airframe",
               "repository": "justgus/Airframe",
-              "activeSprintID": { "rawValue": "SP-011" },
-              "activeEpicID": { "rawValue": "EP-011" }
+              "activeSprintID": { "rawValue": "\(activeSprintID)" },
+              "activeEpicID": { "rawValue": "\(activeEpicID)" }
             }
           ],
           "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },

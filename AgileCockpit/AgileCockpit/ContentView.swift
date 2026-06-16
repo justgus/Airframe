@@ -300,11 +300,42 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var sprintRecords: [AirframeLocalWorkRecord] {
-        records.filter { $0.sprintID == context.project.activeSprintID }
+        dashboardRecords.filter { $0.sprintID == context.project.activeSprintID }
     }
 
     var epicRecords: [AirframeLocalWorkRecord] {
-        records.filter { $0.epicID == context.project.activeEpicID }
+        dashboardRecords.filter { $0.epicID == context.project.activeEpicID }
+    }
+
+    var activeEpicRecord: AirframeLocalWorkRecord? {
+        guard let activeEpicID = context.project.activeEpicID else { return nil }
+        return dashboardRecords.first {
+            $0.workItem.kind == .epic && $0.workItem.id == activeEpicID
+        }
+    }
+
+    var epicAcceptanceCriteriaSummary: AirframeEpicAcceptanceCriteriaSummary? {
+        guard let activeEpicID = context.project.activeEpicID else { return nil }
+        let criteria = activeEpicRecord?.acceptanceCriteria.enumerated().map { index, text in
+            Self.epicAcceptanceCriterion(
+                epicID: activeEpicID,
+                index: index,
+                rawText: text
+            )
+        } ?? []
+        return AirframeEpicAcceptanceCriteriaSummary(epicID: activeEpicID, criteria: criteria)
+    }
+
+    var sprintCloseEligibility: AirframeSprintCloseEligibility? {
+        guard let activeSprintID = context.project.activeSprintID else { return nil }
+        return AirframeSprintCloseEligibility(
+            sprintID: activeSprintID,
+            assignedWorkItems: sprintRecords.map(\.workItem)
+        )
+    }
+
+    var epicCloseEligibility: AirframeEpicCloseEligibility? {
+        epicAcceptanceCriteriaSummary.map(AirframeEpicCloseEligibility.init(criteriaSummary:))
     }
 
     var selectedStatusRecord: AirframeLocalWorkRecord? {
@@ -405,9 +436,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         if configuredRootPath.hasPrefix("/") {
             return URL(filePath: configuredRootPath)
         }
-        return configurationURL
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
+        let configurationDirectory = configurationURL.deletingLastPathComponent()
+        let workspaceBaseURL = configurationDirectory.lastPathComponent == ".airframe"
+            ? configurationDirectory.deletingLastPathComponent()
+            : configurationDirectory
+        return workspaceBaseURL
             .appending(path: configuredRootPath)
             .standardizedFileURL
     }
@@ -495,9 +528,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         var currentTitle: String?
         var currentStatus: AirframeWorkStatus?
         var currentEpicID: AirframeID?
+        var currentSectionLines: [String] = []
 
         func flush() {
             guard let currentID, let currentTitle, let currentStatus else {
+                currentSectionLines.removeAll()
                 return
             }
             records.append(
@@ -511,11 +546,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
                         ),
                         epicID: kind == .sprint ? currentEpicID : nil,
                         sprintID: nil,
-                        priority: .medium
+                        priority: .medium,
+                        acceptanceCriteria: acceptanceCriteria(from: currentSectionLines)
                     ),
                     detailText: contents
                 )
             )
+            currentSectionLines.removeAll()
         }
 
         for line in contents.components(separatedBy: .newlines) {
@@ -523,6 +560,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 flush()
                 currentStatus = nil
                 currentEpicID = nil
+                currentSectionLines = [line]
                 let heading = line.drop { $0 == "#" || $0 == " " }
                 let parts = heading.split(separator: ":", maxSplits: 1).map {
                     String($0).trimmingCharacters(in: .whitespaces)
@@ -530,9 +568,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 currentID = parts.first.map(AirframeID.init)
                 currentTitle = parts.count > 1 ? parts[1] : parts.first
             } else if line.hasPrefix("**Status:**") {
+                currentSectionLines.append(line)
                 currentStatus = status(from: line)
             } else if kind == .sprint, line.hasPrefix("**Epic:**") {
+                currentSectionLines.append(line)
                 currentEpicID = firstAirframeID(in: line, prefix: "EP-")
+            } else if currentID != nil {
+                currentSectionLines.append(line)
             }
         }
 
@@ -583,7 +625,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
                         .flatMap { firstAirframeID(in: $0, prefix: "SP-") },
                     priority: sectionLines
                         .first { $0.hasPrefix("**Priority:**") || $0.hasPrefix("**Severity:**") }
-                        .map(priority(from:)) ?? .medium
+                        .map(priority(from:)) ?? .medium,
+                    acceptanceCriteria: acceptanceCriteria(from: sectionLines)
                 ),
                 detailText: sectionText
             )
@@ -696,6 +739,76 @@ final class AgileCockpitDashboardModel: ObservableObject {
         if normalized.contains("high") { return .high }
         if normalized.contains("low") { return .low }
         return .medium
+    }
+
+    private static func acceptanceCriteria(from lines: [String]) -> [String] {
+        guard let headingIndex = lines.firstIndex(where: { line in
+            normalizedHeading(line) == "acceptance criteria"
+        }) else {
+            return []
+        }
+
+        var criteria: [String] = []
+        for line in lines.dropFirst(headingIndex + 1) {
+            if line.hasPrefix("##") || line.hasPrefix("**") {
+                break
+            }
+            guard let item = markdownListItem(from: line) else {
+                continue
+            }
+            criteria.append(item)
+        }
+        return criteria
+    }
+
+    private static func normalizedHeading(_ line: String) -> String {
+        line
+            .trimmingCharacters(in: .whitespaces)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "#*:"))
+            .trimmingCharacters(in: .whitespaces)
+            .lowercased()
+    }
+
+    private static func markdownListItem(from line: String) -> String? {
+        var text = line.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return nil }
+
+        if text.hasPrefix("- ") {
+            text.removeFirst(2)
+        } else if text.hasPrefix("* ") {
+            text.removeFirst(2)
+        } else {
+            let parts = text.split(separator: ".", maxSplits: 1).map(String.init)
+            guard parts.count == 2, Int(parts[0]) != nil else {
+                return nil
+            }
+            text = parts[1].trimmingCharacters(in: .whitespaces)
+        }
+
+        return text.isEmpty ? nil : text
+    }
+
+    private static func epicAcceptanceCriterion(
+        epicID: AirframeID,
+        index: Int,
+        rawText: String
+    ) -> AirframeEpicAcceptanceCriterion {
+        var text = rawText.trimmingCharacters(in: .whitespaces)
+        let isVerified: Bool
+        if text.lowercased().hasPrefix("[x]") {
+            isVerified = true
+            text = String(text.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+        } else if text.lowercased().hasPrefix("[ ]") {
+            isVerified = false
+            text = String(text.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+        } else {
+            isVerified = false
+        }
+        return AirframeEpicAcceptanceCriterion(
+            id: AirframeID("\(epicID.rawValue)-AC-\(String(format: "%02d", index + 1))"),
+            text: text,
+            isVerified: isVerified
+        )
     }
 
     private static func detailText(for record: AirframeLocalWorkRecord) -> String {
@@ -1217,11 +1330,89 @@ struct ContentView: View {
             Text("Sprint \(model.activeSprintText)")
                 .font(.headline)
                 .accessibilityIdentifier("agile-cockpit-sprint-view")
+            closeEligibilitySection
             dashboardSection("Sprint Work", records: model.sprintRecords)
             Text("Epic \(model.activeEpicText)")
                 .font(.headline)
                 .accessibilityIdentifier("agile-cockpit-epic-view")
+            epicAcceptanceCriteriaSection
             dashboardSection("Epic Work", records: model.epicRecords)
+        }
+    }
+
+    private var closeEligibilitySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Close Eligibility")
+                .font(.headline)
+            if let sprintEligibility = model.sprintCloseEligibility {
+                eligibilityRow(
+                    title: "Sprint",
+                    isEligible: sprintEligibility.eligibility.isEligible,
+                    detail: sprintEligibility.eligibility.isEligible
+                        ? "All assigned Tasks and Issues are verified."
+                        : sprintEligibility.eligibility.blockingReasons.joined(separator: " ")
+                )
+                .accessibilityIdentifier("agile-cockpit-sprint-close-eligibility")
+            }
+            if let epicEligibility = model.epicCloseEligibility {
+                eligibilityRow(
+                    title: "Epic",
+                    isEligible: epicEligibility.eligibility.isEligible,
+                    detail: epicEligibility.eligibility.isEligible
+                        ? "All Epic acceptance criteria are verified."
+                        : epicEligibility.eligibility.blockingReasons.joined(separator: " ")
+                )
+                .accessibilityIdentifier("agile-cockpit-epic-close-eligibility")
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-close-eligibility")
+    }
+
+    private var epicAcceptanceCriteriaSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Epic Acceptance Criteria")
+                .font(.headline)
+            if let summary = model.epicAcceptanceCriteriaSummary, summary.hasCriteria {
+                Text("\(summary.verifiedCount) of \(summary.totalCount) verified")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-epic-criteria-summary")
+                ForEach(summary.criteria) { criterion in
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(criterion.isVerified ? "Verified" : "Unverified")
+                            .font(.caption)
+                            .foregroundStyle(criterion.isVerified ? .green : .secondary)
+                            .frame(width: 72, alignment: .leading)
+                        Text(criterion.text)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .accessibilityIdentifier("agile-cockpit-epic-criterion-\(criterion.id.rawValue)")
+                }
+            } else {
+                Text("No acceptance criteria are recorded.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-epic-criteria-empty")
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-epic-acceptance-criteria")
+    }
+
+    private func eligibilityRow(
+        title: String,
+        isEligible: Bool,
+        detail: String
+    ) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(width: 54, alignment: .leading)
+            Text(isEligible ? "Eligible" : "Blocked")
+                .font(.caption)
+                .foregroundStyle(isEligible ? .green : .secondary)
+                .frame(width: 64, alignment: .leading)
+            Text(detail.isEmpty ? "No blocking details recorded." : detail)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
