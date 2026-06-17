@@ -12,13 +12,13 @@ This is the main index for Agile Airframe Epics. Epics are implementation milest
 
 ## Active Epics
 
-Currently: **1 active Epic**
+Currently: **0 active Epics**
 
 See: [Epic-active.md](Epic-active.md)
 
 ## Backlog Epics
 
-Currently: **1 backlog Epic**
+Currently: **2 backlog Epics**
 
 See: [Epic-backlog.md](Epic-backlog.md)
 
@@ -45,7 +45,7 @@ Currently: **19 Epics** | Next available: **EP-020**
 | EP-015 | AgileCockpit Planning Management | Closed | 2026-06-10 | 2026-06-10 |
 | EP-016 | AICockpit to AgileCockpit Refresh Synchronization | Closed | 2026-06-11 | 2026-06-11 |
 | EP-017 | Workflow Status Dashboard and Mutation Authority | Closed | 2026-06-12 | 2026-06-14 |
-| EP-018 | AgileCockpit Sprint and Epic Status Controls | Active | 2026-06-15 | TBD |
+| EP-018 | AgileCockpit Sprint and Epic Status Controls | Backlog | 2026-06-15 | TBD |
 | EP-019 | Airframe Offline-Only Operation | Backlog | TBD | TBD |
 
 ## Statistics
@@ -53,10 +53,10 @@ Currently: **19 Epics** | Next available: **EP-020**
 - **Total Epics:** 19
 - **Proposed:** 0
 - **Draft:** 0
-- **Active:** 1
+- **Active:** 0
 - **Complete pending close:** 0
 - **Closed:** 17
-- **Backlog:** 1
+- **Backlog:** 2
 - **Next available:** EP-020
 
-*Last Updated: 2026-06-15 (EP-018 activated with SP-020)*
+*Last Updated: 2026-06-17 (EP-018 moved to backlog for architectural replanning)*
