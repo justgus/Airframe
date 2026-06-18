@@ -40,6 +40,497 @@ import Foundation
     #expect(gate.requiredAuthorityClass == .humanOwner)
 }
 
+@Test func canonicalRecordsPreserveRepoCoupledRelationships() throws {
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-020"),
+            kind: .epic,
+            title: "Canonical Airframe Workflow State",
+            status: .active
+        ),
+        owner: "Human / Airframe Planning",
+        goal: "Move workflow state into canonical records.",
+        rationale: "Markdown-authored state can drift.",
+        startDate: "2026-06-17",
+        acceptanceCriterionIDs: [AirframeID("EP-020-AC-01")],
+        sprintIDs: [AirframeID("SP-025")],
+        taskIDs: [AirframeID("T-0116"), AirframeID("T-0117")],
+        planningDocumentPaths: ["docs/Architecture-Modification-Plan.md"]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-025"),
+            kind: .sprint,
+            title: "Canonical Store Schema and Validation",
+            status: .active
+        ),
+        epicID: AirframeID("EP-020"),
+        goal: "Define canonical store schema.",
+        taskIDs: [AirframeID("T-0116"), AirframeID("T-0117")]
+    )
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0116"),
+            kind: .task,
+            title: "Define canonical workflow record schemas",
+            status: .active,
+            githubIssue: 116
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Airframe needs typed canonical records.",
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-025"),
+        acceptanceCriteria: [
+            "Records preserve stable Airframe IDs and relationship IDs."
+        ]
+    )
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: epic.workItem.id,
+        activeSprintID: sprint.workItem.id,
+        epicIDs: [epic.workItem.id],
+        sprintIDs: [sprint.workItem.id],
+        taskIDs: [task.workItem.id]
+    )
+
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+
+    let decodedProject = try decoder.decode(
+        AirframeCanonicalProjectRecord.self,
+        from: encoder.encode(project)
+    )
+    let decodedEpic = try decoder.decode(
+        AirframeCanonicalEpicRecord.self,
+        from: encoder.encode(epic)
+    )
+    let decodedSprint = try decoder.decode(
+        AirframeCanonicalSprintRecord.self,
+        from: encoder.encode(sprint)
+    )
+    let decodedTask = try decoder.decode(
+        AirframeCanonicalTaskRecord.self,
+        from: encoder.encode(task)
+    )
+
+    #expect(decodedProject.activeEpicID == AirframeID("EP-020"))
+    #expect(decodedProject.activeSprintID == AirframeID("SP-025"))
+    #expect(decodedEpic.taskIDs == [AirframeID("T-0116"), AirframeID("T-0117")])
+    #expect(decodedSprint.epicID == AirframeID("EP-020"))
+    #expect(decodedSprint.taskIDs.contains(decodedTask.workItem.id))
+    #expect(decodedTask.epicID == decodedEpic.workItem.id)
+    #expect(decodedTask.sprintID == decodedSprint.workItem.id)
+    #expect(decodedTask.metadata.schemaVersion == .current)
+}
+
+@Test func canonicalRecordsRepresentEvidenceBackendMappingsAndWorkflowDefinitions() throws {
+    let criterion = AirframeCanonicalAcceptanceCriterionRecord(
+        id: AirframeID("EP-020-AC-01"),
+        ownerID: AirframeID("EP-020"),
+        text: "AirframeCore defines canonical Codable records.",
+        isVerified: false,
+        evidenceIDs: [AirframeID("EV-0116-001")]
+    )
+    let evidence = AirframeCanonicalEvidenceSummaryRecord(
+        id: AirframeID("EV-0116-001"),
+        workItemIDs: [AirframeID("T-0116")],
+        summary: "AirframeCore tests pass.",
+        result: .passed,
+        requirementIDs: [AirframeID("REQ-CWS-FR-002")],
+        command: "swift test --package-path AirframeCore",
+        artifactReferences: ["AirframeCore test output"]
+    )
+    let mapping = AirframeCanonicalBackendMappingRecord(
+        id: AirframeID("MAP-T-0116-GH"),
+        localRecordID: AirframeID("T-0116"),
+        backendKind: "github-issues",
+        externalID: "#116",
+        externalURL: "https://github.com/justgus/Airframe/issues/116"
+    )
+    let transition = AirframeCanonicalWorkflowTransitionRecord(
+        id: AirframeID("WF-TASK-BACKLOG-ACTIVE"),
+        workItemKind: .task,
+        fromStatus: .backlog,
+        toStatus: .active,
+        operation: AirframeOperation(
+            id: AirframeID("OP-ACTIVATE-TASK"),
+            category: .workflowTransition
+        ),
+        requiredAuthorityClasses: [.humanOwner, .humanMaintainer, .llmAgent],
+        preconditions: ["Task is assigned to the active Sprint."],
+        sideEffects: ["Update generated task projection."]
+    )
+    let workflow = AirframeCanonicalWorkflowDefinitionRecord(
+        id: AirframeID("WF-TASK"),
+        workItemKind: .task,
+        allowedStatuses: [.backlog, .active, .implementedNotVerified, .implementedVerified, .closed],
+        transitionIDs: [transition.id]
+    )
+
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalAcceptanceCriterionRecord.self,
+            from: encoder.encode(criterion)
+        ) == criterion
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalEvidenceSummaryRecord.self,
+            from: encoder.encode(evidence)
+        ).requirementIDs == [AirframeID("REQ-CWS-FR-002")]
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalBackendMappingRecord.self,
+            from: encoder.encode(mapping)
+        ).externalID == "#116"
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalWorkflowTransitionRecord.self,
+            from: encoder.encode(transition)
+        ).requiredAuthorityClasses.contains(.llmAgent)
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalWorkflowDefinitionRecord.self,
+            from: encoder.encode(workflow)
+        ).transitionIDs == [AirframeID("WF-TASK-BACKLOG-ACTIVE")]
+    )
+}
+
+@Test func canonicalJSONStorePersistsOneFilePerRecordKind() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalStore-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0117"),
+            kind: .task,
+            title: "Implement repo-local JSON canonical store",
+            status: .active,
+            githubIssue: 117
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Canonical workflow state must live in the repository.",
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-025"),
+        acceptanceCriteria: [
+            "AirframeCore can read and write repo-local canonical JSON records."
+        ]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-025"),
+            kind: .sprint,
+            title: "Canonical Store Schema and Validation",
+            status: .active
+        ),
+        epicID: AirframeID("EP-020"),
+        goal: "Define the canonical store schema.",
+        taskIDs: [task.workItem.id]
+    )
+
+    try store.save(task)
+    try store.save(sprint)
+
+    let taskURL = store.recordURL(for: AirframeID("T-0117"), as: AirframeCanonicalTaskRecord.self)
+    let sprintURL = store.recordURL(for: AirframeID("SP-025"), as: AirframeCanonicalSprintRecord.self)
+    let loadedTask = try #require(
+        try store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117"))
+    )
+    let loadedSprint = try #require(
+        try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-025"))
+    )
+
+    #expect(taskURL.path.hasSuffix(".airframe/state/tasks/T-0117.json"))
+    #expect(sprintURL.path.hasSuffix(".airframe/state/sprints/SP-025.json"))
+    #expect(loadedTask == task)
+    #expect(loadedSprint.taskIDs == [AirframeID("T-0117")])
+    #expect(store.exists(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117")))
+    #expect(try store.list(AirframeCanonicalTaskRecord.self).map(\.workItem.id) == [AirframeID("T-0117")])
+
+    try store.delete(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117"))
+
+    #expect(!store.exists(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117")))
+    #expect(try store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117")) == nil)
+}
+
+@Test func canonicalJSONStoreReportsMalformedRecordDiagnostics() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalStoreMalformed-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let directoryURL = store.directoryURL(for: AirframeCanonicalTaskRecord.self)
+    try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+    try Data("{ malformed".utf8).write(
+        to: store.recordURL(for: AirframeID("T-BAD"), as: AirframeCanonicalTaskRecord.self)
+    )
+
+    do {
+        _ = try store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-BAD"))
+        Issue.record("Malformed canonical record should throw a decoding error.")
+    } catch let error as AirframeBackendError {
+        guard case .decodingFailed = error else {
+            Issue.record("Expected decodingFailed, got \(error).")
+            return
+        }
+    }
+}
+
+@Test func canonicalWorkflowPolicyCatalogDefinesArtifactLifecycles() throws {
+    let catalog = AirframeCanonicalWorkflowPolicyCatalog.airframeDefault
+    let taskWorkflow = try #require(catalog.definition(for: .task))
+    let issueWorkflow = try #require(catalog.definition(for: .issue))
+    let sprintWorkflow = try #require(catalog.definition(for: .sprint))
+    let epicWorkflow = try #require(catalog.definition(for: .epic))
+
+    #expect(taskWorkflow.allowedStatuses == [.backlog, .active, .implementedNotVerified, .implementedVerified, .closed])
+    #expect(issueWorkflow.allowedStatuses == [.backlog, .active, .implementedNotVerified, .implementedVerified, .closed])
+    #expect(sprintWorkflow.allowedStatuses == [.backlog, .planning, .active, .review, .closed])
+    #expect(epicWorkflow.allowedStatuses == [.proposed, .draft, .backlog, .active, .complete, .closed])
+    #expect(catalog.transitions(for: .task).contains {
+        $0.fromStatus == .backlog && $0.toStatus == .active
+    })
+    #expect(catalog.transitions(for: .epic).contains {
+        $0.fromStatus == .active && $0.toStatus == .backlog
+    })
+}
+
+@Test func canonicalWorkflowPolicyCatalogProtectsHumanOnlyTransitions() throws {
+    let catalog = AirframeCanonicalWorkflowPolicyCatalog.airframeDefault
+    let taskVerify = try #require(
+        catalog.transition(
+            for: .task,
+            from: .implementedNotVerified,
+            to: .implementedVerified
+        )
+    )
+    let sprintClose = try #require(
+        catalog.transition(for: .sprint, from: .review, to: .closed)
+    )
+    let epicClose = try #require(
+        catalog.transition(for: .epic, from: .complete, to: .closed)
+    )
+
+    #expect(taskVerify.operation.category == .humanAcceptance)
+    #expect(taskVerify.requiredAuthorityClasses == [.humanOwner, .humanReviewer])
+    #expect(!taskVerify.requiredAuthorityClasses.contains(.llmAgent))
+    #expect(sprintClose.operation.category == .sprintControl)
+    #expect(sprintClose.operation.requiresConfirmation)
+    #expect(sprintClose.requiredAuthorityClasses == [.humanOwner, .humanMaintainer])
+    #expect(!sprintClose.requiredAuthorityClasses.contains(.llmAgent))
+    #expect(!sprintClose.preconditions.isEmpty)
+    #expect(epicClose.operation.category == .epicControl)
+    #expect(epicClose.operation.requiresConfirmation)
+    #expect(epicClose.requiredAuthorityClasses == [.humanOwner, .humanMaintainer])
+    #expect(!epicClose.requiredAuthorityClasses.contains(.automation))
+    #expect(epicClose.preconditions == ["All Epic acceptance criteria are verified."])
+}
+
+@Test func canonicalStateValidatorDetectsClosedActiveEpicWithOpenWork() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-018")
+    )
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-018"),
+            kind: .epic,
+            title: "AgileCockpit Sprint and Epic Status Controls",
+            status: .closed
+        ),
+        owner: "Human / Airframe Planning",
+        goal: "Close Sprint and Epic workflow gaps.",
+        rationale: "Planning controls need closeout support.",
+        sprintIDs: [AirframeID("SP-022")],
+        taskIDs: [AirframeID("T-0107")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-022"),
+            kind: .sprint,
+            title: "Sprint and Epic Close Gating",
+            status: .backlog
+        ),
+        epicID: AirframeID("EP-018"),
+        goal: "Gate close actions.",
+        taskIDs: [AirframeID("T-0107")]
+    )
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0107"),
+            kind: .task,
+            title: "Gate Sprint close on verified Tasks and Issues",
+            status: .backlog
+        ),
+        component: "AgileCockpit / AirframeCore",
+        priority: .high,
+        rationale: "Sprint close must stay blocked until work is verified.",
+        epicID: AirframeID("EP-018"),
+        sprintID: AirframeID("SP-022")
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            epics: [epic],
+            sprints: [sprint],
+            tasks: [task]
+        )
+    )
+    let reasonCodes = Set(diagnostics.diagnostics.map(\.reasonCode))
+
+    #expect(diagnostics.status == .blocking)
+    #expect(!diagnostics.isValid)
+    #expect(reasonCodes.contains(.activeEpicNotActive))
+    #expect(reasonCodes.contains(.closedEpicOwnsOpenWork))
+    #expect(diagnostics.diagnostics.contains {
+        $0.repairOptions.map(\.action).contains(.restoreEpicToActive)
+    })
+}
+
+@Test func canonicalStateValidatorDetectsMissingActiveIDsAndRelationshipDrift() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-MISSING"),
+        activeSprintID: AirframeID("SP-MISSING")
+    )
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-020"),
+            kind: .epic,
+            title: "Canonical Airframe Workflow State",
+            status: .active
+        ),
+        owner: "Human / Airframe Planning",
+        goal: "Move workflow state into canonical records.",
+        rationale: "Markdown state can drift.",
+        sprintIDs: [AirframeID("SP-025")],
+        taskIDs: [AirframeID("T-0116")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-025"),
+            kind: .sprint,
+            title: "Canonical Store Schema and Validation",
+            status: .active
+        ),
+        epicID: AirframeID("EP-OTHER"),
+        goal: "Define schema.",
+        taskIDs: [AirframeID("T-0116")]
+    )
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0116"),
+            kind: .task,
+            title: "Define canonical workflow record schemas",
+            status: .active
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Define canonical records.",
+        epicID: AirframeID("EP-OTHER"),
+        sprintID: AirframeID("SP-OTHER")
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            epics: [epic],
+            sprints: [sprint],
+            tasks: [task]
+        )
+    )
+    let reasonCodes = Set(diagnostics.diagnostics.map(\.reasonCode))
+
+    #expect(reasonCodes.contains(.activeEpicMissing))
+    #expect(reasonCodes.contains(.activeSprintMissing))
+    #expect(reasonCodes.contains(.epicSprintRelationshipDrift))
+    #expect(reasonCodes.contains(.epicTaskRelationshipDrift))
+    #expect(reasonCodes.contains(.sprintTaskRelationshipDrift))
+}
+
+@Test func canonicalStateValidatorAcceptsConsistentActiveState() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-020"),
+        activeSprintID: AirframeID("SP-025")
+    )
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-020"),
+            kind: .epic,
+            title: "Canonical Airframe Workflow State",
+            status: .active
+        ),
+        owner: "Human / Airframe Planning",
+        goal: "Move workflow state into canonical records.",
+        rationale: "Markdown state can drift.",
+        sprintIDs: [AirframeID("SP-025")],
+        taskIDs: [AirframeID("T-0119")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-025"),
+            kind: .sprint,
+            title: "Canonical Store Schema and Validation",
+            status: .active
+        ),
+        epicID: AirframeID("EP-020"),
+        goal: "Define diagnostics.",
+        taskIDs: [AirframeID("T-0119")]
+    )
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0119"),
+            kind: .task,
+            title: "Add canonical state validation diagnostics",
+            status: .active
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Detect inconsistent state.",
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-025")
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            epics: [epic],
+            sprints: [sprint],
+            tasks: [task]
+        )
+    )
+
+    #expect(diagnostics.status == .info)
+    #expect(diagnostics.isValid)
+    #expect(diagnostics.diagnostics.isEmpty)
+}
+
 @Test func planningModelsTrackEpicCriteriaAndCloseEligibility() {
     let summary = AirframeEpicAcceptanceCriteriaSummary(
         epicID: AirframeID("EP-018"),

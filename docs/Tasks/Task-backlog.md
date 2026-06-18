@@ -2,7 +2,7 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **9 backlog Tasks**
+Currently: **21 backlog Tasks**
 
 ---
 
@@ -213,6 +213,282 @@ Closeout must continue to work in the local workspace without relying on a serve
 **Evidence:**
 - TBD
 
+## T-0120: Build Markdown artifact importer for existing work products
+
+**Status:** Backlog
+**GitHub Issue:** #120
+**Component:** AirframeCore / Documentation
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Existing Airframe work history must be preserved when canonical records are introduced.
+
+**Acceptance Criteria:**
+1. Existing Epic, Sprint, Task, and Issue Markdown artifacts can be imported into canonical records.
+2. Stable IDs, statuses, relationships, evidence notes, and unstructured narrative are preserved where practical.
+3. Import produces diagnostics for ambiguous or inconsistent artifacts.
+
+**Evidence:**
+- TBD
+
+## T-0121: Generate deterministic Markdown projections from canonical records
+
+**Status:** Backlog
+**GitHub Issue:** #121
+**Component:** AirframeCore / Documentation
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Markdown remains valuable for human review and repository documentation, but it should be generated from canonical state.
+
+**Acceptance Criteria:**
+1. AirframeCore can generate Epic, Sprint, Task, and Issue Markdown projections from canonical records.
+2. Generated output is deterministic.
+3. Index counts and tables are derived from canonical records.
+
+**Evidence:**
+- TBD
+
+## T-0122: Add import and projection regression coverage
+
+**Status:** Backlog
+**GitHub Issue:** #122
+**Component:** AirframeCoreTests
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Migration and generated documentation must be trustworthy before Markdown stops being authoritative.
+
+**Acceptance Criteria:**
+1. Tests prove current Markdown artifacts import into canonical records.
+2. Tests prove generated Markdown projections are deterministic.
+3. Tests prove invalid source artifacts produce diagnostics.
+
+**Evidence:**
+- TBD
+
+## T-0123: Document canonical migration and projection workflow
+
+**Status:** Backlog
+**GitHub Issue:** #123
+**Component:** Documentation
+**Priority:** Medium
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+The project needs a documented migration path so users understand canonical state, generated docs, and manual edit boundaries.
+
+**Acceptance Criteria:**
+1. Documentation explains canonical state ownership.
+2. Documentation explains Markdown import and projection behavior.
+3. Documentation identifies which files should and should not be manually edited after migration.
+
+**Evidence:**
+- TBD
+
+## T-0124: Move AICockpit project summary to canonical records
+
+**Status:** Backlog
+**GitHub Issue:** #124
+**Component:** AICockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-027
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+AICockpit should report project state from canonical records instead of reparsing Markdown as the primary source.
+
+**Acceptance Criteria:**
+1. AICockpit project summary reads canonical workflow records.
+2. Summary output remains compatible with existing JSON and Markdown expectations where practical.
+3. Tests cover canonical summary counts and backend capability reporting.
+
+**Evidence:**
+- TBD
+
+## T-0125: Move AICockpit task packet generation to canonical records
+
+**Status:** Backlog
+**GitHub Issue:** #125
+**Component:** AICockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-027
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Agent task packets need reliable structured state and relationships without Markdown parsing drift.
+
+**Acceptance Criteria:**
+1. Task packets are assembled from canonical Task, Sprint, Epic, Issue, and evidence records.
+2. Missing or inconsistent relationships produce diagnostics in packet output.
+3. Tests prove packet generation from canonical state.
+
+**Evidence:**
+- TBD
+
+## T-0126: Add AICockpit canonical state diagnostics command
+
+**Status:** Backlog
+**GitHub Issue:** #126
+**Component:** AICockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-027
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Agents need a read-only way to inspect state health before acting.
+
+**Acceptance Criteria:**
+1. AICockpit exposes a state diagnostics command with JSON output.
+2. Diagnostics include severity, affected IDs, reason codes, and recommended repairs.
+3. The command is read-only and does not apply repairs.
+
+**Evidence:**
+- TBD
+
+## T-0127: Verify AICockpit authority boundaries against canonical state
+
+**Status:** Backlog
+**GitHub Issue:** #127
+**Component:** AICockpitTests / AirframeCoreTests
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-027
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Moving state authority into AirframeCore must not accidentally expand agent authority.
+
+**Acceptance Criteria:**
+1. Tests prove AICockpit cannot perform human verification, Sprint closure, Epic closure, destructive repair, or policy mutation.
+2. Tests prove allowed agent actions still work through canonical state.
+3. Denied operations include deterministic reason codes.
+
+**Evidence:**
+- TBD
+
+## T-0128: Move AgileCockpit dashboard and planning views to canonical records
+
+**Status:** Backlog
+**GitHub Issue:** #128
+**Component:** AgileCockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-028
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+AgileCockpit should render human-facing planning and dashboard views from the same canonical state used by AICockpit and AirframeCore.
+
+**Acceptance Criteria:**
+1. AgileCockpit dashboard status tiles read canonical records.
+2. Sprint and Epic planning views read canonical records.
+3. Existing local and GitHub-backed views remain usable during migration.
+
+**Evidence:**
+- TBD
+
+## T-0129: Add AgileCockpit data health diagnostics surface
+
+**Status:** Backlog
+**GitHub Issue:** #129
+**Component:** AgileCockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-028
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+AgileCockpit should elevate inconsistent state as a data health problem instead of displaying it as normal workflow state.
+
+**Acceptance Criteria:**
+1. AgileCockpit shows AirframeCore diagnostics with severity, affected IDs, and explanations.
+2. Blocking diagnostics are visible before normal planning actions continue.
+3. Tests cover display of the EP-018 class of inconsistency.
+
+**Evidence:**
+- TBD
+
+## T-0130: Add AgileCockpit repair preview flow for canonical diagnostics
+
+**Status:** Backlog
+**GitHub Issue:** #130
+**Component:** AgileCockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-028
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+Known state problems should be correctable through previewed, human-approved repair workflows rather than manual file edits.
+
+**Acceptance Criteria:**
+1. AgileCockpit can show repair options generated by AirframeCore diagnostics.
+2. Repair previews show affected records and fields before mutation.
+3. Human-only repair actions remain blocked without human approval.
+
+**Evidence:**
+- TBD
+
+## T-0131: Verify end-to-end canonical workflow state behavior
+
+**Status:** Backlog
+**GitHub Issue:** #131
+**Component:** AirframeCoreTests / AICockpitTests / AgileCockpitTests
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-028
+**Date Requested:** 2026-06-17
+**Date Implemented:** TBD
+**Date Verified:** TBD
+
+**Rationale:**
+EP-020 must prove the canonical state path works across Core, CLI, app, generated docs, and authority rules.
+
+**Acceptance Criteria:**
+1. End-to-end tests cover canonical load, validation, AICockpit summary, AICockpit task packet, AgileCockpit dashboard, and generated Markdown.
+2. Tests cover invalid state diagnostics and repair preview behavior.
+3. Tests prove human-only operations remain protected.
+
+**Evidence:**
+- TBD
+
 ---
 
-*Last Updated: 2026-06-16 (T-0104 through T-0106 activated for SP-021)*
+*Last Updated: 2026-06-17 (T-0116 through T-0119 activated for SP-025)*

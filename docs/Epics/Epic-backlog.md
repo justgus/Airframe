@@ -4,6 +4,77 @@ Epics listed here are proposed and queued for future planning.
 
 ---
 
+## EP-021: Requirements Traceability and Release Evidence
+
+**Status:** Backlog
+**Owner:** Human / Airframe Planning
+**Start Date:** TBD
+**Target Close Date:** TBD
+**Close Date:** TBD
+
+**Goal:**
+Add lightweight repo-coupled requirements traceability, test evidence summaries, release candidate gate visibility, external import/export stubs, and generated compliance documentation support without turning Airframe into a replacement for DOORS.
+
+**Rationale:**
+Airframe work products must connect implementation, tests, evidence, requirements, and release decisions. CI can provide test artifacts and build evidence, but AirframeCore must understand whether in-scope requirements have been implemented, verified, validated, deferred, waived, or blocked. Requirements are fluid during development, so the model must support change and import/export while preserving repo-local development history.
+
+**Scope:**
+- Define canonical requirement, requirement revision, trace link, test case, test result summary, deviation, waiver, release scope, and release gate records.
+- Support requirement lifecycle states including Proposed, Draft, Active, Implemented, Verified, Validated, Deferred, Waived, Superseded, and Removed.
+- Support traceability from requirements to Tasks, Issues, Epics, Sprints, tests, evidence, design records, source references, deviations, waivers, and release scopes.
+- Support summarized test evidence linked to requirements without committing every raw local test run.
+- Support optional links to CI runs, CI artifacts, build results, coverage results, and release candidate evidence.
+- Add CSV and JSON import/export for requirements and traceability data, with dry-run import previews.
+- Reserve adapter boundaries for future external requirements tools such as DOORS while keeping native DOORS integration out of Version 1.0.
+- Add AgileCockpit views for release candidate close criteria, traceability gaps, deviations, waivers, missing test evidence, and missing human approvals.
+- Add generated documentation support for Compliance Verification Matrix, Requirements Traceability Matrix, Bidirectional Requirements Traceability Matrix, deviation or waiver report, test plan, verification report, and release candidate closeout package when templates are available.
+
+**Out of Scope:**
+- Native DOORS integration.
+- Full enterprise requirements management.
+- Mandatory code-comment traceability for every requirement.
+- Storing every raw local test run in the repository.
+- Complex template authoring workflows.
+- Final release closeout automation without human authority.
+
+**Acceptance Criteria:**
+1. AirframeCore defines canonical records for requirements, revisions, trace links, test evidence summaries, deviations, waivers, release scopes, and release gates.
+2. Requirements can be imported from and exported to CSV.
+3. Requirements can be imported from and exported to canonical JSON.
+4. Import dry runs report created, updated, unchanged, removed, and conflicted records before mutation.
+5. AirframeCore can identify traceability gaps for in-scope requirements.
+6. Test evidence summaries can link test outcomes to requirement IDs and optional CI artifacts.
+7. AgileCockpit shows release candidate gate status, including implemented, verified, validated, deferred, waived, and blocked requirement counts.
+8. AirframeCore can explain why a release candidate can or cannot close.
+9. Generated traceability and compliance documents can be produced from canonical state using deterministic default layouts or provided templates.
+10. Tests cover import/export, traceability diagnostics, release gate evaluation, and evidence-to-requirement linking.
+
+### Related Planning Documents
+
+- [Architecture Modification Plan](../Architecture-Modification-Plan.md)
+- [Canonical Workflow State Requirements](../requirements/CanonicalWorkflowState_Requirements.md)
+- [Requirements Traceability Requirements](../requirements/RequirementsTraceability_Requirements.md)
+- [Requirements Traceability Import Export Plan](../architecture/RequirementsTraceability_ImportExport_Plan.md)
+
+### Related Sprints
+
+TBD.
+
+### Related Tasks
+
+TBD.
+
+### Related Issues
+
+TBD.
+
+### Notes
+
+- This Epic should follow or overlap carefully with EP-020 only after the canonical store and workflow record model are stable enough to carry requirements and traceability records.
+- CI is an evidence provider; AirframeCore owns release gate policy and requirement verification decisions.
+
+---
+
 ## EP-018: AgileCockpit Sprint and Epic Status Controls
 
 **Status:** Backlog
@@ -144,4 +215,4 @@ The current product still has live GitHub and controlled-remote paths. Those pat
 
 ---
 
-*Last Updated: 2026-06-17 (EP-018 moved to backlog for architectural replanning)*
+*Last Updated: 2026-06-17 (EP-020 activated and removed from backlog)*

@@ -117,6 +117,22 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0104 | #108 | EP-018 | Add Epic Acceptance Criteria tab to the planning panel |
 | T-0105 | #110 | EP-018 | Add verification actions for Epic acceptance criteria |
 | T-0106 | #109 | EP-018 | Add accessibility, selection, and evidence behavior for the criteria tab |
+| T-0116 | #116 | EP-020 | Define canonical workflow record schemas |
+| T-0117 | #117 | EP-020 | Implement repo-local JSON canonical store |
+| T-0118 | #118 | EP-020 | Encode workflow policy definitions in AirframeCore |
+| T-0119 | #119 | EP-020 | Add canonical state validation diagnostics |
+| T-0120 | #120 | EP-020 | Build Markdown artifact importer for existing work products |
+| T-0121 | #121 | EP-020 | Generate deterministic Markdown projections from canonical records |
+| T-0122 | #122 | EP-020 | Add import and projection regression coverage |
+| T-0123 | #123 | EP-020 | Document canonical migration and projection workflow |
+| T-0124 | #124 | EP-020 | Move AICockpit project summary to canonical records |
+| T-0125 | #125 | EP-020 | Move AICockpit task packet generation to canonical records |
+| T-0126 | #126 | EP-020 | Add AICockpit canonical state diagnostics command |
+| T-0127 | #127 | EP-020 | Verify AICockpit authority boundaries against canonical state |
+| T-0128 | #128 | EP-020 | Move AgileCockpit dashboard and planning views to canonical records |
+| T-0129 | #129 | EP-020 | Add AgileCockpit data health diagnostics surface |
+| T-0130 | #130 | EP-020 | Add AgileCockpit repair preview flow for canonical diagnostics |
+| T-0131 | #131 | EP-020 | Verify end-to-end canonical workflow state behavior |
 
 ## Current Issue Mapping
 
@@ -131,4 +147,4 @@ This document records the required one-to-one mapping between GitHub Issues and 
 
 Next local Issue ID: `I-0007`.
 
-*Last Updated: 2026-06-16 (I-0005 and I-0006 mapped to GitHub issues #111 and #112)*
+*Last Updated: 2026-06-17 (T-0116 through T-0131 mapped to GitHub issues #116 through #131)*
