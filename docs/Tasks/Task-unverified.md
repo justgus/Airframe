@@ -2,7 +2,7 @@
 
 Tasks listed here are implemented but not yet human-verified.
 
-Currently: **15 unverified Tasks**
+Currently: **16 unverified Tasks**
 
 ---
 
@@ -448,4 +448,33 @@ T-0104 through T-0106 were human-verified on 2026-06-16 and moved to [Verified/T
 
 T-0116 through T-0119 were human-verified on 2026-06-18 and moved to [Verified/Task-verified-0116-0119.md](Verified/Task-verified-0116-0119.md).
 
-*Last Updated: 2026-06-18 (T-0116 through T-0119 verified by human direction)*
+## T-0120: Build Markdown artifact importer for existing work products
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #120
+**Component:** AirframeCore / Documentation
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** 2026-06-18
+**Date Verified:** TBD
+
+**Rationale:**
+Existing Airframe work history must be preserved when canonical records are introduced.
+
+**Acceptance Criteria:**
+1. Existing Epic, Sprint, Task, and Issue Markdown artifacts can be imported into canonical records.
+2. Stable IDs, statuses, relationships, evidence notes, and unstructured narrative are preserved where practical.
+3. Import produces diagnostics for ambiguous or inconsistent artifacts.
+
+**Implementation Notes:**
+- Added `AirframeMarkdownArtifactImporter` for deterministic import of current Airframe Markdown artifact records into canonical Epic, Sprint, Task, and Issue records.
+- Added import result, source document, and import diagnostic models.
+- The importer preserves stable IDs, statuses, GitHub issue numbers, Epic/Sprint relationships, relationship table IDs, numbered acceptance criteria, narrative blocks, evidence IDs, and source paths where available.
+- Unsupported documents and missing required fields now produce structured import diagnostics; TBD metadata fields produce ambiguity warnings.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-06-17 with 63 tests.
+
+*Last Updated: 2026-06-18 (T-0120 implemented pending human verification)*

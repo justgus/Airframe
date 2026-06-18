@@ -294,6 +294,159 @@ import Foundation
     }
 }
 
+@Test func markdownArtifactImporterImportsTaskSprintAndEpicRecords() {
+    let markdown = """
+    # EP-020: Canonical Airframe Workflow State
+
+    **Status:** Active
+    **Owner:** Human / Airframe Planning
+    **Start Date:** 2026-06-17
+
+    **Goal:**
+    Move Airframe workflow state from Markdown-authored artifacts to canonical records.
+
+    **Rationale:**
+    Markdown-authored state can drift.
+
+    ### Related Sprints
+
+    | Sprint | Goal | Status |
+    | ------ | ---- | ------ |
+    | SP-026 | Import Markdown artifacts. | Active |
+
+    ### Related Tasks
+
+    | Task | Title | Status |
+    | ---- | ----- | ------ |
+    | T-0120 | Build Markdown artifact importer for existing work products | Active |
+
+    # SP-026: Markdown Import and Projection
+
+    **Status:** Active
+    **Epic:** EP-020: Canonical Airframe Workflow State
+    **Goal:** Import current Markdown artifacts into canonical records.
+    **Start Date:** 2026-06-18
+    **End Date:** TBD
+    **Capacity:** TBD
+
+    ### Assigned Tasks
+
+    | Task | Title | Priority | Status |
+    | ---- | ----- | -------- | ------ |
+    | T-0120 | Build Markdown artifact importer for existing work products | High | Active |
+
+    ## T-0120: Build Markdown artifact importer for existing work products
+
+    **Status:** Active
+    **GitHub Issue:** #120
+    **Component:** AirframeCore / Documentation
+    **Priority:** High
+    **Epic:** EP-020
+    **Sprint Assigned:** SP-026
+    **Date Requested:** 2026-06-17
+    **Date Implemented:** TBD
+    **Date Verified:** TBD
+
+    **Rationale:**
+    Existing Airframe work history must be preserved.
+
+    **Acceptance Criteria:**
+    1. Existing Epic, Sprint, Task, and Issue Markdown artifacts can be imported into canonical records.
+    2. Stable IDs, statuses, relationships, evidence notes, and unstructured narrative are preserved where practical.
+    3. Import produces diagnostics for ambiguous or inconsistent artifacts.
+    """
+
+    let result = AirframeMarkdownArtifactImporter().importDocument(
+        markdown,
+        sourcePath: "docs/Tasks/Task-active.md"
+    )
+
+    #expect(result.epics.map(\.workItem.id) == [AirframeID("EP-020")])
+    #expect(result.sprints.map(\.workItem.id) == [AirframeID("SP-026")])
+    #expect(result.tasks.map(\.workItem.id) == [AirframeID("T-0120")])
+    #expect(result.epics[0].sprintIDs == [AirframeID("SP-026")])
+    #expect(result.epics[0].taskIDs == [AirframeID("T-0120")])
+    #expect(result.sprints[0].epicID == AirframeID("EP-020"))
+    #expect(result.sprints[0].taskIDs == [AirframeID("T-0120")])
+    #expect(result.tasks[0].workItem.githubIssue == 120)
+    #expect(result.tasks[0].priority == .high)
+    #expect(result.tasks[0].acceptanceCriteria.count == 3)
+    #expect(result.tasks[0].metadata.source == "docs/Tasks/Task-active.md")
+    #expect(result.diagnostics.map(\.code).contains(.ambiguousField))
+}
+
+@Test func markdownArtifactImporterImportsIssueRecordsAndMergesDocuments() {
+    let issueMarkdown = """
+    ## I-0001: Dashboard status drill-down shows stray selection rectangle
+
+    **Status:** Resolved - Not Verified
+    **GitHub Issue:** #101
+    **Severity:** Medium
+    **Epic:** EP-017
+    **Sprint Assigned:** SP-017
+    **Date Reported:** 2026-06-12
+
+    **Observed Behavior:**
+    The dashboard shows a stray selection rectangle.
+
+    **Expected Behavior:**
+    The dashboard should not show unrelated focus chrome.
+
+    **Reproduction Steps:**
+    1. Open AgileCockpit.
+    2. Select a status row.
+    """
+    let taskMarkdown = """
+    ## T-0123: Document canonical migration and projection workflow
+
+    **Status:** Active
+    **GitHub Issue:** #123
+    **Component:** Documentation
+    **Priority:** Medium
+    **Epic:** EP-020
+    **Sprint Assigned:** SP-026
+
+    **Rationale:**
+    The project needs a documented migration path.
+    """
+
+    let result = AirframeMarkdownArtifactImporter().importDocuments([
+        AirframeMarkdownDocument(sourcePath: "docs/Issues/Issue-active.md", markdown: issueMarkdown),
+        AirframeMarkdownDocument(sourcePath: "docs/Tasks/Task-active.md", markdown: taskMarkdown)
+    ])
+
+    #expect(result.issues.map(\.workItem.id) == [AirframeID("I-0001")])
+    #expect(result.tasks.map(\.workItem.id) == [AirframeID("T-0123")])
+    #expect(result.issues[0].workItem.status == .implementedNotVerified)
+    #expect(result.issues[0].reproductionSteps == ["Open AgileCockpit.", "Select a status row."])
+    #expect(result.tasks[0].sprintID == AirframeID("SP-026"))
+}
+
+@Test func markdownArtifactImporterReportsUnsupportedAndMissingRequiredFields() {
+    let unsupported = AirframeMarkdownArtifactImporter().importDocument(
+        "# Not an Airframe artifact\n\nNo records here.",
+        sourcePath: "docs/README.md"
+    )
+    let missingStatus = AirframeMarkdownArtifactImporter().importDocument(
+        """
+        ## T-9999: Missing status task
+
+        **GitHub Issue:** #9999
+        **Component:** AirframeCore
+        **Priority:** High
+        """,
+        sourcePath: "docs/Tasks/Task-bad.md"
+    )
+
+    #expect(unsupported.diagnostics.map(\.code) == [.unsupportedArtifact])
+    #expect(missingStatus.tasks.map(\.workItem.id) == [AirframeID("T-9999")])
+    #expect(missingStatus.tasks[0].workItem.status == .backlog)
+    #expect(missingStatus.diagnostics.contains {
+        $0.code == .missingRequiredField && $0.recordID == AirframeID("T-9999")
+    })
+    #expect(!missingStatus.isClean)
+}
+
 @Test func canonicalWorkflowPolicyCatalogDefinesArtifactLifecycles() throws {
     let catalog = AirframeCanonicalWorkflowPolicyCatalog.airframeDefault
     let taskWorkflow = try #require(catalog.definition(for: .task))

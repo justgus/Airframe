@@ -68,7 +68,7 @@ EP-018 exposed that Markdown artifacts currently act as both human-readable docu
 | T-0117 | Implement repo-local JSON canonical store | Verified |
 | T-0118 | Encode workflow policy definitions in AirframeCore | Verified |
 | T-0119 | Add canonical state validation diagnostics | Verified |
-| T-0120 | Build Markdown artifact importer for existing work products | Active |
+| T-0120 | Build Markdown artifact importer for existing work products | Implemented |
 | T-0121 | Generate deterministic Markdown projections from canonical records | Active |
 | T-0122 | Add import and projection regression coverage | Active |
 | T-0123 | Document canonical migration and projection workflow | Active |
@@ -92,4 +92,4 @@ TBD.
 - GitHub should be treated as an optional integration or projection target, not the canonical store for repo-coupled workflow state.
 - SP-026 is Active for Markdown import and deterministic projection implementation.
 
-*Last Updated: 2026-06-18 (SP-026 activated for implementation)*
+*Last Updated: 2026-06-18 (T-0120 implemented pending human verification)*

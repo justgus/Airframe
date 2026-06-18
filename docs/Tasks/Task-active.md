@@ -2,32 +2,9 @@
 
 Tasks listed here are assigned to a Sprint and actively being implemented.
 
-Currently: **4 active Tasks**
+Currently: **3 active Tasks**
 
 ---
-
-## T-0120: Build Markdown artifact importer for existing work products
-
-**Status:** Active
-**GitHub Issue:** #120
-**Component:** AirframeCore / Documentation
-**Priority:** High
-**Epic:** EP-020
-**Sprint Assigned:** SP-026
-**Date Requested:** 2026-06-17
-**Date Implemented:** TBD
-**Date Verified:** TBD
-
-**Rationale:**
-Existing Airframe work history must be preserved when canonical records are introduced.
-
-**Acceptance Criteria:**
-1. Existing Epic, Sprint, Task, and Issue Markdown artifacts can be imported into canonical records.
-2. Stable IDs, statuses, relationships, evidence notes, and unstructured narrative are preserved where practical.
-3. Import produces diagnostics for ambiguous or inconsistent artifacts.
-
-**Evidence:**
-- TBD
 
 ## T-0121: Generate deterministic Markdown projections from canonical records
 
@@ -100,4 +77,4 @@ The project needs a documented migration path so users understand canonical stat
 
 ---
 
-*Last Updated: 2026-06-18 (T-0120 through T-0123 activated for SP-026)*
+*Last Updated: 2026-06-18 (T-0120 implemented pending human verification)*
