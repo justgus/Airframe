@@ -14,9 +14,9 @@
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
 | T-0120 | Build Markdown artifact importer for existing work products | High | Implemented |
-| T-0121 | Generate deterministic Markdown projections from canonical records | High | Active |
-| T-0122 | Add import and projection regression coverage | High | Active |
-| T-0123 | Document canonical migration and projection workflow | Medium | Active |
+| T-0121 | Generate deterministic Markdown projections from canonical records | High | Implemented |
+| T-0122 | Add import and projection regression coverage | High | Implemented |
+| T-0123 | Document canonical migration and projection workflow | Medium | Implemented |
 
 ### Assigned Issues
 
@@ -36,4 +36,4 @@ None.
 - Define deterministic projection output expectations before implementation.
 - Identify diagnostics that should block migration versus warn.
 
-*Last Updated: 2026-06-18 (T-0120 implemented pending human verification)*
+*Last Updated: 2026-06-18 (T-0121 through T-0123 implemented pending human verification)*

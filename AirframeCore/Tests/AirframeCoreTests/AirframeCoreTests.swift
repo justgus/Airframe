@@ -447,6 +447,241 @@ import Foundation
     #expect(!missingStatus.isClean)
 }
 
+@Test func markdownArtifactProjectorGeneratesDeterministicArtifactMarkdown() {
+    let projector = AirframeMarkdownArtifactProjector()
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0121"),
+            kind: .task,
+            title: "Generate deterministic Markdown projections from canonical records",
+            status: .active,
+            githubIssue: 121
+        ),
+        component: "AirframeCore / Documentation",
+        priority: .high,
+        rationale: "Markdown should be generated from canonical state.",
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-026"),
+        dateRequested: "2026-06-17",
+        acceptanceCriteria: [
+            "AirframeCore can generate Epic, Sprint, Task, and Issue Markdown projections from canonical records.",
+            "Generated output is deterministic.",
+            "Index counts and tables are derived from canonical records."
+        ],
+        implementationDetails: "Projection uses canonical fields only."
+    )
+    let issue = AirframeCanonicalIssueRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("I-0001"),
+            kind: .issue,
+            title: "Dashboard status drill-down shows stray selection rectangle",
+            status: .implementedNotVerified,
+            githubIssue: 101
+        ),
+        severity: .medium,
+        observedBehavior: "A stray selection rectangle appears.",
+        expectedBehavior: "The UI should not show unrelated focus chrome.",
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-017"),
+        reproductionSteps: ["Open AgileCockpit.", "Select a status row."]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-026"),
+            kind: .sprint,
+            title: "Markdown Import and Projection",
+            status: .active
+        ),
+        epicID: AirframeID("EP-020"),
+        goal: "Import Markdown and project documentation.",
+        startDate: "2026-06-18",
+        taskIDs: [AirframeID("T-0121")]
+    )
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-020"),
+            kind: .epic,
+            title: "Canonical Airframe Workflow State",
+            status: .active
+        ),
+        owner: "Human / Airframe Planning",
+        goal: "Move Airframe workflow state into canonical records.",
+        rationale: "Markdown state can drift.",
+        sprintIDs: [AirframeID("SP-026")],
+        taskIDs: [AirframeID("T-0121")]
+    )
+
+    #expect(projector.projectTask(task) == projector.projectTask(task))
+    #expect(projector.projectTask(task).contains("## T-0121: Generate deterministic Markdown projections from canonical records"))
+    #expect(projector.projectTask(task).contains("1. AirframeCore can generate Epic, Sprint, Task, and Issue Markdown projections from canonical records."))
+    #expect(projector.projectIssue(issue).contains("**Observed Behavior:**\nA stray selection rectangle appears."))
+    #expect(projector.projectIssue(issue).contains("2. Select a status row."))
+    #expect(projector.projectSprint(sprint).contains("| T-0121 |  |"))
+    #expect(projector.projectEpic(epic).contains("| SP-026 |  |"))
+}
+
+@Test func markdownArtifactProjectorOutputImportsBackToCanonicalTask() {
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0121"),
+            kind: .task,
+            title: "Generate deterministic Markdown projections from canonical records",
+            status: .active,
+            githubIssue: 121
+        ),
+        component: "AirframeCore / Documentation",
+        priority: .high,
+        rationale: "Markdown remains valuable for human review.",
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-026"),
+        dateRequested: "2026-06-17",
+        acceptanceCriteria: ["Generated output is deterministic."]
+    )
+
+    let markdown = AirframeMarkdownArtifactProjector().projectTask(task)
+    let imported = AirframeMarkdownArtifactImporter().importDocument(markdown)
+
+    #expect(imported.tasks.count == 1)
+    #expect(imported.tasks[0].workItem == task.workItem)
+    #expect(imported.tasks[0].component == task.component)
+    #expect(imported.tasks[0].epicID == task.epicID)
+    #expect(imported.tasks[0].sprintID == task.sprintID)
+    #expect(imported.tasks[0].acceptanceCriteria == task.acceptanceCriteria)
+    #expect(imported.isClean)
+}
+
+@Test func markdownArtifactProjectorDerivesTaskIndexCountsAndOrdering() {
+    let records = [
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-0123"),
+                kind: .task,
+                title: "Document canonical migration and projection workflow",
+                status: .active,
+                githubIssue: 123
+            ),
+            component: "Documentation",
+            priority: .medium,
+            rationale: "Document migration."
+        ),
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-0120"),
+                kind: .task,
+                title: "Build Markdown artifact importer for existing work products",
+                status: .implementedNotVerified,
+                githubIssue: 120
+            ),
+            component: "AirframeCore",
+            priority: .high,
+            rationale: "Import existing work history."
+        ),
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-0124"),
+                kind: .task,
+                title: "Move AICockpit project summary to canonical records",
+                status: .backlog,
+                githubIssue: 124
+            ),
+            component: "AICockpit",
+            priority: .high,
+            rationale: "Use canonical state."
+        )
+    ]
+
+    let markdown = AirframeMarkdownArtifactProjector().projectTaskIndex(records)
+    let firstTaskRange = markdown.range(of: "| T-0120 | #120 |")
+    let secondTaskRange = markdown.range(of: "| T-0123 | #123 |")
+    let thirdTaskRange = markdown.range(of: "| T-0124 | #124 |")
+
+    #expect(markdown.contains("| Backlog | 1 |"))
+    #expect(markdown.contains("| Active | 1 |"))
+    #expect(markdown.contains("| Implemented - Not Verified | 1 |"))
+    #expect(firstTaskRange?.lowerBound ?? markdown.endIndex < secondTaskRange?.lowerBound ?? markdown.endIndex)
+    #expect(secondTaskRange?.lowerBound ?? markdown.endIndex < thirdTaskRange?.lowerBound ?? markdown.endIndex)
+}
+
+@Test func markdownImportProjectionRegressionCoversMigrationArtifactShapes() {
+    let source = """
+    # Active Sprint
+
+    ## SP-026: Markdown Import and Projection
+
+    **Status:** Active
+    **Epic:** EP-020: Canonical Airframe Workflow State
+    **Goal:** Import current Markdown artifacts into canonical records and generate deterministic documentation projections.
+    **Start Date:** 2026-06-18
+    **End Date:** TBD
+    **Capacity:** TBD
+
+    ### Assigned Tasks
+
+    | Task | Title | Priority | Status |
+    | ---- | ----- | -------- | ------ |
+    | T-0121 | Generate deterministic Markdown projections from canonical records | High | Active |
+    | T-0122 | Add import and projection regression coverage | High | Active |
+
+    ## T-0121: Generate deterministic Markdown projections from canonical records
+
+    **Status:** Active
+    **GitHub Issue:** #121
+    **Component:** AirframeCore / Documentation
+    **Priority:** High
+    **Epic:** EP-020
+    **Sprint Assigned:** SP-026
+    **Date Requested:** 2026-06-17
+    **Date Implemented:** TBD
+    **Date Verified:** TBD
+
+    **Rationale:**
+    Markdown remains valuable for human review and repository documentation, but it should be generated from canonical state.
+
+    **Acceptance Criteria:**
+    1. AirframeCore can generate Epic, Sprint, Task, and Issue Markdown projections from canonical records.
+    2. Generated output is deterministic.
+    3. Index counts and tables are derived from canonical records.
+
+    ## I-0003: Status drill-down detail pane uses incomplete fallback text for Tasks and Issues
+
+    **Status:** Resolved - Not Verified
+    **GitHub Issue:** #103
+    **Severity:** High
+    **Epic:** EP-017
+    **Sprint Assigned:** SP-017
+
+    **Observed Behavior:**
+    The detail pane renders fallback text.
+
+    **Expected Behavior:**
+    The detail pane should render full artifact text.
+    """
+    let invalid = """
+    ## T-9998: Invalid imported Task
+
+    **GitHub Issue:** #9998
+    **Priority:** High
+    """
+
+    let importer = AirframeMarkdownArtifactImporter()
+    let result = importer.importDocuments([
+        AirframeMarkdownDocument(sourcePath: "docs/Sprints/Sprint-active.md", markdown: source),
+        AirframeMarkdownDocument(sourcePath: "docs/Tasks/Task-invalid.md", markdown: invalid)
+    ])
+    let projector = AirframeMarkdownArtifactProjector()
+    let taskProjection = projector.projectTask(result.tasks.first { $0.workItem.id == AirframeID("T-0121") }!)
+    let indexProjection = projector.projectTaskIndex(result.tasks)
+
+    #expect(result.sprints.map(\.workItem.id).contains(AirframeID("SP-026")))
+    #expect(result.tasks.map(\.workItem.id).contains(AirframeID("T-0121")))
+    #expect(result.issues.map(\.workItem.id).contains(AirframeID("I-0003")))
+    #expect(result.diagnostics.contains { $0.code == .missingRequiredField && $0.recordID == AirframeID("T-9998") })
+    #expect(taskProjection == projector.projectTask(result.tasks.first { $0.workItem.id == AirframeID("T-0121") }!))
+    #expect(taskProjection.contains("**Status:** Active"))
+    #expect(indexProjection.contains("| Active | 1 |"))
+    #expect(indexProjection.contains("| Backlog | 1 |"))
+}
+
 @Test func canonicalWorkflowPolicyCatalogDefinesArtifactLifecycles() throws {
     let catalog = AirframeCanonicalWorkflowPolicyCatalog.airframeDefault
     let taskWorkflow = try #require(catalog.definition(for: .task))

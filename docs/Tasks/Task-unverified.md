@@ -2,7 +2,7 @@
 
 Tasks listed here are implemented but not yet human-verified.
 
-Currently: **16 unverified Tasks**
+Currently: **19 unverified Tasks**
 
 ---
 
@@ -477,4 +477,86 @@ Existing Airframe work history must be preserved when canonical records are intr
 **Evidence:**
 - `swift test --package-path AirframeCore` passed on 2026-06-17 with 63 tests.
 
-*Last Updated: 2026-06-18 (T-0120 implemented pending human verification)*
+## T-0121: Generate deterministic Markdown projections from canonical records
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #121
+**Component:** AirframeCore / Documentation
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** 2026-06-18
+**Date Verified:** TBD
+
+**Rationale:**
+Markdown remains valuable for human review and repository documentation, but it should be generated from canonical state.
+
+**Acceptance Criteria:**
+1. AirframeCore can generate Epic, Sprint, Task, and Issue Markdown projections from canonical records.
+2. Generated output is deterministic.
+3. Index counts and tables are derived from canonical records.
+
+**Implementation Notes:**
+- Added `AirframeMarkdownArtifactProjector` for deterministic Epic, Sprint, Task, Issue, and Task index Markdown generation from canonical records.
+- Projection output uses canonical status display names, stable Airframe IDs, deterministic ordering, and `TBD` for missing optional values.
+- Added round-trip coverage proving projected Task Markdown imports back into canonical state.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-06-17 with 67 tests.
+
+## T-0122: Add import and projection regression coverage
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #122
+**Component:** AirframeCoreTests
+**Priority:** High
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** 2026-06-18
+**Date Verified:** TBD
+
+**Rationale:**
+Migration and generated documentation must be trustworthy before Markdown stops being authoritative.
+
+**Acceptance Criteria:**
+1. Tests prove current Markdown artifacts import into canonical records.
+2. Tests prove generated Markdown projections are deterministic.
+3. Tests prove invalid source artifacts produce diagnostics.
+
+**Implementation Notes:**
+- Added migration-style regression coverage for current Airframe Sprint, Task, and Issue Markdown shapes.
+- Regression coverage verifies import of active artifacts, deterministic projection output, derived index counts, and diagnostics for invalid source artifacts.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-06-17 with 67 tests.
+
+## T-0123: Document canonical migration and projection workflow
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #123
+**Component:** Documentation
+**Priority:** Medium
+**Epic:** EP-020
+**Sprint Assigned:** SP-026
+**Date Requested:** 2026-06-17
+**Date Implemented:** 2026-06-18
+**Date Verified:** TBD
+
+**Rationale:**
+The project needs a documented migration path so users understand canonical state, generated docs, and manual edit boundaries.
+
+**Acceptance Criteria:**
+1. Documentation explains canonical state ownership.
+2. Documentation explains Markdown import and projection behavior.
+3. Documentation identifies which files should and should not be manually edited after migration.
+
+**Implementation Notes:**
+- Added `docs/architecture/CanonicalState_Migration_Projection_Workflow.md`.
+- Documented canonical ownership, import scope, diagnostic handling, deterministic projection rules, manual edit boundaries, and migration verification expectations.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-06-17 with 67 tests.
+
+*Last Updated: 2026-06-18 (T-0121 through T-0123 implemented pending human verification)*

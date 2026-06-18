@@ -40,19 +40,15 @@ See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **3 active Tasks**
+Currently: **0 active Tasks**
 
-| Task | GitHub Issue | Title | File | Status |
-| ---- | ------------ | ----- | ---- | ------ |
-| T-0121 | #121 | Generate deterministic Markdown projections from canonical records | [Task-active.md](Task-active.md) | Active |
-| T-0122 | #122 | Add import and projection regression coverage | [Task-active.md](Task-active.md) | Active |
-| T-0123 | #123 | Document canonical migration and projection workflow | [Task-active.md](Task-active.md) | Active |
+No Tasks are currently active.
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **16 unverified Tasks**
+Currently: **19 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -72,6 +68,9 @@ Currently: **16 unverified Tasks**
 | T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0120 | #120 | Build Markdown artifact importer for existing work products | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0121 | #121 | Generate deterministic Markdown projections from canonical records | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0122 | #122 | Add import and projection regression coverage | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0123 | #123 | Document canonical migration and projection workflow | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
@@ -171,10 +170,10 @@ Currently: **95 verified Tasks** | Next available: **T-0132**
 
 - **Total Tasks:** 131
 - **Backlog:** 17
-- **Active:** 3
-- **Unverified:** 16
+- **Active:** 0
+- **Unverified:** 19
 - **Verified:** 95
 - **Closed:** 0
 - **Next available:** T-0132
 
-*Last Updated: 2026-06-18 (T-0120 implemented pending human verification)*
+*Last Updated: 2026-06-18 (T-0121 through T-0123 implemented pending human verification)*
