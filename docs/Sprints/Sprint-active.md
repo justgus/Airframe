@@ -1,11 +1,11 @@
 # Active Sprint
 
-## SP-025: Canonical Store Schema and Validation
+## SP-026: Markdown Import and Projection
 
 **Status:** Active
 **Epic:** EP-020: Canonical Airframe Workflow State
-**Goal:** Define the canonical store schema, workflow policy records, and validation diagnostics.
-**Start Date:** 2026-06-17
+**Goal:** Import current Markdown artifacts into canonical records and generate deterministic documentation projections.
+**Start Date:** 2026-06-18
 **End Date:** TBD
 **Capacity:** TBD
 
@@ -13,36 +13,27 @@
 
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
-| T-0116 | Define canonical workflow record schemas | High | Implemented |
-| T-0117 | Implement repo-local JSON canonical store | High | Implemented |
-| T-0118 | Encode workflow policy definitions in AirframeCore | High | Implemented |
-| T-0119 | Add canonical state validation diagnostics | High | Implemented |
+| T-0120 | Build Markdown artifact importer for existing work products | High | Active |
+| T-0121 | Generate deterministic Markdown projections from canonical records | High | Active |
+| T-0122 | Add import and projection regression coverage | High | Active |
+| T-0123 | Document canonical migration and projection workflow | Medium | Active |
 
 ### Assigned Issues
 
 None.
 
-### Sprint Notes
+### Planning Notes
 
-- SP-025 starts the EP-020 canonical workflow-state implementation.
-- The Sprint should establish the record model, local JSON store foundation, workflow policy definitions, and diagnostics needed before Markdown import/projection and client integrations proceed.
-- GitHub Issues #116 through #119 track the assigned Tasks.
+- SP-026 should use the SP-025 canonical record, JSON store, workflow policy, and diagnostics foundation.
+- Sprint planning should refine the boundary between import parsing, canonical persistence, and generated Markdown projection.
+- T-0120 through T-0123 were activated for SP-026 implementation.
+- GitHub Issues #120 through #123 track the candidate Tasks.
 
-### Retrospective
+### Planning Checklist
 
-**Completed:**
-- TBD
+- Confirm import scope for Epic, Sprint, Task, and Issue Markdown artifacts.
+- Define how imported narrative fields and ambiguous legacy content are preserved.
+- Define deterministic projection output expectations before implementation.
+- Identify diagnostics that should block migration versus warn.
 
-**Returned to Backlog:**
-- TBD
-
-**What went well:**
-- TBD
-
-**What to improve:**
-- TBD
-
-**Carry-forward notes:**
-- TBD
-
-*Last Updated: 2026-06-17 (T-0119 implemented pending human verification)*
+*Last Updated: 2026-06-18 (SP-026 activated for implementation)*

@@ -2,31 +2,9 @@
 
 Sprints listed here are attached to an Epic but are not yet in Planning, Active, Review, or Closed status.
 
-Currently: **6 backlog Sprints**
+Currently: **5 backlog Sprints**
 
 ---
-
-## SP-026: Markdown Import and Projection
-
-**Status:** Backlog
-**Epic:** EP-020: Canonical Airframe Workflow State
-**Goal:** Import current Markdown artifacts into canonical records and generate deterministic documentation projections.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Candidate Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0120 | Build Markdown artifact importer for existing work products | High | Backlog |
-| T-0121 | Generate deterministic Markdown projections from canonical records | High | Backlog |
-| T-0122 | Add import and projection regression coverage | High | Backlog |
-| T-0123 | Document canonical migration and projection workflow | Medium | Backlog |
-
-### Candidate Issues
-
-None.
 
 ## SP-027: AICockpit Canonical State Integration
 
@@ -137,4 +115,4 @@ None.
 
 ---
 
-*Last Updated: 2026-06-17 (SP-025 activated)*
+*Last Updated: 2026-06-18 (SP-026 activated for implementation)*

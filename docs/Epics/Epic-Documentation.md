@@ -61,4 +61,4 @@ Currently: **21 Epics** | Next available: **EP-022**
 - **Backlog:** 3
 - **Next available:** EP-022
 
-*Last Updated: 2026-06-17 (EP-020 activated and implementation Sprints planned)*
+*Last Updated: 2026-06-18 (SP-026 activated for implementation)*

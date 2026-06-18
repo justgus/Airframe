@@ -2,7 +2,7 @@
 
 Tasks listed here are implemented but not yet human-verified.
 
-Currently: **19 unverified Tasks**
+Currently: **15 unverified Tasks**
 
 ---
 
@@ -446,119 +446,6 @@ T-0081 through T-0085 were human-verified on 2026-06-11 and moved to [Verified/T
 
 T-0104 through T-0106 were human-verified on 2026-06-16 and moved to [Verified/Task-verified-0104-0106.md](Verified/Task-verified-0104-0106.md).
 
-## T-0116: Define canonical workflow record schemas
+T-0116 through T-0119 were human-verified on 2026-06-18 and moved to [Verified/Task-verified-0116-0119.md](Verified/Task-verified-0116-0119.md).
 
-**Status:** Implemented - Not Verified
-**GitHub Issue:** #116
-**Component:** AirframeCore
-**Priority:** High
-**Epic:** EP-020
-**Sprint Assigned:** SP-025
-**Date Requested:** 2026-06-17
-**Date Implemented:** 2026-06-17
-**Date Verified:** TBD
-
-**Rationale:**
-Airframe needs typed canonical records before workflow state can move out of Markdown-authored artifacts.
-
-**Acceptance Criteria:**
-1. AirframeCore defines Codable records for Workspace, Project, Epic, Sprint, Task, Issue, acceptance criteria, evidence summary, audit event, backend mapping, workflow definition, and workflow transition.
-2. Records preserve stable Airframe IDs and relationship IDs.
-3. Records include schema versioning hooks for future migrations.
-
-**Implementation Notes:**
-- Added `CanonicalRecords.swift` with schema version metadata and canonical repo-coupled records for Workspace, Project, Epic, Sprint, Task, Issue, acceptance criteria, evidence summaries, audit events, backend mappings, workflow definitions, and workflow transition records.
-- Canonical records preserve relationship IDs across Epics, Sprints, Tasks, Issues, acceptance criteria, evidence, backend mappings, and workflow definitions.
-- Added tests covering Codable round-trip behavior, schema version defaults, relationship preservation, evidence references, backend mappings, and workflow definition records.
-
-**Evidence:**
-- `swift test --package-path AirframeCore` passed on 2026-06-17 with 53 tests.
-
-## T-0117: Implement repo-local JSON canonical store
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** #117
-**Component:** AirframeCore
-**Priority:** High
-**Epic:** EP-020
-**Sprint Assigned:** SP-025
-**Date Requested:** 2026-06-17
-**Date Implemented:** 2026-06-17
-**Date Verified:** TBD
-
-**Rationale:**
-Canonical workflow state must live in the repository so it travels with source revisions, branches, forks, and reverts.
-
-**Acceptance Criteria:**
-1. AirframeCore can read and write repo-local canonical JSON records.
-2. The initial store supports one file per canonical record.
-3. Store load failures produce structured diagnostics instead of partial silent state.
-
-**Implementation Notes:**
-- Added `AirframeCanonicalJSONStore` for repo-local one-file-per-record canonical JSON persistence under `.airframe/state/`.
-- Added `AirframeCanonicalFileRecord` conformance for the canonical Workspace, Project, Epic, Sprint, Task, Issue, acceptance criterion, evidence summary, audit event, backend mapping, workflow definition, and workflow transition records.
-- Implemented deterministic JSON save, load, list, delete, exists, and record path helpers with sorted pretty JSON and ISO-8601 date handling.
-- Added malformed record diagnostics that report decoding failures through existing Airframe backend error contracts.
-
-**Evidence:**
-- `swift test --package-path AirframeCore` passed on 2026-06-17 with 55 tests.
-
-## T-0118: Encode workflow policy definitions in AirframeCore
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** #118
-**Component:** AirframeCore
-**Priority:** High
-**Epic:** EP-020
-**Sprint Assigned:** SP-025
-**Date Requested:** 2026-06-17
-**Date Implemented:** 2026-06-17
-**Date Verified:** TBD
-
-**Rationale:**
-Workflow policy should be executable AirframeCore logic and data, not only prose in guideline Markdown.
-
-**Acceptance Criteria:**
-1. Epic, Sprint, Task, and Issue status lifecycles are represented in AirframeCore workflow definitions.
-2. Transitions define actor authority and required preconditions.
-3. Human-only transitions remain explicitly protected.
-
-**Implementation Notes:**
-- Added `AirframeCanonicalWorkflowPolicyCatalog` with default canonical workflow definitions for Task, Issue, Sprint, and Epic records.
-- Encoded allowed lifecycle statuses and transition records for each artifact kind.
-- Marked human verification, Sprint closure, and Epic closure transitions with human-only authority classes, confirmation requirements, and preconditions.
-- Added lookup helpers for definitions and transitions by artifact kind and status pair.
-
-**Evidence:**
-- `swift test --package-path AirframeCore` passed on 2026-06-17 with 57 tests.
-
-## T-0119: Add canonical state validation diagnostics
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** #119
-**Component:** AirframeCore
-**Priority:** High
-**Epic:** EP-020
-**Sprint Assigned:** SP-025
-**Date Requested:** 2026-06-17
-**Date Implemented:** 2026-06-17
-**Date Verified:** TBD
-
-**Rationale:**
-Airframe needs to detect impossible or inconsistent workflow states before they appear as normal dashboard data.
-
-**Acceptance Criteria:**
-1. Diagnostics detect closed active Epics or Sprints, invalid configured active IDs, and relationship drift.
-2. Diagnostics include severity, affected IDs, reason code, explanation, and recommended repair options.
-3. Unit tests cover the EP-018 class of inconsistency.
-
-**Implementation Notes:**
-- Added canonical diagnostic severity and reason-code models for active ID failures, closed Epic ownership of open work, and relationship drift.
-- Added repair option models so diagnostics can describe allowed remediation paths without mutating state.
-- Added `AirframeCanonicalStateSnapshot` and `AirframeCanonicalStateValidator` to evaluate configured active Epic/Sprint state, open work relationships, and Epic/Sprint/Task link consistency.
-- Added regression coverage for the EP-018 class of inconsistency, missing configured active IDs, relationship drift, and consistent active state.
-
-**Evidence:**
-- `swift test --package-path AirframeCore` passed on 2026-06-17 with 60 tests.
-
-*Last Updated: 2026-06-17 (T-0119 implemented pending human verification)*
+*Last Updated: 2026-06-18 (T-0116 through T-0119 verified by human direction)*

@@ -55,8 +55,8 @@ EP-018 exposed that Markdown artifacts currently act as both human-readable docu
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-025 | Define the canonical store schema, workflow policy records, and validation diagnostics. | Active |
-| SP-026 | Import current Markdown artifacts into canonical records and generate deterministic documentation projections. | Backlog |
+| SP-025 | Define the canonical store schema, workflow policy records, and validation diagnostics. | Closed |
+| SP-026 | Import current Markdown artifacts into canonical records and generate deterministic documentation projections. | Active |
 | SP-027 | Move AICockpit read paths and diagnostics onto canonical workflow state. | Backlog |
 | SP-028 | Move AgileCockpit dashboard, planning, and data-health views onto canonical workflow state. | Backlog |
 
@@ -64,14 +64,14 @@ EP-018 exposed that Markdown artifacts currently act as both human-readable docu
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0116 | Define canonical workflow record schemas | Implemented |
-| T-0117 | Implement repo-local JSON canonical store | Implemented |
-| T-0118 | Encode workflow policy definitions in AirframeCore | Implemented |
-| T-0119 | Add canonical state validation diagnostics | Implemented |
-| T-0120 | Build Markdown artifact importer for existing work products | Backlog |
-| T-0121 | Generate deterministic Markdown projections from canonical records | Backlog |
-| T-0122 | Add import and projection regression coverage | Backlog |
-| T-0123 | Document canonical migration and projection workflow | Backlog |
+| T-0116 | Define canonical workflow record schemas | Verified |
+| T-0117 | Implement repo-local JSON canonical store | Verified |
+| T-0118 | Encode workflow policy definitions in AirframeCore | Verified |
+| T-0119 | Add canonical state validation diagnostics | Verified |
+| T-0120 | Build Markdown artifact importer for existing work products | Active |
+| T-0121 | Generate deterministic Markdown projections from canonical records | Active |
+| T-0122 | Add import and projection regression coverage | Active |
+| T-0123 | Document canonical migration and projection workflow | Active |
 | T-0124 | Move AICockpit project summary to canonical records | Backlog |
 | T-0125 | Move AICockpit task packet generation to canonical records | Backlog |
 | T-0126 | Add AICockpit canonical state diagnostics command | Backlog |
@@ -90,6 +90,6 @@ TBD.
 - This Epic is the architectural foundation for resuming EP-018 safely.
 - EP-019 offline-only operation remains relevant and may be informed by the canonical local store design.
 - GitHub should be treated as an optional integration or projection target, not the canonical store for repo-coupled workflow state.
-- Tasks are planned locally with `GitHub Issue: TBD` until GitHub issue creation is explicitly authorized.
+- SP-026 is Active for Markdown import and deterministic projection implementation.
 
-*Last Updated: 2026-06-17 (T-0119 implemented pending human verification)*
+*Last Updated: 2026-06-18 (SP-026 activated for implementation)*

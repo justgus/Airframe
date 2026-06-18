@@ -7,29 +7,42 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 ## Organization
 
 - **Sprint-backlog.md**: Sprints attached to an Epic but not yet planned or activated.
-- **Sprint-active.md**: The current Sprint, if one exists.
+- **Sprint-active.md**: The current Planning or Active Sprint, if one exists.
 - **Closed/**: Archived closed Sprints, one file per Sprint.
 
 ## Current Sprint Record
 
-Currently: **SP-025**
+Currently: **SP-026**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## Sprint Backlog
 
-Currently: **6 backlog Sprints**
+Currently: **5 backlog Sprints**
 
 See: [Sprint-backlog.md](Sprint-backlog.md)
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-026 | Markdown Import and Projection | EP-020 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-027 | AICockpit Canonical State Integration | EP-020 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-028 | AgileCockpit Canonical State Integration | EP-020 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-022 | Sprint and Epic Close Gating | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
+
+## Planning Sprints
+
+Currently: **0 planning Sprints**
+
+No Sprints are currently in Planning.
+
+## Active Sprints
+
+Currently: **1 active Sprint**
+
+| Sprint | Title | Epic | File | Status |
+| ------ | ----- | ---- | ---- | ------ |
+| SP-026 | Markdown Import and Projection | EP-020 | [Sprint-active.md](Sprint-active.md) | Active |
 
 ## Review Sprints
 
@@ -72,19 +85,19 @@ Currently: **28 Sprints** | Next available: **SP-029**
 | SP-022 | Sprint and Epic Close Gating | EP-018 | T-0107, T-0108, T-0109 | None | Backlog |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | None | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Backlog |
-| SP-025 | Canonical Store Schema and Validation | EP-020 | T-0116, T-0117, T-0118, T-0119 | None | Active |
-| SP-026 | Markdown Import and Projection | EP-020 | T-0120, T-0121, T-0122, T-0123 | None | Backlog |
+| SP-025 | Canonical Store Schema and Validation | EP-020 | T-0116, T-0117, T-0118, T-0119 | None | Closed |
+| SP-026 | Markdown Import and Projection | EP-020 | T-0120, T-0121, T-0122, T-0123 | None | Active |
 | SP-027 | AICockpit Canonical State Integration | EP-020 | T-0124, T-0125, T-0126, T-0127 | None | Backlog |
 | SP-028 | AgileCockpit Canonical State Integration | EP-020 | T-0128, T-0129, T-0130, T-0131 | None | Backlog |
 
 ## Statistics
 
 - **Total Sprints:** 28
-- **Backlog:** 6
+- **Backlog:** 5
 - **Planning:** 0
 - **Active:** 1
 - **Review:** 2
-- **Closed:** 19
+- **Closed:** 20
 - **Next available:** SP-029
 
-*Last Updated: 2026-06-17 (SP-025 activated)*
+*Last Updated: 2026-06-18 (SP-026 activated for implementation)*
