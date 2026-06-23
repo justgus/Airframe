@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-018-AC-07"
+  },
+  "isVerified" : true,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-018"
+  },
+  "text" : "Tests cover local workspace behavior and live GitHub-issues workspace behavior where applicable."
+}

@@ -1,0 +1,93 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-006-AC-01"
+    },
+    {
+      "rawValue" : "EP-006-AC-02"
+    },
+    {
+      "rawValue" : "EP-006-AC-03"
+    },
+    {
+      "rawValue" : "EP-006-AC-04"
+    },
+    {
+      "rawValue" : "EP-006-AC-05"
+    }
+  ],
+  "closeDate" : "2026-06-04",
+  "goal" : "Provide a native macOS dashboard and verification workflow over local AirframeCore data.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-006.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. AgileCockpit launches and displays local workspace dashboard data. 2. User can open a ready-for-verification item. 3. User can accept, reject, or request evidence through AirframeCore. 4. Dashboard and audit views update after the operation. 5. Primary flows have accessibility labels and keyboard-accessible controls."
+  ],
+  "outOfScope" : [
+    "GitHub-specific UI.",
+    "Advanced customization.",
+    "Release polish."
+  ],
+  "owner" : "HumanOwner",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "The human-facing app must demonstrate the core product value: status awareness, review, human verification, metrics, and audit visibility.",
+  "scope" : [
+    "Application shell.",
+    "Dashboard summary sections.",
+    "Project detail view.",
+    "Verification queue and review flow.",
+    "Human accept\/reject\/request-evidence actions.",
+    "Sprint and epic read views.",
+    "Metrics view.",
+    "Audit view.",
+    "Primary accessibility checks."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-006"
+    }
+  ],
+  "startDate" : "2026-06-03",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0029"
+    },
+    {
+      "rawValue" : "T-0030"
+    },
+    {
+      "rawValue" : "T-0031"
+    },
+    {
+      "rawValue" : "T-0032"
+    },
+    {
+      "rawValue" : "T-0033"
+    },
+    {
+      "rawValue" : "T-0034"
+    },
+    {
+      "rawValue" : "T-0035"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-006"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "AgileCockpit Dashboard MVP Integration"
+  }
+}

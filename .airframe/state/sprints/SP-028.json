@@ -1,0 +1,52 @@
+{
+  "endDate" : "2026-06-23",
+  "epicID" : {
+    "rawValue" : "EP-020"
+  },
+  "goal" : "Move AgileCockpit dashboard, planning, and data-health views onto canonical workflow state.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0007"
+    },
+    {
+      "rawValue" : "I-0008"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-028.md"
+  },
+  "notes" : [
+    "Completed: - AgileCockpit dashboard and planning views render from canonical records. - AgileCockpit data health diagnostics surface canonical validation and backend reconciliation problems. - Backend status and relationship label drift can be repaired through the Apply Repair UI and CLI paths. - The canonical store remains the internal source of workflow state while Markdown remains exportable documentation.",
+    "Returned to Backlog: - None.",
+    "What went well: - The final UI migration reused AirframeCore canonical diagnostics and repair actions instead of adding a separate AgileCockpit-only workflow model.",
+    "What to improve: - Follow-up work should remove remaining Markdown-primary assumptions after downstream projects have migrated with the retained helper paths."
+  ],
+  "startDate" : "2026-06-18",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0128"
+    },
+    {
+      "rawValue" : "T-0129"
+    },
+    {
+      "rawValue" : "T-0130"
+    },
+    {
+      "rawValue" : "T-0131"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-028"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "AgileCockpit Canonical State Integration"
+  }
+}

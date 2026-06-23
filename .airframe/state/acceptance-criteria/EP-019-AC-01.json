@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-019-AC-01"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-019"
+  },
+  "text" : "Airframe can launch and operate with only the local filesystem backend configured."
+}

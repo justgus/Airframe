@@ -1,0 +1,46 @@
+{
+  "endDate" : "2026-06-16",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "goal" : "Add a dedicated Epic acceptance-criteria tab with human verification actions.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0005"
+    },
+    {
+      "rawValue" : "I-0006"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-021.md"
+  },
+  "notes" : [
+
+  ],
+  "startDate" : "2026-06-16",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0104"
+    },
+    {
+      "rawValue" : "T-0105"
+    },
+    {
+      "rawValue" : "T-0106"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-021"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Epic Acceptance-Criteria Tab and Verification UI"
+  }
+}

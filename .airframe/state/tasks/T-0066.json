@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "dateVerified" : "2026-06-10",
+  "epicID" : {
+    "rawValue" : "EP-013"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0066-0070.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-013"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 66,
+    "id" : {
+      "rawValue" : "T-0066"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Define controlled GitHub mutation authority contract"
+  }
+}

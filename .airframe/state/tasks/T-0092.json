@@ -1,0 +1,52 @@
+{
+  "acceptanceCriteria" : [
+    "AICockpit can create local Tasks, Issues, Sprints, and Epics.",
+    "AICockpit can update allowed local work item fields and statuses.",
+    "Invalid transitions are rejected through AirframeCore.",
+    "Attempts to apply Task or Issue Verified are rejected."
+  ],
+  "component" : "AICockpit \/ AirframeCore",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-14",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Added record-level update support to the Airframe backend protocol and local filesystem backend.\nAdded AICockpit `create`, `update`, and `status` commands for Tasks and Issues.\nPreserved workflow transition checks for status updates and rejected invalid transitions without mutation.\nAdded explicit human-only rejection for Task and Issue verification commands.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Agents need local mutation capability that preserves AirframeCore workflow policy and local artifact consistency.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-018"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 92,
+    "id" : {
+      "rawValue" : "T-0092"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Implement AICockpit local work item mutation support"
+  }
+}

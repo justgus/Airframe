@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "Tests prove Sprint archive files are updated on close.",
+    "Tests prove Epic archive files are updated on close.",
+    "Tests prove the index files remain synchronized after close."
+  ],
+  "component" : "AgileCockpitTests \/ Documentation",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Archiving is a visible workflow change and needs direct regression coverage.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-024"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0114"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add tests for Sprint and Epic archive updates"
+  }
+}

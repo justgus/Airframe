@@ -1,0 +1,64 @@
+{
+  "acceptanceCriterionIDs" : [
+
+  ],
+  "closeDate" : "2026-06-06",
+  "goal" : "",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-010.md"
+  },
+  "notes" : [
+
+  ],
+  "outOfScope" : [
+
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "",
+  "scope" : [
+
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-010"
+    }
+  ],
+  "startDate" : "2026-06-05",
+  "targetCloseDate" : "2026-06-06",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0051"
+    },
+    {
+      "rawValue" : "T-0052"
+    },
+    {
+      "rawValue" : "T-0053"
+    },
+    {
+      "rawValue" : "T-0054"
+    },
+    {
+      "rawValue" : "T-0055"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-010"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "Read-Only GitHub Adapter"
+  }
+}

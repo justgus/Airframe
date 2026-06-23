@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+
+  ],
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "The current project name or repository should be the most prominent text in the AgileCockpit header. The app name should remain visible but secondary.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0005-0006.md"
+  },
+  "notes" : [
+    "Description: The AgileCockpit header gave the application identity the most prominent placement even when the user was reviewing a specific live project workspace.",
+    "Actual Behavior: The header made the app identity more prominent than the active project identity, making it harder to distinguish Airframe and Telemetrix live demo windows.",
+    "Root Cause Analysis: The header used the static app name as the title and displayed project identity as secondary metadata.",
+    "Resolution: The header now uses the configured project name as the primary title, shows the repository immediately underneath, and moves the app\/workspace identity to secondary caption text.",
+    "Files Affected: - `AgileCockpit\/AgileCockpit\/ContentView.swift`: Made project identity the primary header text and added secondary app\/workspace identity text. - `AgileCockpit\/AgileCockpitTests\/AgileCockpitTests.swift`: Added coverage for the secondary app\/workspace status text.",
+    "Verification: - Human verified this issue in GitHub on 2026-06-16.",
+    "Related Items: - EP-018 - SP-021 - I-0006"
+  ],
+  "observedBehavior" : "",
+  "reproductionSteps" : [
+
+  ],
+  "severity" : "medium",
+  "sprintID" : {
+    "rawValue" : "SP-021"
+  },
+  "workItem" : {
+    "githubIssue" : 111,
+    "id" : {
+      "rawValue" : "I-0005"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "AgileCockpit header emphasizes app identity over project identity"
+  }
+}

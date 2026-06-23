@@ -730,20 +730,15 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
     }
 
     public func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
-        guard let record = try workRecord(id: workItemID), let issueNumber = record.workItem.githubIssue else {
+        let records = try listWorkRecords()
+        guard let record = records.first(where: { $0.workItem.id == workItemID }), let issueNumber = record.workItem.githubIssue else {
             throw AirframeBackendError.missingWorkItem(workItemID)
         }
         let issue = try transport.issue(number: issueNumber, configuration: configuration)
-        return AirframeTaskPacket(
-            workItem: record.workItem,
-            objective: record.workItem.title,
-            scope: record.scope,
-            acceptanceCriteria: record.acceptanceCriteria,
-            constraints: record.constraints,
-            evidenceRequirements: record.evidenceRequirements,
-            protectedPaths: record.protectedPaths,
-            reportFormat: record.reportFormat,
-            existingEvidence: mapper.evidence(from: issue)
+        return AirframeCanonicalTaskPacketAssembler().taskPacket(
+            for: record,
+            records: records,
+            evidence: mapper.evidence(from: issue)
         )
     }
 
@@ -1062,22 +1057,7 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
     }
 
     public func dashboardSummary() throws -> AirframeDashboardSummary {
-        let records = try listWorkRecords()
-        let workItems = records.map(\.workItem)
-        let tasks = workItems.filter { $0.kind == .task }
-        let nextTask = tasks
-            .filter { $0.status == .active }
-            .sorted { $0.id.rawValue < $1.id.rawValue }
-            .first
-        return AirframeDashboardSummary(
-            totalWorkItemCount: workItems.count,
-            activeTaskCount: tasks.filter { $0.status == .active }.count,
-            unverifiedTaskCount: tasks.filter { $0.status == .implementedNotVerified }.count,
-            verifiedTaskCount: tasks.filter { $0.status == .implementedVerified }.count,
-            issueCount: workItems.filter { $0.kind == .issue }.count,
-            nextTask: nextTask,
-            recentEvidenceCount: 0
-        )
+        AirframeCanonicalProjectSummary().dashboardSummary(records: try listWorkRecords())
     }
 
     private func isAirframeWorkIssue(_ issue: AirframeGitHubIssueRecord) -> Bool {

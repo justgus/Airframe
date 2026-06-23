@@ -12,20 +12,18 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-026**
+Currently: **None**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## Sprint Backlog
 
-Currently: **5 backlog Sprints**
+Currently: **3 backlog Sprints**
 
 See: [Sprint-backlog.md](Sprint-backlog.md)
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-027 | AICockpit Canonical State Integration | EP-020 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
-| SP-028 | AgileCockpit Canonical State Integration | EP-020 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-022 | Sprint and Epic Close Gating | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
@@ -38,11 +36,12 @@ No Sprints are currently in Planning.
 
 ## Active Sprints
 
-Currently: **1 active Sprint**
+Currently: **0 active Sprints**
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-026 | Markdown Import and Projection | EP-020 | [Sprint-active.md](Sprint-active.md) | Active |
+
+No Sprints are currently Active.
 
 ## Review Sprints
 
@@ -86,18 +85,18 @@ Currently: **28 Sprints** | Next available: **SP-029**
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | None | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Backlog |
 | SP-025 | Canonical Store Schema and Validation | EP-020 | T-0116, T-0117, T-0118, T-0119 | None | Closed |
-| SP-026 | Markdown Import and Projection | EP-020 | T-0120, T-0121, T-0122, T-0123 | None | Active |
-| SP-027 | AICockpit Canonical State Integration | EP-020 | T-0124, T-0125, T-0126, T-0127 | None | Backlog |
-| SP-028 | AgileCockpit Canonical State Integration | EP-020 | T-0128, T-0129, T-0130, T-0131 | None | Backlog |
+| SP-026 | Markdown Import and Projection | EP-020 | T-0120, T-0121, T-0122, T-0123 | None | Closed |
+| SP-027 | AICockpit Canonical State Integration | EP-020 | T-0124, T-0125, T-0126, T-0127 | None | Closed |
+| SP-028 | AgileCockpit Canonical State Integration | EP-020 | T-0128, T-0129, T-0130, T-0131 | I-0007, I-0008 | Closed |
 
 ## Statistics
 
 - **Total Sprints:** 28
-- **Backlog:** 5
+- **Backlog:** 3
 - **Planning:** 0
-- **Active:** 1
+- **Active:** 0
 - **Review:** 2
-- **Closed:** 20
+- **Closed:** 23
 - **Next available:** SP-029
 
-*Last Updated: 2026-06-18 (SP-026 activated for implementation)*
+*Last Updated: 2026-06-23 (SP-028 closed)*

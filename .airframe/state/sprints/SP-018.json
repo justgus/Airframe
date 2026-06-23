@@ -1,0 +1,47 @@
+{
+  "endDate" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "goal" : "Add local and controlled GitHub create\/update capability to AICockpit while prohibiting AICockpit from applying Verified to Tasks or Issues.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Review\/Sprint-SP-018.md"
+  },
+  "notes" : [
+
+  ],
+  "startDate" : "2026-06-14",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0091"
+    },
+    {
+      "rawValue" : "T-0092"
+    },
+    {
+      "rawValue" : "T-0093"
+    },
+    {
+      "rawValue" : "T-0094"
+    },
+    {
+      "rawValue" : "T-0095"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-018"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "AICockpit Work Item Mutation Support"
+  }
+}

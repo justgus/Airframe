@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "The Sprint close action is disabled or rejected until all assigned Tasks and Issues are verified.",
+    "The UI explains why the Sprint cannot close yet.",
+    "A successful close transitions the Sprint out of the active state."
+  ],
+  "component" : "AgileCockpit \/ AirframeCore",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Sprint close must stay blocked until every Sprint task and issue is verified.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-022"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0107"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Gate Sprint close on verified Tasks and Issues"
+  }
+}

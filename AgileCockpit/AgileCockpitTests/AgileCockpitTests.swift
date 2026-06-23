@@ -157,6 +157,110 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitSP028DashboardAndPlanningUseCanonicalGitHubState() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-028",
+        activeEpicID: "EP-020",
+        backendKind: "github-issues"
+    )
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:],
+        githubIssueTransport: StubGitHubIssueTransport(issues: sp028GitHubIssues)
+    )
+
+    #expect(model.summary.activeTaskCount == 4)
+    #expect(model.summary.nextTask?.id == AirframeID("T-0128"))
+    #expect(model.activeRecords.map(\.workItem.id) == [
+        AirframeID("T-0128"),
+        AirframeID("T-0129"),
+        AirframeID("T-0130"),
+        AirframeID("T-0131")
+    ])
+    #expect(model.sprintRecords.map(\.workItem.id) == [
+        AirframeID("T-0128"),
+        AirframeID("T-0129"),
+        AirframeID("T-0130"),
+        AirframeID("T-0131")
+    ])
+    #expect(model.epicRecords.map(\.workItem.id) == [
+        AirframeID("T-0128"),
+        AirframeID("T-0129"),
+        AirframeID("T-0130"),
+        AirframeID("T-0131")
+    ])
+    #expect(model.statusTiles.first { $0.id == "tasks" }?.rows.first { $0.title == "Active" }?.count == 4)
+}
+
+@MainActor
+@Test func agileCockpitShowsCanonicalDataHealthDiagnosticsForMissingPlanningRecords() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-028",
+        activeEpicID: "EP-020",
+        backendKind: "github-issues"
+    )
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:],
+        githubIssueTransport: StubGitHubIssueTransport(issues: sp028GitHubIssues)
+    )
+
+    #expect(model.canonicalDiagnostics.status == .blocking)
+    #expect(model.diagnosticRows.map(\.reason).contains("activeEpicMissing"))
+    #expect(model.diagnosticRows.map(\.reason).contains("activeSprintMissing"))
+    #expect(model.diagnosticRows.map(\.reason).contains("taskEpicMissing"))
+    #expect(model.diagnosticRows.map(\.reason).contains("taskSprintMissing"))
+    #expect(model.dataHealthStatusText.contains("blocking"))
+    #expect(model.repairPreviewRows.map(\.action).contains(.clearActiveEpicID))
+    #expect(model.repairPreviewRows.map(\.action).contains(.clearActiveSprintID))
+    #expect(model.repairPreviewRows.allSatisfy { $0.requiresHumanApproval })
+}
+
+@MainActor
+@Test func agileCockpitCanonicalDataHealthUsesLocalPlanningArtifactsWhenAvailable() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-028",
+        activeEpicID: "EP-020",
+        backendKind: "github-issues"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-020: Canonical Airframe Workflow State
+
+    **Status:** Active
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-028: AgileCockpit Canonical State Integration
+
+    **Status:** Active
+    **Epic:** EP-020: Canonical Airframe Workflow State
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:],
+        githubIssueTransport: StubGitHubIssueTransport(issues: sp028GitHubIssues)
+    )
+
+    #expect(!model.diagnosticRows.map(\.reason).contains("activeEpicMissing"))
+    #expect(!model.diagnosticRows.map(\.reason).contains("activeSprintMissing"))
+    #expect(model.activeEpicRecord?.workItem.id == AirframeID("EP-020"))
+    #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-028"))
+}
+
+@MainActor
 @Test func agileCockpitLiveFailurePreservesProjectIdentityWithoutSampleFallback() throws {
     let context = try AirframeConfigurationLoader().context(
         for: try AirframeConfigurationLoader().load(data: liveConfigurationData(backendKind: "github-issues"))
@@ -189,35 +293,40 @@ import Foundation
 }
 
 @MainActor
-@Test func agileCockpitExposesVerificationPacketEvidenceAndActions() throws {
+@Test func agileCockpitExposesVerificationPacketEvidenceAndActions() async throws {
     let model = try AgileCockpitDashboardModel.sample()
 
-    model.selectedWorkItemID = AirframeID("T-0042")
+    model.selectVerificationWorkItem(AirframeID("T-0042"))
+    try await waitForVerificationDetailLoaded(model)
 
     #expect(model.selectedPacket?.workItem.id == AirframeID("T-0042"))
     #expect(model.selectedPacket?.existingEvidence.first?.id == AirframeID("EV-0042-001"))
 
     model.requestMoreEvidenceForSelectedWork()
 
+    #expect(model.isVerificationActionPending)
+    try await waitForVerificationActionCompleted(model)
     #expect(model.summary.unverifiedTaskCount == 0)
     #expect(model.activeRecords.map(\.workItem.id).contains(AirframeID("T-0042")))
     #expect(model.auditRows.last?.action == "OP-HUMAN-REQUEST-EVIDENCE")
 }
 
 @MainActor
-@Test func agileCockpitAcceptsReadyWorkThroughCoreBackend() throws {
+@Test func agileCockpitAcceptsReadyWorkThroughCoreBackend() async throws {
     let model = try AgileCockpitDashboardModel.sample()
 
-    model.selectedWorkItemID = AirframeID("T-0042")
+    model.selectVerificationWorkItem(AirframeID("T-0042"))
     model.acceptSelectedWork()
 
+    #expect(model.isVerificationActionPending)
+    try await waitForVerificationActionCompleted(model)
     #expect(model.verifiedRecords.map(\.workItem.id).contains(AirframeID("T-0042")))
     #expect(model.summary.verifiedTaskCount == 2)
     #expect(model.statusMessage.contains("T-0042 accepted"))
 }
 
 @MainActor
-@Test func agileCockpitAcceptsReadyIssueThroughLocalBackend() throws {
+@Test func agileCockpitAcceptsReadyIssueThroughLocalBackend() async throws {
     let context = try AirframeConfigurationLoader().loadSampleContext()
     let storeURL = FileManager.default.temporaryDirectory
         .appending(path: "AgileCockpitIssueVerificationStore")
@@ -244,16 +353,18 @@ import Foundation
         reviewerContext: reviewerContext(projectID: context.project.id)
     )
 
-    model.selectedWorkItemID = AirframeID("I-9100")
+    model.selectVerificationWorkItem(AirframeID("I-9100"))
     model.acceptSelectedWork()
 
+    #expect(model.isVerificationActionPending)
+    try await waitForVerificationActionCompleted(model)
     #expect(model.verifiedRecords.map(\.workItem.id).contains(AirframeID("I-9100")))
     #expect(model.auditRows.last?.action == "OP-HUMAN-ACCEPT-WORK")
     #expect(model.statusMessage.contains("I-9100 accepted"))
 }
 
 @MainActor
-@Test func agileCockpitAppliesGitHubVerificationWithHumanReviewerContext() throws {
+@Test func agileCockpitAppliesGitHubVerificationWithHumanReviewerContext() async throws {
     let configURL = try temporaryLiveConfigurationURL(backendKind: "github-issues")
     let transport = RecordingGitHubIssueTransport(issues: [
         AirframeGitHubIssueRecord(
@@ -274,9 +385,11 @@ import Foundation
         githubIssueTransport: transport
     )
 
-    model.selectedWorkItemID = AirframeID("T-0059")
+    model.selectVerificationWorkItem(AirframeID("T-0059"))
     model.acceptSelectedWork()
 
+    #expect(model.isVerificationActionPending)
+    try await waitForVerificationActionCompleted(model)
     #expect(model.verifiedRecords.map(\.workItem.id).contains(AirframeID("T-0059")))
     #expect(transport.statusTransitions == [
         RecordingGitHubIssueTransport.StatusTransition(
@@ -286,6 +399,67 @@ import Foundation
         )
     ])
     #expect(model.auditRows.last?.action == "OP-HUMAN-ACCEPT-WORK")
+}
+
+@MainActor
+@Test func agileCockpitRequestMoreEvidenceAttachesReviewerComment() async throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let storeURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitReviewerCommentStore")
+        .appending(path: UUID().uuidString)
+        .appending(path: "airframe-local-backend.json")
+    let backend = AirframeLocalFilesystemBackend(storeURL: storeURL)
+    try backend.createWorkRecord(
+        AirframeLocalWorkRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-9200"),
+                kind: .task,
+                title: "Ready task needing more evidence",
+                status: .implementedNotVerified,
+                githubIssue: 9200
+            ),
+            epicID: AirframeID("EP-020"),
+            sprintID: AirframeID("SP-028"),
+            priority: .high
+        )
+    )
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id)
+    )
+
+    model.selectVerificationWorkItem(AirframeID("T-9200"))
+    model.verificationCommentText = "Please attach a screenshot of the loading state."
+    model.requestMoreEvidenceForSelectedWork()
+
+    #expect(model.isVerificationActionPending)
+    try await waitForVerificationActionCompleted(model)
+
+    let evidence = try backend.evidence(for: AirframeID("T-9200"))
+    #expect(evidence.first?.summary.contains("Please attach a screenshot") == true)
+    #expect(model.statusMessage.contains("T-9200 sent back for more evidence"))
+}
+
+@MainActor
+@Test func agileCockpitVerificationDetailLoadFailureIsVisibleAndReloadable() async throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let backend = FailingVerificationBackend()
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id)
+    )
+
+    model.selectVerificationWorkItem(AirframeID("T-9300"))
+    try await waitForVerificationDetailFailed(model)
+
+    if case .failed(let id, let message) = model.verificationDetailState {
+        #expect(id == AirframeID("T-9300"))
+        #expect(message.contains("simulated packet load failure"))
+    } else {
+        Issue.record("Expected failed verification detail state.")
+    }
 }
 
 @MainActor
@@ -585,6 +759,10 @@ import Foundation
         at: rootURL.appending(path: "docs/Sprints/Closed"),
         withIntermediateDirectories: true
     )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints/Review"),
+        withIntermediateDirectories: true
+    )
     try """
     # Active Epics
 
@@ -595,12 +773,12 @@ import Foundation
     try """
     # Sprint Backlog
 
-    ## SP-018: AICockpit Work Item Mutation Support
+    ## SP-020: AgileCockpit Verification Mutations
 
     **Status:** Backlog
     **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
 
-    ## SP-019: AgileCockpit Human Verification Mutations
+    ## SP-021: AgileCockpit Close Controls
 
     **Status:** Backlog
     **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
@@ -608,7 +786,7 @@ import Foundation
     try """
     # Active Sprint
 
-    ## SP-017: Workflow Status Dashboard
+    ## SP-019: AgileCockpit Human Verification Mutations
 
     **Status:** Active
     **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
@@ -624,6 +802,18 @@ import Foundation
     **Status:** Closed
     **Epic:** EP-016: Refresh Synchronization
     """.write(to: rootURL.appending(path: "docs/Sprints/Closed/Sprint-SP-016.md"), atomically: true, encoding: .utf8)
+    try """
+    # SP-017: Workflow Status Dashboard
+
+    **Status:** Review
+    **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
+    """.write(to: rootURL.appending(path: "docs/Sprints/Review/Sprint-SP-017.md"), atomically: true, encoding: .utf8)
+    try """
+    # SP-018: AICockpit Work Item Mutation Support
+
+    **Status:** Review
+    **Epic:** EP-017: Workflow Status Dashboard and Mutation Authority
+    """.write(to: rootURL.appending(path: "docs/Sprints/Review/Sprint-SP-018.md"), atomically: true, encoding: .utf8)
 
     let backend = AirframeLocalFilesystemBackend(
         storeURL: rootURL.appending(path: "airframe-local-backend.json")
@@ -639,7 +829,67 @@ import Foundation
     #expect(model.statusTiles.first { $0.id == "epics" }?.rows.first { $0.title == "Closed" }?.count == 1)
     #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Active" }?.count == 1)
     #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Backlog" }?.count == 2)
+    #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Review" }?.count == 2)
     #expect(model.statusTiles.first { $0.id == "sprints" }?.rows.first { $0.title == "Closed" }?.count == 1)
+}
+
+@MainActor
+@Test func agileCockpitDataHealthReportsCanonicalBackendDrift() throws {
+    let context = try AirframeConfigurationLoader().loadSampleContext()
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitBackendDrift")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Tasks"),
+        withIntermediateDirectories: true
+    )
+    let backend = AirframeLocalFilesystemBackend(
+        storeURL: rootURL.appending(path: "airframe-local-backend.json")
+    )
+    try backend.createWorkRecord(
+        AirframeLocalWorkRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-0091"),
+                kind: .task,
+                title: "Add local create command support",
+                status: .active
+            ),
+            epicID: AirframeID("EP-017"),
+            sprintID: AirframeID("SP-017")
+        )
+    )
+    try """
+    # Implemented Tasks
+
+    ## T-0091: Add local create command support
+
+    **Status:** Implemented - Not Verified
+    **Priority:** High
+    **Epic:** EP-017
+    **Sprint Assigned:** SP-018
+    """.write(to: rootURL.appending(path: "docs/Tasks/Task-unverified.md"), atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel(
+        context: context,
+        backend: backend,
+        reviewerContext: reviewerContext(projectID: context.project.id),
+        artifactRootURL: rootURL
+    )
+
+    let taskRecord = try #require(model.dashboardRecords.first { $0.workItem.id == AirframeID("T-0091") })
+    #expect(taskRecord.workItem.status == .implementedNotVerified)
+    #expect(taskRecord.sprintID == AirframeID("SP-018"))
+    #expect(model.diagnosticRows.map(\.reason).contains("backendStatusDrift"))
+    #expect(model.repairPreviewRows.map(\.action).contains(.applyBackendStatusLabels))
+    let repairRow = try #require(model.repairPreviewRows.first { $0.action == .applyBackendStatusLabels })
+    #expect(repairRow.requiresHumanApproval == false)
+
+    model.applyRepair(repairRow)
+
+    let repairedRecord = try #require(try backend.workRecord(id: AirframeID("T-0091")))
+    #expect(repairedRecord.workItem.status == .implementedNotVerified)
+    #expect(repairedRecord.sprintID == AirframeID("SP-018"))
+    #expect(model.statusMessage == "Applied 1 repair(s).")
 }
 
 @MainActor
@@ -1018,6 +1268,143 @@ private func localTaskRecord(id: String, title: String) -> AirframeLocalWorkReco
     )
 }
 
+@MainActor
+private func waitForVerificationDetailLoaded(
+    _ model: AgileCockpitDashboardModel,
+    fileID: String = #fileID,
+    filePath: String = #filePath,
+    line: Int = #line,
+    column: Int = #column
+) async throws {
+    try await waitForCondition(
+        { if case .loaded = model.verificationDetailState { true } else { false } },
+        fileID: fileID,
+        filePath: filePath,
+        line: line,
+        column: column
+    )
+}
+
+@MainActor
+private func waitForVerificationDetailFailed(
+    _ model: AgileCockpitDashboardModel,
+    fileID: String = #fileID,
+    filePath: String = #filePath,
+    line: Int = #line,
+    column: Int = #column
+) async throws {
+    try await waitForCondition(
+        { if case .failed = model.verificationDetailState { true } else { false } },
+        fileID: fileID,
+        filePath: filePath,
+        line: line,
+        column: column
+    )
+}
+
+@MainActor
+private func waitForVerificationActionCompleted(
+    _ model: AgileCockpitDashboardModel,
+    fileID: String = #fileID,
+    filePath: String = #filePath,
+    line: Int = #line,
+    column: Int = #column
+) async throws {
+    try await waitForCondition(
+        { if case .completed = model.verificationActionState { true } else { false } },
+        fileID: fileID,
+        filePath: filePath,
+        line: line,
+        column: column
+    )
+}
+
+@MainActor
+private func waitForCondition(
+    _ condition: @escaping @MainActor () -> Bool,
+    fileID: String = #fileID,
+    filePath: String = #filePath,
+    line: Int = #line,
+    column: Int = #column
+) async throws {
+    for _ in 0..<50 {
+        if condition() {
+            return
+        }
+        try await Task.sleep(nanoseconds: 10_000_000)
+    }
+    #expect(Bool(false), sourceLocation: SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column))
+}
+
+private final class FailingVerificationBackend: @unchecked Sendable, AirframeBackend {
+    let capabilities = AirframeBackendCapabilities.localFilesystem
+
+    private let record = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-9300"),
+            kind: .task,
+            title: "Ready work with failing packet load",
+            status: .implementedNotVerified,
+            githubIssue: 9300
+        ),
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-028"),
+        priority: .high
+    )
+
+    func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
+        [record]
+    }
+
+    func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
+        id == record.workItem.id ? record : nil
+    }
+
+    func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {}
+
+    func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {}
+
+    func updateWorkItem(_ workItem: AirframeWorkItem) throws {}
+
+    func transitionWorkItem(
+        id: AirframeID,
+        to status: AirframeWorkStatus,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws {}
+
+    func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws {}
+
+    func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
+        []
+    }
+
+    func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
+        throw AirframeBackendError.githubAccessFailed("simulated packet load failure")
+    }
+
+    func applyHumanVerification(
+        action: AirframeHumanVerificationAction,
+        to workItemID: AirframeID,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeHumanVerificationResult {
+        throw AirframeBackendError.githubAccessFailed("simulated verification failure")
+    }
+
+    func dashboardSummary() throws -> AirframeDashboardSummary {
+        AirframeDashboardSummary(
+            totalWorkItemCount: 1,
+            activeTaskCount: 0,
+            unverifiedTaskCount: 1,
+            verifiedTaskCount: 0,
+            issueCount: 0,
+            nextTask: nil,
+            recentEvidenceCount: 0
+        )
+    }
+}
+
 private let liveGitHubIssues = [
     AirframeGitHubIssueRecord(
         number: 56,
@@ -1052,6 +1439,66 @@ private let liveGitHubIssues = [
         title: "Unmapped GitHub issue",
         labels: [],
         body: ""
+    )
+]
+
+private let sp028GitHubIssues = [
+    AirframeGitHubIssueRecord(
+        number: 128,
+        title: "[T-0128] Move AgileCockpit dashboard and planning views to canonical records",
+        labels: ["airframe-task", "status-active", "epic-EP-020", "sprint-SP-028", "priority-high"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0128
+        Epic: EP-020
+        Sprint: SP-028
+
+        ## Acceptance Criteria
+        - AgileCockpit dashboard status tiles read canonical records.
+        - Sprint and Epic planning views read canonical records.
+        """
+    ),
+    AirframeGitHubIssueRecord(
+        number: 129,
+        title: "[T-0129] Add AgileCockpit data health diagnostics surface",
+        labels: ["airframe-task", "status-active", "epic-EP-020", "sprint-SP-028", "priority-high"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0129
+        Epic: EP-020
+        Sprint: SP-028
+
+        ## Acceptance Criteria
+        - AgileCockpit shows AirframeCore diagnostics with severity, affected IDs, and explanations.
+        """
+    ),
+    AirframeGitHubIssueRecord(
+        number: 130,
+        title: "[T-0130] Add AgileCockpit repair preview flow for canonical diagnostics",
+        labels: ["airframe-task", "status-active", "epic-EP-020", "sprint-SP-028", "priority-high"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0130
+        Epic: EP-020
+        Sprint: SP-028
+
+        ## Acceptance Criteria
+        - Repair previews show affected records and fields before mutation.
+        """
+    ),
+    AirframeGitHubIssueRecord(
+        number: 131,
+        title: "[T-0131] Verify end-to-end canonical workflow state behavior",
+        labels: ["airframe-task", "status-active", "epic-EP-020", "sprint-SP-028", "priority-high"],
+        body: """
+        Airframe Type: Task
+        Airframe ID: T-0131
+        Epic: EP-020
+        Sprint: SP-028
+
+        ## Acceptance Criteria
+        - Tests prove human-only operations remain protected.
+        """
     )
 ]
 

@@ -1,0 +1,49 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "Verification",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-12",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Reconciled the pre-sprint draft dashboard\/status patch under active SP-017 scope.\nAdded and verified the LiveDemo post-build copy script.\nThe AgileCockpit Xcode target now installs LiveDemo artifacts by default after build; set `AIRFRAME_SKIP_LIVE_DEMO_INSTALL=1` only when the install should be skipped.\nVerified `AgileCockpit.app` and `aicockpit` were copied to the requested LiveDemo locations.\nUpdated LiveDemo app signing so copied executable files are signed consistently before the bundle is signed.\nFor default ad-hoc LiveDemo signing, the copy script now omits hardened runtime signing options so the local debug dylib can load.\nUpdated the LiveDemo copy step to strip test plug-ins and XCTest\/Testing frameworks before signing the copied demo app.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-017"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 90,
+    "id" : {
+      "rawValue" : "T-0090"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Verify dashboard workflow and integrate draft patch"
+  }
+}

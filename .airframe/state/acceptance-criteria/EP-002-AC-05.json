@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-002-AC-05"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-002.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-002"
+  },
+  "text" : "Core, CLI, and app tests cover the sample configuration path."
+}

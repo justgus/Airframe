@@ -859,6 +859,148 @@ import Foundation
     #expect(reasonCodes.contains(.sprintTaskRelationshipDrift))
 }
 
+@Test func canonicalBackendReconcilerDetectsBackendStatusDriftAndHumanOnlyTransitions() {
+    let canonicalRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0091"),
+            kind: .task,
+            title: "Add local create command support",
+            status: .implementedVerified
+        ),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-018")
+    )
+    let backendRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0091"),
+            kind: .task,
+            title: "Add local create command support",
+            status: .implementedNotVerified
+        ),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-018")
+    )
+
+    let diagnostics = AirframeCanonicalBackendReconciler().diagnostics(
+        canonicalRecords: [canonicalRecord],
+        backendRecords: [backendRecord]
+    )
+    let diagnostic = diagnostics.first
+
+    #expect(diagnostics.map(\.reasonCode) == [.backendStatusDrift])
+    #expect(diagnostic?.message.contains("canonical status is Implemented - Verified") == true)
+    #expect(diagnostic?.repairOptions.first?.action == .applyBackendStatusLabels)
+    #expect(diagnostic?.repairOptions.first?.requiresHumanApproval == true)
+}
+
+@Test func canonicalBackendReconcilerDetectsAgentAllowedBackendRelationshipDrift() {
+    let canonicalRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0092"),
+            kind: .task,
+            title: "Add local update command support",
+            status: .active
+        ),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-018")
+    )
+    let backendRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0092"),
+            kind: .task,
+            title: "Add local update command support",
+            status: .active
+        ),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-017")
+    )
+
+    let diagnostics = AirframeCanonicalBackendReconciler().diagnostics(
+        canonicalRecords: [canonicalRecord],
+        backendRecords: [backendRecord]
+    )
+    let diagnostic = diagnostics.first
+
+    #expect(diagnostics.map(\.reasonCode) == [.backendRelationshipDrift])
+    #expect(diagnostic?.repairOptions.first?.action == .applyBackendRelationshipLabels)
+    #expect(diagnostic?.repairOptions.first?.requiresHumanApproval == false)
+}
+
+@Test func canonicalBackendRepairerAppliesGitHubBackendLabelReconciliation() throws {
+    let canonicalRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0128"),
+            kind: .task,
+            title: "Move AgileCockpit dashboard and planning views to canonical records",
+            status: .implementedNotVerified,
+            githubIssue: 128
+        ),
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-028"),
+        priority: .high
+    )
+    let backendRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0128"),
+            kind: .task,
+            title: "Move AgileCockpit dashboard and planning views to canonical records",
+            status: .active,
+            githubIssue: 128
+        ),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-017"),
+        priority: .high
+    )
+    let transport = RecordingGitHubIssueTransport(
+        issues: [
+            AirframeGitHubIssueRecord(
+                number: 128,
+                title: "[T-0128] Move AgileCockpit dashboard and planning views to canonical records",
+                labels: ["airframe-task", "status-active", "epic-EP-017", "sprint-SP-017", "priority-high"],
+                body: """
+                Airframe Type: Task
+                Airframe ID: T-0128
+                Epic: EP-017
+                Sprint: SP-017
+                """
+            )
+        ]
+    )
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+    let repairOption = try #require(
+        AirframeCanonicalBackendReconciler().diagnostics(
+            canonicalRecords: [canonicalRecord],
+            backendRecords: [backendRecord]
+        ).first?.repairOptions.first
+    )
+
+    let result = try AirframeCanonicalBackendRepairer().apply(
+        repairOption: repairOption,
+        canonicalRecords: [canonicalRecord],
+        backend: backend,
+        approval: AirframeGitHubMutationApproval(
+            isApproved: true,
+            approvedBy: "Human",
+            reason: "Repair backend drift"
+        ),
+        context: try certifiedContext(authorityClass: .llmAgent),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(result.appliedCount == 1)
+    #expect(transport.updatedIssues.count == 1)
+    #expect(transport.updatedIssues.first?.removedLabels.contains("status-active") == true)
+    #expect(transport.updatedIssues.first?.removedLabels.contains("epic-EP-017") == true)
+    #expect(transport.updatedIssues.first?.removedLabels.contains("sprint-SP-017") == true)
+    #expect(transport.updatedIssues.first?.addedLabels.contains("status-unverified") == true)
+    #expect(transport.updatedIssues.first?.addedLabels.contains("epic-EP-020") == true)
+    #expect(transport.updatedIssues.first?.addedLabels.contains("sprint-SP-028") == true)
+}
+
 @Test func canonicalStateValidatorAcceptsConsistentActiveState() {
     let project = AirframeCanonicalProjectRecord(
         id: AirframeID("PRJ-AIRFRAME"),
@@ -1573,6 +1715,130 @@ import Foundation
     #expect(summary.recentEvidenceCount == 1)
 }
 
+@Test func canonicalProjectSummaryReportsTaskIssueCountsAndNextTask() {
+    let tasks = [
+        canonicalTaskRecord(id: "T-0003", title: "Third active task", status: .active),
+        canonicalTaskRecord(id: "T-0001", title: "First active task", status: .active),
+        canonicalTaskRecord(id: "T-0002", title: "Implemented task", status: .implementedNotVerified),
+        canonicalTaskRecord(id: "T-0004", title: "Verified task", status: .implementedVerified)
+    ]
+    let issues = [
+        AirframeCanonicalIssueRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("I-0001"),
+                kind: .issue,
+                title: "Tracked issue",
+                status: .active
+            ),
+            severity: .high,
+            observedBehavior: "Observed",
+            expectedBehavior: "Expected"
+        )
+    ]
+    let evidence = [
+        AirframeCanonicalEvidenceSummaryRecord(
+            id: AirframeID("EV-0001"),
+            workItemIDs: [AirframeID("T-0004")],
+            summary: "Tests passed",
+            result: .passed
+        )
+    ]
+
+    let summary = AirframeCanonicalProjectSummary().dashboardSummary(
+        epics: [
+            AirframeCanonicalEpicRecord(
+                workItem: AirframeWorkItem(
+                    id: AirframeID("EP-0001"),
+                    kind: .epic,
+                    title: "Tracked epic",
+                    status: .active
+                ),
+                owner: "Human",
+                goal: "Goal",
+                rationale: "Rationale"
+            )
+        ],
+        sprints: [
+            AirframeCanonicalSprintRecord(
+                workItem: AirframeWorkItem(
+                    id: AirframeID("SP-0001"),
+                    kind: .sprint,
+                    title: "Tracked sprint",
+                    status: .active
+                ),
+                epicID: AirframeID("EP-0001"),
+                goal: "Goal"
+            )
+        ],
+        tasks: tasks,
+        issues: issues,
+        evidence: evidence
+    )
+
+    #expect(summary.totalWorkItemCount == 7)
+    #expect(summary.activeTaskCount == 2)
+    #expect(summary.unverifiedTaskCount == 1)
+    #expect(summary.verifiedTaskCount == 1)
+    #expect(summary.issueCount == 1)
+    #expect(summary.nextTask?.id == AirframeID("T-0001"))
+    #expect(summary.recentEvidenceCount == 1)
+}
+
+@Test func canonicalTaskPacketAssemblerIncludesEvidenceAndRelationshipDiagnostics() {
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-0125"),
+            kind: .task,
+            title: "Move AICockpit task packet generation to canonical records",
+            status: .active,
+            githubIssue: 125
+        ),
+        component: "AICockpit / AirframeCore",
+        priority: .high,
+        rationale: "Agent task packets need reliable structured state.",
+        epicID: AirframeID("EP-020"),
+        sprintID: AirframeID("SP-027"),
+        acceptanceCriteria: ["Task packets are assembled from canonical records."],
+        componentsAffected: ["AICockpit", "AirframeCore"],
+        testSteps: ["swift test --package-path AirframeCore"],
+        notes: ["Preserve output compatibility."]
+    )
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-020"),
+            kind: .epic,
+            title: "Canonical Airframe Workflow State",
+            status: .active
+        ),
+        owner: "Human",
+        goal: "Canonical state",
+        rationale: "Rationale",
+        taskIDs: [AirframeID("T-0125")]
+    )
+    let evidence = AirframeCanonicalEvidenceSummaryRecord(
+        id: AirframeID("EV-0125-001"),
+        workItemIDs: [AirframeID("T-0125")],
+        summary: "Core tests passed",
+        result: .passed,
+        artifactReferences: ["swift test --package-path AirframeCore"]
+    )
+
+    let packet = AirframeCanonicalTaskPacketAssembler().taskPacket(
+        for: task,
+        epics: [epic],
+        sprints: [],
+        evidence: [evidence]
+    )
+
+    #expect(packet.workItem.id == AirframeID("T-0125"))
+    #expect(packet.scope == ["AICockpit", "AirframeCore"])
+    #expect(packet.acceptanceCriteria == ["Task packets are assembled from canonical records."])
+    #expect(packet.existingEvidence.first?.id == AirframeID("EV-0125-001"))
+    #expect(packet.existingEvidence.first?.artifact == "swift test --package-path AirframeCore")
+    #expect(packet.diagnostics.map(\.reasonCode) == [.taskSprintMissing])
+    #expect(packet.diagnostics.first?.affectedIDs == [AirframeID("T-0125"), AirframeID("SP-027")])
+}
+
 @Test func dashboardStatusSummaryGroupsArtifactSpecificStatusRows() {
     let records = [
         localWorkRecord(id: "EP-0001", kind: .epic, title: "Defined epic", status: .backlog),
@@ -2265,6 +2531,25 @@ private func localTaskRecord(
         constraints: constraints,
         evidenceRequirements: evidenceRequirements,
         protectedPaths: protectedPaths
+    )
+}
+
+private func canonicalTaskRecord(
+    id: String,
+    title: String,
+    status: AirframeWorkStatus
+) -> AirframeCanonicalTaskRecord {
+    AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID(id),
+            kind: .task,
+            title: title,
+            status: status,
+            githubIssue: Int(id.dropFirst(2))
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Canonical summary coverage."
     )
 }
 

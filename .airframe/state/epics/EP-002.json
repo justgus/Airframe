@@ -1,0 +1,84 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-002-AC-01"
+    },
+    {
+      "rawValue" : "EP-002-AC-02"
+    },
+    {
+      "rawValue" : "EP-002-AC-03"
+    },
+    {
+      "rawValue" : "EP-002-AC-04"
+    },
+    {
+      "rawValue" : "EP-002-AC-05"
+    }
+  ],
+  "closeDate" : "2026-06-02",
+  "goal" : "Define the canonical Airframe domain model and load sample workspace\/project configuration through AirframeCore, AICockpit, and AgileCockpit.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-002.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. AirframeCore loads valid sample configuration. 2. AirframeCore rejects malformed configuration with structured errors. 3. AICockpit displays current workspace\/project context. 4. AgileCockpit displays current workspace\/project context. 5. Core, CLI, and app tests cover the sample configuration path."
+  ],
+  "outOfScope" : [
+    "Full workflow enforcement.",
+    "Backend persistence beyond fixtures.",
+    "GitHub integration."
+  ],
+  "owner" : "HumanOwner",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "All clients need a common vocabulary and configuration source before workflow, backend, metrics, or UI behavior can be implemented safely.",
+  "scope" : [
+    "Define canonical IDs and entity models.",
+    "Define workspace\/project configuration structures.",
+    "Implement configuration loading and validation.",
+    "Add local fixture workspace.",
+    "Add CLI context display.",
+    "Add AgileCockpit project context display."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-002"
+    }
+  ],
+  "startDate" : "2026-06-01",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0007"
+    },
+    {
+      "rawValue" : "T-0008"
+    },
+    {
+      "rawValue" : "T-0009"
+    },
+    {
+      "rawValue" : "T-0010"
+    },
+    {
+      "rawValue" : "T-0011"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-002"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "Core Domain and Configuration Foundation"
+  }
+}

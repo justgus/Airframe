@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "dateVerified" : "2026-06-18",
+  "epicID" : {
+    "rawValue" : "EP-020"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0116-0119.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-025"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 118,
+    "id" : {
+      "rawValue" : "T-0118"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Encode workflow policy definitions in AirframeCore"
+  }
+}

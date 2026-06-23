@@ -1,0 +1,51 @@
+{
+  "endDate" : "2026-06-04",
+  "epicID" : {
+    "rawValue" : "EP-007"
+  },
+  "goal" : "Implement GitHub-backed project workflow support while preserving AirframeCore's canonical backend semantics.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-007.md"
+  },
+  "notes" : [
+    "Completed: - SP-007 planning opened on 2026-06-04 after EP-006 closeout. - GitHub backend capability\/configuration, issue\/task mapping, sprint\/epic\/evidence mapping, AICockpit integration, and AgileCockpit backend status were implemented on 2026-06-04. - Verification commands passed on 2026-06-04. - T-0036 through T-0040 human-verified on 2026-06-04. - SP-007 closed on 2026-06-04.",
+    "Returned to Backlog: - None.",
+    "What went well: - The GitHub MVP is testable without live network access. - Client integrations route through canonical AirframeCore backend APIs.",
+    "What to improve: - Future work should make project\/backend selection explicitly multi-project aware. - Live GitHub authentication and remote API operations remain intentionally out of scope.",
+    "Carry-forward notes: - EP-008 should harden the fixture-backed contracts, diagnostics, and verification documentation before release-candidate closeout."
+  ],
+  "startDate" : "2026-06-04",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0036"
+    },
+    {
+      "rawValue" : "T-0037"
+    },
+    {
+      "rawValue" : "T-0038"
+    },
+    {
+      "rawValue" : "T-0039"
+    },
+    {
+      "rawValue" : "T-0040"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-007"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "GitHub Backend MVP"
+  }
+}

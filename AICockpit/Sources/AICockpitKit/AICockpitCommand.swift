@@ -93,6 +93,154 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals == ["state", "diagnostics"] {
+            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try? parsed.workspaceRootURL(projectContext: projectContext)
+                let canonicalStoreURL = rootURL?.appending(path: ".airframe/state")
+                let canonicalRecords: [AirframeLocalWorkRecord]
+                let snapshot: AirframeCanonicalStateSnapshot
+                if let rootURL,
+                   let canonicalStoreURL,
+                   FileManager.default.fileExists(atPath: canonicalStoreURL.path) {
+                    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+                    canonicalRecords = try repository.workRecords()
+                    snapshot = try repository.snapshot(project: projectContext.project)
+                } else {
+                    canonicalRecords = try backend.listWorkRecords()
+                    snapshot = AirframeCanonicalStateSnapshotBuilder().snapshot(
+                        project: projectContext.project,
+                        records: canonicalRecords
+                    )
+                }
+                let stateDiagnostics = AirframeCanonicalStateValidator().diagnostics(for: snapshot)
+                let reconciliationDiagnostics = try AirframeCanonicalBackendReconciler().diagnostics(
+                    canonicalRecords: canonicalRecords,
+                    backendRecords: backend.listWorkRecords()
+                )
+                let diagnostics = AirframeCanonicalDiagnostics(
+                    diagnostics: stateDiagnostics.diagnostics + reconciliationDiagnostics
+                )
+                return try render(
+                    AICockpitCommandEnvelope(
+                        status: diagnostics.isValid ? "ok" : "error",
+                        kind: "canonicalStateDiagnostics",
+                        message: diagnostics.isValid ? "Canonical state diagnostics passed" : "Canonical state diagnostics found issues",
+                        backendCapabilities: backend.capabilities,
+                        workItem: nil,
+                        taskPacket: nil,
+                        dashboardSummary: nil,
+                        canonicalDiagnostics: diagnostics,
+                        evidence: []
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals == ["state", "import-markdown"] {
+            do {
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
+                let documents = try markdownArtifactDocuments(rootURL: rootURL)
+                let importResult = AirframeMarkdownArtifactImporter().importDocuments(documents)
+                try AirframeCanonicalStoreRepository(rootURL: rootURL).saveImportedState(
+                    importResult,
+                    context: projectContext
+                )
+                return AICockpitCommandResult(
+                    exitCode: importResult.isClean ? 0 : 78,
+                    standardOutput: try renderImportResult(
+                        importResult,
+                        rootURL: rootURL,
+                        outputFormat: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalImportFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals == ["state", "export-markdown"] {
+            do {
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
+                let count = try exportMarkdownProjections(rootURL: rootURL)
+                let output = """
+                # Airframe Command
+
+                - status: ok
+                - kind: canonicalMarkdownExport
+                - message: Markdown projections exported
+                - exportedFiles: \(count)
+                """
+                return AICockpitCommandResult(exitCode: 0, standardOutput: output)
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalExportFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals == ["state", "repair"] {
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true,
+                refreshNotifier: refreshNotifier
+            ) { backend, context in
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
+                let canonicalRecords = try AirframeCanonicalStoreRepository(rootURL: rootURL).workRecords()
+                let backendRecords = try backend.listWorkRecords()
+                let diagnostics = AirframeCanonicalBackendReconciler().diagnostics(
+                    canonicalRecords: canonicalRecords,
+                    backendRecords: backendRecords
+                )
+                let action = try parsed.requiredRepairAction()
+                let requestedIDs = parsed.repeatedValues(for: "--id").map(AirframeID.init)
+                let repairOptions = diagnostics.flatMap(\.repairOptions).filter { option in
+                    option.action == action
+                        && (requestedIDs.isEmpty || !Set(option.affectedIDs).isDisjoint(with: requestedIDs))
+                }
+                guard !repairOptions.isEmpty else {
+                    throw AICockpitCommandError.invalidArguments("no matching repair option")
+                }
+                let approval = backend is AirframeGitHubIssuesBackend ? try parsed.githubMutationApproval() : nil
+                let applications = try repairOptions.flatMap { option in
+                    var scopedOption = option
+                    if !requestedIDs.isEmpty {
+                        scopedOption = AirframeCanonicalRepairOption(
+                            action: option.action,
+                            title: option.title,
+                            affectedIDs: option.affectedIDs.filter { requestedIDs.contains($0) },
+                            requiresHumanApproval: option.requiresHumanApproval
+                        )
+                    }
+                    return try AirframeCanonicalBackendRepairer().apply(
+                        repairOption: scopedOption,
+                        canonicalRecords: canonicalRecords,
+                        backend: backend,
+                        approval: approval,
+                        context: context,
+                        targetProjectID: context.targetProjectID
+                    ).applications
+                }
+                return try renderRepairResult(
+                    AirframeCanonicalBackendRepairResult(applications: applications),
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
         if parsed.positionals == ["authority", "demo-denied"] {
             do {
                 let context = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
@@ -705,6 +853,10 @@ public enum AICockpitCommand {
           aicockpit version
           aicockpit context [--config path]
           aicockpit config diagnose [--config path] [--output markdown|json]
+          aicockpit state diagnostics [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit state import-markdown [--config path] [--output markdown|json]
+          aicockpit state export-markdown [--config path]
+          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels [--id ID] --approve --approved-by name [--config path] [--backend github-issues|local-fixture|github-fixture] [--output markdown|json]
           aicockpit authority demo-denied [--config path]
           aicockpit project summary [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
@@ -993,6 +1145,147 @@ public enum AICockpitCommand {
             return envelope.markdown
         }
     }
+
+    private static func markdownArtifactDocuments(rootURL: URL) throws -> [AirframeMarkdownDocument] {
+        let fileManager = FileManager.default
+        let fixedPaths = [
+            "docs/Epics/Epic-backlog.md",
+            "docs/Epics/Epic-active.md",
+            "docs/Sprints/Sprint-backlog.md",
+            "docs/Sprints/Sprint-active.md",
+            "docs/Tasks/Task-backlog.md",
+            "docs/Tasks/Task-active.md",
+            "docs/Tasks/Task-unverified.md",
+            "docs/Issues/Issue-backlog.md",
+            "docs/Issues/Issue-active.md"
+        ]
+        let directories = [
+            "docs/Epics/Closed",
+            "docs/Sprints/Closed",
+            "docs/Sprints/Review",
+            "docs/Tasks/Verified",
+            "docs/Issues/Verified"
+        ]
+
+        let fixedURLs = fixedPaths.map { rootURL.appending(path: $0) }
+        let directoryURLs = directories.flatMap { relativePath in
+            let directoryURL = rootURL.appending(path: relativePath)
+            guard let urls = try? fileManager.contentsOfDirectory(
+                at: directoryURL,
+                includingPropertiesForKeys: nil
+            ) else {
+                return [URL]()
+            }
+            return urls.filter { $0.pathExtension == "md" }
+        }
+        return try (fixedURLs + directoryURLs)
+            .filter { fileManager.fileExists(atPath: $0.path) }
+            .sorted { $0.path < $1.path }
+            .map { url in
+                AirframeMarkdownDocument(
+                    sourcePath: url.path.replacingOccurrences(of: "\(rootURL.path)/", with: ""),
+                    markdown: try String(contentsOf: url, encoding: .utf8)
+                )
+            }
+    }
+
+    private static func renderImportResult(
+        _ result: AirframeMarkdownImportResult,
+        rootURL: URL,
+        outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .markdown:
+            var lines = [
+                "# Airframe Command",
+                "",
+                "- status: \(result.isClean ? "ok" : "error")",
+                "- kind: canonicalMarkdownImport",
+                "- message: Markdown artifacts imported into canonical state",
+                "- state: \(rootURL.appending(path: ".airframe/state").path)",
+                "- epics: \(result.epics.count)",
+                "- sprints: \(result.sprints.count)",
+                "- tasks: \(result.tasks.count)",
+                "- issues: \(result.issues.count)",
+                "- acceptanceCriteria: \(result.acceptanceCriteria.count)"
+            ]
+            if !result.diagnostics.isEmpty {
+                lines.append("")
+                lines.append("## Diagnostics")
+                lines.append(
+                    contentsOf: result.diagnostics.map {
+                        "- \($0.severity.rawValue) \($0.code.rawValue): \($0.message)"
+                    }
+                )
+            }
+            return lines.joined(separator: "\n")
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(result), as: UTF8.self)
+        }
+    }
+
+    private static func renderRepairResult(
+        _ result: AirframeCanonicalBackendRepairResult,
+        outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .markdown:
+            var lines = [
+                "# Airframe Command",
+                "",
+                "- status: ok",
+                "- kind: canonicalBackendRepair",
+                "- message: Backend repair applied",
+                "- applied: \(result.appliedCount)"
+            ]
+            if !result.applications.isEmpty {
+                lines.append("")
+                lines.append("## Applications")
+                lines.append(contentsOf: result.applications.map {
+                    "- \($0.workItemID.rawValue) \($0.action.rawValue): \($0.message)"
+                })
+            }
+            return lines.joined(separator: "\n")
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(result), as: UTF8.self)
+        }
+    }
+
+    private static func exportMarkdownProjections(rootURL: URL) throws -> Int {
+        let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+        let state = try repository.loadState()
+        let projector = AirframeMarkdownArtifactProjector()
+        let outputRoot = rootURL.appending(path: "docs/generated")
+        let fileManager = FileManager.default
+        try fileManager.createDirectory(at: outputRoot, withIntermediateDirectories: true)
+
+        var count = 0
+        func write(_ contents: String, to relativePath: String) throws {
+            let url = outputRoot.appending(path: relativePath)
+            try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try contents.write(to: url, atomically: true, encoding: .utf8)
+            count += 1
+        }
+
+        for epic in state.epics {
+            try write(projector.projectEpic(epic), to: "Epics/\(epic.workItem.id.rawValue).md")
+        }
+        for sprint in state.sprints {
+            try write(projector.projectSprint(sprint), to: "Sprints/\(sprint.workItem.id.rawValue).md")
+        }
+        for task in state.tasks {
+            try write(projector.projectTask(task), to: "Tasks/\(task.workItem.id.rawValue).md")
+        }
+        for issue in state.issues {
+            try write(projector.projectIssue(issue), to: "Issues/\(issue.workItem.id.rawValue).md")
+        }
+        try write(projector.projectTaskIndex(state.tasks), to: "Tasks/index.md")
+        return count
+    }
 }
 
 protocol AICockpitRefreshNotifying {
@@ -1051,6 +1344,24 @@ private struct AICockpitArguments {
         runtimeResolver.storeURL(explicitPath: value(for: "--store"))
     }
 
+    func workspaceRootURL(projectContext: AirframeProjectContext) throws -> URL {
+        if let explicit = value(for: "--root"), !explicit.isEmpty {
+            return URL(filePath: explicit).standardizedFileURL
+        }
+        guard let configurationURL = runtimeResolver.configurationURL(explicitPath: value(for: "--config")) else {
+            throw AICockpitCommandError.invalidArguments("canonical state commands require a workspace configuration")
+        }
+        let configuredRootPath = projectContext.configuration.workspace.rootPath
+        if configuredRootPath.hasPrefix("/") {
+            return URL(filePath: configuredRootPath).standardizedFileURL
+        }
+        let configurationDirectory = configurationURL.deletingLastPathComponent()
+        let workspaceBaseURL = configurationDirectory.lastPathComponent == ".airframe"
+            ? configurationDirectory.deletingLastPathComponent()
+            : configurationDirectory
+        return workspaceBaseURL.appending(path: configuredRootPath).standardizedFileURL
+    }
+
     func backend(
         projectContext: AirframeProjectContext,
         controlledMutationsEnabled: Bool = false
@@ -1058,6 +1369,19 @@ private struct AICockpitArguments {
         let requestedKind = value(for: "--backend")
             ?? value(for: "--provider")
             ?? projectContext.configuration.backend.kind
+        let rootURL = try? workspaceRootURL(projectContext: projectContext)
+        if !controlledMutationsEnabled,
+           value(for: "--backend") == nil,
+           let rootURL,
+           FileManager.default.fileExists(atPath: rootURL.appending(path: ".airframe/state").path) {
+            return AirframeCanonicalStoreBackend(rootURL: rootURL)
+        }
+        if requestedKind == "canonical" {
+            guard let rootURL else {
+                throw AICockpitCommandError.invalidArguments("canonical backend requires a workspace configuration")
+            }
+            return AirframeCanonicalStoreBackend(rootURL: rootURL)
+        }
         switch AirframeBackendKind(rawValue: requestedKind) {
         case .localFixture:
             return AirframeLocalFilesystemBackend(storeURL: storeURL)
@@ -1168,6 +1492,15 @@ private struct AICockpitArguments {
             throw AICockpitCommandError.invalidArguments("unsupported \(kind.rawValue) status \(unsupported)")
         }
     }
+
+    func requiredRepairAction() throws -> AirframeCanonicalRepairAction {
+        let value = try requiredValue(for: "--action")
+        guard let action = AirframeCanonicalRepairAction(rawValue: value),
+              action == .applyBackendStatusLabels || action == .applyBackendRelationshipLabels else {
+            throw AICockpitCommandError.invalidArguments("unsupported repair action \(value)")
+        }
+        return action
+    }
 }
 
 private extension Optional {
@@ -1185,6 +1518,7 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     let taskPacket: AirframeTaskPacket?
     let dashboardSummary: AirframeDashboardSummary?
     var configurationDiagnostics: AirframeConfigurationDiagnostics? = nil
+    var canonicalDiagnostics: AirframeCanonicalDiagnostics? = nil
     let evidence: [AirframeEvidence]
     var mutationResult: AirframeGitHubMutationResult? = nil
 
@@ -1251,6 +1585,24 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
             }
         }
 
+        if let canonicalDiagnostics {
+            lines.append(contentsOf: [
+                "",
+                "## Canonical State Diagnostics",
+                "- status: \(canonicalDiagnostics.status.rawValue)"
+            ])
+            if canonicalDiagnostics.diagnostics.isEmpty {
+                lines.append("- issues: None")
+            } else {
+                lines.append("### Issues")
+                lines.append(
+                    contentsOf: canonicalDiagnostics.diagnostics.map {
+                        "- \($0.severity.rawValue) \($0.reasonCode.rawValue): \($0.message)"
+                    }
+                )
+            }
+        }
+
         if let taskPacket {
             lines.append(contentsOf: [
                 "",
@@ -1275,6 +1627,15 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
             lines.append("")
             lines.append("### Report Format")
             lines.append(taskPacket.reportFormat)
+            if !taskPacket.diagnostics.isEmpty {
+                lines.append("")
+                lines.append("### Diagnostics")
+                lines.append(
+                    contentsOf: taskPacket.diagnostics.map {
+                        "- \($0.severity.rawValue) \($0.reasonCode.rawValue): \($0.message)"
+                    }
+                )
+            }
         }
 
         if !evidence.isEmpty {

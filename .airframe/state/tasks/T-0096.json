@@ -1,0 +1,51 @@
+{
+  "acceptanceCriteria" : [
+    "AgileCockpit authority for Task and Issue verification is documented.",
+    "Required human context and audit evidence are documented.",
+    "AICockpit and AgileCockpit mutation boundaries are explicit."
+  ],
+  "component" : "AgileCockpit \/ Documentation",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-14",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Added `AgileCockpit\/docs\/HumanVerificationMutationContract.md`.\nDocumented AgileCockpit human authority for Task and Issue verification.\nDocumented required human reviewer context, audit expectations, GitHub label effects, and AICockpit boundaries.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "If AICockpit cannot apply Verified, AgileCockpit must own the human-facing verification mutation path.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-019"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 96,
+    "id" : {
+      "rawValue" : "T-0096"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Define AgileCockpit human mutation authority contract"
+  }
+}

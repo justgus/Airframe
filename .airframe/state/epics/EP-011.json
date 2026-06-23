@@ -1,0 +1,64 @@
+{
+  "acceptanceCriterionIDs" : [
+
+  ],
+  "closeDate" : "2026-06-08",
+  "goal" : "",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-011.md"
+  },
+  "notes" : [
+
+  ],
+  "outOfScope" : [
+
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "",
+  "scope" : [
+
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-011"
+    }
+  ],
+  "startDate" : "2026-06-06",
+  "targetCloseDate" : "2026-06-08",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0056"
+    },
+    {
+      "rawValue" : "T-0057"
+    },
+    {
+      "rawValue" : "T-0058"
+    },
+    {
+      "rawValue" : "T-0059"
+    },
+    {
+      "rawValue" : "T-0060"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-011"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "AgileCockpit Live Project View"
+  }
+}

@@ -2,53 +2,9 @@
 
 Sprints listed here are attached to an Epic but are not yet in Planning, Active, Review, or Closed status.
 
-Currently: **5 backlog Sprints**
+Currently: **3 backlog Sprints**
 
 ---
-
-## SP-027: AICockpit Canonical State Integration
-
-**Status:** Backlog
-**Epic:** EP-020: Canonical Airframe Workflow State
-**Goal:** Move AICockpit read paths and diagnostics onto canonical workflow state.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Candidate Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0124 | Move AICockpit project summary to canonical records | High | Backlog |
-| T-0125 | Move AICockpit task packet generation to canonical records | High | Backlog |
-| T-0126 | Add AICockpit canonical state diagnostics command | High | Backlog |
-| T-0127 | Verify AICockpit authority boundaries against canonical state | High | Backlog |
-
-### Candidate Issues
-
-None.
-
-## SP-028: AgileCockpit Canonical State Integration
-
-**Status:** Backlog
-**Epic:** EP-020: Canonical Airframe Workflow State
-**Goal:** Move AgileCockpit dashboard, planning, and data-health views onto canonical workflow state.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Candidate Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0128 | Move AgileCockpit dashboard and planning views to canonical records | High | Backlog |
-| T-0129 | Add AgileCockpit data health diagnostics surface | High | Backlog |
-| T-0130 | Add AgileCockpit repair preview flow for canonical diagnostics | High | Backlog |
-| T-0131 | Verify end-to-end canonical workflow state behavior | High | Backlog |
-
-### Candidate Issues
-
-None.
 
 ## SP-022: Sprint and Epic Close Gating
 
@@ -115,4 +71,4 @@ None.
 
 ---
 
-*Last Updated: 2026-06-18 (SP-026 activated for implementation)*
+*Last Updated: 2026-06-18 (SP-028 activated for final Sprint planning)*

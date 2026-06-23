@@ -1,0 +1,44 @@
+{
+  "endDate" : "2026-06-16",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "goal" : "Add Epic acceptance-criteria state and close-eligibility tracking to the planning model.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-020.md"
+  },
+  "notes" : [
+    "Completed: - Epic acceptance-criteria state was added to the planning model. - Sprint and Epic close eligibility can be evaluated from current work state. - Epic acceptance criteria are loaded and summarized in the planning surface.",
+    "Returned to Backlog: - None.",
+    "What went well: - The model and summary work completed cleanly before the verification UI slice.",
+    "What to improve: - Sprint close should archive the closed record and activate the next Sprint through the human-facing workflow once that EP-018 capability lands."
+  ],
+  "startDate" : "2026-06-15",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0101"
+    },
+    {
+      "rawValue" : "T-0102"
+    },
+    {
+      "rawValue" : "T-0103"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-020"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Epic Acceptance-Criteria Model and Eligibility"
+  }
+}

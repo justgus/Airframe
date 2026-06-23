@@ -1,0 +1,57 @@
+{
+  "endDate" : "2026-06-04",
+  "epicID" : {
+    "rawValue" : "EP-006"
+  },
+  "goal" : "Build the first useful AgileCockpit dashboard and human verification workflow over local AirframeCore data.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-006.md"
+  },
+  "notes" : [
+    "Completed: - SP-006 planned on 2026-06-03. - SP-006 implemented on 2026-06-04 and moved to Review pending human verification. - Added Core-backed AgileCockpit dashboard, verification queue, human verification actions, sprint\/epic read views, metrics, audit display, and focused app\/UI tests. - T-0029 through T-0035 human-verified on 2026-06-04. - SP-006 closed on 2026-06-04.",
+    "Returned to Backlog: - None.",
+    "What went well: - AgileCockpit now provides the human-facing local dashboard and verification workflow. - Human verification semantics remain centralized in AirframeCore.",
+    "What to improve: - Direct macOS accessibility hierarchy assertions were not stable in the local UI runner; future hardening should improve UI-level workflow assertions.",
+    "Carry-forward notes: - EP-007 should preserve local backend semantics as the reference behavior while adding GitHub-backed data."
+  ],
+  "startDate" : "2026-06-04",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0029"
+    },
+    {
+      "rawValue" : "T-0030"
+    },
+    {
+      "rawValue" : "T-0031"
+    },
+    {
+      "rawValue" : "T-0032"
+    },
+    {
+      "rawValue" : "T-0033"
+    },
+    {
+      "rawValue" : "T-0034"
+    },
+    {
+      "rawValue" : "T-0035"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-006"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "AgileCockpit Dashboard MVP Integration"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "capacity" : "Not formally estimated",
+  "endDate" : "2026-06-09",
+  "epicID" : {
+    "rawValue" : "EP-012"
+  },
+  "goal" : "Install Airframe live demo artifacts into a repeatable project-local layout without changing global system state.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-012.md"
+  },
+  "notes" : [
+    "Completed: - Project-local demo layout is documented under `demos\/LiveDemo\/README.md`. - `scripts\/install-live-demo.sh` builds and installs `aicockpit` and `AgileCockpit.app` into `demos\/LiveDemo\/`. - `scripts\/verify-sp012.sh` passed on 2026-06-09, including installed CLI diagnostics, live `github-issues` project summary, artifact checks, and AgileCockpit automated tests.",
+    "Returned to Backlog: - None.",
+    "What went well: - The project-local layout kept all generated artifacts under `demos\/LiveDemo\/` and avoided global install locations.",
+    "What to improve: - Future live demo slices should close the previous sprint before opening the next one.",
+    "Carry-forward notes: - Slice 5 can build on the project-local install flow without adding global install state."
+  ],
+  "startDate" : "2026-06-08",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0061"
+    },
+    {
+      "rawValue" : "T-0062"
+    },
+    {
+      "rawValue" : "T-0063"
+    },
+    {
+      "rawValue" : "T-0064"
+    },
+    {
+      "rawValue" : "T-0065"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-012"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Project-Local Installation"
+  }
+}

@@ -321,16 +321,10 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
                 throw AirframeBackendError.missingWorkItem(workItemID)
             }
             let evidence = state.evidenceByWorkItemID[workItemID.rawValue] ?? []
-            return AirframeTaskPacket(
-                workItem: record.workItem,
-                objective: record.workItem.title,
-                scope: record.scope,
-                acceptanceCriteria: record.acceptanceCriteria,
-                constraints: record.constraints,
-                evidenceRequirements: record.evidenceRequirements,
-                protectedPaths: record.protectedPaths,
-                reportFormat: record.reportFormat,
-                existingEvidence: evidence
+            return AirframeCanonicalTaskPacketAssembler().taskPacket(
+                for: record,
+                records: state.records,
+                evidence: evidence
             )
         }
     }
@@ -389,21 +383,9 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
 
     public func dashboardSummary() throws -> AirframeDashboardSummary {
         try withLockedState { state in
-            let workItems = state.records.map(\.workItem)
-            let tasks = workItems.filter { $0.kind == .task }
-            let nextTask = tasks
-                .filter { $0.status == .active }
-                .sorted { $0.id.rawValue < $1.id.rawValue }
-                .first
-
-            return AirframeDashboardSummary(
-                totalWorkItemCount: workItems.count,
-                activeTaskCount: tasks.filter { $0.status == .active }.count,
-                unverifiedTaskCount: tasks.filter { $0.status == .implementedNotVerified }.count,
-                verifiedTaskCount: tasks.filter { $0.status == .implementedVerified }.count,
-                issueCount: workItems.filter { $0.kind == .issue }.count,
-                nextTask: nextTask,
-                recentEvidenceCount: state.evidenceByWorkItemID.values.reduce(0) { $0 + $1.count }
+            AirframeCanonicalProjectSummary().dashboardSummary(
+                records: state.records,
+                evidence: state.evidenceByWorkItemID.values.flatMap { $0 }
             )
         }
     }

@@ -1,0 +1,54 @@
+{
+  "endDate" : "2026-06-01",
+  "epicID" : {
+    "rawValue" : "EP-001"
+  },
+  "goal" : "Create the workspace and minimal buildable skeletons for all three CSCIs.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-001.md"
+  },
+  "notes" : [
+    "Completed: - T-0001 through T-0006 were implemented and human-verified.",
+    "Returned to Backlog: - None.",
+    "What went well: - All three CSCIs now build from the committed workspace baseline. - Clean checkout verification passed before closure.",
+    "What to improve: - Future app\/project scaffolding should avoid inherited Xcode scheme warnings where possible.",
+    "Carry-forward notes: - EP-002 should preserve AirframeCore as the single source of model and configuration truth."
+  ],
+  "startDate" : "2026-06-01",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0001"
+    },
+    {
+      "rawValue" : "T-0002"
+    },
+    {
+      "rawValue" : "T-0003"
+    },
+    {
+      "rawValue" : "T-0004"
+    },
+    {
+      "rawValue" : "T-0005"
+    },
+    {
+      "rawValue" : "T-0006"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-001"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Workspace Skeleton"
+  }
+}

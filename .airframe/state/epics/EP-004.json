@@ -1,0 +1,85 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-004-AC-01"
+    },
+    {
+      "rawValue" : "EP-004-AC-02"
+    },
+    {
+      "rawValue" : "EP-004-AC-03"
+    },
+    {
+      "rawValue" : "EP-004-AC-04"
+    },
+    {
+      "rawValue" : "EP-004-AC-05"
+    }
+  ],
+  "closeDate" : "2026-06-03",
+  "goal" : "Create a local backend and task packet workflow sufficient for offline development and repeatable verification.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-004.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Local backend can create and query issues and tasks. 2. Local backend can attach evidence. 3. A task can be marked ready for human verification. 4. AirframeCore can generate a compact task packet. 5. AirframeCore can produce dashboard summary data from local backend records."
+  ],
+  "outOfScope" : [
+    "GitHub backend.",
+    "Full AgileCockpit dashboard UI.",
+    "Final CLI JSON schema."
+  ],
+  "owner" : "HumanOwner",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "The local backend provides a deterministic reference implementation before GitHub-specific behavior is introduced.",
+  "scope" : [
+    "Backend adapter protocol.",
+    "Local filesystem backend.",
+    "Issue\/task create, query, update, and transition support.",
+    "Evidence attachment.",
+    "Task packet generation.",
+    "Dashboard summary APIs."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-004"
+    }
+  ],
+  "startDate" : "2026-06-03",
+  "targetCloseDate" : "2026-06-03",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0018"
+    },
+    {
+      "rawValue" : "T-0019"
+    },
+    {
+      "rawValue" : "T-0020"
+    },
+    {
+      "rawValue" : "T-0021"
+    },
+    {
+      "rawValue" : "T-0022"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-004"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "Local Backend and Task Packet MVP"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-008-AC-02"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-008.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-008"
+  },
+  "text" : "AICockpit tests pass."
+}

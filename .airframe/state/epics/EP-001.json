@@ -1,0 +1,88 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-001-AC-01"
+    },
+    {
+      "rawValue" : "EP-001-AC-02"
+    },
+    {
+      "rawValue" : "EP-001-AC-03"
+    },
+    {
+      "rawValue" : "EP-001-AC-04"
+    },
+    {
+      "rawValue" : "EP-001-AC-05"
+    }
+  ],
+  "closeDate" : "2026-06-02",
+  "goal" : "Create a buildable multi-project workspace with the three CSCI skeletons in their selected product forms.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-001.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. `swift test --package-path AirframeCore` passes. 2. `swift test --package-path AICockpit` passes. 3. `swift run --package-path AICockpit aicockpit --help` prints deterministic help. 4. `xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'platform=macOS' build` succeeds. 5. AgileCockpit and AICockpit both import AirframeCore."
+  ],
+  "outOfScope" : [
+    "Production domain model.",
+    "Backend integrations.",
+    "Full app UI.",
+    "Final CLI command contract."
+  ],
+  "owner" : "HumanOwner",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "All later work depends on a stable workspace, package, app, and test baseline that can be verified from a clean checkout.",
+  "scope" : [
+    "Create `Airframe.xcworkspace`.",
+    "Create `AirframeCore` Swift package library skeleton.",
+    "Create `AICockpit` Swift package executable skeleton.",
+    "Create `AgileCockpit` macOS SwiftUI app skeleton.",
+    "Link AirframeCore into both clients.",
+    "Establish baseline build and test commands."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-001"
+    }
+  ],
+  "startDate" : "2026-06-01",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0001"
+    },
+    {
+      "rawValue" : "T-0002"
+    },
+    {
+      "rawValue" : "T-0003"
+    },
+    {
+      "rawValue" : "T-0004"
+    },
+    {
+      "rawValue" : "T-0005"
+    },
+    {
+      "rawValue" : "T-0006"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-001"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "Workspace and Toolchain Baseline"
+  }
+}

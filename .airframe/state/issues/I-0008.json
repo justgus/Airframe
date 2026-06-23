@@ -1,0 +1,44 @@
+{
+  "affectedComponents" : [
+
+  ],
+  "epicID" : {
+    "rawValue" : "EP-020"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Canonical workflow state should represent Sprint Review status, preserve Review Sprint documentation, and expose backend label reconciliation repairs that can be previewed and applied through approved UI and CLI flows.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0008.md"
+  },
+  "notes" : [
+    "Description: Agile Airframe canonical state could not fully represent Review Sprints, which made SP-017 and SP-018 unmanageable through the canonical path. Backend label drift also had preview-only diagnostics without an Apply Repair path, leaving projects on the old artifact layout without a supported reconciliation workflow.",
+    "Resolution: Added Review Sprint support to the canonical import and display paths, preserved legacy Markdown mutation helpers for migration, and implemented backend label reconciliation repair application through AirframeCore, AICockpit, and AgileCockpit.",
+    "Files Affected: - `AirframeCore\/Sources\/AirframeCore\/CanonicalDiagnostics.swift` - `AirframeCore\/Sources\/AirframeCore\/CanonicalStoreBackend.swift` - `AirframeCore\/Sources\/AirframeCore\/MarkdownArtifactImporter.swift` - `AICockpit\/Sources\/AICockpitKit\/AICockpitCommand.swift` - `AgileCockpit\/AgileCockpit\/ContentView.swift` - `AgileCockpit\/AgileCockpitTests\/AgileCockpitTests.swift` - `AirframeCore\/Tests\/AirframeCoreTests\/AirframeCoreTests.swift`",
+    "Verification: - Human verified I-0008 on 2026-06-23.",
+    "Related Items: - EP-020 - SP-017 - SP-018 - SP-028"
+  ],
+  "observedBehavior" : "",
+  "reproductionSteps" : [
+
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-028"
+  },
+  "workItem" : {
+    "githubIssue" : 133,
+    "id" : {
+      "rawValue" : "I-0008"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Canonical state cannot represent Review Sprints and backend label reconciliation"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "capacity" : "Not formally estimated",
+  "endDate" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "goal" : "Deliver artifact-specific workflow status dashboard tiles, drill-down details, and process guardrails.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0001"
+    },
+    {
+      "rawValue" : "I-0002"
+    },
+    {
+      "rawValue" : "I-0003"
+    },
+    {
+      "rawValue" : "I-0004"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Review\/Sprint-SP-017.md"
+  },
+  "notes" : [
+
+  ],
+  "startDate" : "2026-06-12",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0086"
+    },
+    {
+      "rawValue" : "T-0087"
+    },
+    {
+      "rawValue" : "T-0088"
+    },
+    {
+      "rawValue" : "T-0089"
+    },
+    {
+      "rawValue" : "T-0090"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-017"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Workflow Status Dashboard"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-019-AC-03"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-019"
+  },
+  "text" : "AgileCockpit can load the dashboard, review view, planning view, and verification flows offline."
+}

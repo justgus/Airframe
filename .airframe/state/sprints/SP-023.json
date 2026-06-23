@@ -1,0 +1,39 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "goal" : "Archive closed Sprint and Epic records into the documented closed layout and refresh the indexes.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Sprint-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0110"
+    },
+    {
+      "rawValue" : "T-0111"
+    },
+    {
+      "rawValue" : "T-0112"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-023"
+    },
+    "kind" : "sprint",
+    "status" : "backlog",
+    "title" : "Sprint and Epic Archive Workflow"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "A closed Sprint is written into `docs\/Sprints\/Closed\/`.",
+    "The active Sprint file no longer contains the closed Sprint.",
+    "The archived Sprint preserves its closeout details."
+  ],
+  "component" : "Documentation \/ AgileCockpit",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Sprint close must archive the Sprint record instead of leaving the Sprint in the active list.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-023"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0110"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Move closed Sprint records into `docs\/Sprints\/Closed\/`"
+  }
+}

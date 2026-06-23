@@ -9,6 +9,7 @@ import Foundation
     #expect(help.contains("AirframeCore 0.1.0"))
     #expect(help.contains("aicockpit context"))
     #expect(help.contains("aicockpit config diagnose"))
+    #expect(help.contains("aicockpit state diagnostics"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
     #expect(help.contains("aicockpit github comment"))
@@ -36,6 +37,67 @@ import Foundation
     #expect(result.standardOutput.contains("\"configurationDiagnostics\""))
     #expect(result.standardOutput.contains("\"backendKind\" : \"github-fixture\""))
     #expect(result.standardOutput.contains("\"status\" : \"ok\""))
+}
+
+@Test func stateDiagnosticsReturnsCanonicalDiagnosticsJSON() {
+    let store = temporaryStorePath()
+    let created = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--store", store,
+        "--id", "T-9126",
+        "--title", "Add canonical diagnostics",
+        "--status", "active",
+        "--epic", "EP-999",
+        "--sprint", "SP-999",
+        "--output", "json"
+    ])
+    let diagnostics = AICockpitCommand.response(arguments: [
+        "state", "diagnostics",
+        "--store", store,
+        "--output", "json"
+    ])
+
+    #expect(created.exitCode == 0)
+    #expect(diagnostics.exitCode == 0)
+    #expect(diagnostics.standardOutput.contains("\"kind\" : \"canonicalStateDiagnostics\""))
+    #expect(diagnostics.standardOutput.contains("\"canonicalDiagnostics\""))
+    #expect(diagnostics.standardOutput.contains("\"reasonCode\" : \"taskEpicMissing\""))
+    #expect(diagnostics.standardOutput.contains("\"severity\" : \"warning\""))
+}
+
+@Test func stateDiagnosticsDoesNotBypassHumanOnlyStatusGuards() {
+    let store = temporaryStorePath()
+    _ = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--store", store,
+        "--id", "T-9127",
+        "--title", "Verify canonical authority boundaries",
+        "--status", "active",
+        "--output", "json"
+    ])
+
+    let diagnostics = AICockpitCommand.response(arguments: [
+        "state", "diagnostics",
+        "--store", store,
+        "--output", "json"
+    ])
+    let verified = AICockpitCommand.response(arguments: [
+        "task", "status", "T-9127",
+        "--store", store,
+        "--to", "verified",
+        "--output", "json"
+    ])
+    let packet = AICockpitCommand.response(arguments: [
+        "task", "packet", "T-9127",
+        "--store", store,
+        "--output", "json"
+    ])
+
+    #expect(diagnostics.exitCode == 0)
+    #expect(diagnostics.standardOutput.contains("\"kind\" : \"canonicalStateDiagnostics\""))
+    #expect(verified.exitCode == 64)
+    #expect(verified.standardOutput.contains("verification is human-only"))
+    #expect(packet.standardOutput.contains("\"status\" : \"active\""))
 }
 
 @Test func helpCommandReturnsSuccess() {
@@ -272,6 +334,7 @@ import Foundation
     #expect(summary.exitCode == 0)
     #expect(summary.standardOutput.contains("\"backendKind\" : \"github-fixture\""))
     #expect(summary.standardOutput.contains("\"supportsGitHubIssues\" : true"))
+    #expect(summary.standardOutput.contains("\"activeTaskCount\" : 1"))
     #expect(summary.standardOutput.contains("\"rawValue\" : \"T-9039\""))
 }
 

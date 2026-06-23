@@ -1,0 +1,52 @@
+{
+  "acceptanceCriteria" : [
+    "AICockpit can create mapped GitHub Issues for Tasks and Issues with explicit approval.",
+    "AICockpit can update allowed GitHub metadata and labels with explicit approval.",
+    "GitHub status labels stay synchronized with local workflow status.",
+    "AICockpit rejects status-verified for Tasks and Issues, even with approval."
+  ],
+  "component" : "AICockpit \/ AirframeCore GitHub Backend",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-14",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Added GitHub issue creation and update operations to the GitHub transport abstraction and CLI transport.\nAdded controlled GitHub create\/update methods that require `--approve --approved-by` before live mutation.\nUpdated GitHub issue title, body, status labels, priority labels, sprint labels, and epic labels from Airframe records.\nRouted AICockpit Task\/Issue create, update, and status commands to controlled GitHub backend methods when `--backend github-issues` is selected.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "GitHub-backed projects need controlled creation and update of mapped GitHub Issues with auditability and explicit approval.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-018"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 93,
+    "id" : {
+      "rawValue" : "T-0093"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Implement controlled GitHub work item mutation support"
+  }
+}

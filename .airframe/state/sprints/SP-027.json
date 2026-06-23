@@ -1,0 +1,47 @@
+{
+  "endDate" : "2026-06-18",
+  "epicID" : {
+    "rawValue" : "EP-020"
+  },
+  "goal" : "Move AICockpit read paths and diagnostics onto canonical workflow state.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-027.md"
+  },
+  "notes" : [
+    "Completed: - AICockpit project summary can derive counts and next-task selection from canonical records. - AICockpit task packets can be assembled from canonical Task, Sprint, Epic, Issue, and evidence records. - AICockpit exposes read-only canonical state diagnostics. - Regression coverage verifies AICockpit authority boundaries against canonical state.",
+    "Returned to Backlog: - None.",
+    "What went well: - The canonical read migration stayed contained in AirframeCore and AICockpit while preserving existing output compatibility.",
+    "What to improve: - SP-028 should bring the human-facing AgileCockpit dashboard and planning views onto the same canonical state path."
+  ],
+  "startDate" : "2026-06-18",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0124"
+    },
+    {
+      "rawValue" : "T-0125"
+    },
+    {
+      "rawValue" : "T-0126"
+    },
+    {
+      "rawValue" : "T-0127"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-027"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "AICockpit Canonical State Integration"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "endDate" : "2026-06-18",
+  "epicID" : {
+    "rawValue" : "EP-020"
+  },
+  "goal" : "Import current Markdown artifacts into canonical records and generate deterministic documentation projections.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-026.md"
+  },
+  "notes" : [
+    "Completed: - Current Epic, Sprint, Task, and Issue Markdown artifacts can be imported into canonical records. - AirframeCore can generate deterministic Markdown projections from canonical records. - Import and projection regression coverage was added. - The canonical migration and projection workflow was documented.",
+    "Returned to Backlog: - None.",
+    "What went well: - Import and projection behavior stayed contained in AirframeCore and has direct unit coverage.",
+    "What to improve: - SP-027 should move AICockpit read paths onto canonical records without expanding agent authority."
+  ],
+  "startDate" : "2026-06-18",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0120"
+    },
+    {
+      "rawValue" : "T-0121"
+    },
+    {
+      "rawValue" : "T-0122"
+    },
+    {
+      "rawValue" : "T-0123"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-026"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Markdown Import and Projection"
+  }
+}

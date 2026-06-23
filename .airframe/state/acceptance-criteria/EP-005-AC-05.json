@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-005-AC-05"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-005.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-005"
+  },
+  "text" : "JSON output is deterministic and tested for MVP commands."
+}

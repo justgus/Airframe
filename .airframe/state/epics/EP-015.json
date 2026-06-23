@@ -1,0 +1,64 @@
+{
+  "acceptanceCriterionIDs" : [
+
+  ],
+  "closeDate" : "2026-06-11",
+  "goal" : "",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-015.md"
+  },
+  "notes" : [
+
+  ],
+  "outOfScope" : [
+
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "",
+  "scope" : [
+
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-015"
+    }
+  ],
+  "startDate" : "2026-06-10",
+  "targetCloseDate" : "2026-06-11",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0076"
+    },
+    {
+      "rawValue" : "T-0077"
+    },
+    {
+      "rawValue" : "T-0078"
+    },
+    {
+      "rawValue" : "T-0079"
+    },
+    {
+      "rawValue" : "T-0080"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-015"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "AgileCockpit Planning Management"
+  }
+}

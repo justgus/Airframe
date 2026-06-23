@@ -1,0 +1,49 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "AirframeCore",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-12",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Added artifact-specific dashboard status summary models in AirframeCore.\nAdded status rows for Epics, Sprints, Tasks, and Issues with symbols and display titles.\nExtended workflow status vocabulary and backend status mapping for the required workflow states.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-017"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 87,
+    "id" : {
+      "rawValue" : "T-0087"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Define artifact-specific status presentation model"
+  }
+}

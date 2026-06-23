@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "`Sprint-Documentation.md` reflects the closed Sprint.",
+    "`Epic-Documentation.md` reflects the closed Epic.",
+    "Related counts and next IDs remain correct after close."
+  ],
+  "component" : "Documentation",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "The index pages must stay synchronized when a Sprint or Epic is archived.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-023"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0112"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Rewrite sprint and epic index files on close"
+  }
+}

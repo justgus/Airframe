@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-019-AC-04"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-019"
+  },
+  "text" : "Sprint and Epic workflows do not require GitHub access or any remote server for core local operation."
+}

@@ -1,0 +1,49 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "AgileCockpit",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-12",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Replaced the dashboard metrics panel with Epics, Sprints, Tasks, and Issues status tiles.\nRendered status text smaller than tile labels.\nDisplayed status symbols beside each status label.\nTightened the status tile row layout so the four artifact tiles fit in a top-aligned row in the default dashboard layout.\nReplaced two-letter status designations with the workflow status symbols shown in the artifact documents.\nIncluded closed Epic and Sprint artifact files in dashboard status tile counts so prior closed EP-001 through EP-016 and SP-001 through SP-016 appear in the Closed rows.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-017"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 88,
+    "id" : {
+      "rawValue" : "T-0088"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Replace dashboard metrics with workflow status tiles"
+  }
+}

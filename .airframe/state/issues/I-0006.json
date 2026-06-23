@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+
+  ],
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Airframe and Telemetrix should be able to run AgileCockpit at the same time as separate visible instances. Each instance should read and display only its own project-local workspace configuration and backend data.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0005-0006.md"
+  },
+  "notes" : [
+    "Description: Launching AgileCockpit from the Telemetrix project and then from the Airframe project could still show Telemetrix data, and an already running Telemetrix instance prevented a separate Airframe cockpit from being brought up independently.",
+    "Actual Behavior: The second launch could reuse or display the first project's data, and the app could not reliably present both projects on screen simultaneously.",
+    "Root Cause Analysis: The project-local launcher used `open --fresh` on the shared AgileCockpit bundle. Launch Services can still target the existing bundle identity, so the second project launch could reuse the already running app process instead of creating a separate process with the new project environment.",
+    "Resolution: The launcher now uses `open -n --fresh` so each project-local launch requests a new app instance with that launcher's `AIRFRAME_CONFIG_PATH` and `AIRFRAME_STORE_PATH`.",
+    "Files Affected: - `.airframe\/scripts\/ac-launch-cockpit.sh`: Added `-n` to force a new app instance for each project-local launch. - `..\/Telemetrix\/.airframe\/scripts\/ac-launch-cockpit.sh`: Human applied the same `open -n --fresh` launcher fix. - `AgileCockpit\/AgileCockpit\/ContentView.swift`: Made project identity more visible so concurrent instances are easier to distinguish.",
+    "Verification: - Human verified this issue in GitHub on 2026-06-16.",
+    "Related Items: - EP-018 - SP-021 - I-0005"
+  ],
+  "observedBehavior" : "",
+  "reproductionSteps" : [
+
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-021"
+  },
+  "workItem" : {
+    "githubIssue" : 112,
+    "id" : {
+      "rawValue" : "I-0006"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "AgileCockpit cannot run concurrent project instances"
+  }
+}

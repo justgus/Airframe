@@ -532,6 +532,7 @@ public struct AirframeTaskPacket: Codable, Equatable, Sendable {
     public let protectedPaths: [String]
     public let reportFormat: String
     public let existingEvidence: [AirframeEvidence]
+    public let diagnostics: [AirframeCanonicalDiagnostic]
 
     public init(
         workItem: AirframeWorkItem,
@@ -542,7 +543,8 @@ public struct AirframeTaskPacket: Codable, Equatable, Sendable {
         evidenceRequirements: [String],
         protectedPaths: [String],
         reportFormat: String,
-        existingEvidence: [AirframeEvidence] = []
+        existingEvidence: [AirframeEvidence] = [],
+        diagnostics: [AirframeCanonicalDiagnostic] = []
     ) {
         self.workItem = workItem
         self.objective = objective
@@ -553,6 +555,7 @@ public struct AirframeTaskPacket: Codable, Equatable, Sendable {
         self.protectedPaths = protectedPaths
         self.reportFormat = reportFormat
         self.existingEvidence = existingEvidence
+        self.diagnostics = diagnostics
     }
 }
 

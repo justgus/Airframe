@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-020-AC-01"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-active.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-020"
+  },
+  "text" : "AirframeCore defines canonical Codable records for core work products, workflow policy, evidence summaries, and audit events."
+}

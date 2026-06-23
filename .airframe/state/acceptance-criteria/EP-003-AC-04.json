@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-003-AC-04"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-003.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-003"
+  },
+  "text" : "Denied operations return deterministic reason codes."
+}

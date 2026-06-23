@@ -1,0 +1,52 @@
+{
+  "acceptanceCriteria" : [
+    "Tests prove local create\/update commands work for allowed artifacts.",
+    "Tests prove GitHub create\/update commands require explicit approval.",
+    "Tests prove AICockpit cannot verify Tasks or Issues locally or on GitHub.",
+    "Tests prove human-only Sprint\/Epic closure remains blocked."
+  ],
+  "component" : "Verification",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-14",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Added AICockpit tests for local Task and Issue create\/update\/status commands.\nAdded AICockpit tests for Sprint and Epic planning create commands.\nAdded tests proving invalid workflow transitions do not mutate records.\nAdded tests proving Task\/Issue verification and Sprint\/Epic closure are rejected by AICockpit.\nAdded AirframeCore GitHub backend tests proving approval-gated create\/update behavior and no transport mutation before approval.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "AICockpit mutation support must prove it can do allowed planning work and cannot bypass human-only authority.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-018"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 95,
+    "id" : {
+      "rawValue" : "T-0095"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Verify AICockpit mutation authority boundaries"
+  }
+}

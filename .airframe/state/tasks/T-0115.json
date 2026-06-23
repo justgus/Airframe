@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "Tests prove closeout works locally without network access.",
+    "Tests prove GitHub-specific paths remain optional.",
+    "Tests prove human-only closeout boundaries are preserved."
+  ],
+  "component" : "AgileCockpitTests \/ AICockpitTests",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Closeout must continue to work in the local workspace without relying on a server or GitHub.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-024"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0115"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add tests for offline local-only closeout behavior"
+  }
+}

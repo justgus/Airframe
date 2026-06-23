@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "dateVerified" : "2026-06-04",
+  "epicID" : {
+    "rawValue" : "EP-008"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0041-0045.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-008"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 42,
+    "id" : {
+      "rawValue" : "T-0042"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Harden CLI output and error contracts"
+  }
+}

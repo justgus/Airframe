@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "The Epic complete\/close action is disabled or rejected until all acceptance criteria are verified.",
+    "The UI explains why the Epic cannot close yet.",
+    "A successful close transitions the Epic to its closed state."
+  ],
+  "component" : "AgileCockpit \/ AirframeCore",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Epic close must stay blocked until every acceptance criterion has been verified by the human reviewer.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-022"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0108"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Gate Epic close on verified acceptance criteria"
+  }
+}

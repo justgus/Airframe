@@ -1,0 +1,49 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "Documentation \/ Process",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-12",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Updated AGENTS.md with artifact workflow labels and implementation preflight guardrails.\nUpdated Epic, Sprint, Task, and Issue guideline documents for Sprint Backlog, Epic Backlog, Backlog Issues, and display aliases.\nPreserved the pre-sprint draft work as reviewed under active SP-017 tasks.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-017"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 86,
+    "id" : {
+      "rawValue" : "T-0086"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Reconcile Agile artifact workflow documentation and process guardrails"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "capacity" : "Not formally estimated",
+  "endDate" : "2026-06-10",
+  "epicID" : {
+    "rawValue" : "EP-014"
+  },
+  "goal" : "Rehearse the full project-local Airframe live demo against `justgus\/Airframe`, including read-only discovery, AgileCockpit review, and explicitly approved controlled GitHub mutation paths.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-014.md"
+  },
+  "notes" : [
+    "Completed: - Slice 6 demo script and runbook were documented in `docs\/Live-Demo-Runbook.md`. - Project-local AICockpit live GitHub workflow was rehearsed through `scripts\/verify-sp014.sh`. - AgileCockpit project-local review workflow was covered by the SP-014 verification script and automated tests. - Controlled GitHub write safety was verified through the missing-approval failure path. - AirframeCore GitHub CLI transport was fixed to avoid pipe-buffer deadlock on large `gh` output.",
+    "Returned to Backlog: - None.",
+    "What went well: - The full project-local verification caught and then verified a real live-backend transport issue.",
+    "What to improve: - Future live GitHub command wrappers should include bounded timeouts or equivalent clear failure behavior.",
+    "Carry-forward notes: - The automated SP-014 verification intentionally does not perform an approved live GitHub mutation; that remains a manual, explicitly approved demo step."
+  ],
+  "startDate" : "2026-06-10",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0071"
+    },
+    {
+      "rawValue" : "T-0072"
+    },
+    {
+      "rawValue" : "T-0073"
+    },
+    {
+      "rawValue" : "T-0074"
+    },
+    {
+      "rawValue" : "T-0075"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-014"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "End-to-End Live Demo Rehearsal"
+  }
+}

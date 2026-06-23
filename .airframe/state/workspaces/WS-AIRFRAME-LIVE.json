@@ -1,0 +1,22 @@
+{
+  "defaultProjectID" : {
+    "rawValue" : "PRJ-AIRFRAME"
+  },
+  "id" : {
+    "rawValue" : "WS-AIRFRAME-LIVE"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "name" : "Airframe Live Demo",
+  "projectIDs" : [
+    {
+      "rawValue" : "PRJ-AIRFRAME"
+    }
+  ],
+  "rootPath" : "."
+}

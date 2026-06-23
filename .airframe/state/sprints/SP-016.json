@@ -1,0 +1,50 @@
+{
+  "capacity" : "Not formally estimated",
+  "endDate" : "2026-06-11",
+  "epicID" : {
+    "rawValue" : "EP-016"
+  },
+  "goal" : "Keep AgileCockpit synchronized with canonical Airframe state after AICockpit or script-driven mutations.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-016.md"
+  },
+  "notes" : [
+    "Completed: - Refresh synchronization contract was documented. - Shared Airframe refresh notification primitive was added. - AICockpit mutation paths now post refresh only after success. - AgileCockpit now reloads from source of truth after refresh signals and local file changes. - Focused Core, CLI, and AgileCockpit tests passed.",
+    "Returned to Backlog: - None.",
+    "What to improve: - Full AgileCockpit UI smoke tests should be revisited separately; SP-016 verification intentionally used the stable AgileCockpit unit target."
+  ],
+  "startDate" : "2026-06-11",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0081"
+    },
+    {
+      "rawValue" : "T-0082"
+    },
+    {
+      "rawValue" : "T-0083"
+    },
+    {
+      "rawValue" : "T-0084"
+    },
+    {
+      "rawValue" : "T-0085"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-016"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Refresh Synchronization for AgileCockpit"
+  }
+}

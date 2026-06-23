@@ -1,0 +1,73 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-019-AC-01"
+    },
+    {
+      "rawValue" : "EP-019-AC-02"
+    },
+    {
+      "rawValue" : "EP-019-AC-03"
+    },
+    {
+      "rawValue" : "EP-019-AC-04"
+    },
+    {
+      "rawValue" : "EP-019-AC-05"
+    },
+    {
+      "rawValue" : "EP-019-AC-06"
+    }
+  ],
+  "goal" : "Make Airframe fully functional without GitHub or any backend server so the workspace, CLI, and app can operate entirely offline against local files and local state.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Airframe can launch and operate with only the local filesystem backend configured. 2. AICockpit can read, create, update, and transition supported work items offline. 3. AgileCockpit can load the dashboard, review view, planning view, and verification flows offline. 4. Sprint and Epic workflows do not require GitHub access or any remote server for core local operation. 5. Offline regression tests pass without network access or GitHub credentials. 6. GitHub-backed paths remain optional and do not block local workflows when unavailable.",
+    "Implementation Plan: 1. Inventory all code paths that assume GitHub availability or a remote backend. 2. Separate local-first behavior from optional live-GitHub behavior in AirframeCore and the two client apps. 3. Add explicit offline-mode tests for AICockpit and AgileCockpit against local fixture data. 4. Harden configuration and failure messaging so missing GitHub credentials do not break local usage. 5. Verify that all essential workflows continue to work entirely from the local workspace, including archive and status updates.",
+    "Related Areas: - `AirframeCore` - `AICockpit` - `AgileCockpit` - `docs\/Tasks\/` - `docs\/Issues\/` - `docs\/Sprints\/` - `docs\/Epics\/`",
+    "Notes: - This Epic is about survivable product operation, not just “offline-friendly” fallback behavior. - If a feature cannot operate without GitHub or a server, it should be explicitly marked optional rather than assumed."
+  ],
+  "outOfScope" : [
+    "Removing GitHub support entirely.",
+    "Building a network server or sync service.",
+    "Replacing the local filesystem backend with a new storage engine.",
+    "Changing human-only closeout policy."
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "The current product still has live GitHub and controlled-remote paths. Those paths are useful, but they are not acceptable as a requirement for basic operation. Airframe must be able to load, inspect, mutate, verify, and archive work completely offline using local data only.",
+  "scope" : [
+    "Audit all runtime paths in AirframeCore, AICockpit, and AgileCockpit for hidden GitHub or network dependencies.",
+    "Ensure the local filesystem backend is sufficient for day-to-day project operation.",
+    "Make the CLI usable against a purely local workspace without requiring GitHub authentication or network access.",
+    "Make AgileCockpit usable against a purely local workspace without requiring GitHub authentication or network access.",
+    "Preserve existing GitHub-backed functionality as optional, not required.",
+    "Add offline regression coverage for project load, dashboard display, task packets, verification, planning, and archive updates."
+  ],
+  "sprintIDs" : [
+
+  ],
+  "taskIDs" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-019"
+    },
+    "kind" : "epic",
+    "status" : "backlog",
+    "title" : "Airframe Offline-Only Operation"
+  }
+}

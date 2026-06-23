@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-007-AC-03"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-007.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-007"
+  },
+  "text" : "AgileCockpit displays GitHub-backed data through canonical models."
+}

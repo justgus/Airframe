@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "Close actions present clear disabled or denied feedback.",
+    "Success and failure states are distinguishable in the UI.",
+    "The current close eligibility is visible without digging through source data."
+  ],
+  "component" : "AgileCockpit",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Users need clear feedback when Sprint or Epic close is unavailable, denied, or completed.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-022"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0109"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add close-action messaging and disabled-state behavior"
+  }
+}

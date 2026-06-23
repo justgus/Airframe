@@ -1,0 +1,146 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-018-AC-01"
+    },
+    {
+      "rawValue" : "EP-018-AC-02"
+    },
+    {
+      "rawValue" : "EP-018-AC-03"
+    },
+    {
+      "rawValue" : "EP-018-AC-04"
+    },
+    {
+      "rawValue" : "EP-018-AC-05"
+    },
+    {
+      "rawValue" : "EP-018-AC-06"
+    },
+    {
+      "rawValue" : "EP-018-AC-07"
+    }
+  ],
+  "goal" : "Add human-facing AgileCockpit controls for Sprint and Epic status mutation, including Epic acceptance-criteria verification, Sprint close gating, and Epic close gating with archive updates.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0005"
+    },
+    {
+      "rawValue" : "I-0006"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated tab or equivalent panel. 2. [x] A human can mark Epic acceptance criteria verified in the UI. 3. [x] A Sprint close action is enabled only after all Sprint Tasks and Issues are verified. 4. [x] An Epic complete or close action is enabled only after all Epic acceptance criteria are verified. 5. [x] Closing a Sprint archives the Sprint record and updates the Sprint index. 6. [x] Closing an Epic archives the Epic record and updates the Epic index. 7. [x] Tests cover local workspace behavior and live GitHub-issues workspace behavior where applicable."
+  ],
+  "outOfScope" : [
+    "Granting AICockpit Sprint or Epic close authority.",
+    "Automatic close without explicit human action.",
+    "Creating GitHub issues for Epics or Sprints where no remote artifact store exists.",
+    "Reworking the already closed EP-017\/SP-017\/SP-018\/SP-019 history."
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "EP-017, SP-017, SP-018, and SP-019 established the workflow dashboard, mutation authority, and Task\/Issue verification flows. The remaining gap is that AgileCockpit still cannot help a human verify Epic acceptance criteria or close and archive a Sprint or Epic after the assigned work is complete.",
+  "scope" : [
+    "Add an Epic Acceptance Criteria tab to the Sprint & Epic panel.",
+    "Show each Epic acceptance criterion and allow it to be marked verified by a human reviewer.",
+    "Gate Sprint close on all assigned Tasks and Issues being verified.",
+    "Gate Epic complete and close on all acceptance criteria being verified.",
+    "Archive closed Sprint and Epic records into the documented `Closed\/` layout and update index files.",
+    "Preserve existing human-only authority boundaries and keep agent-facing tools out of the close path."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-017"
+    },
+    {
+      "rawValue" : "SP-018"
+    },
+    {
+      "rawValue" : "SP-019"
+    },
+    {
+      "rawValue" : "SP-020"
+    },
+    {
+      "rawValue" : "SP-021"
+    },
+    {
+      "rawValue" : "SP-022"
+    },
+    {
+      "rawValue" : "SP-023"
+    },
+    {
+      "rawValue" : "SP-024"
+    }
+  ],
+  "startDate" : "2026-06-15",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0101"
+    },
+    {
+      "rawValue" : "T-0102"
+    },
+    {
+      "rawValue" : "T-0103"
+    },
+    {
+      "rawValue" : "T-0104"
+    },
+    {
+      "rawValue" : "T-0105"
+    },
+    {
+      "rawValue" : "T-0106"
+    },
+    {
+      "rawValue" : "T-0107"
+    },
+    {
+      "rawValue" : "T-0108"
+    },
+    {
+      "rawValue" : "T-0109"
+    },
+    {
+      "rawValue" : "T-0110"
+    },
+    {
+      "rawValue" : "T-0111"
+    },
+    {
+      "rawValue" : "T-0112"
+    },
+    {
+      "rawValue" : "T-0113"
+    },
+    {
+      "rawValue" : "T-0114"
+    },
+    {
+      "rawValue" : "T-0115"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-018"
+    },
+    "kind" : "epic",
+    "status" : "backlog",
+    "title" : "AgileCockpit Sprint and Epic Status Controls"
+  }
+}

@@ -12,13 +12,19 @@ public enum AirframeCanonicalDiagnosticReasonCode: String, Codable, Equatable, S
     case activeSprintMissing
     case activeEpicNotActive
     case activeSprintNotActive
+    case backendRelationshipDrift
+    case backendStatusDrift
     case closedEpicOwnsOpenWork
     case epicSprintRelationshipDrift
     case epicTaskRelationshipDrift
     case sprintTaskRelationshipDrift
+    case taskEpicMissing
+    case taskSprintMissing
 }
 
 public enum AirframeCanonicalRepairAction: String, Codable, Equatable, Sendable {
+    case applyBackendStatusLabels
+    case applyBackendRelationshipLabels
     case clearActiveEpicID
     case clearActiveSprintID
     case restoreEpicToActive
@@ -28,6 +34,169 @@ public enum AirframeCanonicalRepairAction: String, Codable, Equatable, Sendable 
     case reconcileEpicSprintLinks
     case reconcileEpicTaskLinks
     case reconcileSprintTaskLinks
+}
+
+public struct AirframeCanonicalBackendReconciler: Sendable {
+    public init() {}
+
+    public func diagnostics(
+        canonicalRecords: [AirframeLocalWorkRecord],
+        backendRecords: [AirframeLocalWorkRecord],
+        workflowPolicy: AirframeCanonicalWorkflowPolicyCatalog = .airframeDefault
+    ) -> [AirframeCanonicalDiagnostic] {
+        let backendByID = Dictionary(uniqueKeysWithValues: backendRecords.map { ($0.workItem.id, $0) })
+        return canonicalRecords.compactMap { canonicalRecord in
+            guard let backendRecord = backendByID[canonicalRecord.workItem.id] else {
+                return nil
+            }
+            if backendRecord.workItem.status != canonicalRecord.workItem.status {
+                return statusDriftDiagnostic(
+                    canonicalRecord: canonicalRecord,
+                    backendRecord: backendRecord,
+                    workflowPolicy: workflowPolicy
+                )
+            }
+            if backendRecord.epicID != canonicalRecord.epicID || backendRecord.sprintID != canonicalRecord.sprintID {
+                return relationshipDriftDiagnostic(
+                    canonicalRecord: canonicalRecord,
+                    backendRecord: backendRecord
+                )
+            }
+            return nil
+        }.sorted {
+            $0.reasonCode.rawValue == $1.reasonCode.rawValue
+                ? $0.affectedIDs.map(\.rawValue).joined() < $1.affectedIDs.map(\.rawValue).joined()
+                : $0.reasonCode.rawValue < $1.reasonCode.rawValue
+        }
+    }
+
+    private func statusDriftDiagnostic(
+        canonicalRecord: AirframeLocalWorkRecord,
+        backendRecord: AirframeLocalWorkRecord,
+        workflowPolicy: AirframeCanonicalWorkflowPolicyCatalog
+    ) -> AirframeCanonicalDiagnostic {
+        let requiresHumanApproval = workflowPolicy.transition(
+            for: canonicalRecord.workItem.kind,
+            from: backendRecord.workItem.status,
+            to: canonicalRecord.workItem.status
+        ).map {
+            $0.operation.category == .humanAcceptance ||
+                $0.operation.category == .sprintControl ||
+                $0.operation.category == .epicControl ||
+                $0.operation.requiresConfirmation
+        } ?? true
+
+        return AirframeCanonicalDiagnostic(
+            severity: .warning,
+            reasonCode: .backendStatusDrift,
+            affectedIDs: [canonicalRecord.workItem.id],
+            message: "Backend status for \(canonicalRecord.workItem.id.rawValue) is \(backendRecord.workItem.status.description), but canonical status is \(canonicalRecord.workItem.status.description).",
+            repairOptions: [
+                AirframeCanonicalRepairOption(
+                    action: .applyBackendStatusLabels,
+                    title: "Update backend status labels from canonical state.",
+                    affectedIDs: [canonicalRecord.workItem.id],
+                    requiresHumanApproval: requiresHumanApproval
+                )
+            ]
+        )
+    }
+
+    private func relationshipDriftDiagnostic(
+        canonicalRecord: AirframeLocalWorkRecord,
+        backendRecord: AirframeLocalWorkRecord
+    ) -> AirframeCanonicalDiagnostic {
+        AirframeCanonicalDiagnostic(
+            severity: .warning,
+            reasonCode: .backendRelationshipDrift,
+            affectedIDs: [canonicalRecord.workItem.id],
+            message: "Backend relationships for \(canonicalRecord.workItem.id.rawValue) do not match canonical Epic/Sprint labels.",
+            repairOptions: [
+                AirframeCanonicalRepairOption(
+                    action: .applyBackendRelationshipLabels,
+                    title: "Update backend Epic/Sprint labels from canonical state.",
+                    affectedIDs: [canonicalRecord.workItem.id],
+                    requiresHumanApproval: false
+                )
+            ]
+        )
+    }
+}
+
+public struct AirframeCanonicalBackendRepairApplication: Codable, Equatable, Sendable {
+    public let workItemID: AirframeID
+    public let action: AirframeCanonicalRepairAction
+    public let applied: Bool
+    public let message: String
+
+    public init(
+        workItemID: AirframeID,
+        action: AirframeCanonicalRepairAction,
+        applied: Bool,
+        message: String
+    ) {
+        self.workItemID = workItemID
+        self.action = action
+        self.applied = applied
+        self.message = message
+    }
+}
+
+public struct AirframeCanonicalBackendRepairResult: Codable, Equatable, Sendable {
+    public let applications: [AirframeCanonicalBackendRepairApplication]
+
+    public init(applications: [AirframeCanonicalBackendRepairApplication]) {
+        self.applications = applications
+    }
+
+    public var appliedCount: Int {
+        applications.filter(\.applied).count
+    }
+}
+
+public struct AirframeCanonicalBackendRepairer: Sendable {
+    public init() {}
+
+    public func apply(
+        repairOption: AirframeCanonicalRepairOption,
+        canonicalRecords: [AirframeLocalWorkRecord],
+        backend: any AirframeBackend,
+        approval: AirframeGitHubMutationApproval? = nil,
+        context: AirframeCertifiedContext?,
+        targetProjectID: AirframeID
+    ) throws -> AirframeCanonicalBackendRepairResult {
+        guard repairOption.action == .applyBackendStatusLabels
+            || repairOption.action == .applyBackendRelationshipLabels else {
+            throw AirframeBackendError.readOnlyBackend("canonical repair action \(repairOption.action.rawValue)")
+        }
+        guard !repairOption.requiresHumanApproval else {
+            throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+        }
+
+        let canonicalByID = Dictionary(uniqueKeysWithValues: canonicalRecords.map { ($0.workItem.id, $0) })
+        let applications = try repairOption.affectedIDs.map { id in
+            guard let canonicalRecord = canonicalByID[id] else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            if let githubBackend = backend as? AirframeGitHubIssuesBackend {
+                _ = try githubBackend.updateGitHubWorkRecord(
+                    canonicalRecord,
+                    approval: approval,
+                    context: context,
+                    targetProjectID: targetProjectID
+                )
+            } else {
+                try backend.updateWorkRecord(canonicalRecord)
+            }
+            return AirframeCanonicalBackendRepairApplication(
+                workItemID: id,
+                action: repairOption.action,
+                applied: true,
+                message: "Applied \(repairOption.action.rawValue) to \(id.rawValue)."
+            )
+        }
+        return AirframeCanonicalBackendRepairResult(applications: applications)
+    }
 }
 
 public struct AirframeCanonicalRepairOption: Codable, Equatable, Sendable {
@@ -141,6 +310,8 @@ public struct AirframeCanonicalStateValidator: Sendable {
         diagnostics.append(
             contentsOf: relationshipDiagnostics(
                 epics: snapshot.epics,
+                tasks: snapshot.tasks,
+                epicsByID: epicsByID,
                 sprintsByID: sprintsByID,
                 tasksByID: tasksByID
             )
@@ -306,6 +477,8 @@ public struct AirframeCanonicalStateValidator: Sendable {
 
     private func relationshipDiagnostics(
         epics: [AirframeCanonicalEpicRecord],
+        tasks: [AirframeCanonicalTaskRecord],
+        epicsByID: [AirframeID: AirframeCanonicalEpicRecord],
         sprintsByID: [AirframeID: AirframeCanonicalSprintRecord],
         tasksByID: [AirframeID: AirframeCanonicalTaskRecord]
     ) -> [AirframeCanonicalDiagnostic] {
@@ -350,6 +523,68 @@ public struct AirframeCanonicalStateValidator: Sendable {
                 }
             }
         }
+        for task in tasks {
+            if let epicID = task.epicID {
+                if let epic = epicsByID[epicID] {
+                    if !epic.taskIDs.isEmpty, !epic.taskIDs.contains(task.workItem.id) {
+                        diagnostics.append(
+                            AirframeCanonicalDiagnostic(
+                                severity: .warning,
+                                reasonCode: .epicTaskRelationshipDrift,
+                                affectedIDs: [epicID, task.workItem.id],
+                                message: "Task \(task.workItem.id.rawValue) references Epic \(epicID.rawValue), but the Epic does not reference the Task.",
+                                repairOptions: [
+                                    AirframeCanonicalRepairOption(
+                                        action: .reconcileEpicTaskLinks,
+                                        title: "Reconcile Epic and Task links.",
+                                        affectedIDs: [epicID, task.workItem.id]
+                                    )
+                                ]
+                            )
+                        )
+                    }
+                } else {
+                    diagnostics.append(
+                        AirframeCanonicalDiagnostic(
+                            severity: .warning,
+                            reasonCode: .taskEpicMissing,
+                            affectedIDs: [task.workItem.id, epicID],
+                            message: "Task \(task.workItem.id.rawValue) references missing Epic \(epicID.rawValue)."
+                        )
+                    )
+                }
+            }
+            if let sprintID = task.sprintID {
+                if let sprint = sprintsByID[sprintID] {
+                    if !sprint.taskIDs.isEmpty, !sprint.taskIDs.contains(task.workItem.id) {
+                        diagnostics.append(
+                            AirframeCanonicalDiagnostic(
+                                severity: .warning,
+                                reasonCode: .sprintTaskRelationshipDrift,
+                                affectedIDs: [sprintID, task.workItem.id],
+                                message: "Task \(task.workItem.id.rawValue) references Sprint \(sprintID.rawValue), but the Sprint does not reference the Task.",
+                                repairOptions: [
+                                    AirframeCanonicalRepairOption(
+                                        action: .reconcileSprintTaskLinks,
+                                        title: "Reconcile Sprint and Task links.",
+                                        affectedIDs: [sprintID, task.workItem.id]
+                                    )
+                                ]
+                            )
+                        )
+                    }
+                } else {
+                    diagnostics.append(
+                        AirframeCanonicalDiagnostic(
+                            severity: .warning,
+                            reasonCode: .taskSprintMissing,
+                            affectedIDs: [task.workItem.id, sprintID],
+                            message: "Task \(task.workItem.id.rawValue) references missing Sprint \(sprintID.rawValue)."
+                        )
+                    )
+                }
+            }
+        }
         for sprint in sprintsByID.values {
             for taskID in sprint.taskIDs {
                 if let task = tasksByID[taskID], task.sprintID != sprint.workItem.id {
@@ -378,4 +613,3 @@ public struct AirframeCanonicalStateValidator: Sendable {
         status == .implementedVerified || status == .closed
     }
 }
-

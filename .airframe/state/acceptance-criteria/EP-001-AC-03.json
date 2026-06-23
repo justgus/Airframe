@@ -1,0 +1,21 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-001-AC-03"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-001.md"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-001"
+  },
+  "text" : "`swift run --package-path AICockpit aicockpit --help` prints deterministic help."
+}

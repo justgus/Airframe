@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "A closed Epic is written into `docs\/Epics\/Closed\/`.",
+    "The active Epic file no longer contains the closed Epic.",
+    "The archived Epic preserves its closeout details."
+  ],
+  "component" : "Documentation \/ AgileCockpit",
+  "componentsAffected" : [
+
+  ],
+  "dateRequested" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Epic close must archive the Epic record and preserve the milestone history.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-023"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0111"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Move closed Epic records into `docs\/Epics\/Closed\/`"
+  }
+}

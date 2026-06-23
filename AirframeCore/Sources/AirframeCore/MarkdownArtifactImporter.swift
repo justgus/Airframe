@@ -33,6 +33,7 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
     public let sprints: [AirframeCanonicalSprintRecord]
     public let tasks: [AirframeCanonicalTaskRecord]
     public let issues: [AirframeCanonicalIssueRecord]
+    public let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
     public let diagnostics: [AirframeMarkdownImportDiagnostic]
 
     public init(
@@ -40,12 +41,14 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
         sprints: [AirframeCanonicalSprintRecord] = [],
         tasks: [AirframeCanonicalTaskRecord] = [],
         issues: [AirframeCanonicalIssueRecord] = [],
+        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
         diagnostics: [AirframeMarkdownImportDiagnostic] = []
     ) {
         self.epics = epics
         self.sprints = sprints
         self.tasks = tasks
         self.issues = issues
+        self.acceptanceCriteria = acceptanceCriteria
         self.diagnostics = diagnostics
     }
 
@@ -59,6 +62,7 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
             sprints: sprints + other.sprints,
             tasks: tasks + other.tasks,
             issues: issues + other.issues,
+            acceptanceCriteria: acceptanceCriteria + other.acceptanceCriteria,
             diagnostics: diagnostics + other.diagnostics
         )
     }
@@ -78,6 +82,89 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
     public func importDocument(_ markdown: String, sourcePath: String? = nil) -> AirframeMarkdownImportResult {
         let sections = AirframeMarkdownRecordSection.sections(in: markdown)
         guard !sections.isEmpty else {
+            let tableRecords = AirframeMarkdownRecordSection.summaryTableRecords(
+                in: markdown,
+                sourcePath: sourcePath
+            )
+            guard !tableRecords.tasks.isEmpty || !tableRecords.issues.isEmpty else {
+                return AirframeMarkdownImportResult(
+                    diagnostics: [
+                        AirframeMarkdownImportDiagnostic(
+                            severity: .warning,
+                            code: .unsupportedArtifact,
+                            sourcePath: sourcePath,
+                            recordID: nil,
+                            message: "No Airframe artifact record heading was found."
+                        )
+                    ]
+                )
+            }
+            return AirframeMarkdownImportResult(
+                tasks: tableRecords.tasks,
+                issues: tableRecords.issues,
+                diagnostics: tableRecords.diagnostics
+            )
+        }
+
+        let tableRecords = AirframeMarkdownRecordSection.summaryTableRecords(
+            in: markdown,
+            sourcePath: sourcePath
+        )
+
+        func preferSectionRecords<Record>(
+            _ sectionRecords: [Record],
+            tableRecords: [Record],
+            id: (Record) -> AirframeID
+        ) -> [Record] {
+            let sectionIDs = Set(sectionRecords.map(id))
+            return sectionRecords + tableRecords.filter { !sectionIDs.contains(id($0)) }
+        }
+
+        var epics: [AirframeCanonicalEpicRecord] = []
+        var sprints: [AirframeCanonicalSprintRecord] = []
+        var tasks: [AirframeCanonicalTaskRecord] = []
+        var issues: [AirframeCanonicalIssueRecord] = []
+        var acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = []
+        var diagnostics: [AirframeMarkdownImportDiagnostic] = tableRecords.diagnostics
+
+        for section in sections {
+            switch section.kind {
+            case .epic:
+                let imported = importEpic(section, sourcePath: sourcePath)
+                imported.record.map { epics.append($0) }
+                acceptanceCriteria.append(contentsOf: imported.acceptanceCriteria)
+                diagnostics.append(contentsOf: imported.diagnostics)
+            case .sprint:
+                let imported = importSprint(section, sourcePath: sourcePath)
+                imported.record.map { sprints.append($0) }
+                diagnostics.append(contentsOf: imported.diagnostics)
+            case .task:
+                let imported = importTask(section, sourcePath: sourcePath)
+                imported.record.map { tasks.append($0) }
+                diagnostics.append(contentsOf: imported.diagnostics)
+            case .issue:
+                let imported = importIssue(section, sourcePath: sourcePath)
+                imported.record.map { issues.append($0) }
+                diagnostics.append(contentsOf: imported.diagnostics)
+            }
+        }
+
+        tasks = preferSectionRecords(tasks, tableRecords: tableRecords.tasks, id: { $0.workItem.id })
+        issues = preferSectionRecords(issues, tableRecords: tableRecords.issues, id: { $0.workItem.id })
+
+        return AirframeMarkdownImportResult(
+            epics: epics.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            sprints: sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            tasks: tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            issues: issues.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            acceptanceCriteria: acceptanceCriteria.sorted { $0.id.rawValue < $1.id.rawValue },
+            diagnostics: diagnostics
+        )
+    }
+
+    private func legacyImportDocument(_ markdown: String, sourcePath: String? = nil) -> AirframeMarkdownImportResult {
+        let sections = AirframeMarkdownRecordSection.sections(in: markdown)
+        guard !sections.isEmpty else {
             return AirframeMarkdownImportResult(
                 diagnostics: [
                     AirframeMarkdownImportDiagnostic(
@@ -95,6 +182,7 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
         var sprints: [AirframeCanonicalSprintRecord] = []
         var tasks: [AirframeCanonicalTaskRecord] = []
         var issues: [AirframeCanonicalIssueRecord] = []
+        var acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = []
         var diagnostics: [AirframeMarkdownImportDiagnostic] = []
 
         for section in sections {
@@ -102,6 +190,7 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             case .epic:
                 let imported = importEpic(section, sourcePath: sourcePath)
                 imported.record.map { epics.append($0) }
+                acceptanceCriteria.append(contentsOf: imported.acceptanceCriteria)
                 diagnostics.append(contentsOf: imported.diagnostics)
             case .sprint:
                 let imported = importSprint(section, sourcePath: sourcePath)
@@ -123,6 +212,7 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             sprints: sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
             tasks: tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
             issues: issues.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            acceptanceCriteria: acceptanceCriteria.sorted { $0.id.rawValue < $1.id.rawValue },
             diagnostics: diagnostics
         )
     }
@@ -130,9 +220,14 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
     private func importEpic(
         _ section: AirframeMarkdownRecordSection,
         sourcePath: String?
-    ) -> (record: AirframeCanonicalEpicRecord?, diagnostics: [AirframeMarkdownImportDiagnostic]) {
+    ) -> (
+        record: AirframeCanonicalEpicRecord?,
+        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord],
+        diagnostics: [AirframeMarkdownImportDiagnostic]
+    ) {
         let status = statusValue(section.field("Status"))
         var diagnostics = requiredDiagnostics(for: section, status: status, sourcePath: sourcePath)
+        let criteria = section.acceptanceCriteria(ownerID: section.id, metadata: metadata(sourcePath))
         let record = AirframeCanonicalEpicRecord(
             workItem: AirframeWorkItem(
                 id: section.id,
@@ -148,7 +243,7 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             closeDate: normalizedOptional(section.field("Close Date")),
             scope: section.listBlock("Scope"),
             outOfScope: section.listBlock("Out of Scope"),
-            acceptanceCriterionIDs: section.relatedIDs(withPrefix: "AC"),
+            acceptanceCriterionIDs: stableUnique(section.relatedIDs(withPrefix: "AC") + criteria.map(\.id)),
             sprintIDs: section.relatedIDs(withPrefix: "SP"),
             taskIDs: section.relatedIDs(withPrefix: "T"),
             issueIDs: section.relatedIDs(withPrefix: "I"),
@@ -157,7 +252,7 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             metadata: metadata(sourcePath)
         )
         diagnostics.append(contentsOf: ambiguityDiagnostics(for: section, sourcePath: sourcePath))
-        return (record, diagnostics)
+        return (record, criteria, diagnostics)
     }
 
     private func importSprint(
@@ -205,7 +300,8 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             priority: priorityValue(section.field("Priority")),
             rationale: section.block("Rationale") ?? "",
             epicID: section.relatedID(fromField: "Epic", prefix: "EP"),
-            sprintID: section.relatedID(fromField: "Sprint Assigned", prefix: "SP"),
+            sprintID: section.relatedID(fromField: "Sprint Assigned", prefix: "SP")
+                ?? section.relatedID(fromField: "Sprint", prefix: "SP"),
             dateRequested: normalizedOptional(section.field("Date Requested")),
             dateImplemented: normalizedOptional(section.field("Date Implemented")),
             dateVerified: normalizedOptional(section.field("Date Verified")),
@@ -237,7 +333,8 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             observedBehavior: section.block("Observed Behavior") ?? section.block("Current Behavior") ?? "",
             expectedBehavior: section.block("Expected Behavior") ?? section.block("Desired Behavior") ?? "",
             epicID: section.relatedID(fromField: "Epic", prefix: "EP"),
-            sprintID: section.relatedID(fromField: "Sprint Assigned", prefix: "SP"),
+            sprintID: section.relatedID(fromField: "Sprint Assigned", prefix: "SP")
+                ?? section.relatedID(fromField: "Sprint", prefix: "SP"),
             dateReported: normalizedOptional(section.field("Date Reported") ?? section.field("Date Requested")),
             dateResolved: normalizedOptional(section.field("Date Resolved") ?? section.field("Date Implemented")),
             dateVerified: normalizedOptional(section.field("Date Verified")),
@@ -415,6 +512,22 @@ private struct AirframeMarkdownRecordSection {
         }
     }
 
+    func acceptanceCriteria(
+        ownerID: AirframeID,
+        metadata: AirframeCanonicalRecordMetadata
+    ) -> [AirframeCanonicalAcceptanceCriterionRecord] {
+        numberedBlock("Acceptance Criteria").enumerated().map { offset, rawText in
+            let normalized = Self.checkboxValue(rawText)
+            return AirframeCanonicalAcceptanceCriterionRecord(
+                id: AirframeID("\(ownerID.rawValue)-AC-\(String(format: "%02d", offset + 1))"),
+                ownerID: ownerID,
+                text: normalized.text,
+                isVerified: normalized.isVerified,
+                metadata: metadata
+            )
+        }
+    }
+
     func notes(excluding names: [String]) -> [String] {
         var notes: [String] = []
         var index = 0
@@ -508,6 +621,98 @@ private struct AirframeMarkdownRecordSection {
         }
     }
 
+    static func summaryTableRecords(
+        in markdown: String,
+        sourcePath: String?
+    ) -> (
+        tasks: [AirframeCanonicalTaskRecord],
+        issues: [AirframeCanonicalIssueRecord],
+        diagnostics: [AirframeMarkdownImportDiagnostic]
+    ) {
+        var tasks: [AirframeCanonicalTaskRecord] = []
+        var issues: [AirframeCanonicalIssueRecord] = []
+        var diagnostics: [AirframeMarkdownImportDiagnostic] = []
+        let documentFields = documentFieldValues(in: markdown)
+        let documentEpicID = documentFields["Epic"].flatMap { firstID(in: $0, prefix: "EP") }
+        let documentSprintID = (documentFields["Sprint"] ?? documentFields["Sprint Assigned"])
+            .flatMap { firstID(in: $0, prefix: "SP") }
+
+        for line in markdown.components(separatedBy: .newlines) {
+            let columns = tableColumns(from: line)
+            guard columns.count >= 4,
+                  let idColumn = columns.first,
+                  idColumn != "Task",
+                  idColumn != "Issue",
+                  !idColumn.allSatisfy({ $0 == "-" }),
+                  idColumn.hasPrefix("T-") || idColumn.hasPrefix("I-"),
+                  columns[1].hasPrefix("#") || columns[1] == "TBD" else {
+                continue
+            }
+
+            let statusText = columns.last ?? ""
+            guard let status = statusValue(statusText) else {
+                diagnostics.append(
+                    AirframeMarkdownImportDiagnostic(
+                        severity: .warning,
+                        code: .missingRequiredField,
+                        sourcePath: sourcePath,
+                        recordID: AirframeID(idColumn),
+                        message: "Required field Status is missing."
+                    )
+                )
+                continue
+            }
+
+            if idColumn.hasPrefix("T-") {
+                let title = columns.count > 2 ? columns[2] : idColumn
+                tasks.append(
+                    AirframeCanonicalTaskRecord(
+                        workItem: AirframeWorkItem(
+                            id: AirframeID(idColumn),
+                            kind: .task,
+                            title: title,
+                            status: status,
+                            githubIssue: githubIssue(columns.count > 1 ? columns[1] : nil)
+                        ),
+                        component: "",
+                        priority: .medium,
+                        rationale: "",
+                        epicID: documentEpicID,
+                        sprintID: documentSprintID,
+                        dateVerified: normalizedOptional(documentFields["Date Verified"]),
+                        metadata: AirframeCanonicalRecordMetadata(source: sourcePath)
+                    )
+                )
+            } else if idColumn.hasPrefix("I-") {
+                let title = columns.count > 2 ? columns[2] : idColumn
+                let severityColumn = columns.count > 4 ? columns[3] : nil
+                issues.append(
+                    AirframeCanonicalIssueRecord(
+                        workItem: AirframeWorkItem(
+                            id: AirframeID(idColumn),
+                            kind: .issue,
+                            title: title,
+                            status: status,
+                            githubIssue: githubIssue(columns.count > 1 ? columns[1] : nil)
+                        ),
+                        severity: priorityValue(severityColumn),
+                        observedBehavior: "",
+                        expectedBehavior: "",
+                        epicID: documentEpicID,
+                        sprintID: documentSprintID,
+                        dateVerified: normalizedOptional(documentFields["Date Verified"]),
+                        metadata: AirframeCanonicalRecordMetadata(source: sourcePath)
+                    )
+                )
+            }
+        }
+        return (
+            tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            issues.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            diagnostics
+        )
+    }
+
     static func fieldNameAndValue(from line: String) -> (name: String, value: String)? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         guard trimmed.hasPrefix("**"),
@@ -529,6 +734,83 @@ private struct AirframeMarkdownRecordSection {
         return String(trimmed.dropFirst(2).dropLast(3))
     }
 
+    private static func tableColumns(from line: String) -> [String] {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasPrefix("|"), trimmed.hasSuffix("|") else {
+            return []
+        }
+        return trimmed
+            .split(separator: "|", omittingEmptySubsequences: false)
+            .dropFirst()
+            .dropLast()
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+    }
+
+    private static func documentFieldValues(in markdown: String) -> [String: String] {
+        markdown.components(separatedBy: .newlines).reduce(into: [String: String]()) { fields, line in
+            guard let field = fieldNameAndValue(from: line) else { return }
+            fields[field.name] = field.value
+        }
+    }
+
+    private static func statusValue(_ rawValue: String) -> AirframeWorkStatus? {
+        switch rawValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "proposed": return .proposed
+        case "draft": return .draft
+        case "backlog": return .backlog
+        case "planning": return .planning
+        case "active", "in progress": return .active
+        case "review": return .review
+        case "implemented", "implemented - not verified", "resolved", "resolved - not verified":
+            return .implementedNotVerified
+        case "verified", "implemented - verified", "resolved - verified":
+            return .implementedVerified
+        case "complete": return .complete
+        case "closed": return .closed
+        default: return nil
+        }
+    }
+
+    private static func priorityValue(_ rawValue: String?) -> AirframeWorkPriority {
+        switch rawValue?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "high": .high
+        case "low": .low
+        default: .medium
+        }
+    }
+
+    private static func normalizedOptional(_ rawValue: String?) -> String? {
+        guard let value = rawValue?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !value.isEmpty,
+              value.uppercased() != "TBD",
+              value != "-" else {
+            return nil
+        }
+        return value
+    }
+
+    private static func githubIssue(_ rawValue: String?) -> Int? {
+        guard let rawValue else { return nil }
+        return firstID(in: rawValue, prefix: "#").flatMap { Int($0.rawValue.dropFirst()) }
+    }
+
+    private static func checkboxValue(_ rawText: String) -> (text: String, isVerified: Bool) {
+        let trimmed = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.lowercased().hasPrefix("[x]") {
+            return (
+                String(trimmed.dropFirst(3)).trimmingCharacters(in: .whitespacesAndNewlines),
+                true
+            )
+        }
+        if trimmed.lowercased().hasPrefix("[ ]") {
+            return (
+                String(trimmed.dropFirst(3)).trimmingCharacters(in: .whitespacesAndNewlines),
+                false
+            )
+        }
+        return (trimmed, false)
+    }
+
     private static func recordHeading(from line: String) -> (id: AirframeID, kind: AirframeWorkItemKind, title: String)? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         guard trimmed.hasPrefix("#") else {
@@ -538,7 +820,10 @@ private struct AirframeMarkdownRecordSection {
         guard let colonIndex = withoutMarks.firstIndex(of: ":") else {
             return nil
         }
-        let idValue = String(withoutMarks[..<colonIndex])
+        let idValue = String(withoutMarks[..<colonIndex]).trimmingCharacters(in: .whitespaces)
+        guard idValue.split(separator: " ").count == 1 else {
+            return nil
+        }
         guard let kind = kind(for: idValue) else {
             return nil
         }

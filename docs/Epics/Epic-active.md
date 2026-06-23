@@ -56,9 +56,9 @@ EP-018 exposed that Markdown artifacts currently act as both human-readable docu
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
 | SP-025 | Define the canonical store schema, workflow policy records, and validation diagnostics. | Closed |
-| SP-026 | Import current Markdown artifacts into canonical records and generate deterministic documentation projections. | Active |
-| SP-027 | Move AICockpit read paths and diagnostics onto canonical workflow state. | Backlog |
-| SP-028 | Move AgileCockpit dashboard, planning, and data-health views onto canonical workflow state. | Backlog |
+| SP-026 | Import current Markdown artifacts into canonical records and generate deterministic documentation projections. | Closed |
+| SP-027 | Move AICockpit read paths and diagnostics onto canonical workflow state. | Closed |
+| SP-028 | Move AgileCockpit dashboard, planning, and data-health views onto canonical workflow state. | Closed |
 
 ### Related Tasks
 
@@ -68,28 +68,36 @@ EP-018 exposed that Markdown artifacts currently act as both human-readable docu
 | T-0117 | Implement repo-local JSON canonical store | Verified |
 | T-0118 | Encode workflow policy definitions in AirframeCore | Verified |
 | T-0119 | Add canonical state validation diagnostics | Verified |
-| T-0120 | Build Markdown artifact importer for existing work products | Implemented |
-| T-0121 | Generate deterministic Markdown projections from canonical records | Implemented |
-| T-0122 | Add import and projection regression coverage | Implemented |
-| T-0123 | Document canonical migration and projection workflow | Implemented |
-| T-0124 | Move AICockpit project summary to canonical records | Backlog |
-| T-0125 | Move AICockpit task packet generation to canonical records | Backlog |
-| T-0126 | Add AICockpit canonical state diagnostics command | Backlog |
-| T-0127 | Verify AICockpit authority boundaries against canonical state | Backlog |
-| T-0128 | Move AgileCockpit dashboard and planning views to canonical records | Backlog |
-| T-0129 | Add AgileCockpit data health diagnostics surface | Backlog |
-| T-0130 | Add AgileCockpit repair preview flow for canonical diagnostics | Backlog |
-| T-0131 | Verify end-to-end canonical workflow state behavior | Backlog |
+| T-0120 | Build Markdown artifact importer for existing work products | Verified |
+| T-0121 | Generate deterministic Markdown projections from canonical records | Verified |
+| T-0122 | Add import and projection regression coverage | Verified |
+| T-0123 | Document canonical migration and projection workflow | Verified |
+| T-0124 | Move AICockpit project summary to canonical records | Verified |
+| T-0125 | Move AICockpit task packet generation to canonical records | Verified |
+| T-0126 | Add AICockpit canonical state diagnostics command | Verified |
+| T-0127 | Verify AICockpit authority boundaries against canonical state | Verified |
+| T-0128 | Move AgileCockpit dashboard and planning views to canonical records | Verified |
+| T-0129 | Add AgileCockpit data health diagnostics surface | Verified |
+| T-0130 | Add AgileCockpit repair preview flow for canonical diagnostics | Verified |
+| T-0131 | Verify end-to-end canonical workflow state behavior | Verified |
 
 ### Related Issues
 
-TBD.
+| Issue | Title | Status |
+| ----- | ----- | ------ |
+| I-0007 | Verification tab can stall or fail silently while loading queue details | Verified |
+| I-0008 | Canonical state cannot represent Review Sprints and backend label reconciliation | Verified |
 
 ### Notes
 
 - This Epic is the architectural foundation for resuming EP-018 safely.
 - EP-019 offline-only operation remains relevant and may be informed by the canonical local store design.
 - GitHub should be treated as an optional integration or projection target, not the canonical store for repo-coupled workflow state.
-- SP-026 is Active for Markdown import and deterministic projection implementation.
+- SP-026 is Closed after Markdown import and deterministic projection verification.
+- SP-027 is Closed after AICockpit canonical state integration verification.
+- SP-028 is Closed after AgileCockpit canonical state integration verification.
+- T-0128 through T-0131 are Implemented - Verified after SP-028 closeout.
+- I-0007 is Resolved - Verified in SP-028 for Verification tab loading and failure-state behavior.
+- I-0008 is Resolved - Verified in SP-028 for Review Sprint representation and backend label reconciliation repair behavior.
 
-*Last Updated: 2026-06-18 (T-0121 through T-0123 implemented pending human verification)*
+*Last Updated: 2026-06-23 (SP-028 closed and I-0008 verified)*

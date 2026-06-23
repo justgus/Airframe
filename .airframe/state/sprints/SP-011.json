@@ -1,0 +1,52 @@
+{
+  "capacity" : "Not formally estimated",
+  "endDate" : "2026-06-08",
+  "epicID" : {
+    "rawValue" : "EP-011"
+  },
+  "goal" : "Implement Slice 3 so AgileCockpit shows live `justgus\/Airframe` project state through the read-only `github-issues` backend, matching the verified AICockpit live state without presenting fixture data as live behavior.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-011.md"
+  },
+  "notes" : [
+    "Completed: - AgileCockpit configured loading now supports the read-only `github-issues` backend. - AgileCockpit launch failure handling preserves live project identity instead of falling back to sample data. - Live demo configuration now points to `github-issues`, SP-011, and EP-011. - Focused AgileCockpit tests cover live dashboard, planning, verification, and failure-state behavior.",
+    "Returned to Backlog: - None.",
+    "What went well: - Existing AirframeCore GitHub issue mapping APIs were sufficient for AgileCockpit live views.",
+    "What to improve: - A dedicated manual app launch script would make live UI verification more repeatable.",
+    "Carry-forward notes: - Slice 4 can package the project-local launch path after SP-011 closeout."
+  ],
+  "startDate" : "2026-06-08",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0056"
+    },
+    {
+      "rawValue" : "T-0057"
+    },
+    {
+      "rawValue" : "T-0058"
+    },
+    {
+      "rawValue" : "T-0059"
+    },
+    {
+      "rawValue" : "T-0060"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-011"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "AgileCockpit Live Project View Planning"
+  }
+}

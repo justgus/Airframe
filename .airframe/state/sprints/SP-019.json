@@ -1,0 +1,50 @@
+{
+  "endDate" : "2026-06-14",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "goal" : "Add human-facing AgileCockpit mutation support for Task and Issue verification while preserving AICockpit restrictions.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-019.md"
+  },
+  "notes" : [
+    "Completed: - AgileCockpit human verification actions were added for eligible Tasks and Issues. - Local and GitHub-backed verification support was implemented through AirframeCore authority checks. - Verification UI flows and regression tests were added.",
+    "Returned to Backlog: - None.",
+    "What went well: - Human verification authority remained separate from AICockpit mutation authority.",
+    "What to improve: - Sprint closure should be documented immediately after manual close to avoid stale active-record state."
+  ],
+  "startDate" : "2026-06-14",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0096"
+    },
+    {
+      "rawValue" : "T-0097"
+    },
+    {
+      "rawValue" : "T-0098"
+    },
+    {
+      "rawValue" : "T-0099"
+    },
+    {
+      "rawValue" : "T-0100"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-019"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "AgileCockpit Human Verification Mutations"
+  }
+}

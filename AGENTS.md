@@ -38,9 +38,14 @@ The user owns the project direction and approval boundary. Codex must not turn b
 
 ## GitHub And External State
 
-- GitHub issue edits, label changes, comments, closes, pushes, and other remote mutations require explicit user authorization or a previously approved closeout procedure.
+- Codex may mutate GitHub without per-action approval only for agent-allowed Airframe workflow synchronization on work it is handling:
+  - Move assigned or active Tasks from `status-active` to `status-unverified` after Codex has implemented the work locally and recorded evidence.
+  - Move assigned or active Issues from `status-active` or `status-in-progress` to `status-unverified` after Codex has resolved the issue locally and recorded evidence.
+  - Add implementation or evidence comments for Codex-completed work.
+  - Keep established Airframe labels synchronized with local artifact state for agent-allowed transitions.
+- Explicit user authorization is still required for human-only acceptance or verification, Sprint closure, Epic completion or closure, Issue closure, pushes, destructive remote changes, workflow policy changes, and creating/changing labels outside the established Airframe workflow labels.
 - Read-only GitHub inspection is allowed when it is necessary to answer a current request, subject to tool permissions.
-- Report remote changes made, including issue numbers and labels/states changed.
+- Report remote changes made, including issue numbers, labels/states changed, and comments added.
 
 ## Airframe Project Conventions
 
@@ -65,8 +70,8 @@ swift run --package-path AICockpit aicockpit project summary --config .airframe/
 swift run --package-path AICockpit aicockpit task packet T-XXXX --config .airframe/airframe-workspace.json --backend github-issues --output json
 ```
 
-- Codex may use AICockpit for read-only discovery, task packets, evidence attachment or evidence comments, and explicitly approved workflow transitions. Codex must not use AICockpit or any other tool to perform human-only acceptance, human verification, sprint closure, epic closure, issue closure, or workflow policy changes.
-- If AICockpit does not support a needed Agile Artifact mutation, Codex must state the capability gap and request approval before directly editing Agile Artifact Markdown or mutating GitHub.
+- Codex may use AICockpit for read-only discovery, task packets, evidence attachment or evidence comments, and agent-allowed workflow transitions. Codex must not use AICockpit or any other tool to perform human-only acceptance, human verification, sprint closure, epic closure, issue closure, or workflow policy changes.
+- If AICockpit does not support a needed agent-allowed Agile Artifact mutation, Codex may directly edit Agile Artifact Markdown or mutate established Airframe GitHub labels to keep state synchronized. Codex must state the capability gap and request approval before any mutation outside the agent-allowed GitHub synchronization boundary.
 - AgileCockpit is the human-facing review surface and may expose human verification actions through AirframeCore.
 - Live GitHub access is not assumed. Fixture-backed GitHub behavior is distinct from live GitHub Issues integration.
 - A live demonstration project must be planned before implementation. The plan must specify repository/project target, local clone or remote source, backend mode, credential expectations, install locations, seeded data, and verification criteria.

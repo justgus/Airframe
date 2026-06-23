@@ -14,7 +14,7 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **17 backlog Tasks**
+Currently: **9 backlog Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -27,14 +27,6 @@ Currently: **17 backlog Tasks**
 | T-0113 | TBD | Add tests for Epic acceptance-criteria verification | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0114 | TBD | Add tests for Sprint and Epic archive updates | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0115 | TBD | Add tests for offline local-only closeout behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0124 | #124 | Move AICockpit project summary to canonical records | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0125 | #125 | Move AICockpit task packet generation to canonical records | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0126 | #126 | Add AICockpit canonical state diagnostics command | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0127 | #127 | Verify AICockpit authority boundaries against canonical state | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0128 | #128 | Move AgileCockpit dashboard and planning views to canonical records | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0129 | #129 | Add AgileCockpit data health diagnostics surface | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0130 | #130 | Add AgileCockpit repair preview flow for canonical diagnostics | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0131 | #131 | Verify end-to-end canonical workflow state behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
 
 See: [Task-backlog.md](Task-backlog.md)
 
@@ -42,13 +34,15 @@ See: [Task-backlog.md](Task-backlog.md)
 
 Currently: **0 active Tasks**
 
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
 No Tasks are currently active.
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **19 unverified Tasks**
+Currently: **15 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -67,16 +61,12 @@ Currently: **19 unverified Tasks**
 | T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0120 | #120 | Build Markdown artifact importer for existing work products | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0121 | #121 | Generate deterministic Markdown projections from canonical records | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0122 | #122 | Add import and projection regression coverage | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0123 | #123 | Document canonical migration and projection workflow | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **95 verified Tasks** | Next available: **T-0132**
+Currently: **107 verified Tasks** | Next available: **T-0132**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -165,15 +155,27 @@ Currently: **95 verified Tasks** | Next available: **T-0132**
 | T-0117 | #117 | Implement repo-local JSON canonical store | [Task-verified-0116-0119.md](Verified/Task-verified-0116-0119.md) | Implemented - Verified |
 | T-0118 | #118 | Encode workflow policy definitions in AirframeCore | [Task-verified-0116-0119.md](Verified/Task-verified-0116-0119.md) | Implemented - Verified |
 | T-0119 | #119 | Add canonical state validation diagnostics | [Task-verified-0116-0119.md](Verified/Task-verified-0116-0119.md) | Implemented - Verified |
+| T-0120 | #120 | Build Markdown artifact importer for existing work products | [Task-verified-0120-0123.md](Verified/Task-verified-0120-0123.md) | Implemented - Verified |
+| T-0121 | #121 | Generate deterministic Markdown projections from canonical records | [Task-verified-0120-0123.md](Verified/Task-verified-0120-0123.md) | Implemented - Verified |
+| T-0122 | #122 | Add import and projection regression coverage | [Task-verified-0120-0123.md](Verified/Task-verified-0120-0123.md) | Implemented - Verified |
+| T-0123 | #123 | Document canonical migration and projection workflow | [Task-verified-0120-0123.md](Verified/Task-verified-0120-0123.md) | Implemented - Verified |
+| T-0124 | #124 | Move AICockpit project summary to canonical records | [Task-verified-0124-0127.md](Verified/Task-verified-0124-0127.md) | Implemented - Verified |
+| T-0125 | #125 | Move AICockpit task packet generation to canonical records | [Task-verified-0124-0127.md](Verified/Task-verified-0124-0127.md) | Implemented - Verified |
+| T-0126 | #126 | Add AICockpit canonical state diagnostics command | [Task-verified-0124-0127.md](Verified/Task-verified-0124-0127.md) | Implemented - Verified |
+| T-0127 | #127 | Verify AICockpit authority boundaries against canonical state | [Task-verified-0124-0127.md](Verified/Task-verified-0124-0127.md) | Implemented - Verified |
+| T-0128 | #128 | Move AgileCockpit dashboard and planning views to canonical records | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
+| T-0129 | #129 | Add AgileCockpit data health diagnostics surface | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
+| T-0130 | #130 | Add AgileCockpit repair preview flow for canonical diagnostics | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
+| T-0131 | #131 | Verify end-to-end canonical workflow state behavior | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
 
 ## Statistics
 
 - **Total Tasks:** 131
-- **Backlog:** 17
+- **Backlog:** 9
 - **Active:** 0
-- **Unverified:** 19
-- **Verified:** 95
+- **Unverified:** 15
+- **Verified:** 107
 - **Closed:** 0
 - **Next available:** T-0132
 
-*Last Updated: 2026-06-18 (T-0121 through T-0123 implemented pending human verification)*
+*Last Updated: 2026-06-23 (T-0128 through T-0131 verified by human direction)*

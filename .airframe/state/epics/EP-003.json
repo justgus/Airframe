@@ -1,0 +1,91 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-003-AC-01"
+    },
+    {
+      "rawValue" : "EP-003-AC-02"
+    },
+    {
+      "rawValue" : "EP-003-AC-03"
+    },
+    {
+      "rawValue" : "EP-003-AC-04"
+    },
+    {
+      "rawValue" : "EP-003-AC-05"
+    },
+    {
+      "rawValue" : "EP-003-AC-06"
+    }
+  ],
+  "closeDate" : "2026-06-04",
+  "goal" : "Implement the deny-by-default workflow, authority, project-context, and audit foundation used by both clients.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Closed\/Epic-EP-003.md"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. LLM actor can perform allowed proposal\/evidence operations. 2. LLM actor cannot perform human-only operations. 3. Project mismatch is denied by default. 4. Denied operations return deterministic reason codes. 5. Audit records are created for allowed and denied write attempts. 6. CLI and app both display denial information without duplicating policy logic."
+  ],
+  "outOfScope" : [
+    "GitHub authentication.",
+    "Full backend persistence.",
+    "Final UI polish."
+  ],
+  "owner" : "HumanOwner",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "Authority and workflow are the primary safety boundary of Agile Airframe and must be centralized in AirframeCore before meaningful write operations are exposed.",
+  "scope" : [
+    "Actor and certified context model.",
+    "Authority evaluator.",
+    "Workflow transition evaluator.",
+    "Audit event service.",
+    "CLI denied-operation output.",
+    "App action availability and audit display."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-003"
+    }
+  ],
+  "startDate" : "2026-06-02",
+  "targetCloseDate" : "2026-06-03",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0012"
+    },
+    {
+      "rawValue" : "T-0013"
+    },
+    {
+      "rawValue" : "T-0014"
+    },
+    {
+      "rawValue" : "T-0015"
+    },
+    {
+      "rawValue" : "T-0016"
+    },
+    {
+      "rawValue" : "T-0017"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-003"
+    },
+    "kind" : "epic",
+    "status" : "closed",
+    "title" : "Workflow, Authority, and Audit Foundation"
+  }
+}

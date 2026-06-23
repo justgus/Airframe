@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "dateVerified" : "2026-06-01",
+  "epicID" : {
+    "rawValue" : "EP-002"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0007-0011.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-002"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 11,
+    "id" : {
+      "rawValue" : "T-0011"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Implement AgileCockpit project context UI"
+  }
+}

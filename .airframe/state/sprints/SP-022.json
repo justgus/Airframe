@@ -1,0 +1,39 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "goal" : "Enable Sprint close and Epic complete\/close only when prerequisites are satisfied.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Sprint-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0107"
+    },
+    {
+      "rawValue" : "T-0108"
+    },
+    {
+      "rawValue" : "T-0109"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-022"
+    },
+    "kind" : "sprint",
+    "status" : "backlog",
+    "title" : "Sprint and Epic Close Gating"
+  }
+}

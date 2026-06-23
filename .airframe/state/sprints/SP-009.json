@@ -1,0 +1,52 @@
+{
+  "capacity" : "Not formally estimated",
+  "endDate" : "2026-06-04",
+  "epicID" : {
+    "rawValue" : "EP-009"
+  },
+  "goal" : "Implement the Slice 1 runtime configuration path so AICockpit and AgileCockpit can run against the live Airframe project identity without embedded sample data or GitHub writes.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-009.md"
+  },
+  "notes" : [
+    "Completed: - Runtime configuration resolver added in AirframeCore. - AICockpit runtime config\/store selection implemented. - AgileCockpit runtime config model loading implemented. - Airframe live demo config and usage docs added. - Direct verification commands passed.",
+    "Returned to Backlog: - None.",
+    "What went well: - Slice 1 established live project identity without implementing live GitHub issue reads prematurely.",
+    "What to improve: - Manual AgileCockpit app launch with environment variables remains useful for demonstration rehearsal.",
+    "Carry-forward notes: - Slice 2 should implement read-only `github-issues` adapter behavior."
+  ],
+  "startDate" : "2026-06-04",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0046"
+    },
+    {
+      "rawValue" : "T-0047"
+    },
+    {
+      "rawValue" : "T-0048"
+    },
+    {
+      "rawValue" : "T-0049"
+    },
+    {
+      "rawValue" : "T-0050"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-009"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Live Demo Runtime Configuration"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "acceptanceCriteria" : [
+    "Dashboard and verification views expose eligible Task verification actions.",
+    "Dashboard and verification views expose eligible Issue verification actions.",
+    "Verification UI distinguishes Implemented\/Resolved from Verified."
+  ],
+  "component" : "AgileCockpit",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-14",
+  "dateRequested" : "2026-06-12",
+  "epicID" : {
+    "rawValue" : "EP-017"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "implementationDetails" : "Added Accept, Reject, and Request More Evidence actions for ready-for-verification dashboard items.\nConnected dashboard verification actions to the existing verification view mutation path.\nKept the UI limited to human-facing AgileCockpit verification flows.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Human users need an ergonomic route from verification candidates to verification action.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-019"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "githubIssue" : 99,
+    "id" : {
+      "rawValue" : "T-0099"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Add human verification UI flows for Tasks and Issues"
+  }
+}
