@@ -1,36 +1,31 @@
 {
   "acceptanceCriteria" : [
-    "Commands are defined for creating and updating Tasks, Issues, Sprints, and Epics.",
-    "Local and GitHub behavior is specified.",
-    "Approval and authority requirements are specified.",
-    "AICockpit is explicitly prohibited from applying Verified to Tasks or Issues."
+
   ],
-  "component" : "AICockpit \/ Documentation",
+  "component" : "",
   "componentsAffected" : [
 
   ],
-  "dateImplemented" : "2026-06-14",
-  "dateRequested" : "2026-06-12",
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "implementationDetails" : "Added `AICockpit\/docs\/MutationCommandContract.md` defining create, update, and status command surfaces for Tasks, Issues, Sprints, and Epics.\nDocumented local artifact write behavior and live GitHub issue\/label mutation behavior.\nDocumented live GitHub approval requirements with `--approve --approved-by name`.\nExplicitly rejected Task\/Issue Verified, Sprint Closed, Epic Closed, policy configuration, destructive, and human-only acceptance operations for AICockpit.\nLinked the mutation command contract from `AICockpit\/docs\/AgentUsage.md`.",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Tasks\/Task-unverified.md"
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0086-0100.md"
   },
   "notes" : [
 
   ],
   "priority" : "high",
-  "rationale" : "AICockpit needs explicit command contracts for creating and updating work items locally and on GitHub.",
+  "rationale" : "",
   "requirementIDs" : [
 
   ],
@@ -46,7 +41,7 @@
       "rawValue" : "T-0091"
     },
     "kind" : "task",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Define AICockpit work item mutation command contract"
   }
 }

@@ -1,36 +1,31 @@
 {
   "acceptanceCriteria" : [
-    "Tests prove AICockpit cannot apply Task or Issue Verified.",
-    "Tests prove AgileCockpit can apply Task or Issue Verified through human context.",
-    "Tests prove audit records distinguish agent and human mutation paths.",
-    "Tests prove unauthorized Sprint\/Epic closure remains blocked."
+
   ],
-  "component" : "Verification",
+  "component" : "",
   "componentsAffected" : [
 
   ],
-  "dateImplemented" : "2026-06-14",
-  "dateRequested" : "2026-06-12",
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "implementationDetails" : "Added GitHub backend regression coverage proving LLM context cannot perform human verification.\nRetained AICockpit tests proving Task\/Issue Verified and Sprint\/Epic Closed statuses are rejected.\nAdded AgileCockpit tests proving human reviewer context can perform permitted verification mutations.",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Tasks\/Task-unverified.md"
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0086-0100.md"
   },
   "notes" : [
 
   ],
   "priority" : "high",
-  "rationale" : "The system must prove agent-facing and human-facing mutation authority are separated end to end.",
+  "rationale" : "",
   "requirementIDs" : [
 
   ],
@@ -46,7 +41,7 @@
       "rawValue" : "T-0100"
     },
     "kind" : "task",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Verify AICockpit and AgileCockpit authority separation"
   }
 }

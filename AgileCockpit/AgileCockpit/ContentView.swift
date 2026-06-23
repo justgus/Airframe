@@ -176,7 +176,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.records = loadedRecords
         let dashboardData = Self.dashboardData(
             backendRecords: loadedRecords,
-            artifactRootURL: artifactRootURL
+            artifactRootURL: artifactRootURL,
+            preferBackendRecords: self.canonicalRepository != nil
         )
         self.dashboardRecords = dashboardData.records
         self.dashboardDetailTextByID = dashboardData.detailTextByID
@@ -568,28 +569,17 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "\(criterion.id.rawValue) is already verified."
             return
         }
-        guard let activeEpicID = context.project.activeEpicID else {
+        guard context.project.activeEpicID != nil else {
             statusMessage = "No active Epic is configured."
             return
         }
 
         do {
-            if let canonicalRepository {
-                try canonicalRepository.verifyEpicCriterion(id: criterion.id)
-            } else {
-                guard let artifactRootURL else {
-                    statusMessage = "Epic criteria verification requires a local Airframe artifact workspace."
-                    return
-                }
-                let epicFileURL = artifactRootURL.appending(path: "docs/Epics/Epic-active.md")
-                let contents = try String(contentsOf: epicFileURL, encoding: .utf8)
-                let updatedContents = try Self.markEpicAcceptanceCriterionVerified(
-                    criterion.id,
-                    epicID: activeEpicID,
-                    in: contents
-                )
-                try updatedContents.write(to: epicFileURL, atomically: true, encoding: .utf8)
+            guard let canonicalRepository else {
+                statusMessage = "Epic criteria verification requires canonical Airframe state."
+                return
             }
+            try canonicalRepository.verifyEpicCriterion(id: criterion.id)
             auditStore.record(
                 id: AirframeID("AUD-AGILE-\(auditStore.events.count + 1)"),
                 context: reviewerContext,
@@ -620,28 +610,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
             return
         }
         do {
-            if canonicalRepository != nil {
-                try backend.transitionWorkItem(
-                    id: activeSprintID,
-                    to: .review,
-                    context: reviewerContext,
-                    targetProjectID: context.project.id
-                )
-            } else {
-                guard let artifactRootURL else {
-                    statusMessage = "Sprint close requires a local Airframe artifact workspace."
-                    return
-                }
-                let sprintFileURL = artifactRootURL.appending(path: "docs/Sprints/Sprint-active.md")
-                let contents = try String(contentsOf: sprintFileURL, encoding: .utf8)
-                let updatedContents = try Self.replacingArtifactStatus(
-                    for: activeSprintID,
-                    kind: .sprint,
-                    with: .review,
-                    in: contents
-                )
-                try updatedContents.write(to: sprintFileURL, atomically: true, encoding: .utf8)
+            guard let canonicalRepository else {
+                statusMessage = "Sprint close requires canonical Airframe state."
+                return
             }
+            try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .review)
             recordCloseAudit(action: "OP-HUMAN-CLOSE-SPRINT", workItemID: activeSprintID)
             try reload(selecting: selectedWorkItemID)
             statusMessage = "Sprint \(activeSprintID.rawValue) close accepted: moved to Review."
@@ -664,28 +637,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
             return
         }
         do {
-            if canonicalRepository != nil {
-                try backend.transitionWorkItem(
-                    id: activeEpicID,
-                    to: .closed,
-                    context: reviewerContext,
-                    targetProjectID: context.project.id
-                )
-            } else {
-                guard let artifactRootURL else {
-                    statusMessage = "Epic close requires a local Airframe artifact workspace."
-                    return
-                }
-                let epicFileURL = artifactRootURL.appending(path: "docs/Epics/Epic-active.md")
-                let contents = try String(contentsOf: epicFileURL, encoding: .utf8)
-                let updatedContents = try Self.replacingArtifactStatus(
-                    for: activeEpicID,
-                    kind: .epic,
-                    with: .closed,
-                    in: contents
-                )
-                try updatedContents.write(to: epicFileURL, atomically: true, encoding: .utf8)
+            guard let canonicalRepository else {
+                statusMessage = "Epic close requires canonical Airframe state."
+                return
             }
+            try canonicalRepository.transitionWorkItem(id: activeEpicID, to: .closed)
             recordCloseAudit(action: "OP-HUMAN-CLOSE-EPIC", workItemID: activeEpicID)
             try reload(selecting: selectedWorkItemID)
             statusMessage = "Epic \(activeEpicID.rawValue) closed."
@@ -761,6 +717,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
+    @available(*, deprecated, message: "Markdown mutation helpers are retained only for migration compatibility; use AirframeCanonicalStoreRepository instead.")
     static func markEpicAcceptanceCriterionVerified(
         _ criterionID: AirframeID,
         epicID: AirframeID,
@@ -813,6 +770,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
+    @available(*, deprecated, message: "Markdown mutation helpers are retained only for migration compatibility; use AirframeCanonicalStoreRepository instead.")
     static func replacingArtifactStatus(
         for workItemID: AirframeID,
         kind: AirframeWorkItemKind,
@@ -928,7 +886,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         records = try backend.listWorkRecords()
         let dashboardData = Self.dashboardData(
             backendRecords: records,
-            artifactRootURL: artifactRootURL
+            artifactRootURL: artifactRootURL,
+            preferBackendRecords: canonicalRepository != nil
         )
         dashboardRecords = dashboardData.records
         dashboardDetailTextByID = dashboardData.detailTextByID
@@ -1062,7 +1021,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private static func dashboardData(
         backendRecords: [AirframeLocalWorkRecord],
-        artifactRootURL: URL?
+        artifactRootURL: URL?,
+        preferBackendRecords: Bool = false
     ) -> (records: [AirframeLocalWorkRecord], detailTextByID: [AirframeID: String]) {
         guard let artifactRootURL else {
             return (
@@ -1080,9 +1040,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
             $0.record.workItem.id.rawValue < $1.record.workItem.id.rawValue
         }
         let backendIDs = Set(backendRecords.map(\.workItem.id))
-        let mergedBackendRecords = backendRecords.map { backendRecord in
-            artifactRecordsByID[backendRecord.workItem.id]?.record ?? backendRecord
-        }
+        let mergedBackendRecords = preferBackendRecords
+            ? backendRecords
+            : backendRecords.map { backendRecord in
+                artifactRecordsByID[backendRecord.workItem.id]?.record ?? backendRecord
+            }
         var detailTextByID = Dictionary(
             uniqueKeysWithValues: backendRecords.map { ($0.workItem.id, detailText(for: $0)) }
         )

@@ -46,13 +46,13 @@
     "Granting AICockpit Sprint or Epic close authority.",
     "Automatic close without explicit human action.",
     "Creating GitHub issues for Epics or Sprints where no remote artifact store exists.",
-    "Reworking the already closed EP-017\/SP-017\/SP-018\/SP-019 history."
+    "Reworking the already closed EP-017 history."
   ],
   "owner" : "Human \/ Airframe Planning",
   "planningDocumentPaths" : [
 
   ],
-  "rationale" : "EP-017, SP-017, SP-018, and SP-019 established the workflow dashboard, mutation authority, and Task\/Issue verification flows. The remaining gap is that AgileCockpit still cannot help a human verify Epic acceptance criteria or close and archive a Sprint or Epic after the assigned work is complete.",
+  "rationale" : "The previous EP-017 Sprint series established the workflow dashboard, mutation authority, and Task\/Issue verification flows. The remaining gap is that AgileCockpit still cannot help a human verify Epic acceptance criteria or close and archive a Sprint or Epic after the assigned work is complete.",
   "scope" : [
     "Add an Epic Acceptance Criteria tab to the Sprint & Epic panel.",
     "Show each Epic acceptance criterion and allow it to be marked verified by a human reviewer.",
@@ -62,15 +62,6 @@
     "Preserve existing human-only authority boundaries and keep agent-facing tools out of the close path."
   ],
   "sprintIDs" : [
-    {
-      "rawValue" : "SP-017"
-    },
-    {
-      "rawValue" : "SP-018"
-    },
-    {
-      "rawValue" : "SP-019"
-    },
     {
       "rawValue" : "SP-020"
     },

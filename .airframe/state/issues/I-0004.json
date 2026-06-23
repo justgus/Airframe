@@ -2,31 +2,24 @@
   "affectedComponents" : [
 
   ],
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "expectedBehavior" : "Whenever the selected drill-down work item changes and the detail view refreshes, the detail pane should reset to the top of the newly selected item text.",
+  "expectedBehavior" : "",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Issues\/Issue-active.md"
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0001-0004.md"
   },
   "notes" : [
-    "Description: The AgileCockpit dashboard status drill-down detail pane retains its scroll position when the user selects a different work item. If the previous detail text was scrolled to the bottom, selecting another item opens the new detail text at the bottom instead of at the beginning.",
-    "Actual Behavior: The detail pane can remain scrolled to the bottom or another prior offset after selecting a different work item.",
-    "Steps to Reproduce: 1. Open AgileCockpit. 2. Click a dashboard status row with multiple work products. 3. Select a work product with enough detail text to scroll. 4. Scroll the detail pane to the bottom. 5. Select another work product in the list. 6. Observe that the new detail remains at the previous scroll offset instead of starting at the top.",
-    "Impact: - Reviewers can miss the start of the selected work product detail. - The detail refresh appears incomplete or stale because the pane does not present the beginning of the newly selected text.",
-    "Root Cause Analysis: The status drill-down detail view reused the same SwiftUI scroll view identity across different selected work items, so SwiftUI could preserve the previous scroll offset when the detail text changed.",
-    "Resolution: Scoped the detail view identity to the selected work item ID so selecting a different item reconstructs the detail scroll view at the top of the newly selected content.",
-    "Files Affected: - `AgileCockpit\/AgileCockpit\/ContentView.swift`: Added selection-scoped identity to `WorkDetail` for dashboard status detail rendering.",
-    "Verification: 1. Open a dashboard status drill-down with multiple work products. 2. Select one item and scroll the detail pane to the bottom. 3. Select a different item. 4. Confirm the detail pane resets to the top of the newly selected text.",
-    "Related Items: - EP-017 - SP-017 - T-0089"
+
   ],
   "observedBehavior" : "",
   "reproductionSteps" : [
@@ -42,7 +35,7 @@
       "rawValue" : "I-0004"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Status drill-down detail scroll position is retained across item selection"
   }
 }

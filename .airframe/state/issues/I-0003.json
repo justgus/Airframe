@@ -2,31 +2,24 @@
   "affectedComponents" : [
 
   ],
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "expectedBehavior" : "Selecting a Task or Issue in the status drill-down should show the matching local Markdown section from aggregate artifact files such as `docs\/Issues\/Issue-active.md`, `docs\/Issues\/Issue-backlog.md`, `docs\/Tasks\/Task-active.md`, `docs\/Tasks\/Task-backlog.md`, `docs\/Tasks\/Task-unverified.md`, and `docs\/Tasks\/Verified\/Task-verified-*.md` when available.",
+  "expectedBehavior" : "",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Issues\/Issue-active.md"
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0001-0004.md"
   },
   "notes" : [
-    "Description: The AgileCockpit dashboard status drill-down detail pane falls back to a synthetic field dump for Task and Issue records instead of using the source Markdown artifact sections. This omits the review history needed for work product inspection, including findings, root cause analysis, resolution notes, evidence, and verification instructions.",
-    "Actual Behavior: Task and Issue details may show only synthesized backend fields such as ID, kind, title, status, priority, and empty acceptance\/scope\/evidence placeholders. The source review log is not preserved in the detail pane for those records.",
-    "Steps to Reproduce: 1. Open AgileCockpit. 2. Click a dashboard status row containing Tasks or Issues. 3. Select a Task or Issue whose detailed record exists in an aggregate Markdown artifact. 4. Observe that the detail pane can show incomplete synthetic fallback text instead of the source artifact section.",
-    "Impact: - Reviewers cannot inspect the full work product history from the dashboard drill-down. - Findings, root cause analysis, resolution notes, evidence, and verification instructions can be hidden from the review surface. - The dashboard drill-down cannot serve as a reliable work product reference for Tasks and Issues.",
-    "Root Cause Analysis: Dashboard detail text was keyed from backend records first. For Task and Issue records that live inside aggregate Markdown files, the dashboard could fall back to synthesized record fields instead of extracting the matching Markdown section.",
-    "Resolution: Indexed local Task and Issue aggregate Markdown files by Airframe ID, preserved each matching heading section as the dashboard detail payload, used verified task batch files as the detail source for verified task rows, and retained synthesized fallback text only when no local artifact text exists.",
-    "Files Affected: - `AgileCockpit\/AgileCockpit\/ContentView.swift`: Added section-based local artifact records for Task and Issue aggregate files and merged artifact detail text ahead of backend fallback detail text. - `AgileCockpit\/AgileCockpitTests\/AgileCockpitTests.swift`: Added regression coverage for Issue section detail text, Task section detail text, and verified Task batch detail text.",
-    "Verification: 1. Open a dashboard status drill-down containing `I-0002`. 2. Select `I-0002`. 3. Confirm the detail pane shows the `Issue-active.md` section for `I-0002`, including description, root cause, resolution, evidence, and verification. 4. Select Tasks from active, backlog, unverified, and verified aggregate files. 5. Confirm each detail pane shows the matching artifact text rather than incomplete synthetic fallback text.",
-    "Related Items: - EP-017 - SP-017 - T-0089"
+
   ],
   "observedBehavior" : "",
   "reproductionSteps" : [
@@ -42,7 +35,7 @@
       "rawValue" : "I-0003"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Status drill-down detail pane uses incomplete fallback text for Tasks and Issues"
   }
 }

@@ -1,35 +1,31 @@
 {
   "acceptanceCriteria" : [
-    "AICockpit can create and update Sprint backlog and Planning records.",
-    "AICockpit can create and update Epic Proposed, Draft, Backlog, and Active records where policy allows.",
-    "AICockpit cannot perform human-only Sprint or Epic closure."
+
   ],
-  "component" : "AICockpit \/ AirframeCore",
+  "component" : "",
   "componentsAffected" : [
 
   ],
-  "dateImplemented" : "2026-06-14",
-  "dateRequested" : "2026-06-12",
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "implementationDetails" : "Allowed the local backend to store Sprint and Epic work records.\nAdded AICockpit `sprint create`, `sprint update`, `sprint status`, `epic create`, `epic update`, and `epic status` commands.\nSupported Sprint Backlog, Planning, Active, and Review statuses.\nSupported Epic Proposed, Draft, Backlog, Active, and Complete statuses.\nRejected Sprint Closed and Epic Closed through AICockpit as human-only closure operations.",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Tasks\/Task-unverified.md"
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0086-0100.md"
   },
   "notes" : [
 
   ],
   "priority" : "high",
-  "rationale" : "Planning work should be manageable through AICockpit without granting human-only closure authority.",
+  "rationale" : "",
   "requirementIDs" : [
 
   ],
@@ -45,7 +41,7 @@
       "rawValue" : "T-0094"
     },
     "kind" : "task",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Add AICockpit Sprint and Epic planning mutation support"
   }
 }

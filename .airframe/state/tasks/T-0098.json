@@ -1,35 +1,31 @@
 {
   "acceptanceCriteria" : [
-    "AgileCockpit can apply status-verified to mapped Task GitHub Issues through human context.",
-    "AgileCockpit can apply status-verified to mapped Issue GitHub Issues through human context.",
-    "GitHub verification writes produce audit evidence."
+
   ],
-  "component" : "AgileCockpit \/ AirframeCore GitHub Backend",
+  "component" : "",
   "componentsAffected" : [
 
   ],
-  "dateImplemented" : "2026-06-14",
-  "dateRequested" : "2026-06-12",
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "implementationDetails" : "Added GitHub-backed human verification mutation support to the GitHub Issues backend.\nRequired controlled mutations and human reviewer context before replacing GitHub status labels.\nAdded in-memory transport tests covering GitHub label replacement and reviewer audit context.",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Tasks\/Task-unverified.md"
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0086-0100.md"
   },
   "notes" : [
 
   ],
   "priority" : "high",
-  "rationale" : "Human verification in AgileCockpit must synchronize status-verified to mapped GitHub Issues when using the GitHub backend.",
+  "rationale" : "",
   "requirementIDs" : [
 
   ],
@@ -45,7 +41,7 @@
       "rawValue" : "T-0098"
     },
     "kind" : "task",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Implement AgileCockpit controlled GitHub verification mutations"
   }
 }

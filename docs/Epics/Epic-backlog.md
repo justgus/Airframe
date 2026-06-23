@@ -87,7 +87,7 @@ TBD.
 Add human-facing AgileCockpit controls for Sprint and Epic status mutation, including Epic acceptance-criteria verification, Sprint close gating, and Epic close gating with archive updates.
 
 **Rationale:**
-EP-017, SP-017, SP-018, and SP-019 established the workflow dashboard, mutation authority, and Task/Issue verification flows. The remaining gap is that AgileCockpit still cannot help a human verify Epic acceptance criteria or close and archive a Sprint or Epic after the assigned work is complete.
+The previous EP-017 Sprint series established the workflow dashboard, mutation authority, and Task/Issue verification flows. The remaining gap is that AgileCockpit still cannot help a human verify Epic acceptance criteria or close and archive a Sprint or Epic after the assigned work is complete.
 
 **Scope:**
 - Add an Epic Acceptance Criteria tab to the Sprint & Epic panel.
@@ -101,7 +101,7 @@ EP-017, SP-017, SP-018, and SP-019 established the workflow dashboard, mutation 
 - Granting AICockpit Sprint or Epic close authority.
 - Automatic close without explicit human action.
 - Creating GitHub issues for Epics or Sprints where no remote artifact store exists.
-- Reworking the already closed EP-017/SP-017/SP-018/SP-019 history.
+- Reworking the already closed EP-017 history.
 
 **Acceptance Criteria:**
 1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated tab or equivalent panel.

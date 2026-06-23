@@ -45,14 +45,13 @@ No Sprints are currently Active.
 
 ## Review Sprints
 
-Currently: **2 review Sprints**
+Currently: **0 review Sprints**
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-017 | Workflow Status Dashboard | EP-017 | [Review/Sprint-SP-017.md](Review/Sprint-SP-017.md) | Review |
-| SP-018 | AICockpit Work Item Mutation Support | EP-017 | [Review/Sprint-SP-018.md](Review/Sprint-SP-018.md) | Review |
+No Sprints are currently in Review.
 
-See: [Review/Sprint-SP-017.md](Review/Sprint-SP-017.md) | [Review/Sprint-SP-018.md](Review/Sprint-SP-018.md)
+See: [Closed/Sprint-SP-017.md](Closed/Sprint-SP-017.md) | [Closed/Sprint-SP-018.md](Closed/Sprint-SP-018.md)
 
 ## All Sprints
 
@@ -76,8 +75,8 @@ Currently: **28 Sprints** | Next available: **SP-029**
 | SP-014 | End-to-End Live Demo Rehearsal | EP-014 | T-0071, T-0072, T-0073, T-0074, T-0075 | None | Closed |
 | SP-015 | Human Planning Controls for Agile Artifacts | EP-015 | T-0076, T-0077, T-0078, T-0079, T-0080 | None | Closed |
 | SP-016 | Refresh Synchronization for AgileCockpit | EP-016 | T-0081, T-0082, T-0083, T-0084, T-0085 | None | Closed |
-| SP-017 | Workflow Status Dashboard | EP-017 | T-0086, T-0087, T-0088, T-0089, T-0090 | None | Review |
-| SP-018 | AICockpit Work Item Mutation Support | EP-017 | T-0091, T-0092, T-0093, T-0094, T-0095 | None | Review |
+| SP-017 | Workflow Status Dashboard | EP-017 | T-0086, T-0087, T-0088, T-0089, T-0090 | I-0001, I-0002, I-0003, I-0004 | Closed |
+| SP-018 | AICockpit Work Item Mutation Support | EP-017 | T-0091, T-0092, T-0093, T-0094, T-0095 | None | Closed |
 | SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Closed |
 | SP-020 | Epic Acceptance-Criteria Model and Eligibility | EP-018 | T-0101, T-0102, T-0103 | None | Closed |
 | SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | T-0104, T-0105, T-0106 | I-0005, I-0006 | Closed |
@@ -95,8 +94,8 @@ Currently: **28 Sprints** | Next available: **SP-029**
 - **Backlog:** 3
 - **Planning:** 0
 - **Active:** 0
-- **Review:** 2
-- **Closed:** 23
+- **Review:** 0
+- **Closed:** 25
 - **Next available:** SP-029
 
-*Last Updated: 2026-06-23 (SP-028 closed)*
+*Last Updated: 2026-06-23 (historical EP-017 Sprints reconciled)*

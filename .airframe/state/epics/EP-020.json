@@ -28,6 +28,7 @@
       "rawValue" : "EP-020-AC-09"
     }
   ],
+  "closeDate" : "2026-06-23",
   "goal" : "Move Airframe workflow state from Markdown-authored artifacts to AirframeCore-owned canonical structured records, with validation diagnostics, migration support, generated documentation projections, and repo-coupled history.",
   "issueIDs" : [
     {
@@ -43,10 +44,11 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Epics\/Epic-active.md"
+    "source" : "docs\/Epics\/Closed\/Epic-EP-020.md"
   },
   "notes" : [
-    "Acceptance Criteria: 1. AirframeCore defines canonical Codable records for core work products, workflow policy, evidence summaries, and audit events. 2. AirframeCore can load and validate a repo-local canonical workflow store. 3. AirframeCore diagnostics detect invalid active\/backlog\/closed states and relationship drift. 4. Existing Markdown work artifacts can be imported into canonical records with stable IDs preserved. 5. Markdown documentation can be generated deterministically from canonical records. 6. AICockpit reads project summaries and task packets from canonical records without reparsing Markdown as the primary state source. 7. AgileCockpit dashboard and planning views can render from canonical records. 8. Human-only transitions remain blocked outside human-authorized AgileCockpit workflows. 9. Tests cover canonical load, validation, import, projection, and authority-preserving mutation behavior."
+    "Scope Completed: - Canonical AirframeCore record models were defined for Workspace, Project, Epic, Sprint, Task, Issue, acceptance criteria, evidence summaries, audit events, backend mappings, workflow definitions, and workflow transitions. - The repo-local structured store was implemented as one JSON file per canonical record kind. - Epic, Sprint, Task, and Issue workflow policies were encoded in AirframeCore instead of relying on guideline Markdown as authority. - Validation diagnostics were added for active\/backlog\/closed inconsistencies, relationship drift, invalid configured active work, and unsupported human-only mutations. - Import support from the current Markdown artifacts into canonical records was added. - Deterministic Markdown projection support for human-readable documentation was added. - AICockpit now queries canonical records for discovery, summaries, and task packets. - AgileCockpit now reads canonical records for dashboard and planning views. - Human-only authority boundaries remain enforced for verification, Sprint closure, Epic closure, destructive repair, and policy mutation.",
+    "Acceptance Criteria: 1. [x] AirframeCore defines canonical Codable records for core work products, workflow policy, evidence summaries, and audit events. 2. [x] AirframeCore can load and validate a repo-local canonical workflow store. 3. [x] AirframeCore diagnostics detect invalid active\/backlog\/closed states and relationship drift. 4. [x] Existing Markdown work artifacts can be imported into canonical records with stable IDs preserved. 5. [x] Markdown documentation can be generated deterministically from canonical records. 6. [x] AICockpit reads project summaries and task packets from canonical records without reparsing Markdown as the primary state source. 7. [x] AgileCockpit dashboard and planning views can render from canonical records. 8. [x] Human-only transitions remain blocked outside human-authorized AgileCockpit workflows. 9. [x] Tests cover canonical load, validation, import, projection, and authority-preserving mutation behavior."
   ],
   "outOfScope" : [
     "Native DOORS or enterprise requirements-tool integration.",
@@ -61,17 +63,9 @@
     "..\/requirements\/CanonicalWorkflowState_Requirements.md",
     "..\/architecture\/CanonicalWorkflowState_Storage_Trade_Study.md"
   ],
-  "rationale" : "EP-018 exposed that Markdown artifacts currently act as both human-readable documentation and mutable canonical state. That makes Airframe vulnerable to inconsistent states where an Epic, Sprint, Task, Issue, index, workspace configuration, and GitHub label disagree. Airframe needs a canonical repo-local state model owned by AirframeCore so workflow state evolves with the source code and remains valid across branches, forks, checkouts, reverts, and release tags.",
+  "rationale" : "EP-018 exposed that Markdown artifacts currently act as both human-readable documentation and mutable canonical state. That made Airframe vulnerable to inconsistent states where an Epic, Sprint, Task, Issue, index, workspace configuration, and GitHub label disagreed. Airframe now owns a canonical repo-local state model in AirframeCore so workflow state evolves with the source code and remains valid across branches, forks, checkouts, reverts, and release tags.",
   "scope" : [
-    "Define canonical AirframeCore record models for Workspace, Project, Epic, Sprint, Task, Issue, acceptance criteria, evidence summaries, audit events, backend mappings, workflow definitions, and workflow transitions.",
-    "Select and implement the initial repo-local structured store shape, expected to start as one JSON file per canonical record unless the storage trade study changes direction.",
-    "Encode current Epic, Sprint, Task, and Issue workflow policies in AirframeCore instead of relying on guideline Markdown as authority.",
-    "Add validation diagnostics for active\/backlog\/closed inconsistencies, relationship drift, invalid configured active work, and unsupported human-only mutations.",
-    "Add import support from the current Markdown artifacts into canonical records.",
-    "Add deterministic Markdown projection support for human-readable documentation.",
-    "Update AICockpit to query canonical records for discovery, summaries, and task packets.",
-    "Update AgileCockpit to read canonical records for dashboard and planning views.",
-    "Preserve human-only authority boundaries for verification, Sprint closure, Epic closure, destructive repair, and policy mutation."
+
   ],
   "sprintIDs" : [
     {
@@ -88,6 +82,7 @@
     }
   ],
   "startDate" : "2026-06-17",
+  "targetCloseDate" : "2026-06-23",
   "taskIDs" : [
     {
       "rawValue" : "T-0116"
@@ -143,7 +138,7 @@
       "rawValue" : "EP-020"
     },
     "kind" : "epic",
-    "status" : "active",
+    "status" : "closed",
     "title" : "Canonical Airframe Workflow State"
   }
 }

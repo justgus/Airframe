@@ -94,7 +94,7 @@ import Foundation
 }
 
 @MainActor
-@Test func agileCockpitVerifiesSelectedEpicCriterionThroughLocalArtifactState() throws {
+@Test func agileCockpitVerifiesSelectedEpicCriterionThroughCanonicalState() throws {
     let configURL = try temporaryLiveConfigurationURL(
         activeSprintID: "SP-021",
         activeEpicID: "EP-018",
@@ -116,6 +116,7 @@ import Foundation
     1. [ ] AgileCockpit shows Epic acceptance criteria in a dedicated tab.
     2. [ ] A human can mark Epic acceptance criteria verified in the UI.
     """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
 
     let model = try AgileCockpitDashboardModel.configured(
         configurationURL: configURL,
@@ -126,8 +127,8 @@ import Foundation
     model.selectEpicAcceptanceCriterion(criterion)
     model.verifySelectedEpicAcceptanceCriterion()
 
-    let updated = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
-    #expect(updated.contains("1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated tab."))
+    let state = try AirframeCanonicalStoreRepository(rootURL: rootURL).loadState()
+    #expect(state.acceptanceCriteria.first?.isVerified == true)
     #expect(model.epicAcceptanceCriteriaSummary?.verifiedCount == 1)
     #expect(model.auditRows.last?.action == "OP-HUMAN-VERIFY-EPIC-CRITERION")
     #expect(model.statusMessage == "EP-018-AC-01 verified.")
@@ -1017,6 +1018,7 @@ import Foundation
         sprintIssueStatus: "Resolved - Verified",
         epicCriteria: ["[x] Criterion is verified."]
     )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
     let model = try AgileCockpitDashboardModel.configured(
         configurationURL: configURL,
         environment: [:]
@@ -1024,8 +1026,11 @@ import Foundation
 
     model.closeActiveSprint()
 
-    let sprintContents = try String(contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), encoding: .utf8)
-    #expect(sprintContents.contains("**Status:** Review"))
+    let sprintRecord = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+        .snapshot(project: model.context.project)
+        .sprints
+        .first { $0.workItem.id == AirframeID("SP-022") }
+    #expect(sprintRecord?.workItem.status == .review)
     #expect(model.activeSprintRecord?.workItem.status == .review)
     #expect(model.auditRows.last?.action == "OP-HUMAN-CLOSE-SPRINT")
     #expect(model.statusMessage == "Sprint SP-022 close accepted: moved to Review.")
@@ -1045,6 +1050,7 @@ import Foundation
         sprintIssueStatus: "Resolved - Verified",
         epicCriteria: ["[x] Verified criterion.", "[ ] Unverified criterion."]
     )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
     let blockedModel = try AgileCockpitDashboardModel.configured(
         configurationURL: configURL,
         environment: [:]
@@ -1063,6 +1069,7 @@ import Foundation
         sprintIssueStatus: "Resolved - Verified",
         epicCriteria: ["[x] Verified criterion.", "[x] Now verified criterion."]
     )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
     let eligibleModel = try AgileCockpitDashboardModel.configured(
         configurationURL: configURL,
         environment: [:]
@@ -1070,8 +1077,11 @@ import Foundation
 
     eligibleModel.closeActiveEpic()
 
-    epicContents = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
-    #expect(epicContents.contains("**Status:** Closed"))
+    let epicRecord = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+        .snapshot(project: eligibleModel.context.project)
+        .epics
+        .first { $0.workItem.id == AirframeID("EP-018") }
+    #expect(epicRecord?.workItem.status == .closed)
     #expect(eligibleModel.activeEpicRecord?.workItem.status == .closed)
     #expect(eligibleModel.auditRows.last?.action == "OP-HUMAN-CLOSE-EPIC")
     #expect(eligibleModel.statusMessage == "Epic EP-018 closed.")
@@ -1193,6 +1203,30 @@ private func writeCloseActionWorkspace(
     **Epic:** EP-018
     **Sprint Assigned:** SP-022
     """.write(to: rootURL.appending(path: "docs/Issues/Issue-active.md"), atomically: true, encoding: .utf8)
+}
+
+private func importMarkdownFixturesIntoCanonicalState(rootURL: URL, configURL: URL) throws {
+    let context = try AirframeRuntimeConfigurationResolver().loadContext(explicitPath: configURL.path)
+    let fileManager = FileManager.default
+    let paths = [
+        "docs/Epics/Epic-active.md",
+        "docs/Sprints/Sprint-active.md",
+        "docs/Tasks/Task-active.md",
+        "docs/Issues/Issue-active.md"
+    ]
+    let documents = try paths.compactMap { path -> AirframeMarkdownDocument? in
+        let url = rootURL.appending(path: path)
+        guard fileManager.fileExists(atPath: url.path) else { return nil }
+        return AirframeMarkdownDocument(
+            sourcePath: path,
+            markdown: try String(contentsOf: url, encoding: .utf8)
+        )
+    }
+    let result = AirframeMarkdownArtifactImporter().importDocuments(documents)
+    try AirframeCanonicalStoreRepository(rootURL: rootURL).saveImportedState(
+        result,
+        context: context
+    )
 }
 
 private func liveConfigurationData(backendKind: String) -> Data {

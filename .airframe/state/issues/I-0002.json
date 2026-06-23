@@ -2,31 +2,24 @@
   "affectedComponents" : [
 
   ],
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "expectedBehavior" : "The detail pane should present the entire contents of the local work-product file or equivalent full text, not just selected summary fields.",
+  "expectedBehavior" : "",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Issues\/Issue-active.md"
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0001-0004.md"
   },
   "notes" : [
-    "Description: The status drill-down detail pane shows only a subset of a work product's fields. The UI needs to expose the full local work-product text so the selected Epic, Sprint, Task, or Issue can be read end to end from the dashboard.",
-    "Actual Behavior: Only some fields are shown in the detail pane.",
-    "Steps to Reproduce: 1. Open AgileCockpit. 2. Click a dashboard status row with one or more work products. 3. Select a work product. 4. Observe the detail pane on the right.",
-    "Impact: - Users cannot inspect the complete work product from the dashboard drill-down. - The dashboard cannot serve as a full reference point for the selected local artifact.",
-    "Root Cause Analysis: The detail pane was built from a partial field summary rather than the full source text of the selected work product.",
-    "Resolution: The detail pane now renders the full source text for the selected local artifact when available, and a full text dump of the work record fields otherwise.",
-    "Files Affected: - `AgileCockpit\/AgileCockpit\/ContentView.swift`: Added full-detail text aggregation and switched the drill-down pane to render the complete text payload.",
-    "Verification: 1. Open a dashboard status drill-down with a local Epic or Sprint artifact. 2. Confirm the detail pane shows the full file text. 3. Confirm the full text can be read and scrolled end to end.",
-    "Related Items: - EP-017 - SP-017 - T-0089"
+
   ],
   "observedBehavior" : "",
   "reproductionSteps" : [
@@ -42,7 +35,7 @@
       "rawValue" : "I-0002"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Status drill-down detail pane omits full work product text"
   }
 }

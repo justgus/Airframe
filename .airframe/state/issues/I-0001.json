@@ -2,31 +2,24 @@
   "affectedComponents" : [
 
   ],
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "expectedBehavior" : "The popup should show no selected-row highlight until a work item is selected. After selection, only the selected work item row should be highlighted.",
+  "expectedBehavior" : "",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Issues\/Issue-active.md"
+    "source" : "docs\/Issues\/Verified\/Issue-verified-0001-0004.md"
   },
   "notes" : [
-    "Description: The dashboard status drill-down popup displays a large blue rectangle at the top of each work product list. The rectangle looks like a selection indicator, but it is visible before a meaningful work product selection has been made.",
-    "Actual Behavior: A stroked blue focus rectangle appears as the first element in every popup work product list. It does not move when the selected work product changes and is visually distinct from the filled selected-row highlight.",
-    "Steps to Reproduce: 1. Open AgileCockpit. 2. Click a dashboard status row with one or more work products. 3. Observe the top of the popup work product list before selecting a work item.",
-    "Impact: - The popup looks broken. - The selection affordance is misleading and distracts from the work product list.",
-    "Root Cause Analysis: The work product rows are rendered as SwiftUI `Button` views. On macOS, the popover gives keyboard focus to the first focusable button and draws a stroked focus ring around it. That focus ring is not the app's selected-row highlight and does not track `selectedStatusWorkItemID`.",
-    "Resolution: Disabled focusability on the status drill-down row buttons so macOS does not draw the persistent first-row focus ring. The app's filled selected-row highlight remains tied to the clicked work product.",
-    "Files Affected: - `AgileCockpit\/AgileCockpit\/ContentView.swift`: Disabled focusability on status drill-down row buttons, removed default first-item selection on status drill-down open, and kept row highlight rendering behind a concrete selected ID check. - `AgileCockpit\/AgileCockpitTests\/AgileCockpitTests.swift`: Added regression coverage that opening a status drill-down does not preselect a work item.",
-    "Verification: 1. Open a dashboard status drill-down with multiple work products. 2. Confirm no stray blue rectangle appears before selection. 3. Click different work products and confirm the highlight follows only the selected row.",
-    "Related Items: - EP-017 - SP-017 - T-0089"
+
   ],
   "observedBehavior" : "",
   "reproductionSteps" : [
@@ -42,7 +35,7 @@
       "rawValue" : "I-0001"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Dashboard status drill-down shows stray blue selection rectangle"
   }
 }

@@ -42,31 +42,17 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **15 unverified Tasks**
+Currently: **0 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0086 | #86 | Reconcile Agile artifact workflow documentation and process guardrails | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0087 | #87 | Define artifact-specific status presentation model | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0088 | #88 | Replace dashboard metrics with workflow status tiles | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0089 | #89 | Add interactive dashboard status drill-down | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0090 | #90 | Verify dashboard workflow and integrate draft patch | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0091 | #91 | Define AICockpit work item mutation command contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0092 | #92 | Implement AICockpit local work item mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0093 | #93 | Implement controlled GitHub work item mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0095 | #95 | Verify AICockpit mutation authority boundaries | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0096 | #96 | Define AgileCockpit human mutation authority contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0097 | #97 | Implement AgileCockpit local verification mutations | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+No Tasks are currently implemented and awaiting verification.
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **107 verified Tasks** | Next available: **T-0132**
+Currently: **122 verified Tasks** | Next available: **T-0132**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -145,6 +131,21 @@ Currently: **107 verified Tasks** | Next available: **T-0132**
 | T-0073 | #72 | Rehearse AgileCockpit live project review workflow | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
 | T-0074 | #74 | Verify controlled GitHub write demo with explicit approval | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
 | T-0075 | #73 | Document final live demo runbook and rollback notes | [Task-verified-0071-0075.md](Verified/Task-verified-0071-0075.md) | Implemented - Verified |
+| T-0086 | #86 | Reconcile Agile artifact workflow documentation and process guardrails | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0087 | #87 | Define artifact-specific status presentation model | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0088 | #88 | Replace dashboard metrics with workflow status tiles | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0089 | #89 | Add interactive dashboard status drill-down | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0090 | #90 | Verify dashboard workflow and integrate draft patch | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0091 | #91 | Define AICockpit work item mutation command contract | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0092 | #92 | Implement AICockpit local work item mutation support | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0093 | #93 | Implement controlled GitHub work item mutation support | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0095 | #95 | Verify AICockpit mutation authority boundaries | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0096 | #96 | Define AgileCockpit human mutation authority contract | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0097 | #97 | Implement AgileCockpit local verification mutations | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
+| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | [Task-verified-0086-0100.md](Verified/Task-verified-0086-0100.md) | Implemented - Verified |
 | T-0101 | #105 | Define Epic acceptance criteria verification model | [Task-verified-0101-0103.md](Verified/Task-verified-0101-0103.md) | Implemented - Verified |
 | T-0102 | #106 | Extend planning model for Epic and Sprint close eligibility | [Task-verified-0101-0103.md](Verified/Task-verified-0101-0103.md) | Implemented - Verified |
 | T-0103 | #107 | Add Epic acceptance-criteria loading and summary rendering | [Task-verified-0101-0103.md](Verified/Task-verified-0101-0103.md) | Implemented - Verified |
@@ -173,9 +174,9 @@ Currently: **107 verified Tasks** | Next available: **T-0132**
 - **Total Tasks:** 131
 - **Backlog:** 9
 - **Active:** 0
-- **Unverified:** 15
-- **Verified:** 107
+- **Unverified:** 0
+- **Verified:** 122
 - **Closed:** 0
 - **Next available:** T-0132
 
-*Last Updated: 2026-06-23 (T-0128 through T-0131 verified by human direction)*
+*Last Updated: 2026-06-23 (historical EP-017 Tasks reconciled)*

@@ -5,14 +5,14 @@
   "id" : {
     "rawValue" : "EP-020-AC-08"
   },
-  "isVerified" : false,
+  "isVerified" : true,
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Epics\/Epic-active.md"
+    "source" : "docs\/Epics\/Closed\/Epic-EP-020.md"
   },
   "ownerID" : {
     "rawValue" : "EP-020"

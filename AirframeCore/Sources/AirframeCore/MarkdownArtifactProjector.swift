@@ -77,7 +77,7 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
             "",
             "**Status:** \(record.workItem.status.description)",
             "**GitHub Issue:** \(record.workItem.githubIssue.map { "#\($0)" } ?? "TBD")",
-            "**Component:** \(record.component)",
+            "**Component:** \(record.component.isEmpty ? "TBD" : record.component)",
             "**Priority:** \(record.priority.description)",
             "**Epic:** \(record.epicID?.rawValue ?? "TBD")",
             "**Sprint Assigned:** \(record.sprintID?.rawValue ?? "TBD")",

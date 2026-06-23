@@ -2,26 +2,24 @@
   "acceptanceCriteria" : [
 
   ],
-  "component" : "AgileCockpit",
+  "component" : "",
   "componentsAffected" : [
 
   ],
-  "dateImplemented" : "2026-06-12",
-  "dateRequested" : "2026-06-12",
+  "dateVerified" : "2026-06-23",
   "epicID" : {
     "rawValue" : "EP-017"
   },
   "evidenceIDs" : [
 
   ],
-  "implementationDetails" : "Status rows open a drill-down popover with matching item IDs and titles.\nSelecting an item displays rendered work item details.\nDrill-down is backed by the shared AirframeCore status summary model.\nAgileCockpit now supplements backend Task\/Issue records with local Epic and Sprint artifact records for dashboard status tiles, so GitHub Issues mode can show active and backlog Epic\/Sprint counts even when Epics and Sprints are represented by labels and Markdown artifacts rather than standalone GitHub issues.\nUpdated the live workspace configuration to identify EP-017 and SP-017 as the active Epic and Sprint.\nThe drill-down popover dismisses on outside click using native popover behavior.\nThe drill-down item list is scrollable for large result sets.\nThe selected item highlight now follows the selected work item when a different row is clicked.",
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Tasks\/Task-unverified.md"
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0086-0100.md"
   },
   "notes" : [
 
@@ -43,7 +41,7 @@
       "rawValue" : "T-0089"
     },
     "kind" : "task",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Add interactive dashboard status drill-down"
   }
 }

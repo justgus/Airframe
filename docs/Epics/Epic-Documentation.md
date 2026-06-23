@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Epics. Epics are implementation milest
 
 ## Active Epics
 
-Currently: **1 active Epic**
+Currently: **0 active Epics**
 
 See: [Epic-active.md](Epic-active.md)
 
@@ -47,7 +47,7 @@ Currently: **21 Epics** | Next available: **EP-022**
 | EP-017 | Workflow Status Dashboard and Mutation Authority | Closed | 2026-06-12 | 2026-06-14 |
 | EP-018 | AgileCockpit Sprint and Epic Status Controls | Backlog | 2026-06-15 | TBD |
 | EP-019 | Airframe Offline-Only Operation | Backlog | TBD | TBD |
-| EP-020 | Canonical Airframe Workflow State | Active | 2026-06-17 | TBD |
+| EP-020 | Canonical Airframe Workflow State | Closed | 2026-06-17 | 2026-06-23 |
 | EP-021 | Requirements Traceability and Release Evidence | Backlog | TBD | TBD |
 
 ## Statistics
@@ -55,10 +55,10 @@ Currently: **21 Epics** | Next available: **EP-022**
 - **Total Epics:** 21
 - **Proposed:** 0
 - **Draft:** 0
-- **Active:** 1
+- **Active:** 0
 - **Complete pending close:** 0
-- **Closed:** 17
+- **Closed:** 18
 - **Backlog:** 3
 - **Next available:** EP-022
 
-*Last Updated: 2026-06-18 (SP-027 archived and SP-028 activated)*
+*Last Updated: 2026-06-23 (EP-020 closed)*

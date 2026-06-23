@@ -6,8 +6,8 @@ Currently: **131 total Tasks**
 | ------ | ----- |
 | Backlog | 9 |
 | Active | 0 |
-| Implemented - Not Verified | 15 |
-| Implemented - Verified | 107 |
+| Implemented - Not Verified | 0 |
+| Implemented - Verified | 122 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -97,21 +97,21 @@ Currently: **131 total Tasks**
 | T-0083 | #84 | Emit refresh after successful AICockpit mutations | Implemented - Verified |
 | T-0084 | #85 | Reload AgileCockpit from source of truth after refresh signals and file changes | Implemented - Verified |
 | T-0085 | #83 | Verify refresh synchronization and document evidence | Implemented - Verified |
-| T-0086 | #86 | Reconcile Agile artifact workflow documentation and process guardrails | Implemented - Not Verified |
-| T-0087 | #87 | Define artifact-specific status presentation model | Implemented - Not Verified |
-| T-0088 | #88 | Replace dashboard metrics with workflow status tiles | Implemented - Not Verified |
-| T-0089 | #89 | Add interactive dashboard status drill-down | Implemented - Not Verified |
-| T-0090 | #90 | Verify dashboard workflow and integrate draft patch | Implemented - Not Verified |
-| T-0091 | #91 | Define AICockpit work item mutation command contract | Implemented - Not Verified |
-| T-0092 | #92 | Implement AICockpit local work item mutation support | Implemented - Not Verified |
-| T-0093 | #93 | Implement controlled GitHub work item mutation support | Implemented - Not Verified |
-| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | Implemented - Not Verified |
-| T-0095 | #95 | Verify AICockpit mutation authority boundaries | Implemented - Not Verified |
-| T-0096 | #96 | Define AgileCockpit human mutation authority contract | Implemented - Not Verified |
-| T-0097 | #97 | Implement AgileCockpit local verification mutations | Implemented - Not Verified |
-| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | Implemented - Not Verified |
-| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | Implemented - Not Verified |
-| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | Implemented - Not Verified |
+| T-0086 | #86 | Reconcile Agile artifact workflow documentation and process guardrails | Implemented - Verified |
+| T-0087 | #87 | Define artifact-specific status presentation model | Implemented - Verified |
+| T-0088 | #88 | Replace dashboard metrics with workflow status tiles | Implemented - Verified |
+| T-0089 | #89 | Add interactive dashboard status drill-down | Implemented - Verified |
+| T-0090 | #90 | Verify dashboard workflow and integrate draft patch | Implemented - Verified |
+| T-0091 | #91 | Define AICockpit work item mutation command contract | Implemented - Verified |
+| T-0092 | #92 | Implement AICockpit local work item mutation support | Implemented - Verified |
+| T-0093 | #93 | Implement controlled GitHub work item mutation support | Implemented - Verified |
+| T-0094 | #94 | Add AICockpit Sprint and Epic planning mutation support | Implemented - Verified |
+| T-0095 | #95 | Verify AICockpit mutation authority boundaries | Implemented - Verified |
+| T-0096 | #96 | Define AgileCockpit human mutation authority contract | Implemented - Verified |
+| T-0097 | #97 | Implement AgileCockpit local verification mutations | Implemented - Verified |
+| T-0098 | #98 | Implement AgileCockpit controlled GitHub verification mutations | Implemented - Verified |
+| T-0099 | #99 | Add human verification UI flows for Tasks and Issues | Implemented - Verified |
+| T-0100 | #100 | Verify AICockpit and AgileCockpit authority separation | Implemented - Verified |
 | T-0101 | #105 | Define Epic acceptance criteria verification model | Implemented - Verified |
 | T-0102 | #106 | Extend planning model for Epic and Sprint close eligibility | Implemented - Verified |
 | T-0103 | #107 | Add Epic acceptance-criteria loading and summary rendering | Implemented - Verified |
