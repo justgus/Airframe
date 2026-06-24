@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **131 total Tasks**
+Currently: **142 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 9 |
+| Backlog | 1 |
 | Active | 0 |
-| Implemented - Not Verified | 0 |
-| Implemented - Verified | 122 |
+| Implemented - Not Verified | 16 |
+| Implemented - Verified | 125 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -118,14 +118,14 @@ Currently: **131 total Tasks**
 | T-0104 | #108 | Add Epic Acceptance Criteria tab to the planning panel | Implemented - Verified |
 | T-0105 | #110 | Add verification actions for Epic acceptance criteria | Implemented - Verified |
 | T-0106 | #109 | Add accessibility, selection, and evidence behavior for the criteria tab | Implemented - Verified |
-| T-0107 | TBD | Gate Sprint close on verified Tasks and Issues | Backlog |
-| T-0108 | TBD | Gate Epic close on verified acceptance criteria | Backlog |
-| T-0109 | TBD | Add close-action messaging and disabled-state behavior | Backlog |
-| T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | Backlog |
-| T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | Backlog |
-| T-0112 | TBD | Rewrite sprint and epic index files on close | Backlog |
-| T-0113 | TBD | Add tests for Epic acceptance-criteria verification | Backlog |
-| T-0114 | TBD | Add tests for Sprint and Epic archive updates | Backlog |
+| T-0107 | TBD | Gate Sprint close on verified Tasks and Issues | Implemented - Not Verified |
+| T-0108 | TBD | Gate Epic close on verified acceptance criteria | Implemented - Not Verified |
+| T-0109 | TBD | Add close-action messaging and disabled-state behavior | Implemented - Not Verified |
+| T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | Implemented - Not Verified |
+| T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | Implemented - Not Verified |
+| T-0112 | TBD | Rewrite sprint and epic index files on close | Implemented - Not Verified |
+| T-0113 | TBD | Add tests for Epic acceptance-criteria verification | Implemented - Not Verified |
+| T-0114 | TBD | Add tests for Sprint and Epic archive updates | Implemented - Not Verified |
 | T-0115 | TBD | Add tests for offline local-only closeout behavior | Backlog |
 | T-0116 | #116 | Define canonical workflow record schemas | Implemented - Verified |
 | T-0117 | #117 | Implement repo-local JSON canonical store | Implemented - Verified |
@@ -143,3 +143,14 @@ Currently: **131 total Tasks**
 | T-0129 | #129 | Add AgileCockpit data health diagnostics surface | Implemented - Verified |
 | T-0130 | #130 | Add AgileCockpit repair preview flow for canonical diagnostics | Implemented - Verified |
 | T-0131 | #131 | Verify end-to-end canonical workflow state behavior | Implemented - Verified |
+| T-0132 | TBD | Define canonical requirement records | Implemented - Verified |
+| T-0133 | TBD | Implement requirement CSV and JSON interchange | Implemented - Verified |
+| T-0134 | TBD | Add import preview and conflict reporting | Implemented - Verified |
+| T-0135 | #134 | Implement traceability graph and bidirectional queries | Implemented - Verified |
+| T-0136 | #136 | Add traceability gap diagnostics | Implemented - Verified |
+| T-0137 | #135 | Add requirement revision and source metadata | Implemented - Verified |
+| T-0138 | TBD | Implement evidence summaries and CI artifact links | Implemented - Not Verified |
+| T-0139 | TBD | Add release scope and gate evaluation | Implemented - Not Verified |
+| T-0140 | TBD | Add AgileCockpit release gate and traceability views | Implemented - Not Verified |
+| T-0141 | TBD | Generate compliance and traceability documents | Implemented - Not Verified |
+| T-0142 | TBD | Add regression tests for import/export, traceability, and gates | Implemented - Not Verified |

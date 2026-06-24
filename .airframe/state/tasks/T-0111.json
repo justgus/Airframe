@@ -8,6 +8,7 @@
   "componentsAffected" : [
 
   ],
+  "dateImplemented" : "2026-06-23",
   "dateRequested" : "2026-06-14",
   "epicID" : {
     "rawValue" : "EP-018"
@@ -42,7 +43,7 @@
       "rawValue" : "T-0111"
     },
     "kind" : "task",
-    "status" : "backlog",
+    "status" : "implementedNotVerified",
     "title" : "Move closed Epic records into `docs\/Epics\/Closed\/`"
   }
 }

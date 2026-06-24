@@ -14,8 +14,12 @@
       },
       "name": "Agile Airframe",
       "repository": "justgus/Airframe",
-      "activeSprintID": null,
-      "activeEpicID": null
+      "activeSprintID": {
+        "rawValue": "SP-031"
+      },
+      "activeEpicID": {
+        "rawValue": "EP-021"
+      }
     }
   ],
   "defaultProjectID": {

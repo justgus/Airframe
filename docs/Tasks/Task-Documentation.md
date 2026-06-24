@@ -27,7 +27,6 @@ Currently: **9 backlog Tasks**
 | T-0113 | TBD | Add tests for Epic acceptance-criteria verification | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0114 | TBD | Add tests for Sprint and Epic archive updates | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0115 | TBD | Add tests for offline local-only closeout behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
-
 See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
@@ -42,17 +41,21 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **0 unverified Tasks**
+Currently: **5 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-No Tasks are currently implemented and awaiting verification.
+| T-0138 | TBD | Implement evidence summaries and CI artifact links | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0139 | TBD | Add release scope and gate evaluation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0140 | TBD | Add AgileCockpit release gate and traceability views | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0141 | TBD | Generate compliance and traceability documents | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0142 | TBD | Add regression tests for import/export, traceability, and gates | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **122 verified Tasks** | Next available: **T-0132**
+Currently: **128 verified Tasks** | Next available: **T-0143**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -168,15 +171,21 @@ Currently: **122 verified Tasks** | Next available: **T-0132**
 | T-0129 | #129 | Add AgileCockpit data health diagnostics surface | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
 | T-0130 | #130 | Add AgileCockpit repair preview flow for canonical diagnostics | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
 | T-0131 | #131 | Verify end-to-end canonical workflow state behavior | [Task-verified-0128-0131.md](Verified/Task-verified-0128-0131.md) | Implemented - Verified |
+| T-0132 | TBD | Define canonical requirement records | [Task-verified-0132-0134.md](Verified/Task-verified-0132-0134.md) | Implemented - Verified |
+| T-0133 | TBD | Implement requirement CSV and JSON interchange | [Task-verified-0132-0134.md](Verified/Task-verified-0132-0134.md) | Implemented - Verified |
+| T-0134 | TBD | Add import preview and conflict reporting | [Task-verified-0132-0134.md](Verified/Task-verified-0132-0134.md) | Implemented - Verified |
+| T-0135 | #134 | Implement traceability graph and bidirectional queries | [Task-verified-0135-0137.md](Verified/Task-verified-0135-0137.md) | Implemented - Verified |
+| T-0136 | #136 | Add traceability gap diagnostics | [Task-verified-0135-0137.md](Verified/Task-verified-0135-0137.md) | Implemented - Verified |
+| T-0137 | #135 | Add requirement revision and source metadata | [Task-verified-0135-0137.md](Verified/Task-verified-0135-0137.md) | Implemented - Verified |
 
 ## Statistics
 
-- **Total Tasks:** 131
+- **Total Tasks:** 142
 - **Backlog:** 9
 - **Active:** 0
-- **Unverified:** 0
-- **Verified:** 122
+- **Unverified:** 5
+- **Verified:** 128
 - **Closed:** 0
-- **Next available:** T-0132
+- **Next available:** T-0143
 
-*Last Updated: 2026-06-23 (historical EP-017 Tasks reconciled)*
+*Last Updated: 2026-06-24 (T-0135 through T-0137 verified)*

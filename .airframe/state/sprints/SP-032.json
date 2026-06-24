@@ -1,0 +1,36 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-021"
+  },
+  "goal" : "Generate compliance documents and regression coverage for the migration.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Sprint-backlog.md"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0141"
+    },
+    {
+      "rawValue" : "T-0142"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-032"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "Compliance Documents and Regression Coverage"
+  }
+}

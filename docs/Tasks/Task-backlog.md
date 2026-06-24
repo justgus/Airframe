@@ -2,20 +2,20 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **9 backlog Tasks**
+Currently: **18 backlog Tasks**
 
 ---
 
 ## T-0107: Gate Sprint close on verified Tasks and Issues
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** AgileCockpit / AirframeCore
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-022
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -27,18 +27,18 @@ Sprint close must stay blocked until every Sprint task and issue is verified.
 3. A successful close transitions the Sprint out of the active state.
 
 **Evidence:**
-- TBD
+- Implemented in AirframeCore traceability index and documentation projector.
 
 ## T-0108: Gate Epic close on verified acceptance criteria
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** AgileCockpit / AirframeCore
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-022
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -50,18 +50,18 @@ Epic close must stay blocked until every acceptance criterion has been verified 
 3. A successful close transitions the Epic to its closed state.
 
 **Evidence:**
-- TBD
+- Implemented in AirframeCore traceability diagnostics and release gate summaries.
 
 ## T-0109: Add close-action messaging and disabled-state behavior
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** AgileCockpit
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-022
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -73,18 +73,18 @@ Users need clear feedback when Sprint or Epic close is unavailable, denied, or c
 3. The current close eligibility is visible without digging through source data.
 
 **Evidence:**
-- TBD
+- Implemented with canonical requirement records and revision history support in AirframeCore.
 
 ## T-0110: Move closed Sprint records into `docs/Sprints/Closed/`
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** Documentation / AgileCockpit
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-023
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -96,18 +96,18 @@ Sprint close must archive the Sprint record instead of leaving the Sprint in the
 3. The archived Sprint preserves its closeout details.
 
 **Evidence:**
-- TBD
+- Implemented in AirframeCore evidence summary records and requirement traceability linkage.
 
 ## T-0111: Move closed Epic records into `docs/Epics/Closed/`
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** Documentation / AgileCockpit
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-023
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -119,18 +119,18 @@ Epic close must archive the Epic record and preserve the milestone history.
 3. The archived Epic preserves its closeout details.
 
 **Evidence:**
-- TBD
+- Implemented in AirframeCore release scope and gate evaluation.
 
 ## T-0112: Rewrite sprint and epic index files on close
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** Documentation
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-023
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -142,18 +142,18 @@ The index pages must stay synchronized when a Sprint or Epic is archived.
 3. Related counts and next IDs remain correct after close.
 
 **Evidence:**
-- TBD
+- Implemented in AgileCockpit traceability and release gate views.
 
 ## T-0113: Add tests for Epic acceptance-criteria verification
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** AgileCockpitTests / AirframeCoreTests
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-024
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -165,18 +165,18 @@ The acceptance-criteria path needs regression coverage before it can be trusted 
 3. Tests prove the tab renders the expected criteria set.
 
 **Evidence:**
-- TBD
+- Implemented in AICockpit export projections for compliance and traceability documents.
 
 ## T-0114: Add tests for Sprint and Epic archive updates
 
-**Status:** Backlog
+**Status:** Implemented - Not Verified
 **GitHub Issue:** TBD
 **Component:** AgileCockpitTests / Documentation
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-024
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-23
 **Date Verified:** TBD
 
 **Rationale:**
@@ -188,7 +188,7 @@ Archiving is a visible workflow change and needs direct regression coverage.
 3. Tests prove the index files remain synchronized after close.
 
 **Evidence:**
-- TBD
+- Implemented with regression coverage in AirframeCoreTests and AgileCockpit build verification.
 
 ## T-0115: Add tests for offline local-only closeout behavior
 
@@ -215,4 +215,4 @@ Closeout must continue to work in the local workspace without relying on a serve
 
 ---
 
-*Last Updated: 2026-06-18 (SP-028 activated for final Sprint planning)*
+*Last Updated: 2026-06-23 (SP-029 activated)*

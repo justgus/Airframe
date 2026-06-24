@@ -35,6 +35,16 @@ extension AirframeCanonicalIssueRecord: AirframeCanonicalFileRecord {
     public var canonicalRecordID: AirframeID { workItem.id }
 }
 
+extension AirframeCanonicalRequirementRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "requirements"
+    public var canonicalRecordID: AirframeID { id }
+}
+
+extension AirframeCanonicalRequirementRevisionRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "requirement-revisions"
+    public var canonicalRecordID: AirframeID { id }
+}
+
 extension AirframeCanonicalAcceptanceCriterionRecord: AirframeCanonicalFileRecord {
     public static let canonicalDirectoryName = "acceptance-criteria"
     public var canonicalRecordID: AirframeID { id }
@@ -237,4 +247,3 @@ public final class AirframeCanonicalJSONStore: @unchecked Sendable {
         return try body()
     }
 }
-

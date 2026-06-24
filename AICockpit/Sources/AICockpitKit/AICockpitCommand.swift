@@ -1284,7 +1284,173 @@ public enum AICockpitCommand {
             try write(projector.projectIssue(issue), to: "Issues/\(issue.workItem.id.rawValue).md")
         }
         try write(projector.projectTaskIndex(state.tasks), to: "Tasks/index.md")
+        for (relativePath, contents) in requirementMarkdownFiles(state: state) {
+            try write(contents, to: relativePath)
+        }
         return count
+    }
+
+    private static func requirementMarkdownFiles(state: AirframeCanonicalStoreState) -> [(String, String)] {
+        [
+            ("Requirements/index.md", requirementIndexMarkdown(state: state)),
+            ("Requirements/Requirements-Traceability-Matrix.md", requirementTraceabilityMatrixMarkdown(state: state)),
+            ("Requirements/Bidirectional-Requirements-Traceability-Matrix.md", requirementBidirectionalTraceabilityMatrixMarkdown(state: state)),
+            ("Requirements/Release-Gate.md", requirementReleaseGateMarkdown(state: state)),
+            ("Requirements/Compliance-Verification-Matrix.md", requirementComplianceVerificationMatrixMarkdown(state: state))
+        ]
+    }
+
+    private static func requirementIndexMarkdown(state: AirframeCanonicalStoreState) -> String {
+        var lines: [String] = [
+            "# Requirements",
+            "",
+            "Currently: **\(state.requirements.count) requirements**",
+            "",
+            "| Requirement | Status | Source | Release Scope |",
+            "| ----------- | ------ | ------ | ------------- |"
+        ]
+        for requirement in state.requirements.sorted(by: { $0.id.rawValue < $1.id.rawValue }) {
+            lines.append(
+                "| \(requirement.id.rawValue) | \(requirement.status.description) | \(requirement.sourceKind.rawValue) | \(requirement.releaseScope.isEmpty ? "None" : requirement.releaseScope.joined(separator: ", ")) |"
+            )
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func requirementTraceabilityMatrixMarkdown(state: AirframeCanonicalStoreState) -> String {
+        let tasksByRequirement = Dictionary(grouping: state.tasks, by: { Set($0.requirementIDs) })
+        let evidenceByRequirement = Dictionary(grouping: state.evidence, by: { Set($0.requirementIDs) })
+        var lines: [String] = [
+            "# Requirements Traceability Matrix",
+            "",
+            "| Requirement | Status | Work Items | Evidence | Revisions | Trace Targets |",
+            "| ----------- | ------ | ---------- | -------- | --------- | ------------- |"
+        ]
+        for requirement in state.requirements.sorted(by: { $0.id.rawValue < $1.id.rawValue }) {
+            let workItemIDs = state.tasks
+                .filter { $0.requirementIDs.contains(requirement.id) || $0.workItem.id.rawValue == requirement.id.rawValue }
+                .map { $0.workItem.id.rawValue }
+            let evidenceIDs = state.evidence
+                .filter { $0.requirementIDs.contains(requirement.id) }
+                .map { $0.id.rawValue }
+            let revisions = state.requirementRevisions
+                .filter { $0.requirementID == requirement.id }
+                .map { $0.id.rawValue }
+            let targetKinds = requirement.traceLinks.map(\.targetKind).sorted()
+            _ = tasksByRequirement
+            _ = evidenceByRequirement
+            lines.append(
+                "| \(requirement.id.rawValue) | \(requirement.status.description) | \(workItemIDs.joined(separator: ", ")) | \(evidenceIDs.joined(separator: ", ")) | \(revisions.joined(separator: ", ")) | \(targetKinds.joined(separator: ", ")) |"
+            )
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func requirementBidirectionalTraceabilityMatrixMarkdown(state: AirframeCanonicalStoreState) -> String {
+        var lines: [String] = [
+            "# Bidirectional Requirements Traceability Matrix",
+            "",
+            "| Work Item or Evidence | Requirements |",
+            "| --------------------- | ------------ |"
+        ]
+        let identifiers = state.epics.map(\.workItem.id) + state.sprints.map(\.workItem.id) + state.tasks.map(\.workItem.id) + state.issues.map(\.workItem.id) + state.evidence.map(\.id)
+        for identifier in identifiers {
+            let requirementIDs = requirementIDs(for: identifier, state: state)
+            guard !requirementIDs.isEmpty else { continue }
+            lines.append("| \(identifier.rawValue) | \(requirementIDs.map(\.rawValue).joined(separator: ", ")) |")
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func requirementReleaseGateMarkdown(state: AirframeCanonicalStoreState) -> String {
+        let gate = requirementGateSummary(state: state)
+        var lines: [String] = [
+            "# Release Gate",
+            "",
+            "**Release Scope:** All requirements",
+            "**Can Close:** \(gate.canClose ? "Yes" : "No")",
+            "",
+            "| Count | Value |",
+            "| ----- | ----- |",
+            "| In Scope | \(gate.inScopeRequirementIDs.count) |",
+            "| Implemented | \(gate.implementedCount) |",
+            "| Verified | \(gate.verifiedCount) |",
+            "| Validated | \(gate.validatedCount) |",
+            "| Deferred | \(gate.deferredCount) |",
+            "| Waived | \(gate.waivedCount) |",
+            "| Blocked | \(gate.blockedCount) |"
+        ]
+        if !gate.blockingReasons.isEmpty {
+            lines.append("")
+            lines.append("## Blocking Reasons")
+            lines.append(contentsOf: gate.blockingReasons.map { "- \($0)" })
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func requirementComplianceVerificationMatrixMarkdown(state: AirframeCanonicalStoreState) -> String {
+        let gate = requirementGateSummary(state: state)
+        var lines: [String] = [
+            "# Compliance Verification Matrix",
+            "",
+            "| Count | Value |",
+            "| ----- | ----- |",
+            "| Requirements | \(state.requirements.count) |",
+            "| Implemented | \(gate.implementedCount) |",
+            "| Verified | \(gate.verifiedCount) |",
+            "| Validated | \(gate.validatedCount) |",
+            "| Deferred | \(gate.deferredCount) |",
+            "| Waived | \(gate.waivedCount) |",
+            "| Blocked | \(gate.blockedCount) |"
+        ]
+        if !gate.blockingReasons.isEmpty {
+            lines.append("")
+            lines.append("## Blocking Reasons")
+            lines.append(contentsOf: gate.blockingReasons.map { "- \($0)" })
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func requirementIDs(for identifier: AirframeID, state: AirframeCanonicalStoreState) -> [AirframeID] {
+        var ids = Set<AirframeID>()
+        for task in state.tasks where task.requirementIDs.contains(identifier) {
+            ids.insert(task.workItem.id)
+        }
+        for evidence in state.evidence where evidence.requirementIDs.contains(identifier) {
+            ids.insert(evidence.id)
+        }
+        for requirement in state.requirements {
+            if requirement.traceLinks.contains(where: { $0.targetID == identifier.rawValue }) {
+                ids.insert(requirement.id)
+            }
+        }
+        return ids.sorted { $0.rawValue < $1.rawValue }
+    }
+
+    private static func requirementGateSummary(state: AirframeCanonicalStoreState) -> (inScopeRequirementIDs: [AirframeID], implementedCount: Int, verifiedCount: Int, validatedCount: Int, deferredCount: Int, waivedCount: Int, blockedCount: Int, canClose: Bool, blockingReasons: [String]) {
+        let requirements = state.requirements.sorted { $0.id.rawValue < $1.id.rawValue }
+        let implementedCount = requirements.filter { $0.status == .implemented }.count
+        let verifiedCount = requirements.filter { $0.status == .verified }.count
+        let validatedCount = requirements.filter { $0.status == .validated }.count
+        let deferredCount = requirements.filter { $0.status == .deferred }.count
+        let waivedCount = requirements.filter { $0.status == .waived }.count
+        let blockingReasons = requirements.compactMap { requirement -> String? in
+            if requirement.status == .implemented || requirement.status == .verified || requirement.status == .validated || requirement.status == .deferred || requirement.status == .waived || requirement.status == .superseded || requirement.status == .removed {
+                return nil
+            }
+            return "Requirement \(requirement.id.rawValue) is \(requirement.status.description)."
+        }
+        return (
+            inScopeRequirementIDs: requirements.map(\.id),
+            implementedCount: implementedCount,
+            verifiedCount: verifiedCount,
+            validatedCount: validatedCount,
+            deferredCount: deferredCount,
+            waivedCount: waivedCount,
+            blockedCount: blockingReasons.count,
+            canClose: blockingReasons.isEmpty,
+            blockingReasons: blockingReasons
+        )
     }
 }
 

@@ -7,6 +7,8 @@ public struct AirframeCanonicalStoreState: Sendable {
     public let sprints: [AirframeCanonicalSprintRecord]
     public let tasks: [AirframeCanonicalTaskRecord]
     public let issues: [AirframeCanonicalIssueRecord]
+    public let requirements: [AirframeCanonicalRequirementRecord]
+    public let requirementRevisions: [AirframeCanonicalRequirementRevisionRecord]
     public let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
     public let evidence: [AirframeCanonicalEvidenceSummaryRecord]
 
@@ -17,6 +19,8 @@ public struct AirframeCanonicalStoreState: Sendable {
         sprints: [AirframeCanonicalSprintRecord] = [],
         tasks: [AirframeCanonicalTaskRecord] = [],
         issues: [AirframeCanonicalIssueRecord] = [],
+        requirements: [AirframeCanonicalRequirementRecord] = [],
+        requirementRevisions: [AirframeCanonicalRequirementRevisionRecord] = [],
         acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
         evidence: [AirframeCanonicalEvidenceSummaryRecord] = []
     ) {
@@ -26,6 +30,8 @@ public struct AirframeCanonicalStoreState: Sendable {
         self.sprints = sprints
         self.tasks = tasks
         self.issues = issues
+        self.requirements = requirements
+        self.requirementRevisions = requirementRevisions
         self.acceptanceCriteria = acceptanceCriteria
         self.evidence = evidence
     }
@@ -50,6 +56,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             sprints: store.list(AirframeCanonicalSprintRecord.self),
             tasks: store.list(AirframeCanonicalTaskRecord.self),
             issues: store.list(AirframeCanonicalIssueRecord.self),
+            requirements: store.list(AirframeCanonicalRequirementRecord.self),
+            requirementRevisions: store.list(AirframeCanonicalRequirementRevisionRecord.self),
             acceptanceCriteria: store.list(AirframeCanonicalAcceptanceCriterionRecord.self),
             evidence: store.list(AirframeCanonicalEvidenceSummaryRecord.self)
         )
@@ -215,6 +223,13 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             return
         }
         throw AirframeBackendError.missingWorkItem(id)
+    }
+
+    public func clearActiveSprintID(projectID: AirframeID) throws {
+        guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
+            throw AirframeBackendError.missingWorkItem(projectID)
+        }
+        try store.save(project.clearingActiveSprintID())
     }
 
     public func snapshot(project: AirframeProject) throws -> AirframeCanonicalStateSnapshot {
@@ -401,6 +416,24 @@ private extension AirframeCanonicalEpicRecord {
             issueIDs: issueIDs,
             planningDocumentPaths: planningDocumentPaths,
             notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+}
+
+private extension AirframeCanonicalProjectRecord {
+    func clearingActiveSprintID() -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: nil,
+            epicIDs: epicIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
             metadata: metadata.updatingTimestamp()
         )
     }

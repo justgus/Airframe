@@ -10,6 +10,7 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
     case dashboard = "Dashboard"
     case verification = "Verification"
     case planning = "Sprint & Epic"
+    case requirements = "Requirements"
     case metrics = "Metrics & Audit"
 
     var id: String { rawValue }
@@ -22,6 +23,8 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
             "verification"
         case .planning:
             "planning"
+        case .requirements:
+            "requirements"
         case .metrics:
             "metrics"
         }
@@ -91,6 +94,25 @@ struct AgileCockpitRepairPreviewRow: Equatable, Identifiable {
     }
 }
 
+struct AgileCockpitRequirementTraceRow: Equatable, Identifiable {
+    let requirementID: String
+    let status: String
+    let workItems: String
+    let evidence: String
+    let revisions: String
+    let targetKinds: String
+
+    var id: String { requirementID }
+}
+
+struct AgileCockpitRequirementGapRow: Equatable, Identifiable {
+    let requirementID: String
+    let kind: String
+    let message: String
+
+    var id: String { "\(requirementID)-\(kind)" }
+}
+
 enum AgileCockpitVerificationQueueState: Equatable {
     case loading
     case loaded
@@ -141,6 +163,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     private let reviewerContext: AirframeCertifiedContext
     private let artifactRootURL: URL?
     private let canonicalRepository: AirframeCanonicalStoreRepository?
+    private let canonicalState: AirframeCanonicalStoreState?
     private var auditStore: AirframeAuditEventStore
     private var refreshObserver: NSObjectProtocol?
     private var fileWatchSources: [DispatchSourceFileSystemObject] = []
@@ -166,9 +189,12 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.artifactRootURL = artifactRootURL
         if let artifactRootURL,
            FileManager.default.fileExists(atPath: artifactRootURL.appending(path: ".airframe/state").path) {
-            self.canonicalRepository = AirframeCanonicalStoreRepository(rootURL: artifactRootURL)
+            let repository = AirframeCanonicalStoreRepository(rootURL: artifactRootURL)
+            self.canonicalRepository = repository
+            self.canonicalState = try? repository.loadState()
         } else {
             self.canonicalRepository = nil
+            self.canonicalState = nil
         }
         self.auditStore = auditStore
         self.selectedSection = selectedSection
@@ -181,7 +207,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
         self.dashboardRecords = dashboardData.records
         self.dashboardDetailTextByID = dashboardData.detailTextByID
-        let canonicalSnapshot = Self.canonicalSnapshot(context: context, records: dashboardData.records)
+        let canonicalSnapshot = try Self.canonicalSnapshot(
+            context: context,
+            records: dashboardData.records,
+            canonicalRepository: canonicalRepository
+        )
         self.canonicalSnapshot = canonicalSnapshot
         self.canonicalDiagnostics = Self.canonicalDiagnostics(
             snapshot: canonicalSnapshot,
@@ -357,7 +387,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var activeSprintText: String {
-        context.project.activeSprintID?.rawValue ?? "None"
+        canonicalSnapshot.project.activeSprintID?.rawValue ?? "None"
     }
 
     var activeEpicText: String {
@@ -464,7 +494,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var sprintRecords: [AirframeLocalWorkRecord] {
-        canonicalDashboardRecords.filter { $0.sprintID == context.project.activeSprintID }
+        canonicalDashboardRecords.filter { $0.sprintID == canonicalSnapshot.project.activeSprintID }
     }
 
     var epicRecords: [AirframeLocalWorkRecord] {
@@ -479,7 +509,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var activeSprintRecord: AirframeLocalWorkRecord? {
-        guard let activeSprintID = context.project.activeSprintID else { return nil }
+        guard let activeSprintID = canonicalSnapshot.project.activeSprintID else { return nil }
         return canonicalDashboardRecords.first {
             $0.workItem.kind == .sprint && $0.workItem.id == activeSprintID
         }
@@ -502,7 +532,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var sprintCloseEligibility: AirframeSprintCloseEligibility? {
-        guard let activeSprintID = context.project.activeSprintID else { return nil }
+        guard let activeSprintID = canonicalSnapshot.project.activeSprintID else { return nil }
         return AirframeSprintCloseEligibility(
             sprintID: activeSprintID,
             assignedWorkItems: sprintRecords.map(\.workItem)
@@ -511,6 +541,46 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     var epicCloseEligibility: AirframeEpicCloseEligibility? {
         epicAcceptanceCriteriaSummary.map(AirframeEpicCloseEligibility.init(criteriaSummary:))
+    }
+
+    var requirementTraceabilityIndex: AirframeRequirementTraceabilityIndex {
+        AirframeRequirementTraceabilityIndex(
+            requirements: canonicalState?.requirements ?? [],
+            revisions: canonicalState?.requirementRevisions ?? [],
+            evidence: canonicalState?.evidence ?? [],
+            epics: canonicalSnapshot.epics,
+            sprints: canonicalSnapshot.sprints,
+            tasks: canonicalSnapshot.tasks,
+            issues: canonicalSnapshot.issues
+        )
+    }
+
+    var requirementGateSummary: AirframeRequirementReleaseGateSummary {
+        requirementTraceabilityIndex.releaseGateSummary(releaseScope: context.project.activeSprintID?.rawValue ?? context.project.activeEpicID?.rawValue)
+    }
+
+    var requirementTraceRows: [AgileCockpitRequirementTraceRow] {
+        requirementTraceabilityIndex.requirements.map { requirement in
+            let summary = requirementTraceabilityIndex.traceSummary(for: requirement.id)
+            return AgileCockpitRequirementTraceRow(
+                requirementID: requirement.id.rawValue,
+                status: requirement.status.description,
+                workItems: summary.workItemIDs.map(\.rawValue).joined(separator: ", "),
+                evidence: summary.evidenceIDs.map(\.rawValue).joined(separator: ", "),
+                revisions: summary.revisionIDs.map(\.rawValue).joined(separator: ", "),
+                targetKinds: summary.targetKinds.joined(separator: ", ")
+            )
+        }
+    }
+
+    var requirementGapRows: [AgileCockpitRequirementGapRow] {
+        requirementTraceabilityIndex.gapDiagnostics(releaseScope: context.project.activeSprintID?.rawValue ?? context.project.activeEpicID?.rawValue).map {
+            AgileCockpitRequirementGapRow(
+                requirementID: $0.requirementID.rawValue,
+                kind: $0.kind.rawValue,
+                message: $0.message
+            )
+        }
     }
 
     var selectedEpicAcceptanceCriterion: AirframeEpicAcceptanceCriterion? {
@@ -597,8 +667,12 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     func closeActiveSprint() {
-        guard let activeSprintID = context.project.activeSprintID else {
+        guard let activeSprintID = canonicalSnapshot.project.activeSprintID else {
             statusMessage = "No active Sprint is configured."
+            return
+        }
+        guard let activeSprintRecord else {
+            statusMessage = "Configured active Sprint \(activeSprintID.rawValue) was not found."
             return
         }
         guard let eligibility = sprintCloseEligibility else {
@@ -614,10 +688,21 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Sprint close requires canonical Airframe state."
                 return
             }
-            try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .review)
-            recordCloseAudit(action: "OP-HUMAN-CLOSE-SPRINT", workItemID: activeSprintID)
-            try reload(selecting: selectedWorkItemID)
-            statusMessage = "Sprint \(activeSprintID.rawValue) close accepted: moved to Review."
+            switch activeSprintRecord.workItem.status {
+            case .active:
+                try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .review)
+                recordCloseAudit(action: "OP-HUMAN-REVIEW-SPRINT", workItemID: activeSprintID)
+                try reload(selecting: selectedWorkItemID)
+                statusMessage = "Sprint \(activeSprintID.rawValue) close accepted: moved to Review."
+            case .review:
+                try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .closed)
+                try canonicalRepository.clearActiveSprintID(projectID: context.project.id)
+                recordCloseAudit(action: "OP-HUMAN-CLOSE-SPRINT", workItemID: activeSprintID)
+                try reload(selecting: selectedWorkItemID)
+                statusMessage = "Sprint \(activeSprintID.rawValue) closed."
+            default:
+                statusMessage = "Sprint \(activeSprintID.rawValue) cannot close from \(activeSprintRecord.workItem.status.description)."
+            }
         } catch {
             statusMessage = "Sprint close failed: \(error)"
         }
@@ -891,7 +976,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
         dashboardRecords = dashboardData.records
         dashboardDetailTextByID = dashboardData.detailTextByID
-        canonicalSnapshot = Self.canonicalSnapshot(context: context, records: dashboardData.records)
+        canonicalSnapshot = try Self.canonicalSnapshot(
+            context: context,
+            records: dashboardData.records,
+            canonicalRepository: canonicalRepository
+        )
         canonicalDiagnostics = Self.canonicalDiagnostics(
             snapshot: canonicalSnapshot,
             canonicalRecords: dashboardData.records,
@@ -928,9 +1017,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private static func canonicalSnapshot(
         context: AirframeProjectContext,
-        records: [AirframeLocalWorkRecord]
-    ) -> AirframeCanonicalStateSnapshot {
-        AirframeCanonicalStateSnapshotBuilder().snapshot(
+        records: [AirframeLocalWorkRecord],
+        canonicalRepository: AirframeCanonicalStoreRepository?
+    ) throws -> AirframeCanonicalStateSnapshot {
+        if let canonicalRepository {
+            return try canonicalRepository.snapshot(project: context.project)
+        }
+        return AirframeCanonicalStateSnapshotBuilder().snapshot(
             project: context.project,
             records: records
         )
@@ -1885,6 +1978,8 @@ struct ContentView: View {
             verificationView
         case .planning:
             planningView
+        case .requirements:
+            requirementsView
         case .metrics:
             metricsView
         }
@@ -2060,6 +2155,17 @@ struct ContentView: View {
         .accessibilityIdentifier("agile-cockpit-planning")
     }
 
+    private var requirementsView: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Requirements")
+                .font(.headline)
+                .accessibilityIdentifier("agile-cockpit-requirements-title")
+            requirementGateSection
+            requirementTraceabilitySection
+        }
+        .accessibilityIdentifier("agile-cockpit-requirements")
+    }
+
     private var planningTabPicker: some View {
         Picker("Sprint and Epic View", selection: $model.selectedPlanningTab) {
             ForEach(AgileCockpitPlanningTab.allCases) { tab in
@@ -2148,6 +2254,107 @@ struct ContentView: View {
             }
         }
         .accessibilityIdentifier("agile-cockpit-close-eligibility")
+    }
+
+    private var requirementGateSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Release Gate")
+                .font(.headline)
+            LabeledContent("Scope", value: model.requirementGateSummary.releaseScope ?? "All requirements")
+            LabeledContent("Can Close", value: model.requirementGateSummary.canClose ? "Yes" : "No")
+            HStack(spacing: 12) {
+                gateMetric("In Scope", "\(model.requirementGateSummary.inScopeRequirementIDs.count)")
+                gateMetric("Implemented", "\(model.requirementGateSummary.implementedCount)")
+                gateMetric("Verified", "\(model.requirementGateSummary.verifiedCount)")
+                gateMetric("Validated", "\(model.requirementGateSummary.validatedCount)")
+                gateMetric("Blocked", "\(model.requirementGateSummary.blockedCount)")
+            }
+            if model.requirementGateSummary.blockingReasons.isEmpty {
+                Text("No blocking traceability gaps were found.")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(model.requirementGateSummary.blockingReasons, id: \.self) { reason in
+                    Text(reason)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-requirement-gate")
+    }
+
+    private var requirementTraceabilitySection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Traceability Matrix")
+                .font(.headline)
+            if model.requirementTraceRows.isEmpty {
+                Text("No requirements are recorded in canonical state.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-requirements-empty")
+            } else {
+                ForEach(model.requirementTraceRows) { row in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(row.requirementID)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 82, alignment: .leading)
+                            Text(row.status)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 110, alignment: .leading)
+                            Text(row.workItems.isEmpty ? "No work links" : row.workItems)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        if !row.evidence.isEmpty || !row.revisions.isEmpty || !row.targetKinds.isEmpty {
+                            Text("Evidence: \(row.evidence.isEmpty ? "None" : row.evidence) | Revisions: \(row.revisions.isEmpty ? "None" : row.revisions) | Targets: \(row.targetKinds.isEmpty ? "None" : row.targetKinds)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            Text("Gaps")
+                .font(.headline)
+            if model.requirementGapRows.isEmpty {
+                Text("No gaps recorded.")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(model.requirementGapRows) { row in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(row.requirementID)
+                                .font(.caption)
+                                .frame(width: 82, alignment: .leading)
+                            Text(row.kind)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 180, alignment: .leading)
+                        }
+                        Text(row.message)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-requirement-traceability")
+    }
+
+    private func gateMetric(_ title: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.headline)
+                .monospacedDigit()
+        }
+        .frame(minWidth: 78, alignment: .leading)
+        .padding(6)
+        .background(Color.secondary.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 
     private var epicAcceptanceCriteriaSection: some View {

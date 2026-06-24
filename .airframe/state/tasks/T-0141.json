@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "epicID" : {
+    "rawValue" : "EP-021"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-032"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0141"
+    },
+    "kind" : "task",
+    "status" : "implementedNotVerified",
+    "title" : "Generate compliance and traceability documents"
+  }
+}

@@ -71,4 +71,4 @@ None.
 
 ---
 
-*Last Updated: 2026-06-18 (SP-028 activated for final Sprint planning)*
+*Last Updated: 2026-06-24 (SP-032 moved to Planning)*

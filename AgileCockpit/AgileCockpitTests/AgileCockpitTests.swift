@@ -1032,8 +1032,44 @@ import Foundation
         .first { $0.workItem.id == AirframeID("SP-022") }
     #expect(sprintRecord?.workItem.status == .review)
     #expect(model.activeSprintRecord?.workItem.status == .review)
-    #expect(model.auditRows.last?.action == "OP-HUMAN-CLOSE-SPRINT")
+    #expect(model.auditRows.last?.action == "OP-HUMAN-REVIEW-SPRINT")
     #expect(model.statusMessage == "Sprint SP-022 close accepted: moved to Review.")
+}
+
+@MainActor
+@Test func agileCockpitClosesReviewedSprintAndClearsActiveSprint() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintStatus: "Review",
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Criterion is verified."]
+    )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.canonicalDiagnostics.isValid)
+
+    model.closeActiveSprint()
+
+    let snapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+        .snapshot(project: model.context.project)
+    let sprintRecord = snapshot.sprints.first { $0.workItem.id == AirframeID("SP-022") }
+    #expect(sprintRecord?.workItem.status == .closed)
+    #expect(snapshot.project.activeSprintID == nil)
+    #expect(model.canonicalSnapshot.project.activeSprintID == nil)
+    #expect(model.activeSprintRecord == nil)
+    #expect(model.auditRows.last?.action == "OP-HUMAN-CLOSE-SPRINT")
+    #expect(model.statusMessage == "Sprint SP-022 closed.")
 }
 
 @MainActor
@@ -1140,6 +1176,7 @@ private func temporaryLiveConfigurationURL(
 
 private func writeCloseActionWorkspace(
     rootURL: URL,
+    sprintStatus: String = "Active",
     sprintTaskStatus: String,
     sprintIssueStatus: String,
     epicCriteria: [String]
@@ -1179,7 +1216,7 @@ private func writeCloseActionWorkspace(
 
     ## SP-022: Close Eligibility
 
-    **Status:** Active
+    **Status:** \(sprintStatus)
     **Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
     """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
     try """

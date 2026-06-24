@@ -96,6 +96,83 @@ extension AirframeWorkPriority: CustomStringConvertible {
     }
 }
 
+public enum AirframeRequirementLifecycleStatus: String, Codable, Equatable, Sendable {
+    case proposed
+    case draft
+    case active
+    case implemented
+    case verified
+    case validated
+    case deferred
+    case waived
+    case superseded
+    case removed
+}
+
+extension AirframeRequirementLifecycleStatus: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .proposed:
+            "Proposed"
+        case .draft:
+            "Draft"
+        case .active:
+            "Active"
+        case .implemented:
+            "Implemented"
+        case .verified:
+            "Verified"
+        case .validated:
+            "Validated"
+        case .deferred:
+            "Deferred"
+        case .waived:
+            "Waived"
+        case .superseded:
+            "Superseded"
+        case .removed:
+            "Removed"
+        }
+    }
+}
+
+public enum AirframeRequirementVerificationMethod: String, Codable, Equatable, Sendable {
+    case test
+    case analysis
+    case inspection
+    case demonstration
+    case review
+    case mixed
+}
+
+public enum AirframeRequirementSourceKind: String, Codable, Equatable, Sendable {
+    case airframe
+    case csv
+    case json
+    case external
+    case generated
+    case manual
+}
+
+public struct AirframeRequirementLink: Codable, Equatable, Sendable {
+    public let id: AirframeID
+    public let title: String?
+    public let targetKind: String
+    public let targetID: String
+
+    public init(
+        id: AirframeID,
+        targetKind: String,
+        targetID: String,
+        title: String? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.targetKind = targetKind
+        self.targetID = targetID
+    }
+}
+
 public struct AirframeLocalWorkRecord: Codable, Equatable, Sendable {
     public let workItem: AirframeWorkItem
     public let epicID: AirframeID?

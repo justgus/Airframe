@@ -399,13 +399,13 @@ public struct AirframeCanonicalStateValidator: Sendable {
                 )
             ]
         }
-        guard activeSprint.workItem.status == .active else {
+        guard activeSprint.workItem.status == .active || activeSprint.workItem.status == .review else {
             return [
                 AirframeCanonicalDiagnostic(
                     severity: .blocking,
                     reasonCode: .activeSprintNotActive,
                     affectedIDs: [project.id, activeSprintID],
-                    message: "Configured active Sprint \(activeSprintID.rawValue) is \(activeSprint.workItem.status.description), not Active.",
+                    message: "Configured active Sprint \(activeSprintID.rawValue) is \(activeSprint.workItem.status.description), not Active or Review.",
                     repairOptions: [
                         AirframeCanonicalRepairOption(
                             action: .restoreSprintToActive,

@@ -1,0 +1,42 @@
+{
+  "endDate" : "2026-06-24",
+  "epicID" : {
+    "rawValue" : "EP-021"
+  },
+  "goal" : "Add summarized evidence records, release gates, and Cockpit views.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Sprint-backlog.md",
+    "updatedAt" : "2026-06-24T15:38:33Z"
+  },
+  "notes" : [
+
+  ],
+  "startDate" : "2026-06-24",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0138"
+    },
+    {
+      "rawValue" : "T-0139"
+    },
+    {
+      "rawValue" : "T-0140"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-031"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Evidence Summaries and Release Gates"
+  }
+}

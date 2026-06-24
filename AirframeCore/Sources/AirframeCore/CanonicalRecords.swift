@@ -306,6 +306,140 @@ public struct AirframeCanonicalIssueRecord: Codable, Equatable, Sendable {
     }
 }
 
+public struct AirframeCanonicalRequirementRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let externalID: String?
+    public let title: String
+    public let statement: String
+    public let rationale: String
+    public let sourceKind: AirframeRequirementSourceKind
+    public let sourceURI: String?
+    public let status: AirframeRequirementLifecycleStatus
+    public let priority: AirframeWorkPriority
+    public let verificationMethod: AirframeRequirementVerificationMethod
+    public let validationRequired: Bool
+    public let releaseScope: [String]
+    public let parentIDs: [AirframeID]
+    public let derivedFromIDs: [AirframeID]
+    public let supersedesIDs: [AirframeID]
+    public let traceLinks: [AirframeRequirementLink]
+    public let deviationIDs: [AirframeID]
+    public let currentRevisionID: AirframeID?
+    public let changeRationale: String?
+
+    public init(
+        id: AirframeID,
+        title: String,
+        statement: String,
+        status: AirframeRequirementLifecycleStatus,
+        rationale: String = "",
+        sourceKind: AirframeRequirementSourceKind = .airframe,
+        sourceURI: String? = nil,
+        externalID: String? = nil,
+        priority: AirframeWorkPriority = .medium,
+        verificationMethod: AirframeRequirementVerificationMethod = .test,
+        validationRequired: Bool = true,
+        releaseScope: [String] = [],
+        parentIDs: [AirframeID] = [],
+        derivedFromIDs: [AirframeID] = [],
+        supersedesIDs: [AirframeID] = [],
+        traceLinks: [AirframeRequirementLink] = [],
+        deviationIDs: [AirframeID] = [],
+        currentRevisionID: AirframeID? = nil,
+        changeRationale: String? = nil,
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.externalID = externalID
+        self.title = title
+        self.statement = statement
+        self.rationale = rationale
+        self.sourceKind = sourceKind
+        self.sourceURI = sourceURI
+        self.status = status
+        self.priority = priority
+        self.verificationMethod = verificationMethod
+        self.validationRequired = validationRequired
+        self.releaseScope = releaseScope
+        self.parentIDs = parentIDs
+        self.derivedFromIDs = derivedFromIDs
+        self.supersedesIDs = supersedesIDs
+        self.traceLinks = traceLinks
+        self.deviationIDs = deviationIDs
+        self.currentRevisionID = currentRevisionID
+        self.changeRationale = changeRationale
+    }
+}
+
+public struct AirframeCanonicalRequirementRevisionRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let requirementID: AirframeID
+    public let revisionNumber: Int
+    public let title: String
+    public let statement: String
+    public let rationale: String
+    public let sourceKind: AirframeRequirementSourceKind
+    public let sourceURI: String?
+    public let status: AirframeRequirementLifecycleStatus
+    public let priority: AirframeWorkPriority
+    public let verificationMethod: AirframeRequirementVerificationMethod
+    public let validationRequired: Bool
+    public let releaseScope: [String]
+    public let parentIDs: [AirframeID]
+    public let derivedFromIDs: [AirframeID]
+    public let supersedesIDs: [AirframeID]
+    public let traceLinks: [AirframeRequirementLink]
+    public let deviationIDs: [AirframeID]
+    public let changeRationale: String?
+
+    public init(
+        id: AirframeID,
+        requirementID: AirframeID,
+        revisionNumber: Int,
+        title: String,
+        statement: String,
+        status: AirframeRequirementLifecycleStatus,
+        rationale: String = "",
+        sourceKind: AirframeRequirementSourceKind = .airframe,
+        sourceURI: String? = nil,
+        priority: AirframeWorkPriority = .medium,
+        verificationMethod: AirframeRequirementVerificationMethod = .test,
+        validationRequired: Bool = true,
+        releaseScope: [String] = [],
+        parentIDs: [AirframeID] = [],
+        derivedFromIDs: [AirframeID] = [],
+        supersedesIDs: [AirframeID] = [],
+        traceLinks: [AirframeRequirementLink] = [],
+        deviationIDs: [AirframeID] = [],
+        changeRationale: String? = nil,
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.requirementID = requirementID
+        self.revisionNumber = revisionNumber
+        self.title = title
+        self.statement = statement
+        self.rationale = rationale
+        self.sourceKind = sourceKind
+        self.sourceURI = sourceURI
+        self.status = status
+        self.priority = priority
+        self.verificationMethod = verificationMethod
+        self.validationRequired = validationRequired
+        self.releaseScope = releaseScope
+        self.parentIDs = parentIDs
+        self.derivedFromIDs = derivedFromIDs
+        self.supersedesIDs = supersedesIDs
+        self.traceLinks = traceLinks
+        self.deviationIDs = deviationIDs
+        self.changeRationale = changeRationale
+    }
+}
+
 public struct AirframeCanonicalAcceptanceCriterionRecord: Codable, Equatable, Sendable {
     public let metadata: AirframeCanonicalRecordMetadata
     public let id: AirframeID
@@ -477,4 +611,3 @@ public struct AirframeCanonicalWorkflowTransitionRecord: Codable, Equatable, Sen
         self.auditRequired = auditRequired
     }
 }
-

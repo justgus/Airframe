@@ -207,6 +207,74 @@ import Foundation
     )
 }
 
+@Test func canonicalRequirementRecordsRoundTripWithRevisionLinkage() throws {
+    let requirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-0001"),
+        title: "The system shall record canonical requirements.",
+        statement: "AirframeCore shall persist requirements as repo-local canonical records.",
+        status: .active,
+        rationale: "Canonical requirement storage is the first step in the traceability model.",
+        sourceKind: .airframe,
+        sourceURI: "docs/Architecture-Modification-Plan.md#6-requirements-and-release-traceability",
+        externalID: "REQ-LEGACY-001",
+        priority: .high,
+        verificationMethod: .review,
+        validationRequired: true,
+        releaseScope: ["EP-021"],
+        parentIDs: [AirframeID("REQ-0000")],
+        derivedFromIDs: [AirframeID("REQ-BASE")],
+        supersedesIDs: [AirframeID("REQ-OLD-1")],
+        traceLinks: [
+            AirframeRequirementLink(
+                id: AirframeID("RL-0001"),
+                targetKind: "task",
+                targetID: "T-0132",
+                title: "Defines the requirement record model"
+            )
+        ],
+        deviationIDs: [AirframeID("DEV-0001")],
+        currentRevisionID: AirframeID("REQ-0001-R2"),
+        changeRationale: "Initial canonical requirement schema."
+    )
+    let revision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-0001-R2"),
+        requirementID: requirement.id,
+        revisionNumber: 2,
+        title: requirement.title,
+        statement: requirement.statement,
+        status: requirement.status,
+        rationale: requirement.rationale,
+        sourceKind: requirement.sourceKind,
+        sourceURI: requirement.sourceURI,
+        priority: requirement.priority,
+        verificationMethod: requirement.verificationMethod,
+        validationRequired: requirement.validationRequired,
+        releaseScope: requirement.releaseScope,
+        parentIDs: requirement.parentIDs,
+        derivedFromIDs: requirement.derivedFromIDs,
+        supersedesIDs: requirement.supersedesIDs,
+        traceLinks: requirement.traceLinks,
+        deviationIDs: requirement.deviationIDs,
+        changeRationale: requirement.changeRationale
+    )
+
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalRequirementRecord.self,
+            from: encoder.encode(requirement)
+        ) == requirement
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalRequirementRevisionRecord.self,
+            from: encoder.encode(revision)
+        ) == revision
+    )
+}
+
 @Test func canonicalJSONStorePersistsOneFilePerRecordKind() throws {
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AirframeCanonicalStore-\(UUID().uuidString)")
@@ -267,6 +335,412 @@ import Foundation
 
     #expect(!store.exists(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117")))
     #expect(try store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0117")) == nil)
+}
+
+@Test func canonicalJSONStorePersistsRequirementRecords() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalRequirements-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let requirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-0001"),
+        title: "The system shall record canonical requirements.",
+        statement: "AirframeCore shall persist requirements as repo-local canonical records.",
+        status: .active,
+        rationale: "Requirements are the foundation for traceability.",
+        sourceKind: .airframe,
+        sourceURI: "docs/Architecture-Modification-Plan.md#6-requirements-and-release-traceability",
+        externalID: "LEGACY-REQ-001",
+        priority: .high,
+        verificationMethod: .review,
+        validationRequired: true,
+        releaseScope: ["EP-021"],
+        currentRevisionID: AirframeID("REQ-0001-R1")
+    )
+    let revision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-0001-R1"),
+        requirementID: requirement.id,
+        revisionNumber: 1,
+        title: requirement.title,
+        statement: requirement.statement,
+        status: requirement.status,
+        rationale: requirement.rationale,
+        sourceKind: requirement.sourceKind,
+        sourceURI: requirement.sourceURI,
+        priority: requirement.priority,
+        verificationMethod: requirement.verificationMethod,
+        validationRequired: requirement.validationRequired,
+        releaseScope: requirement.releaseScope
+    )
+
+    try store.save(requirement)
+    try store.save(revision)
+
+    let requirementURL = store.recordURL(for: requirement.id, as: AirframeCanonicalRequirementRecord.self)
+    let revisionURL = store.recordURL(for: revision.id, as: AirframeCanonicalRequirementRevisionRecord.self)
+    let loadedRequirement = try #require(
+        try store.load(AirframeCanonicalRequirementRecord.self, id: requirement.id)
+    )
+    let loadedRevision = try #require(
+        try store.load(AirframeCanonicalRequirementRevisionRecord.self, id: revision.id)
+    )
+
+    #expect(requirementURL.path.hasSuffix(".airframe/state/requirements/REQ-0001.json"))
+    #expect(revisionURL.path.hasSuffix(".airframe/state/requirement-revisions/REQ-0001-R1.json"))
+    #expect(loadedRequirement == requirement)
+    #expect(loadedRevision == revision)
+    #expect(try store.list(AirframeCanonicalRequirementRecord.self).map(\.id) == [AirframeID("REQ-0001")])
+    #expect(try store.list(AirframeCanonicalRequirementRevisionRecord.self).map(\.id) == [AirframeID("REQ-0001-R1")])
+}
+
+@Test func requirementInterchangeRoundTripsJSONAndCSV() throws {
+    let requirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-0002"),
+        title: "Requirements import/export shall support diff review.",
+        statement: "AirframeCore shall export requirements in deterministic CSV and JSON forms.",
+        status: .draft,
+        rationale: "The interchange layer supports future migration and review.",
+        sourceKind: .manual,
+        sourceURI: "docs/architecture/RequirementsTraceability_ImportExport_Plan.md",
+        externalID: "EXT-42",
+        priority: .medium,
+        verificationMethod: .review,
+        validationRequired: false,
+        releaseScope: ["EP-021", "SP-029"],
+        parentIDs: [AirframeID("REQ-0001")],
+        derivedFromIDs: [AirframeID("REQ-BASE")],
+        supersedesIDs: [AirframeID("REQ-OLD-2")],
+        traceLinks: [
+            AirframeRequirementLink(
+                id: AirframeID("RL-0002"),
+                targetKind: "task",
+                targetID: "T-0133",
+                title: "Requirement interchange"
+            )
+        ],
+        deviationIDs: [AirframeID("DEV-0002")],
+        currentRevisionID: AirframeID("REQ-0002-R1"),
+        changeRationale: "Initial interchange implementation."
+    )
+    let revision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-0002-R1"),
+        requirementID: requirement.id,
+        revisionNumber: 1,
+        title: requirement.title,
+        statement: requirement.statement,
+        status: requirement.status,
+        rationale: requirement.rationale,
+        sourceKind: requirement.sourceKind,
+        sourceURI: requirement.sourceURI,
+        priority: requirement.priority,
+        verificationMethod: requirement.verificationMethod,
+        validationRequired: requirement.validationRequired,
+        releaseScope: requirement.releaseScope,
+        parentIDs: requirement.parentIDs,
+        derivedFromIDs: requirement.derivedFromIDs,
+        supersedesIDs: requirement.supersedesIDs,
+        traceLinks: requirement.traceLinks,
+        deviationIDs: requirement.deviationIDs,
+        changeRationale: requirement.changeRationale
+    )
+
+    let interchange = AirframeRequirementInterchange()
+    let json = try interchange.exportJSON(requirements: [requirement], revisions: [revision])
+    let document = try interchange.importJSON(json)
+    let csv = try interchange.exportCSV(requirements: document.requirements, revisions: document.revisions)
+    let importedCSV = try interchange.importCSV(csv)
+
+    #expect(document.requirements == [requirement])
+    #expect(document.revisions == [revision])
+    #expect(importedCSV.requirements == [requirement])
+    #expect(importedCSV.revisions == [revision])
+    #expect(csv.contains("record_kind"))
+    #expect(csv.contains("REQ-0002"))
+    #expect(json.contains("\"requirements\""))
+}
+
+@Test func requirementInterchangePreviewReportsCreatedUpdatedUnchangedRemovedAndConflictedRecords() throws {
+    let unchangedExistingRequirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-1000"),
+        title: "Unchanged requirement",
+        statement: "Existing canonical requirement.",
+        status: .active,
+        rationale: "Baseline record.",
+        sourceKind: .airframe,
+        sourceURI: "docs/requirements/existing.md",
+        currentRevisionID: AirframeID("REQ-1000-R1")
+    )
+    let updatedExistingRequirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-1100"),
+        title: "Updated requirement",
+        statement: "Existing canonical requirement.",
+        status: .active,
+        rationale: "Baseline record.",
+        sourceKind: .airframe,
+        sourceURI: "docs/requirements/updated.md",
+        currentRevisionID: AirframeID("REQ-1100-R1")
+    )
+    let removedRequirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-2000"),
+        title: "Removed requirement",
+        statement: "This requirement will be removed from the import payload.",
+        status: .draft,
+        rationale: "Legacy record.",
+        sourceKind: .manual,
+        sourceURI: "docs/requirements/removed.md"
+    )
+    let unchangedExistingRevision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-1000-R1"),
+        requirementID: unchangedExistingRequirement.id,
+        revisionNumber: 1,
+        title: unchangedExistingRequirement.title,
+        statement: unchangedExistingRequirement.statement,
+        status: unchangedExistingRequirement.status,
+        rationale: unchangedExistingRequirement.rationale,
+        sourceKind: unchangedExistingRequirement.sourceKind,
+        sourceURI: unchangedExistingRequirement.sourceURI
+    )
+    let updatedExistingRevision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-1100-R1"),
+        requirementID: updatedExistingRequirement.id,
+        revisionNumber: 1,
+        title: updatedExistingRequirement.title,
+        statement: updatedExistingRequirement.statement,
+        status: updatedExistingRequirement.status,
+        rationale: updatedExistingRequirement.rationale,
+        sourceKind: updatedExistingRequirement.sourceKind,
+        sourceURI: updatedExistingRequirement.sourceURI
+    )
+    let removedRevision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-2000-R1"),
+        requirementID: removedRequirement.id,
+        revisionNumber: 1,
+        title: removedRequirement.title,
+        statement: removedRequirement.statement,
+        status: removedRequirement.status,
+        rationale: removedRequirement.rationale,
+        sourceKind: removedRequirement.sourceKind,
+        sourceURI: removedRequirement.sourceURI
+    )
+
+    let unchangedRequirement = unchangedExistingRequirement
+    let updatedRequirement = AirframeCanonicalRequirementRecord(
+        id: updatedExistingRequirement.id,
+        title: "Updated requirement",
+        statement: "Existing canonical requirement with updated text.",
+        status: .verified,
+        rationale: "Baseline record updated.",
+        sourceKind: .airframe,
+        sourceURI: "docs/requirements/updated.md",
+        currentRevisionID: AirframeID("REQ-1100-R2")
+    )
+    let createdRequirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-3000"),
+        title: "Created requirement",
+        statement: "A new requirement from import.",
+        status: .draft,
+        rationale: "New record.",
+        sourceKind: .manual,
+        sourceURI: "docs/requirements/created.md"
+    )
+    let incomingRequirementDuplicate = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-3000"),
+        title: "Created requirement duplicate",
+        statement: "This duplicate should conflict.",
+        status: .draft,
+        rationale: "Duplicate record.",
+        sourceKind: .manual,
+        sourceURI: "docs/requirements/created-duplicate.md"
+    )
+
+    let unchangedRevision = unchangedExistingRevision
+    let updatedRevision = AirframeCanonicalRequirementRevisionRecord(
+        id: updatedExistingRevision.id,
+        requirementID: updatedExistingRequirement.id,
+        revisionNumber: 1,
+        title: updatedExistingRequirement.title,
+        statement: "Existing canonical requirement with updated revision text.",
+        status: .verified,
+        rationale: "Baseline record updated.",
+        sourceKind: .airframe,
+        sourceURI: updatedExistingRequirement.sourceURI
+    )
+    let createdRevision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-3000-R1"),
+        requirementID: createdRequirement.id,
+        revisionNumber: 1,
+        title: createdRequirement.title,
+        statement: createdRequirement.statement,
+        status: createdRequirement.status,
+        rationale: createdRequirement.rationale,
+        sourceKind: createdRequirement.sourceKind,
+        sourceURI: createdRequirement.sourceURI
+    )
+    let incomingRevisionDuplicate = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-3000-R1"),
+        requirementID: createdRequirement.id,
+        revisionNumber: 1,
+        title: "Created requirement duplicate",
+        statement: "This duplicate should conflict.",
+        status: .draft,
+        rationale: "Duplicate record.",
+        sourceKind: .manual,
+        sourceURI: "docs/requirements/created-duplicate.md"
+    )
+
+    let previewJSONDocument = AirframeRequirementInterchangeDocument(
+        requirements: [unchangedRequirement, updatedRequirement, createdRequirement, incomingRequirementDuplicate],
+        revisions: [unchangedRevision, updatedRevision, createdRevision, incomingRevisionDuplicate]
+    )
+    let previewJSON = try JSONEncoder().encode(previewJSONDocument)
+    let interchange = AirframeRequirementInterchange()
+    let preview = try interchange.previewImportJSON(
+        String(decoding: previewJSON, as: UTF8.self),
+        existingRequirements: [unchangedExistingRequirement, updatedExistingRequirement, removedRequirement],
+        existingRevisions: [unchangedExistingRevision, updatedExistingRevision, removedRevision]
+    )
+
+    #expect(preview.createdCount == 2)
+    #expect(preview.updatedCount == 2)
+    #expect(preview.unchangedCount == 2)
+    #expect(preview.removedCount == 2)
+    #expect(preview.conflictedCount == 2)
+    #expect(preview.requirements.contains(where: { $0.changeKind == .conflicted && $0.id == AirframeID("REQ-3000") }))
+    #expect(preview.revisions.contains(where: { $0.changeKind == .conflicted && $0.id == AirframeID("REQ-3000-R1") }))
+
+    let csv = try interchange.exportCSV(
+        requirements: [unchangedRequirement, updatedRequirement, createdRequirement, incomingRequirementDuplicate],
+        revisions: [unchangedRevision, updatedRevision, createdRevision, incomingRevisionDuplicate]
+    )
+    let csvPreview = try interchange.previewImportCSV(
+        csv,
+        existingRequirements: [unchangedExistingRequirement, updatedExistingRequirement, removedRequirement],
+        existingRevisions: [unchangedExistingRevision, updatedExistingRevision, removedRevision]
+    )
+
+    #expect(csvPreview == preview)
+}
+
+@Test func requirementTraceabilityIndexAndGateEvaluationCoverWorkItemsEvidenceAndReports() throws {
+    let requirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-9001"),
+        title: "The system shall link requirements to work and evidence.",
+        statement: "AirframeCore shall provide traceability coverage for requirement-linked work items and evidence.",
+        status: .active,
+        rationale: "Traceability is required for release gating.",
+        sourceKind: .manual,
+        sourceURI: "docs/requirements/traceability.md",
+        releaseScope: ["SP-029"],
+        traceLinks: [
+            AirframeRequirementLink(
+                id: AirframeID("RL-9001"),
+                targetKind: "task",
+                targetID: "T-9001",
+                title: "Requirement implementation task"
+            ),
+            AirframeRequirementLink(
+                id: AirframeID("RL-9002"),
+                targetKind: "evidence",
+                targetID: "EV-9001",
+                title: "Requirement evidence"
+            ),
+            AirframeRequirementLink(
+                id: AirframeID("RL-9003"),
+                targetKind: "design",
+                targetID: "DESIGN-42",
+                title: "Design note"
+            )
+        ],
+        currentRevisionID: AirframeID("REQ-9001-R1")
+    )
+    let verifiedRequirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-9002"),
+        title: "The system shall keep source metadata.",
+        statement: "AirframeCore shall preserve source metadata with revision history.",
+        status: .verified,
+        rationale: "Source provenance is required for import/export auditing.",
+        sourceKind: .external,
+        sourceURI: "docs/source/requirements.csv",
+        releaseScope: ["SP-029"],
+        currentRevisionID: AirframeID("REQ-9002-R1")
+    )
+    let draftRequirement = AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-9003"),
+        title: "The system shall expose release gate reporting.",
+        statement: "AirframeCore shall explain why a release can or cannot close.",
+        status: .draft,
+        rationale: "Release gating needs a user-facing explanation.",
+        sourceKind: .airframe,
+        sourceURI: "docs/requirements/release-gates.md",
+        releaseScope: ["SP-029"]
+    )
+    let requirementRevision = AirframeCanonicalRequirementRevisionRecord(
+        id: AirframeID("REQ-9001-R1"),
+        requirementID: requirement.id,
+        revisionNumber: 1,
+        title: requirement.title,
+        statement: requirement.statement,
+        status: requirement.status,
+        rationale: requirement.rationale,
+        sourceKind: requirement.sourceKind,
+        sourceURI: requirement.sourceURI
+    )
+    let task = AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("T-9001"),
+            kind: .task,
+            title: "Implement traceability index",
+            status: .implementedNotVerified
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Traceability implementation is required for release gating.",
+        epicID: AirframeID("EP-021"),
+        sprintID: AirframeID("SP-029"),
+        requirementIDs: [requirement.id],
+        testSteps: ["Run traceability tests"]
+    )
+    let evidence = AirframeCanonicalEvidenceSummaryRecord(
+        id: AirframeID("EV-9001"),
+        workItemIDs: [task.workItem.id],
+        summary: "Traceability tests passed.",
+        result: .passed,
+        requirementIDs: [requirement.id],
+        command: "swift test --package-path AirframeCore",
+        artifactReferences: ["docs/generated/Requirements/Requirements-Traceability-Matrix.md"],
+        ciReferences: ["ci://runs/9001"],
+        environment: "macOS"
+    )
+
+    let index = AirframeRequirementTraceabilityIndex(
+        requirements: [requirement, verifiedRequirement, draftRequirement],
+        revisions: [requirementRevision],
+        evidence: [evidence],
+        tasks: [task]
+    )
+    let summary = index.traceSummary(for: requirement.id)
+    let requirementsForTask = index.requirements(for: task.workItem.id)
+    let requirementsForEvidence = index.requirements(for: evidence.id)
+    let gaps = index.gapDiagnostics(releaseScope: "SP-029")
+    let gate = index.releaseGateSummary(releaseScope: "SP-029")
+    let documentation = AirframeRequirementDocumentationProjector().projectRequirementReport(index, releaseScope: "SP-029")
+
+    #expect(summary.hasWorkItemTrace)
+    #expect(summary.hasEvidenceTrace)
+    #expect(summary.revisionIDs == [AirframeID("REQ-9001-R1")])
+    #expect(requirementsForTask.map { $0.id } == [requirement.id])
+    #expect(requirementsForEvidence.map { $0.id } == [requirement.id])
+    #expect(gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
+    #expect(gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
+    #expect(!gate.canClose)
+    #expect(gate.blockedRequirementIDs.contains(draftRequirement.id))
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("REQ-9001") == true)
+    #expect(documentation["Requirements/Bidirectional-Requirements-Traceability-Matrix.md"]?.contains("T-9001") == true)
+    #expect(documentation["Requirements/Release-Gate.md"]?.contains("Can Close") == true)
+    #expect(documentation["Requirements/Compliance-Verification-Matrix.md"]?.contains("Blocked") == true)
 }
 
 @Test func canonicalJSONStoreReportsMalformedRecordDiagnostics() throws {
@@ -1053,6 +1527,50 @@ import Foundation
             epics: [epic],
             sprints: [sprint],
             tasks: [task]
+        )
+    )
+
+    #expect(diagnostics.status == .info)
+    #expect(diagnostics.isValid)
+    #expect(diagnostics.diagnostics.isEmpty)
+}
+
+@Test func canonicalStateValidatorAcceptsConfiguredActiveSprintInReview() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-020"),
+        activeSprintID: AirframeID("SP-025")
+    )
+    let epic = AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("EP-020"),
+            kind: .epic,
+            title: "Canonical Airframe Workflow State",
+            status: .active
+        ),
+        owner: "Human / Airframe Planning",
+        goal: "Move workflow state into canonical records.",
+        rationale: "Markdown state can drift.",
+        sprintIDs: [AirframeID("SP-025")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-025"),
+            kind: .sprint,
+            title: "Canonical Store Schema and Validation",
+            status: .review
+        ),
+        epicID: AirframeID("EP-020"),
+        goal: "Define diagnostics."
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            epics: [epic],
+            sprints: [sprint]
         )
     )
 

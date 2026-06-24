@@ -1,0 +1,42 @@
+{
+  "endDate" : "2026-06-24",
+  "epicID" : {
+    "rawValue" : "EP-021"
+  },
+  "goal" : "Add traceability graph queries, revision metadata, and gap diagnostics.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Sprint-backlog.md",
+    "updatedAt" : "2026-06-24T15:14:24Z"
+  },
+  "notes" : [
+
+  ],
+  "startDate" : "2026-06-24",
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0135"
+    },
+    {
+      "rawValue" : "T-0136"
+    },
+    {
+      "rawValue" : "T-0137"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-030"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Traceability Graph and Diagnostics"
+  }
+}

@@ -12,7 +12,7 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **None**
+Currently: **SP-031**
 
 See: [Sprint-active.md](Sprint-active.md)
 
@@ -30,18 +30,19 @@ See: [Sprint-backlog.md](Sprint-backlog.md)
 
 ## Planning Sprints
 
-Currently: **0 planning Sprints**
-
-No Sprints are currently in Planning.
-
-## Active Sprints
-
-Currently: **0 active Sprints**
+Currently: **1 planning Sprint**
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
+| SP-032 | Compliance Documents and Regression Coverage | EP-021 | [Sprint-active.md](Sprint-active.md) | Planning |
 
-No Sprints are currently Active.
+## Active Sprints
+
+Currently: **1 active Sprint**
+
+| Sprint | Title | Epic | File | Status |
+| ------ | ----- | ---- | ---- | ------ |
+| SP-031 | Evidence Summaries and Release Gates | EP-021 | [Sprint-active.md](Sprint-active.md) | Active |
 
 ## Review Sprints
 
@@ -55,7 +56,7 @@ See: [Closed/Sprint-SP-017.md](Closed/Sprint-SP-017.md) | [Closed/Sprint-SP-018.
 
 ## All Sprints
 
-Currently: **28 Sprints** | Next available: **SP-029**
+Currently: **32 Sprints** | Next available: **SP-033**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -87,15 +88,19 @@ Currently: **28 Sprints** | Next available: **SP-029**
 | SP-026 | Markdown Import and Projection | EP-020 | T-0120, T-0121, T-0122, T-0123 | None | Closed |
 | SP-027 | AICockpit Canonical State Integration | EP-020 | T-0124, T-0125, T-0126, T-0127 | None | Closed |
 | SP-028 | AgileCockpit Canonical State Integration | EP-020 | T-0128, T-0129, T-0130, T-0131 | I-0007, I-0008 | Closed |
+| SP-029 | Canonical Requirement Model and Interchange | EP-021 | T-0132, T-0133, T-0134 | None | Closed |
+| SP-030 | Traceability Graph and Diagnostics | EP-021 | T-0135, T-0136, T-0137 | None | Closed |
+| SP-031 | Evidence Summaries and Release Gates | EP-021 | T-0138, T-0139, T-0140 | None | Active |
+| SP-032 | Compliance Documents and Regression Coverage | EP-021 | T-0141, T-0142 | None | Planning |
 
 ## Statistics
 
-- **Total Sprints:** 28
+- **Total Sprints:** 32
 - **Backlog:** 3
-- **Planning:** 0
-- **Active:** 0
+- **Planning:** 1
+- **Active:** 1
 - **Review:** 0
-- **Closed:** 25
-- **Next available:** SP-029
+- **Closed:** 27
+- **Next available:** SP-033
 
-*Last Updated: 2026-06-23 (historical EP-017 Sprints reconciled)*
+*Last Updated: 2026-06-24 (SP-030 closed; SP-031 activated; SP-032 moved to Planning)*
