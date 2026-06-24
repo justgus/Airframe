@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AF-FR-011"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
+  "statement" : "Airframe Core shall support updates to canonical project entities subject to authority and workflow constraints.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Entity Update",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

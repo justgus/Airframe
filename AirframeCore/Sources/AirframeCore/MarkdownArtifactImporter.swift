@@ -33,6 +33,8 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
     public let sprints: [AirframeCanonicalSprintRecord]
     public let tasks: [AirframeCanonicalTaskRecord]
     public let issues: [AirframeCanonicalIssueRecord]
+    public let requirements: [AirframeCanonicalRequirementRecord]
+    public let requirementRevisions: [AirframeCanonicalRequirementRevisionRecord]
     public let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
     public let diagnostics: [AirframeMarkdownImportDiagnostic]
 
@@ -41,6 +43,8 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
         sprints: [AirframeCanonicalSprintRecord] = [],
         tasks: [AirframeCanonicalTaskRecord] = [],
         issues: [AirframeCanonicalIssueRecord] = [],
+        requirements: [AirframeCanonicalRequirementRecord] = [],
+        requirementRevisions: [AirframeCanonicalRequirementRevisionRecord] = [],
         acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
         diagnostics: [AirframeMarkdownImportDiagnostic] = []
     ) {
@@ -48,6 +52,8 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
         self.sprints = sprints
         self.tasks = tasks
         self.issues = issues
+        self.requirements = requirements
+        self.requirementRevisions = requirementRevisions
         self.acceptanceCriteria = acceptanceCriteria
         self.diagnostics = diagnostics
     }
@@ -62,6 +68,8 @@ public struct AirframeMarkdownImportResult: Codable, Equatable, Sendable {
             sprints: sprints + other.sprints,
             tasks: tasks + other.tasks,
             issues: issues + other.issues,
+            requirements: requirements + other.requirements,
+            requirementRevisions: requirementRevisions + other.requirementRevisions,
             acceptanceCriteria: acceptanceCriteria + other.acceptanceCriteria,
             diagnostics: diagnostics + other.diagnostics
         )
@@ -80,13 +88,14 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
     }
 
     public func importDocument(_ markdown: String, sourcePath: String? = nil) -> AirframeMarkdownImportResult {
+        let requirementRecords = importRequirements(from: markdown, sourcePath: sourcePath)
         let sections = AirframeMarkdownRecordSection.sections(in: markdown)
         guard !sections.isEmpty else {
             let tableRecords = AirframeMarkdownRecordSection.summaryTableRecords(
                 in: markdown,
                 sourcePath: sourcePath
             )
-            guard !tableRecords.tasks.isEmpty || !tableRecords.issues.isEmpty else {
+            guard !tableRecords.tasks.isEmpty || !tableRecords.issues.isEmpty || !requirementRecords.requirements.isEmpty else {
                 return AirframeMarkdownImportResult(
                     diagnostics: [
                         AirframeMarkdownImportDiagnostic(
@@ -102,7 +111,9 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             return AirframeMarkdownImportResult(
                 tasks: tableRecords.tasks,
                 issues: tableRecords.issues,
-                diagnostics: tableRecords.diagnostics
+                requirements: requirementRecords.requirements,
+                requirementRevisions: requirementRecords.revisions,
+                diagnostics: tableRecords.diagnostics + requirementRecords.diagnostics
             )
         }
 
@@ -157,8 +168,10 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             sprints: sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
             tasks: tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
             issues: issues.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue },
+            requirements: requirementRecords.requirements,
+            requirementRevisions: requirementRecords.revisions,
             acceptanceCriteria: acceptanceCriteria.sorted { $0.id.rawValue < $1.id.rawValue },
-            diagnostics: diagnostics
+            diagnostics: diagnostics + requirementRecords.diagnostics
         )
     }
 
@@ -348,6 +361,102 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
         return (record, diagnostics)
     }
 
+    private func importRequirements(
+        from markdown: String,
+        sourcePath: String?
+    ) -> (
+        requirements: [AirframeCanonicalRequirementRecord],
+        revisions: [AirframeCanonicalRequirementRevisionRecord],
+        diagnostics: [AirframeMarkdownImportDiagnostic]
+    ) {
+        let sections = AirframeMarkdownRequirementSection.sections(in: markdown)
+        guard !sections.isEmpty else {
+            return ([], [], [])
+        }
+
+        var requirements: [AirframeCanonicalRequirementRecord] = []
+        var revisions: [AirframeCanonicalRequirementRevisionRecord] = []
+        var diagnostics: [AirframeMarkdownImportDiagnostic] = []
+
+        for section in sections {
+            let statement = section.statement
+            if statement.isEmpty {
+                diagnostics.append(
+                    AirframeMarkdownImportDiagnostic(
+                        severity: .warning,
+                        code: .missingRequiredField,
+                        sourcePath: sourcePath,
+                        recordID: section.id,
+                        message: "Required field statement is missing."
+                    )
+                )
+            }
+            let verificationMethod = Self.inferredVerificationMethod(
+                title: section.title,
+                statement: statement
+            )
+            let requirementID = section.id
+            let revisionID = AirframeID("\(requirementID.rawValue)-R1")
+            requirements.append(
+                AirframeCanonicalRequirementRecord(
+                    id: requirementID,
+                    title: section.title,
+                    statement: statement,
+                    status: .draft,
+                    rationale: "",
+                    sourceKind: .manual,
+                    sourceURI: sourcePath,
+                    priority: .medium,
+                    verificationMethod: verificationMethod,
+                    validationRequired: true,
+                    currentRevisionID: revisionID,
+                    metadata: metadata(sourcePath)
+                )
+            )
+            revisions.append(
+                AirframeCanonicalRequirementRevisionRecord(
+                    id: revisionID,
+                    requirementID: requirementID,
+                    revisionNumber: 1,
+                    title: section.title,
+                    statement: statement,
+                    status: .draft,
+                    rationale: "",
+                    sourceKind: .manual,
+                    sourceURI: sourcePath,
+                    priority: .medium,
+                    verificationMethod: verificationMethod,
+                    validationRequired: true,
+                    changeRationale: "Initial import from \(sourcePath ?? "markdown source")",
+                    metadata: metadata(sourcePath)
+                )
+            )
+        }
+
+        return (
+            requirements: requirements.sorted { $0.id.rawValue < $1.id.rawValue },
+            revisions: revisions.sorted { $0.id.rawValue < $1.id.rawValue },
+            diagnostics: diagnostics
+        )
+    }
+
+    private static func inferredVerificationMethod(title: String, statement: String) -> AirframeRequirementVerificationMethod {
+        let searchableText = "\(title) \(statement)".lowercased()
+        if searchableText.contains("display") || searchableText.contains("show") || searchableText.contains("visible") || searchableText.contains("visibility") {
+            return .inspection
+        }
+        if searchableText.contains("compute") || searchableText.contains("calculate") || searchableText.contains("detect") || searchableText.contains("diagnostic") || searchableText.contains("explain") {
+            return .analysis
+        }
+        if searchableText.contains("verify") || searchableText.contains("auditable") || searchableText.contains("review") {
+            return .review
+        }
+        if searchableText.contains("import") || searchableText.contains("export") || searchableText.contains("open") || searchableText.contains("close") || searchableText.contains("allow") || searchableText.contains("support") || searchableText.contains("attach") || searchableText.contains("mark") {
+            return .demonstration
+        }
+        return .test
+    }
+
     private func requiredDiagnostics(
         for section: AirframeMarkdownRecordSection,
         status: AirframeWorkStatus?,
@@ -438,6 +547,62 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
             return nil
         }
         return value
+    }
+}
+
+private struct AirframeMarkdownRequirementSection {
+    let id: AirframeID
+    let title: String
+    let lines: [String]
+
+    var statement: String {
+        lines
+            .joined(separator: "\n")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    static func sections(in markdown: String) -> [AirframeMarkdownRequirementSection] {
+        let lines = markdown.components(separatedBy: .newlines)
+        var headings: [(index: Int, id: AirframeID, title: String)] = []
+        for (index, line) in lines.enumerated() {
+            guard let heading = requirementHeading(from: line) else {
+                continue
+            }
+            headings.append((index, heading.id, heading.title))
+        }
+        return headings.enumerated().map { offset, heading in
+            let end = offset + 1 < headings.count ? headings[offset + 1].index : lines.count
+            return AirframeMarkdownRequirementSection(
+                id: heading.id,
+                title: heading.title,
+                lines: Array(lines[(heading.index + 1)..<end])
+            )
+        }
+    }
+
+    private static func requirementHeading(from line: String) -> (id: AirframeID, title: String)? {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasPrefix("### ") else {
+            return nil
+        }
+        let content = trimmed.dropFirst(4)
+        guard let firstSpace = content.firstIndex(where: { $0.isWhitespace }) else {
+            return nil
+        }
+        let idValue = String(content[..<firstSpace])
+        guard isRequirementID(idValue) else {
+            return nil
+        }
+        let title = String(content[content.index(after: firstSpace)...]).trimmingCharacters(in: .whitespaces)
+        return (AirframeID(idValue), title)
+    }
+
+    private static func isRequirementID(_ value: String) -> Bool {
+        guard let regex = try? NSRegularExpression(pattern: #"^[A-Z][A-Z0-9-]*-[0-9]{3}$"#) else {
+            return false
+        }
+        let range = NSRange(value.startIndex..<value.endIndex, in: value)
+        return regex.firstMatch(in: value, range: range) != nil
     }
 }
 

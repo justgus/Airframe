@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AC-FR-014"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
+  "statement" : "Agile Cockpit shall provide access to audit events associated with project-management actions, including allowed and denied operations.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Audit Visibility",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

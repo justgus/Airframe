@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AC-SR-005"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
+  "statement" : "Agile Cockpit shall require explicit human confirmation before requesting sensitive operations such as closing a sprint, closing an epic, bulk status changes, or configuration changes.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Sensitive Operation Confirmation",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

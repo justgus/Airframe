@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "RT-RG-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/RequirementsTraceability_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "statement" : "AirframeCore shall support configurable release gate policy.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Configurable Gate Policy",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

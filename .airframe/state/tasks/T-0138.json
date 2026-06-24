@@ -19,13 +19,12 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Tasks\/Task-unverified.md",
-    "updatedAt" : "2026-06-24T15:36:37Z"
+    "source" : "docs\/Tasks\/Verified\/Task-verified-0138-0140.md"
   },
   "notes" : [
 
   ],
-  "priority" : "high",
+  "priority" : "medium",
   "rationale" : "",
   "requirementIDs" : [
 
@@ -37,6 +36,7 @@
 
   ],
   "workItem" : {
+    "githubIssue" : 137,
     "id" : {
       "rawValue" : "T-0138"
     },

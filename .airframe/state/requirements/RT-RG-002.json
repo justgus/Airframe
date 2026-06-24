@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "RT-RG-002"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/RequirementsTraceability_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "statement" : "The default release candidate gate shall require:\n\n- No blocking Issues.\n- All in-scope requirements are implemented, deferred, waived, or explicitly out of scope.\n- All in-scope non-deferred requirements have required verification evidence.\n- All requirements requiring validation have validation approval.\n- All deviations and waivers have approving authority.\n- No blocking traceability diagnostics remain.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Default Gate Policy",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

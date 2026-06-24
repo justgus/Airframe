@@ -4,32 +4,11 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-031: Evidence Summaries and Release Gates
+## SP-033: Canonical Requirements Import
 
 **Status:** Active
 **Epic:** EP-021: Requirements Traceability and Release Evidence
-**Goal:** Add summarized evidence records, release gates, and Cockpit views.
-**Start Date:** 2026-06-24
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0138 | Implement evidence summaries and CI artifact links | High | Implemented - Not Verified |
-| T-0139 | Add release scope and gate evaluation | High | Implemented - Not Verified |
-| T-0140 | Add AgileCockpit release gate and traceability views | High | Implemented - Not Verified |
-
-### Assigned Issues
-
-None.
-
-## SP-032: Compliance Documents and Regression Coverage
-
-**Status:** Planning
-**Epic:** EP-021: Requirements Traceability and Release Evidence
-**Goal:** Generate compliance documents and regression coverage for the migration.
+**Goal:** Import existing requirements documentation into canonical requirement records and expose them in the release gate.
 **Start Date:** TBD
 **End Date:** TBD
 **Capacity:** TBD
@@ -38,11 +17,14 @@ None.
 
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
-| T-0141 | Generate compliance and traceability documents | High | Implemented - Not Verified |
-| T-0142 | Add regression tests for import/export, traceability, and gates | High | Implemented - Not Verified |
+| T-0143 | Define AICockpit requirements import command contract | High | Implemented - Not Verified |
+| T-0144 | Implement canonical requirements import apply path | High | Implemented - Not Verified |
+| T-0145 | Add Markdown requirements seed import support | High | Implemented - Not Verified |
+| T-0146 | Regenerate requirements documentation from canonical state | High | Implemented - Not Verified |
+| T-0147 | Add requirements import regression coverage | High | Implemented - Not Verified |
 
 ### Assigned Issues
 
 None.
 
-*Last Updated: 2026-06-24 (SP-030 closed; SP-031 activated; SP-032 moved to Planning)*
+*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*

@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "RT-FR-016"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/RequirementsTraceability_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "statement" : "Airframe shall support generating traceability and compliance documents from canonical records and templates.\n\nInitial document targets:\n\n- Compliance Verification Matrix.\n- Requirements Traceability Matrix.\n- Bidirectional Requirements Traceability Matrix.\n- Deviation or waiver report.\n- Test plan.\n- Verification report.\n- Release candidate closeout report.\n\n## 4. Import Export Requirements",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Compliance Document Generation",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

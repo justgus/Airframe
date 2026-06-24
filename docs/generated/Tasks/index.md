@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **142 total Tasks**
+Currently: **147 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
 | Backlog | 1 |
 | Active | 0 |
-| Implemented - Not Verified | 16 |
-| Implemented - Verified | 125 |
+| Implemented - Not Verified | 8 |
+| Implemented - Verified | 138 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -149,8 +149,13 @@ Currently: **142 total Tasks**
 | T-0135 | #134 | Implement traceability graph and bidirectional queries | Implemented - Verified |
 | T-0136 | #136 | Add traceability gap diagnostics | Implemented - Verified |
 | T-0137 | #135 | Add requirement revision and source metadata | Implemented - Verified |
-| T-0138 | TBD | Implement evidence summaries and CI artifact links | Implemented - Not Verified |
-| T-0139 | TBD | Add release scope and gate evaluation | Implemented - Not Verified |
-| T-0140 | TBD | Add AgileCockpit release gate and traceability views | Implemented - Not Verified |
-| T-0141 | TBD | Generate compliance and traceability documents | Implemented - Not Verified |
-| T-0142 | TBD | Add regression tests for import/export, traceability, and gates | Implemented - Not Verified |
+| T-0138 | #137 | Implement evidence summaries and CI artifact links | Implemented - Verified |
+| T-0139 | #138 | Add release scope and gate evaluation | Implemented - Verified |
+| T-0140 | #139 | Add AgileCockpit release gate and traceability views | Implemented - Verified |
+| T-0141 | #140 | Generate compliance and traceability documents | Implemented - Verified |
+| T-0142 | #141 | Add regression tests for import/export, traceability, and gates | Implemented - Verified |
+| T-0143 | #142 | Define AICockpit requirements import command contract | Implemented - Verified |
+| T-0144 | #143 | Implement canonical requirements import apply path | Implemented - Verified |
+| T-0145 | #144 | Add Markdown requirements seed import support | Implemented - Verified |
+| T-0146 | #145 | Regenerate requirements documentation from canonical state | Implemented - Verified |
+| T-0147 | #146 | Add requirements import regression coverage | Implemented - Verified |

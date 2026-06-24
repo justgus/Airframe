@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "CWS-FR-003"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
+  "statement" : "Airframe shall represent relationships between work products by ID, including:\n\n- Epic to Sprint.\n- Epic to Task.\n- Epic to Issue.\n- Sprint to Task.\n- Sprint to Issue.\n- Requirement to Task.\n- Requirement to Test.\n- Requirement to Evidence.\n- Task or Issue to Evidence.\n- Work item to GitHub issue where applicable.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Relationship Model",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

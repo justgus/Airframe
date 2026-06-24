@@ -60,26 +60,32 @@ Airframe work products must connect implementation, tests, evidence, requirement
 
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
-| SP-029 | Define the canonical requirement record model and interchange formats. | Backlog |
-| SP-030 | Add traceability graph queries, revision metadata, and gap diagnostics. | Backlog |
-| SP-031 | Add summarized evidence records, release gates, and Cockpit views. | Backlog |
-| SP-032 | Generate compliance documents and regression coverage for the migration. | Backlog |
+| SP-029 | Define the canonical requirement record model and interchange formats. | Closed |
+| SP-030 | Add traceability graph queries, revision metadata, and gap diagnostics. | Closed |
+| SP-031 | Add summarized evidence records, release gates, and Cockpit views. | Closed |
+| SP-032 | Generate compliance documents and regression coverage for the migration. | Closed |
+| SP-033 | Import existing requirements documentation into canonical requirement records and expose them in the release gate. | Active |
 
 ### Related Tasks
 
 | Task | Title | Status |
 | ---- | ----- | ------ |
-| T-0132 | Define canonical requirement records | Backlog |
-| T-0133 | Implement requirement CSV and JSON interchange | Backlog |
-| T-0134 | Add import preview and conflict reporting | Backlog |
-| T-0135 | Implement traceability graph and bidirectional queries | Backlog |
-| T-0136 | Add traceability gap diagnostics | Backlog |
-| T-0137 | Add requirement revision and source metadata | Backlog |
-| T-0138 | Implement evidence summaries and CI artifact links | Backlog |
-| T-0139 | Add release scope and gate evaluation | Backlog |
-| T-0140 | Add AgileCockpit release gate and traceability views | Backlog |
-| T-0141 | Generate compliance and traceability documents | Backlog |
-| T-0142 | Add regression tests for import/export, traceability, and gates | Backlog |
+| T-0132 | Define canonical requirement records | Implemented - Verified |
+| T-0133 | Implement requirement CSV and JSON interchange | Implemented - Verified |
+| T-0134 | Add import preview and conflict reporting | Implemented - Verified |
+| T-0135 | Implement traceability graph and bidirectional queries | Implemented - Verified |
+| T-0136 | Add traceability gap diagnostics | Implemented - Verified |
+| T-0137 | Add requirement revision and source metadata | Implemented - Verified |
+| T-0138 | Implement evidence summaries and CI artifact links | Implemented - Verified |
+| T-0139 | Add release scope and gate evaluation | Implemented - Verified |
+| T-0140 | Add AgileCockpit release gate and traceability views | Implemented - Verified |
+| T-0141 | Generate compliance and traceability documents | Implemented - Verified |
+| T-0142 | Add regression tests for import/export, traceability, and gates | Implemented - Verified |
+| T-0143 | Define AICockpit requirements import command contract | Implemented - Not Verified |
+| T-0144 | Implement canonical requirements import apply path | Implemented - Not Verified |
+| T-0145 | Add Markdown requirements seed import support | Implemented - Not Verified |
+| T-0146 | Regenerate requirements documentation from canonical state | Implemented - Not Verified |
+| T-0147 | Add requirements import regression coverage | Implemented - Not Verified |
 
 ### Related Issues
 

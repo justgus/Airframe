@@ -133,6 +133,19 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0129 | #129 | EP-020 | Add AgileCockpit data health diagnostics surface |
 | T-0130 | #130 | EP-020 | Add AgileCockpit repair preview flow for canonical diagnostics |
 | T-0131 | #131 | EP-020 | Verify end-to-end canonical workflow state behavior |
+| T-0135 | #134 | EP-021 | Implement traceability graph and bidirectional queries |
+| T-0136 | #136 | EP-021 | Add traceability gap diagnostics |
+| T-0137 | #135 | EP-021 | Add requirement revision and source metadata |
+| T-0138 | #137 | EP-021 | Implement evidence summaries and CI artifact links |
+| T-0139 | #138 | EP-021 | Add release scope and gate evaluation |
+| T-0140 | #139 | EP-021 | Add AgileCockpit release gate and traceability views |
+| T-0141 | #140 | EP-021 | Generate compliance and traceability documents |
+| T-0142 | #141 | EP-021 | Add regression tests for import/export, traceability, and gates |
+| T-0143 | #142 | EP-021 | Define AICockpit requirements import command contract |
+| T-0144 | #143 | EP-021 | Implement canonical requirements import apply path |
+| T-0145 | #144 | EP-021 | Add Markdown requirements seed import support |
+| T-0146 | #145 | EP-021 | Regenerate requirements documentation from canonical state |
+| T-0147 | #146 | EP-021 | Add requirements import regression coverage |
 
 ## Current Issue Mapping
 
@@ -147,4 +160,4 @@ This document records the required one-to-one mapping between GitHub Issues and 
 
 Next local Issue ID: `I-0007`.
 
-*Last Updated: 2026-06-17 (T-0116 through T-0131 mapped to GitHub issues #116 through #131)*
+*Last Updated: 2026-06-24 (T-0141 through T-0147 mapped to GitHub issues #140 through #146)*

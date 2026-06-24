@@ -145,6 +145,25 @@ public enum AirframeRequirementVerificationMethod: String, Codable, Equatable, S
     case mixed
 }
 
+extension AirframeRequirementVerificationMethod: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .test:
+            "Test"
+        case .analysis:
+            "Analysis"
+        case .inspection:
+            "Inspection"
+        case .demonstration:
+            "Demonstration"
+        case .review:
+            "Review"
+        case .mixed:
+            "Mixed"
+        }
+    }
+}
+
 public enum AirframeRequirementSourceKind: String, Codable, Equatable, Sendable {
     case airframe
     case csv

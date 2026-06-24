@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "RT-FR-011"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/RequirementsTraceability_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "statement" : "AgileCockpit shall show release candidate close criteria, including:\n\n- In-scope requirements count.\n- Implemented requirements count.\n- Verified requirements count.\n- Validated requirements count.\n- Deferred or waived requirements count.\n- Open deviations.\n- Blocking traceability gaps.\n- Blocking Issues.\n- Missing test evidence.\n- Missing human approvals.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Release Gate Summary",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

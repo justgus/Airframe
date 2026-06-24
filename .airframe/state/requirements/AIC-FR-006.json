@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AIC-FR-006"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AICockpit_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AICockpit_CSCI_Requirements.md",
+  "statement" : "AI Cockpit shall generate compact task packets containing:\n\n- Project name.\n- Work item identifier.\n- Objective.\n- Scope.\n- Out-of-scope constraints.\n- Acceptance criteria.\n- Verification requirements.\n- Relevant files, when available.\n- Protected paths or no-touch areas.\n- Required final report format.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Generate Task Packet",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

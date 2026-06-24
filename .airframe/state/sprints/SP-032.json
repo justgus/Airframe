@@ -1,4 +1,5 @@
 {
+  "endDate" : "2026-06-24",
   "epicID" : {
     "rawValue" : "EP-021"
   },
@@ -12,11 +13,12 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Sprints\/Sprint-backlog.md"
+    "source" : "docs\/Sprints\/Closed\/Sprint-SP-032.md"
   },
   "notes" : [
 
   ],
+  "startDate" : "2026-06-24",
   "taskIDs" : [
     {
       "rawValue" : "T-0141"
@@ -30,7 +32,7 @@
       "rawValue" : "SP-032"
     },
     "kind" : "sprint",
-    "status" : "planning",
+    "status" : "closed",
     "title" : "Compliance Documents and Regression Coverage"
   }
 }

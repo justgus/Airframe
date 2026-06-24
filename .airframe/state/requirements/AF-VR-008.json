@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AF-VR-008"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
+  "statement" : "Tests shall verify audit event creation for allowed and denied write operations.\n\n---\n\n## 11. Open Issues\n\n- Implementation language and packaging strategy remain to be selected.\n- Initial backend adapter selection remains open between GitHub-first and local-backend-first.\n- Final canonical workflow states remain to be finalized.\n- Credential and identity-provider mechanisms remain to be selected.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Audit Tests",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

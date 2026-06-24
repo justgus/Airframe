@@ -71,4 +71,4 @@ None.
 
 ---
 
-*Last Updated: 2026-06-24 (SP-032 moved to Planning)*
+*Last Updated: 2026-06-24 (SP-032 activated; backlog unchanged)*

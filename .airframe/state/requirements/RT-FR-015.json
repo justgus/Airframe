@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "RT-FR-015"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/RequirementsTraceability_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "statement" : "Airframe shall support optional code-level trace references to requirements.\n\nSupported references may include:\n\n- Source comments.\n- Test names.\n- Test metadata.\n- Work item records.\n- Commit metadata.\n- Generated source scans.\n\nAirframe shall not require every requirement to be referenced directly in code comments unless project policy requires it.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Code Reference Trace",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

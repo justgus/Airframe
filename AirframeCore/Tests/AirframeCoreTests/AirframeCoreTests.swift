@@ -396,6 +396,90 @@ import Foundation
     #expect(try store.list(AirframeCanonicalRequirementRevisionRecord.self).map(\.id) == [AirframeID("REQ-0001-R1")])
 }
 
+@Test func canonicalRepositorySprintActivationSetsProjectActiveSprint() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalSprintActivation-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-021"),
+        activeSprintID: nil,
+        sprintIDs: [AirframeID("SP-032")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-032"),
+            kind: .sprint,
+            title: "Compliance Documents and Regression Coverage",
+            status: .planning
+        ),
+        epicID: AirframeID("EP-021"),
+        goal: "Generate compliance documents and regression coverage."
+    )
+    try store.save(project)
+    try store.save(sprint)
+
+    try AirframeCanonicalStoreRepository(store: store)
+        .transitionWorkItem(id: AirframeID("SP-032"), to: .active)
+
+    let loadedProject = try #require(
+        try store.load(AirframeCanonicalProjectRecord.self, id: AirframeID("PRJ-AIRFRAME"))
+    )
+    let loadedSprint = try #require(
+        try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-032"))
+    )
+    #expect(loadedSprint.workItem.status == .active)
+    #expect(loadedProject.activeSprintID == AirframeID("SP-032"))
+}
+
+@Test func canonicalRepositorySprintClosureClearsMatchingProjectActiveSprint() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalSprintClosure-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-021"),
+        activeSprintID: AirframeID("SP-032"),
+        sprintIDs: [AirframeID("SP-032")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-032"),
+            kind: .sprint,
+            title: "Compliance Documents and Regression Coverage",
+            status: .review
+        ),
+        epicID: AirframeID("EP-021"),
+        goal: "Generate compliance documents and regression coverage."
+    )
+    try store.save(project)
+    try store.save(sprint)
+
+    try AirframeCanonicalStoreRepository(store: store)
+        .transitionWorkItem(id: AirframeID("SP-032"), to: .closed)
+
+    let loadedProject = try #require(
+        try store.load(AirframeCanonicalProjectRecord.self, id: AirframeID("PRJ-AIRFRAME"))
+    )
+    let loadedSprint = try #require(
+        try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-032"))
+    )
+    #expect(loadedSprint.workItem.status == .closed)
+    #expect(loadedProject.activeSprintID == nil)
+}
+
 @Test func requirementInterchangeRoundTripsJSONAndCSV() throws {
     let requirement = AirframeCanonicalRequirementRecord(
         id: AirframeID("REQ-0002"),
@@ -703,6 +787,12 @@ import Foundation
         requirementIDs: [requirement.id],
         testSteps: ["Run traceability tests"]
     )
+    let acceptanceCriterion = AirframeCanonicalAcceptanceCriterionRecord(
+        id: AirframeID("AC-9001"),
+        ownerID: AirframeID("EP-021"),
+        text: "Show requirement traceability coverage for requirement-linked work items and evidence.",
+        isVerified: true
+    )
     let evidence = AirframeCanonicalEvidenceSummaryRecord(
         id: AirframeID("EV-9001"),
         workItemIDs: [task.workItem.id],
@@ -719,28 +809,39 @@ import Foundation
         requirements: [requirement, verifiedRequirement, draftRequirement],
         revisions: [requirementRevision],
         evidence: [evidence],
+        acceptanceCriteria: [acceptanceCriterion],
         tasks: [task]
     )
     let summary = index.traceSummary(for: requirement.id)
     let requirementsForTask = index.requirements(for: task.workItem.id)
+    let requirementsForCriterion = index.requirements(for: acceptanceCriterion.id)
     let requirementsForEvidence = index.requirements(for: evidence.id)
     let gaps = index.gapDiagnostics(releaseScope: "SP-029")
     let gate = index.releaseGateSummary(releaseScope: "SP-029")
+    let coverage = index.coverageSummary(releaseScope: "SP-029")
     let documentation = AirframeRequirementDocumentationProjector().projectRequirementReport(index, releaseScope: "SP-029")
 
     #expect(summary.hasWorkItemTrace)
+    #expect(summary.hasAcceptanceCriterionTrace)
     #expect(summary.hasEvidenceTrace)
+    #expect(summary.acceptanceCriterionIDs == [AirframeID("AC-9001")])
     #expect(summary.revisionIDs == [AirframeID("REQ-9001-R1")])
     #expect(requirementsForTask.map { $0.id } == [requirement.id])
+    #expect(requirementsForCriterion.map { $0.id } == [requirement.id])
     #expect(requirementsForEvidence.map { $0.id } == [requirement.id])
-    #expect(gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
+    #expect(!gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
     #expect(gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
+    #expect(coverage.totalRequirementCount == 3)
+    #expect(coverage.assignedRequirementCount >= 1)
     #expect(!gate.canClose)
     #expect(gate.blockedRequirementIDs.contains(draftRequirement.id))
+    #expect(documentation["Requirements/Requirements-Specification.md"]?.contains("Verification Method") == true)
     #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("REQ-9001") == true)
+    #expect(documentation["Requirements/index.md"]?.contains("The system shall link requirements to work and evidence.") == true)
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("The system shall link requirements to work and evidence.") == true)
     #expect(documentation["Requirements/Bidirectional-Requirements-Traceability-Matrix.md"]?.contains("T-9001") == true)
     #expect(documentation["Requirements/Release-Gate.md"]?.contains("Can Close") == true)
-    #expect(documentation["Requirements/Compliance-Verification-Matrix.md"]?.contains("Blocked") == true)
+    #expect(documentation["Requirements/Compliance-Verification-Matrix.md"]?.contains("Requirement") == true)
 }
 
 @Test func canonicalJSONStoreReportsMalformedRecordDiagnostics() throws {
@@ -847,6 +948,38 @@ import Foundation
     #expect(result.tasks[0].acceptanceCriteria.count == 3)
     #expect(result.tasks[0].metadata.source == "docs/Tasks/Task-active.md")
     #expect(result.diagnostics.map(\.code).contains(.ambiguousField))
+}
+
+@Test func markdownArtifactImporterImportsRequirementRecordsFromRequirementDocs() {
+    let markdown = """
+    # Requirements Traceability Requirements
+
+    ## 3. Functional Requirements
+
+    ### RT-FR-001 Requirement Records
+
+    Airframe shall maintain canonical requirement records with stable IDs.
+
+    ### RT-FR-002 Requirement Revision State
+
+    Airframe shall support requirement revision metadata, including status, source, version, rationale, and change history.
+    """
+
+    let result = AirframeMarkdownArtifactImporter().importDocument(
+        markdown,
+        sourcePath: "docs/requirements/RequirementsTraceability_Requirements.md"
+    )
+
+    #expect(result.requirements.map(\.id) == [AirframeID("RT-FR-001"), AirframeID("RT-FR-002")])
+    #expect(result.requirements.allSatisfy { $0.status == .draft })
+    #expect(result.requirements.allSatisfy { $0.sourceKind == .manual })
+    #expect(result.requirements.allSatisfy { $0.sourceURI == "docs/requirements/RequirementsTraceability_Requirements.md" })
+    #expect(result.requirements.allSatisfy { $0.currentRevisionID != nil })
+    #expect(result.requirementRevisions.map(\.id) == [AirframeID("RT-FR-001-R1"), AirframeID("RT-FR-002-R1")])
+    #expect(result.requirements[0].title == "Requirement Records")
+    #expect(result.requirements[0].statement.contains("canonical requirement records"))
+    #expect(result.requirements[1].statement.contains("requirement revision metadata"))
+    #expect(result.diagnostics.isEmpty)
 }
 
 @Test func markdownArtifactImporterImportsIssueRecordsAndMergesDocuments() {

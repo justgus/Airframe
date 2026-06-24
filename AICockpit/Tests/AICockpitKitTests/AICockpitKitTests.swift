@@ -1,4 +1,5 @@
 import Testing
+import AirframeCore
 @testable import AICockpitKit
 import Foundation
 
@@ -10,6 +11,8 @@ import Foundation
     #expect(help.contains("aicockpit context"))
     #expect(help.contains("aicockpit config diagnose"))
     #expect(help.contains("aicockpit state diagnostics"))
+    #expect(help.contains("aicockpit requirements import --format csv|json --file path --dry-run"))
+    #expect(help.contains("aicockpit requirements export --format csv|json"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
     #expect(help.contains("aicockpit github comment"))
@@ -104,6 +107,157 @@ import Foundation
     #expect(AICockpitCommand.main(arguments: ["--help"]) == 0)
 }
 
+@Test func requirementsImportDryRunReturnsPreviewFromCSVInterchange() throws {
+    let configPath = try temporaryCanonicalRequirementsConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    try store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-0001"),
+            title: "Existing requirement",
+            statement: "Original statement",
+            status: .draft
+        )
+    )
+    try store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-0003"),
+            title: "Removed requirement",
+            statement: "Removed statement",
+            status: .draft
+        )
+    )
+    let importURL = rootURL.appending(path: "requirements.csv")
+    try Data(
+        """
+        record_kind,id,requirement_id,revision_number,external_id,title,statement,status,rationale,source_kind,source_uri,priority,verification_method,validation_required,release_scope,parent_ids,derived_from_ids,supersedes_ids,trace_links,deviation_ids,current_revision_id,change_rationale
+        requirement,REQ-0001,,,EXT-1,Existing requirement,Changed statement,active,,airframe,,high,test,true,v1,,,,,,,
+        requirement,REQ-0002,,,EXT-2,New requirement,New statement,draft,,airframe,,medium,test,true,v1,,,,,,,
+        """.utf8
+    ).write(to: importURL)
+
+    let result = AICockpitCommand.response(arguments: [
+        "requirements", "import",
+        "--config", configPath,
+        "--format", "csv",
+        "--file", importURL.path,
+        "--dry-run",
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"kind\" : \"requirementsImportPreview\""))
+    #expect(result.standardOutput.contains("\"format\" : \"csv\""))
+    #expect(result.standardOutput.contains("\"createdCount\" : 1"))
+    #expect(result.standardOutput.contains("\"updatedCount\" : 1"))
+    #expect(result.standardOutput.contains("\"removedCount\" : 1"))
+    #expect(result.standardOutput.contains("\"rawValue\" : \"REQ-0002\""))
+}
+
+@Test func requirementsExportRoutesJSONThroughInterchange() throws {
+    let configPath = try temporaryCanonicalRequirementsConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    try AirframeCanonicalJSONStore(rootURL: rootURL).save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-0100"),
+            title: "Exported requirement",
+            statement: "Exported statement",
+            status: .active,
+            releaseScope: ["v1"]
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "requirements", "export",
+        "--config", configPath,
+        "--format", "json"
+    ])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"requirements\""))
+    #expect(result.standardOutput.contains("\"rawValue\" : \"REQ-0100\""))
+    #expect(result.standardOutput.contains("\"title\" : \"Exported requirement\""))
+    #expect(result.standardOutput.contains("\"releaseScope\" : ["))
+}
+
+@Test func requirementsImportApplyWritesCanonicalRequirementRecords() throws {
+    let configPath = try temporaryCanonicalRequirementsConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    try store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-0199"),
+            title: "Removed requirement",
+            statement: "Removed statement",
+            status: .draft
+        )
+    )
+    let importURL = rootURL.appending(path: "requirements.csv")
+    try Data(
+        """
+        record_kind,id,requirement_id,revision_number,external_id,title,statement,status,rationale,source_kind,source_uri,priority,verification_method,validation_required,release_scope,parent_ids,derived_from_ids,supersedes_ids,trace_links,deviation_ids,current_revision_id,change_rationale
+        requirement,REQ-0200,,,EXT-200,Apply requirement,Apply statement,draft,,airframe,,medium,test,true,,,,,,,,
+        """.utf8
+    ).write(to: importURL)
+
+    let result = AICockpitCommand.response(arguments: [
+        "requirements", "import",
+        "--config", configPath,
+        "--format", "csv",
+        "--file", importURL.path,
+        "--apply",
+        "--output", "json"
+    ])
+    let savedRequirement = try store.load(AirframeCanonicalRequirementRecord.self, id: AirframeID("REQ-0200"))
+    let removedRequirement = try store.load(AirframeCanonicalRequirementRecord.self, id: AirframeID("REQ-0199"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"kind\" : \"requirementsImportApply\""))
+    #expect(result.standardOutput.contains("\"applied\" : true"))
+    #expect(result.standardOutput.contains("\"createdCount\" : 1"))
+    #expect(result.standardOutput.contains("\"removedCount\" : 1"))
+    #expect(savedRequirement?.title == "Apply requirement")
+    #expect(removedRequirement == nil)
+}
+
+@Test func stateImportMarkdownSeedsCanonicalRequirementsFromRequirementDocs() throws {
+    let configPath = try temporaryCanonicalRequirementsConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let requirementsDirectory = rootURL.appending(path: "docs/requirements")
+    try FileManager.default.createDirectory(at: requirementsDirectory, withIntermediateDirectories: true)
+    try Data(
+        """
+        # Requirements Traceability Requirements
+
+        ## 3. Functional Requirements
+
+        ### RT-FR-001 Requirement Records
+
+        Airframe shall maintain canonical requirement records with stable IDs.
+
+        ### RT-FR-002 Requirement Revision State
+
+        Airframe shall support requirement revision metadata, including status, source, version, rationale, and change history.
+        """.utf8
+    ).write(to: requirementsDirectory.appending(path: "RequirementsTraceability_Requirements.md"))
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "import-markdown",
+        "--config", configPath
+    ])
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let requirement1 = try store.load(AirframeCanonicalRequirementRecord.self, id: AirframeID("RT-FR-001"))
+    let requirement2 = try store.load(AirframeCanonicalRequirementRecord.self, id: AirframeID("RT-FR-002"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("requirements: 2"))
+    #expect(requirement1?.title == "Requirement Records")
+    #expect(requirement2?.title == "Requirement Revision State")
+    #expect(requirement1?.sourceURI?.contains("RequirementsTraceability_Requirements.md") == true)
+    #expect(requirement2?.sourceURI?.contains("RequirementsTraceability_Requirements.md") == true)
+}
+
 @Test func unknownCommandReturnsUsageError() {
     #expect(AICockpitCommand.main(arguments: ["unknown"]) == 64)
 }
@@ -143,6 +297,32 @@ import Foundation
     #expect(result.standardOutput.contains("Repository: justgus/Airframe"))
     #expect(result.standardOutput.contains("Active Epic: EP-009"))
     #expect(result.standardOutput.contains("Active Sprint: SP-009"))
+}
+
+@Test func contextCommandPrefersCanonicalProjectActiveSprintWhenStateExists() throws {
+    let config = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: config).deletingLastPathComponent()
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    try store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-021"),
+            activeSprintID: AirframeID("SP-032"),
+            sprintIDs: [AirframeID("SP-032")]
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "context",
+        "--config", config
+    ])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("Active Epic: EP-021"))
+    #expect(result.standardOutput.contains("Active Sprint: SP-032"))
+    #expect(!result.standardOutput.contains("Active Sprint: SP-009"))
 }
 
 @Test func configDiagnoseSupportsExplicitRuntimeConfiguration() throws {
@@ -621,6 +801,41 @@ private func temporaryLiveConfigurationPath() throws -> String {
           "backend": {
             "kind": "github-fixture",
             "location": "justgus/Airframe"
+          }
+        }
+        """.utf8
+    ).write(to: configURL)
+    return configURL.path
+}
+
+private func temporaryCanonicalRequirementsConfigurationPath() throws -> String {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AICockpitRequirementsConfig")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    let configURL = rootURL.appending(path: "airframe-workspace.json")
+    try Data(
+        """
+        {
+          "schemaVersion": 1,
+          "workspace": {
+            "id": { "rawValue": "WS-AIRFRAME-REQ" },
+            "name": "Airframe Requirements Test",
+            "rootPath": "."
+          },
+          "projects": [
+            {
+              "id": { "rawValue": "PRJ-AIRFRAME" },
+              "name": "Agile Airframe",
+              "repository": "justgus/Airframe",
+              "activeSprintID": null,
+              "activeEpicID": { "rawValue": "EP-021" }
+            }
+          ],
+          "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },
+          "backend": {
+            "kind": "local-fixture",
+            "location": "airframe-local-backend.json"
           }
         }
         """.utf8

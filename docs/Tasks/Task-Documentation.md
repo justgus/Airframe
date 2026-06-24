@@ -33,9 +33,7 @@ See: [Task-backlog.md](Task-backlog.md)
 
 Currently: **0 active Tasks**
 
-| Task | GitHub Issue | Title | File | Status |
-| ---- | ------------ | ----- | ---- | ------ |
-No Tasks are currently active.
+None.
 
 See: [Task-active.md](Task-active.md)
 
@@ -45,17 +43,17 @@ Currently: **5 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0138 | TBD | Implement evidence summaries and CI artifact links | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0139 | TBD | Add release scope and gate evaluation | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0140 | TBD | Add AgileCockpit release gate and traceability views | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0141 | TBD | Generate compliance and traceability documents | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0142 | TBD | Add regression tests for import/export, traceability, and gates | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0143 | TBD | Define AICockpit requirements import command contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0144 | TBD | Implement canonical requirements import apply path | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0145 | TBD | Add Markdown requirements seed import support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0146 | TBD | Regenerate requirements documentation from canonical state | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0147 | TBD | Add requirements import regression coverage | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **128 verified Tasks** | Next available: **T-0143**
+Currently: **133 verified Tasks** | Next available: **T-0148**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -177,15 +175,20 @@ Currently: **128 verified Tasks** | Next available: **T-0143**
 | T-0135 | #134 | Implement traceability graph and bidirectional queries | [Task-verified-0135-0137.md](Verified/Task-verified-0135-0137.md) | Implemented - Verified |
 | T-0136 | #136 | Add traceability gap diagnostics | [Task-verified-0135-0137.md](Verified/Task-verified-0135-0137.md) | Implemented - Verified |
 | T-0137 | #135 | Add requirement revision and source metadata | [Task-verified-0135-0137.md](Verified/Task-verified-0135-0137.md) | Implemented - Verified |
+| T-0138 | #137 | Implement evidence summaries and CI artifact links | [Task-verified-0138-0140.md](Verified/Task-verified-0138-0140.md) | Implemented - Verified |
+| T-0139 | #138 | Add release scope and gate evaluation | [Task-verified-0138-0140.md](Verified/Task-verified-0138-0140.md) | Implemented - Verified |
+| T-0140 | #139 | Add AgileCockpit release gate and traceability views | [Task-verified-0138-0140.md](Verified/Task-verified-0138-0140.md) | Implemented - Verified |
+| T-0141 | TBD | Generate compliance and traceability documents | [Task-verified-0141-0142.md](Verified/Task-verified-0141-0142.md) | Implemented - Verified |
+| T-0142 | TBD | Add regression tests for import/export, traceability, and gates | [Task-verified-0141-0142.md](Verified/Task-verified-0141-0142.md) | Implemented - Verified |
 
 ## Statistics
 
-- **Total Tasks:** 142
+- **Total Tasks:** 147
 - **Backlog:** 9
 - **Active:** 0
 - **Unverified:** 5
-- **Verified:** 128
+- **Verified:** 133
 - **Closed:** 0
-- **Next available:** T-0143
+- **Next available:** T-0148
 
-*Last Updated: 2026-06-24 (T-0135 through T-0137 verified)*
+*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*

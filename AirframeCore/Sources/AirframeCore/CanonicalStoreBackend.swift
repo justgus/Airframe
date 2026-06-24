@@ -93,6 +93,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         try importResult.sprints.forEach(store.save)
         try importResult.tasks.forEach(store.save)
         try importResult.issues.forEach(store.save)
+        try importResult.requirements.forEach(store.save)
+        try importResult.requirementRevisions.forEach(store.save)
         try importResult.acceptanceCriteria.forEach(store.save)
     }
 
@@ -114,6 +116,12 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         }
         try store.list(AirframeCanonicalIssueRecord.self).forEach {
             try store.delete(AirframeCanonicalIssueRecord.self, id: $0.workItem.id)
+        }
+        try store.list(AirframeCanonicalRequirementRecord.self).forEach {
+            try store.delete(AirframeCanonicalRequirementRecord.self, id: $0.id)
+        }
+        try store.list(AirframeCanonicalRequirementRevisionRecord.self).forEach {
+            try store.delete(AirframeCanonicalRequirementRevisionRecord.self, id: $0.id)
         }
         try store.list(AirframeCanonicalAcceptanceCriterionRecord.self).forEach {
             try store.delete(AirframeCanonicalAcceptanceCriterionRecord.self, id: $0.id)
@@ -212,6 +220,7 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         }
         if let record = try store.load(AirframeCanonicalSprintRecord.self, id: id) {
             try store.save(record.updatingStatus(status))
+            try applyActiveSprintPointerSideEffect(for: record, transitioningTo: status)
             return
         }
         if let record = try store.load(AirframeCanonicalTaskRecord.self, id: id) {
@@ -230,6 +239,13 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             throw AirframeBackendError.missingWorkItem(projectID)
         }
         try store.save(project.clearingActiveSprintID())
+    }
+
+    public func setActiveSprintID(_ sprintID: AirframeID, projectID: AirframeID) throws {
+        guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
+            throw AirframeBackendError.missingWorkItem(projectID)
+        }
+        try store.save(project.settingActiveSprintID(sprintID))
     }
 
     public func snapshot(project: AirframeProject) throws -> AirframeCanonicalStateSnapshot {
@@ -252,6 +268,26 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             tasks: state.tasks,
             issues: state.issues
         )
+    }
+
+    private func applyActiveSprintPointerSideEffect(
+        for sprint: AirframeCanonicalSprintRecord,
+        transitioningTo status: AirframeWorkStatus
+    ) throws {
+        let projects = try store.list(AirframeCanonicalProjectRecord.self)
+        switch status {
+        case .active:
+            guard let project = projects.first(where: { $0.sprintIDs.contains(sprint.workItem.id) }) else {
+                return
+            }
+            try store.save(project.settingActiveSprintID(sprint.workItem.id))
+        case .closed:
+            try projects
+                .filter { $0.activeSprintID == sprint.workItem.id }
+                .forEach { try store.save($0.clearingActiveSprintID()) }
+        default:
+            return
+        }
     }
 }
 
@@ -422,6 +458,22 @@ private extension AirframeCanonicalEpicRecord {
 }
 
 private extension AirframeCanonicalProjectRecord {
+    func settingActiveSprintID(_ sprintID: AirframeID) -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: sprintID,
+            epicIDs: epicIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
     func clearingActiveSprintID() -> AirframeCanonicalProjectRecord {
         AirframeCanonicalProjectRecord(
             id: id,

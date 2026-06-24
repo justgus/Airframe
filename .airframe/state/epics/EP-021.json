@@ -31,6 +31,7 @@
       "rawValue" : "EP-021-AC-10"
     }
   ],
+  "closeDate" : "2026-06-24",
   "goal" : "Add lightweight repo-coupled requirements traceability, test evidence summaries, release candidate gate visibility, external import\/export stubs, and generated compliance documentation support without turning Airframe into a replacement for DOORS.",
   "issueIDs" : [
 
@@ -41,7 +42,8 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Epics\/Epic-active.md"
+    "source" : "docs\/Epics\/Epic-active.md",
+    "updatedAt" : "2026-06-24T21:32:09Z"
   },
   "notes" : [
     "Acceptance Criteria: 1. AirframeCore defines canonical records for requirements, revisions, trace links, test evidence summaries, deviations, waivers, release scopes, and release gates. 2. Requirements can be imported from and exported to CSV. 3. Requirements can be imported from and exported to canonical JSON. 4. Import dry runs report created, updated, unchanged, removed, and conflicted records before mutation. 5. AirframeCore can identify traceability gaps for in-scope requirements. 6. Test evidence summaries can link test outcomes to requirement IDs and optional CI artifacts. 7. AgileCockpit shows release candidate gate status, including implemented, verified, validated, deferred, waived, and blocked requirement counts. 8. AirframeCore can explain why a release candidate can or cannot close. 9. Generated traceability and compliance documents can be produced from canonical state using deterministic default layouts or provided templates. 10. Tests cover import\/export, traceability diagnostics, release gate evaluation, and evidence-to-requirement linking."
@@ -85,6 +87,9 @@
     },
     {
       "rawValue" : "SP-032"
+    },
+    {
+      "rawValue" : "SP-033"
     }
   ],
   "startDate" : "2026-06-23",
@@ -121,6 +126,21 @@
     },
     {
       "rawValue" : "T-0142"
+    },
+    {
+      "rawValue" : "T-0143"
+    },
+    {
+      "rawValue" : "T-0144"
+    },
+    {
+      "rawValue" : "T-0145"
+    },
+    {
+      "rawValue" : "T-0146"
+    },
+    {
+      "rawValue" : "T-0147"
     }
   ],
   "workItem" : {
@@ -128,7 +148,7 @@
       "rawValue" : "EP-021"
     },
     "kind" : "epic",
-    "status" : "active",
+    "status" : "closed",
     "title" : "Requirements Traceability and Release Evidence"
   }
 }

@@ -1,14 +1,421 @@
 # Release Gate
 
 **Release Scope:** All requirements
-**Can Close:** Yes
+**Can Close:** No
 
 | Count | Value |
 | ----- | ----- |
-| In Scope | 0 |
+| In Scope | 201 |
 | Implemented | 0 |
 | Verified | 0 |
 | Validated | 0 |
 | Deferred | 0 |
 | Waived | 0 |
-| Blocked | 0 |
+| Blocked | 201 |
+
+## Blocking Reasons
+- Requirement AC-DR-001 requires verification evidence but has none.
+- Requirement AC-DR-002 requires verification evidence but has none.
+- Requirement AC-DR-003 requires verification evidence but has none.
+- Requirement AC-DR-004 requires verification evidence but has none.
+- Requirement AC-FR-001 requires verification evidence but has none.
+- Requirement AC-FR-002 requires verification evidence but has none.
+- Requirement AC-FR-003 requires verification evidence but has none.
+- Requirement AC-FR-004 requires verification evidence but has none.
+- Requirement AC-FR-005 requires verification evidence but has none.
+- Requirement AC-FR-006 requires verification evidence but has none.
+- Requirement AC-FR-007 requires verification evidence but has none.
+- Requirement AC-FR-008 requires verification evidence but has none.
+- Requirement AC-FR-009 requires verification evidence but has none.
+- Requirement AC-FR-010 requires verification evidence but has none.
+- Requirement AC-FR-011 requires verification evidence but has none.
+- Requirement AC-FR-012 requires verification evidence but has none.
+- Requirement AC-FR-013 requires verification evidence but has none.
+- Requirement AC-FR-014 requires verification evidence but has none.
+- Requirement AC-FR-015 requires verification evidence but has none.
+- Requirement AC-FR-016 requires verification evidence but has none.
+- Requirement AC-FR-017 requires verification evidence but has none.
+- Requirement AC-FR-018 requires verification evidence but has none.
+- Requirement AC-IR-001 requires verification evidence but has none.
+- Requirement AC-IR-002 requires verification evidence but has none.
+- Requirement AC-IR-003 requires verification evidence but has none.
+- Requirement AC-IR-004 requires verification evidence but has none.
+- Requirement AC-NFR-001 requires verification evidence but has none.
+- Requirement AC-NFR-002 has no linked implementation work.
+- Requirement AC-NFR-002 requires verification evidence but has none.
+- Requirement AC-NFR-003 requires verification evidence but has none.
+- Requirement AC-NFR-004 requires verification evidence but has none.
+- Requirement AC-NFR-005 requires verification evidence but has none.
+- Requirement AC-NFR-006 requires verification evidence but has none.
+- Requirement AC-SR-001 requires verification evidence but has none.
+- Requirement AC-SR-002 requires verification evidence but has none.
+- Requirement AC-SR-003 requires verification evidence but has none.
+- Requirement AC-SR-004 requires verification evidence but has none.
+- Requirement AC-SR-005 requires verification evidence but has none.
+- Requirement AC-SR-006 requires verification evidence but has none.
+- Requirement AC-VR-001 requires verification evidence but has none.
+- Requirement AC-VR-002 requires verification evidence but has none.
+- Requirement AC-VR-003 requires verification evidence but has none.
+- Requirement AC-VR-004 requires verification evidence but has none.
+- Requirement AC-VR-005 requires verification evidence but has none.
+- Requirement AF-BR-001 requires verification evidence but has none.
+- Requirement AF-BR-002 requires verification evidence but has none.
+- Requirement AF-BR-003 requires verification evidence but has none.
+- Requirement AF-BR-004 requires verification evidence but has none.
+- Requirement AF-BR-005 requires verification evidence but has none.
+- Requirement AF-DR-001 requires verification evidence but has none.
+- Requirement AF-DR-002 requires verification evidence but has none.
+- Requirement AF-DR-003 requires verification evidence but has none.
+- Requirement AF-DR-004 requires verification evidence but has none.
+- Requirement AF-DR-005 requires verification evidence but has none.
+- Requirement AF-DR-006 requires verification evidence but has none.
+- Requirement AF-FR-001 requires verification evidence but has none.
+- Requirement AF-FR-002 requires verification evidence but has none.
+- Requirement AF-FR-003 requires verification evidence but has none.
+- Requirement AF-FR-004 requires verification evidence but has none.
+- Requirement AF-FR-005 requires verification evidence but has none.
+- Requirement AF-FR-006 requires verification evidence but has none.
+- Requirement AF-FR-007 requires verification evidence but has none.
+- Requirement AF-FR-008 requires verification evidence but has none.
+- Requirement AF-FR-009 requires verification evidence but has none.
+- Requirement AF-FR-010 requires verification evidence but has none.
+- Requirement AF-FR-011 requires verification evidence but has none.
+- Requirement AF-FR-012 requires verification evidence but has none.
+- Requirement AF-FR-013 requires verification evidence but has none.
+- Requirement AF-FR-014 requires verification evidence but has none.
+- Requirement AF-FR-015 requires verification evidence but has none.
+- Requirement AF-FR-016 requires verification evidence but has none.
+- Requirement AF-FR-017 requires verification evidence but has none.
+- Requirement AF-FR-018 requires verification evidence but has none.
+- Requirement AF-FR-019 requires verification evidence but has none.
+- Requirement AF-FR-020 requires verification evidence but has none.
+- Requirement AF-FR-021 requires verification evidence but has none.
+- Requirement AF-FR-022 requires verification evidence but has none.
+- Requirement AF-FR-023 requires verification evidence but has none.
+- Requirement AF-IR-001 requires verification evidence but has none.
+- Requirement AF-IR-002 requires verification evidence but has none.
+- Requirement AF-IR-003 requires verification evidence but has none.
+- Requirement AF-IR-004 requires verification evidence but has none.
+- Requirement AF-IR-005 requires verification evidence but has none.
+- Requirement AF-IR-006 requires verification evidence but has none.
+- Requirement AF-IR-007 requires verification evidence but has none.
+- Requirement AF-MR-001 requires verification evidence but has none.
+- Requirement AF-MR-002 requires verification evidence but has none.
+- Requirement AF-MR-003 requires verification evidence but has none.
+- Requirement AF-MR-004 requires verification evidence but has none.
+- Requirement AF-MR-005 requires verification evidence but has none.
+- Requirement AF-MR-006 requires verification evidence but has none.
+- Requirement AF-MR-007 requires verification evidence but has none.
+- Requirement AF-NFR-001 requires verification evidence but has none.
+- Requirement AF-NFR-002 requires verification evidence but has none.
+- Requirement AF-NFR-003 requires verification evidence but has none.
+- Requirement AF-NFR-004 requires verification evidence but has none.
+- Requirement AF-NFR-005 requires verification evidence but has none.
+- Requirement AF-NFR-006 requires verification evidence but has none.
+- Requirement AF-NFR-007 requires verification evidence but has none.
+- Requirement AF-SR-001 requires verification evidence but has none.
+- Requirement AF-SR-002 requires verification evidence but has none.
+- Requirement AF-SR-003 requires verification evidence but has none.
+- Requirement AF-SR-004 requires verification evidence but has none.
+- Requirement AF-SR-005 requires verification evidence but has none.
+- Requirement AF-SR-006 requires verification evidence but has none.
+- Requirement AF-SR-007 requires verification evidence but has none.
+- Requirement AF-SR-008 requires verification evidence but has none.
+- Requirement AF-VR-001 requires verification evidence but has none.
+- Requirement AF-VR-002 has no linked implementation work.
+- Requirement AF-VR-002 requires verification evidence but has none.
+- Requirement AF-VR-003 requires verification evidence but has none.
+- Requirement AF-VR-004 requires verification evidence but has none.
+- Requirement AF-VR-005 requires verification evidence but has none.
+- Requirement AF-VR-006 requires verification evidence but has none.
+- Requirement AF-VR-007 requires verification evidence but has none.
+- Requirement AF-VR-008 requires verification evidence but has none.
+- Requirement AIC-DR-001 requires verification evidence but has none.
+- Requirement AIC-DR-002 requires verification evidence but has none.
+- Requirement AIC-DR-003 requires verification evidence but has none.
+- Requirement AIC-DR-004 requires verification evidence but has none.
+- Requirement AIC-FR-001 requires verification evidence but has none.
+- Requirement AIC-FR-002 requires verification evidence but has none.
+- Requirement AIC-FR-003 requires verification evidence but has none.
+- Requirement AIC-FR-004 requires verification evidence but has none.
+- Requirement AIC-FR-005 requires verification evidence but has none.
+- Requirement AIC-FR-006 requires verification evidence but has none.
+- Requirement AIC-FR-007 requires verification evidence but has none.
+- Requirement AIC-FR-008 requires verification evidence but has none.
+- Requirement AIC-FR-009 requires verification evidence but has none.
+- Requirement AIC-FR-010 requires verification evidence but has none.
+- Requirement AIC-FR-011 requires verification evidence but has none.
+- Requirement AIC-FR-012 requires verification evidence but has none.
+- Requirement AIC-FR-013 requires verification evidence but has none.
+- Requirement AIC-FR-014 requires verification evidence but has none.
+- Requirement AIC-FR-015 requires verification evidence but has none.
+- Requirement AIC-IR-001 requires verification evidence but has none.
+- Requirement AIC-IR-002 requires verification evidence but has none.
+- Requirement AIC-IR-003 has no linked implementation work.
+- Requirement AIC-IR-003 requires verification evidence but has none.
+- Requirement AIC-IR-004 requires verification evidence but has none.
+- Requirement AIC-IR-005 requires verification evidence but has none.
+- Requirement AIC-NFR-001 requires verification evidence but has none.
+- Requirement AIC-NFR-002 requires verification evidence but has none.
+- Requirement AIC-NFR-003 requires verification evidence but has none.
+- Requirement AIC-NFR-004 requires verification evidence but has none.
+- Requirement AIC-NFR-005 requires verification evidence but has none.
+- Requirement AIC-SR-001 requires verification evidence but has none.
+- Requirement AIC-SR-002 requires verification evidence but has none.
+- Requirement AIC-SR-003 requires verification evidence but has none.
+- Requirement AIC-SR-004 requires verification evidence but has none.
+- Requirement AIC-SR-005 requires verification evidence but has none.
+- Requirement AIC-SR-006 requires verification evidence but has none.
+- Requirement AIC-SR-007 requires verification evidence but has none.
+- Requirement AIC-VR-001 requires verification evidence but has none.
+- Requirement AIC-VR-002 requires verification evidence but has none.
+- Requirement AIC-VR-003 requires verification evidence but has none.
+- Requirement AIC-VR-004 requires verification evidence but has none.
+- Requirement AIC-VR-005 requires verification evidence but has none.
+- Requirement AIC-VR-006 requires verification evidence but has none.
+- Requirement CWS-FR-001 requires verification evidence but has none.
+- Requirement CWS-FR-002 requires verification evidence but has none.
+- Requirement CWS-FR-003 requires verification evidence but has none.
+- Requirement CWS-FR-004 requires verification evidence but has none.
+- Requirement CWS-FR-005 requires verification evidence but has none.
+- Requirement CWS-FR-006 requires verification evidence but has none.
+- Requirement CWS-FR-007 requires verification evidence but has none.
+- Requirement CWS-FR-008 requires verification evidence but has none.
+- Requirement CWS-FR-009 requires verification evidence but has none.
+- Requirement CWS-FR-010 requires verification evidence but has none.
+- Requirement CWS-FR-011 requires verification evidence but has none.
+- Requirement CWS-FR-012 requires verification evidence but has none.
+- Requirement CWS-FR-013 requires verification evidence but has none.
+- Requirement CWS-FR-014 requires verification evidence but has none.
+- Requirement CWS-FR-015 requires verification evidence but has none.
+- Requirement CWS-NFR-001 requires verification evidence but has none.
+- Requirement CWS-NFR-002 requires verification evidence but has none.
+- Requirement CWS-NFR-003 requires verification evidence but has none.
+- Requirement CWS-NFR-004 requires verification evidence but has none.
+- Requirement CWS-NFR-005 requires verification evidence but has none.
+- Requirement RT-FR-001 requires verification evidence but has none.
+- Requirement RT-FR-002 requires verification evidence but has none.
+- Requirement RT-FR-003 requires verification evidence but has none.
+- Requirement RT-FR-004 requires verification evidence but has none.
+- Requirement RT-FR-005 requires verification evidence but has none.
+- Requirement RT-FR-006 requires verification evidence but has none.
+- Requirement RT-FR-007 requires verification evidence but has none.
+- Requirement RT-FR-008 requires verification evidence but has none.
+- Requirement RT-FR-009 requires verification evidence but has none.
+- Requirement RT-FR-010 requires verification evidence but has none.
+- Requirement RT-FR-011 requires verification evidence but has none.
+- Requirement RT-FR-012 requires verification evidence but has none.
+- Requirement RT-FR-013 requires verification evidence but has none.
+- Requirement RT-FR-014 requires verification evidence but has none.
+- Requirement RT-FR-015 requires verification evidence but has none.
+- Requirement RT-FR-016 requires verification evidence but has none.
+- Requirement RT-IE-001 requires verification evidence but has none.
+- Requirement RT-IE-002 requires verification evidence but has none.
+- Requirement RT-IE-003 requires verification evidence but has none.
+- Requirement RT-IE-004 requires verification evidence but has none.
+- Requirement RT-IE-005 requires verification evidence but has none.
+- Requirement RT-RG-001 requires verification evidence but has none.
+- Requirement RT-RG-002 requires verification evidence but has none.
+- Requirement RT-RG-003 requires verification evidence but has none.
+- Requirement RT-RG-004 requires verification evidence but has none.
+- Requirement AC-DR-001 is Draft.
+- Requirement AC-DR-002 is Draft.
+- Requirement AC-DR-003 is Draft.
+- Requirement AC-DR-004 is Draft.
+- Requirement AC-FR-001 is Draft.
+- Requirement AC-FR-002 is Draft.
+- Requirement AC-FR-003 is Draft.
+- Requirement AC-FR-004 is Draft.
+- Requirement AC-FR-005 is Draft.
+- Requirement AC-FR-006 is Draft.
+- Requirement AC-FR-007 is Draft.
+- Requirement AC-FR-008 is Draft.
+- Requirement AC-FR-009 is Draft.
+- Requirement AC-FR-010 is Draft.
+- Requirement AC-FR-011 is Draft.
+- Requirement AC-FR-012 is Draft.
+- Requirement AC-FR-013 is Draft.
+- Requirement AC-FR-014 is Draft.
+- Requirement AC-FR-015 is Draft.
+- Requirement AC-FR-016 is Draft.
+- Requirement AC-FR-017 is Draft.
+- Requirement AC-FR-018 is Draft.
+- Requirement AC-IR-001 is Draft.
+- Requirement AC-IR-002 is Draft.
+- Requirement AC-IR-003 is Draft.
+- Requirement AC-IR-004 is Draft.
+- Requirement AC-NFR-001 is Draft.
+- Requirement AC-NFR-002 is Draft.
+- Requirement AC-NFR-003 is Draft.
+- Requirement AC-NFR-004 is Draft.
+- Requirement AC-NFR-005 is Draft.
+- Requirement AC-NFR-006 is Draft.
+- Requirement AC-SR-001 is Draft.
+- Requirement AC-SR-002 is Draft.
+- Requirement AC-SR-003 is Draft.
+- Requirement AC-SR-004 is Draft.
+- Requirement AC-SR-005 is Draft.
+- Requirement AC-SR-006 is Draft.
+- Requirement AC-VR-001 is Draft.
+- Requirement AC-VR-002 is Draft.
+- Requirement AC-VR-003 is Draft.
+- Requirement AC-VR-004 is Draft.
+- Requirement AC-VR-005 is Draft.
+- Requirement AF-BR-001 is Draft.
+- Requirement AF-BR-002 is Draft.
+- Requirement AF-BR-003 is Draft.
+- Requirement AF-BR-004 is Draft.
+- Requirement AF-BR-005 is Draft.
+- Requirement AF-DR-001 is Draft.
+- Requirement AF-DR-002 is Draft.
+- Requirement AF-DR-003 is Draft.
+- Requirement AF-DR-004 is Draft.
+- Requirement AF-DR-005 is Draft.
+- Requirement AF-DR-006 is Draft.
+- Requirement AF-FR-001 is Draft.
+- Requirement AF-FR-002 is Draft.
+- Requirement AF-FR-003 is Draft.
+- Requirement AF-FR-004 is Draft.
+- Requirement AF-FR-005 is Draft.
+- Requirement AF-FR-006 is Draft.
+- Requirement AF-FR-007 is Draft.
+- Requirement AF-FR-008 is Draft.
+- Requirement AF-FR-009 is Draft.
+- Requirement AF-FR-010 is Draft.
+- Requirement AF-FR-011 is Draft.
+- Requirement AF-FR-012 is Draft.
+- Requirement AF-FR-013 is Draft.
+- Requirement AF-FR-014 is Draft.
+- Requirement AF-FR-015 is Draft.
+- Requirement AF-FR-016 is Draft.
+- Requirement AF-FR-017 is Draft.
+- Requirement AF-FR-018 is Draft.
+- Requirement AF-FR-019 is Draft.
+- Requirement AF-FR-020 is Draft.
+- Requirement AF-FR-021 is Draft.
+- Requirement AF-FR-022 is Draft.
+- Requirement AF-FR-023 is Draft.
+- Requirement AF-IR-001 is Draft.
+- Requirement AF-IR-002 is Draft.
+- Requirement AF-IR-003 is Draft.
+- Requirement AF-IR-004 is Draft.
+- Requirement AF-IR-005 is Draft.
+- Requirement AF-IR-006 is Draft.
+- Requirement AF-IR-007 is Draft.
+- Requirement AF-MR-001 is Draft.
+- Requirement AF-MR-002 is Draft.
+- Requirement AF-MR-003 is Draft.
+- Requirement AF-MR-004 is Draft.
+- Requirement AF-MR-005 is Draft.
+- Requirement AF-MR-006 is Draft.
+- Requirement AF-MR-007 is Draft.
+- Requirement AF-NFR-001 is Draft.
+- Requirement AF-NFR-002 is Draft.
+- Requirement AF-NFR-003 is Draft.
+- Requirement AF-NFR-004 is Draft.
+- Requirement AF-NFR-005 is Draft.
+- Requirement AF-NFR-006 is Draft.
+- Requirement AF-NFR-007 is Draft.
+- Requirement AF-SR-001 is Draft.
+- Requirement AF-SR-002 is Draft.
+- Requirement AF-SR-003 is Draft.
+- Requirement AF-SR-004 is Draft.
+- Requirement AF-SR-005 is Draft.
+- Requirement AF-SR-006 is Draft.
+- Requirement AF-SR-007 is Draft.
+- Requirement AF-SR-008 is Draft.
+- Requirement AF-VR-001 is Draft.
+- Requirement AF-VR-002 is Draft.
+- Requirement AF-VR-003 is Draft.
+- Requirement AF-VR-004 is Draft.
+- Requirement AF-VR-005 is Draft.
+- Requirement AF-VR-006 is Draft.
+- Requirement AF-VR-007 is Draft.
+- Requirement AF-VR-008 is Draft.
+- Requirement AIC-DR-001 is Draft.
+- Requirement AIC-DR-002 is Draft.
+- Requirement AIC-DR-003 is Draft.
+- Requirement AIC-DR-004 is Draft.
+- Requirement AIC-FR-001 is Draft.
+- Requirement AIC-FR-002 is Draft.
+- Requirement AIC-FR-003 is Draft.
+- Requirement AIC-FR-004 is Draft.
+- Requirement AIC-FR-005 is Draft.
+- Requirement AIC-FR-006 is Draft.
+- Requirement AIC-FR-007 is Draft.
+- Requirement AIC-FR-008 is Draft.
+- Requirement AIC-FR-009 is Draft.
+- Requirement AIC-FR-010 is Draft.
+- Requirement AIC-FR-011 is Draft.
+- Requirement AIC-FR-012 is Draft.
+- Requirement AIC-FR-013 is Draft.
+- Requirement AIC-FR-014 is Draft.
+- Requirement AIC-FR-015 is Draft.
+- Requirement AIC-IR-001 is Draft.
+- Requirement AIC-IR-002 is Draft.
+- Requirement AIC-IR-003 is Draft.
+- Requirement AIC-IR-004 is Draft.
+- Requirement AIC-IR-005 is Draft.
+- Requirement AIC-NFR-001 is Draft.
+- Requirement AIC-NFR-002 is Draft.
+- Requirement AIC-NFR-003 is Draft.
+- Requirement AIC-NFR-004 is Draft.
+- Requirement AIC-NFR-005 is Draft.
+- Requirement AIC-SR-001 is Draft.
+- Requirement AIC-SR-002 is Draft.
+- Requirement AIC-SR-003 is Draft.
+- Requirement AIC-SR-004 is Draft.
+- Requirement AIC-SR-005 is Draft.
+- Requirement AIC-SR-006 is Draft.
+- Requirement AIC-SR-007 is Draft.
+- Requirement AIC-VR-001 is Draft.
+- Requirement AIC-VR-002 is Draft.
+- Requirement AIC-VR-003 is Draft.
+- Requirement AIC-VR-004 is Draft.
+- Requirement AIC-VR-005 is Draft.
+- Requirement AIC-VR-006 is Draft.
+- Requirement CWS-FR-001 is Draft.
+- Requirement CWS-FR-002 is Draft.
+- Requirement CWS-FR-003 is Draft.
+- Requirement CWS-FR-004 is Draft.
+- Requirement CWS-FR-005 is Draft.
+- Requirement CWS-FR-006 is Draft.
+- Requirement CWS-FR-007 is Draft.
+- Requirement CWS-FR-008 is Draft.
+- Requirement CWS-FR-009 is Draft.
+- Requirement CWS-FR-010 is Draft.
+- Requirement CWS-FR-011 is Draft.
+- Requirement CWS-FR-012 is Draft.
+- Requirement CWS-FR-013 is Draft.
+- Requirement CWS-FR-014 is Draft.
+- Requirement CWS-FR-015 is Draft.
+- Requirement CWS-NFR-001 is Draft.
+- Requirement CWS-NFR-002 is Draft.
+- Requirement CWS-NFR-003 is Draft.
+- Requirement CWS-NFR-004 is Draft.
+- Requirement CWS-NFR-005 is Draft.
+- Requirement RT-FR-001 is Draft.
+- Requirement RT-FR-002 is Draft.
+- Requirement RT-FR-003 is Draft.
+- Requirement RT-FR-004 is Draft.
+- Requirement RT-FR-005 is Draft.
+- Requirement RT-FR-006 is Draft.
+- Requirement RT-FR-007 is Draft.
+- Requirement RT-FR-008 is Draft.
+- Requirement RT-FR-009 is Draft.
+- Requirement RT-FR-010 is Draft.
+- Requirement RT-FR-011 is Draft.
+- Requirement RT-FR-012 is Draft.
+- Requirement RT-FR-013 is Draft.
+- Requirement RT-FR-014 is Draft.
+- Requirement RT-FR-015 is Draft.
+- Requirement RT-FR-016 is Draft.
+- Requirement RT-IE-001 is Draft.
+- Requirement RT-IE-002 is Draft.
+- Requirement RT-IE-003 is Draft.
+- Requirement RT-IE-004 is Draft.
+- Requirement RT-IE-005 is Draft.
+- Requirement RT-RG-001 is Draft.
+- Requirement RT-RG-002 is Draft.
+- Requirement RT-RG-003 is Draft.
+- Requirement RT-RG-004 is Draft.

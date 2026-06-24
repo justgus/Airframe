@@ -18,6 +18,9 @@ Commands that write or inspect backend state route through AirframeCore backend 
 | `aicockpit context` | Prints workspace, project, repository, backend, active epic, and active sprint. |
 | `aicockpit config diagnose [--output markdown\|json]` | Reports structured configuration diagnostics from AirframeCore. |
 | `aicockpit project summary [--backend local-fixture\|github-fixture] [--output markdown\|json]` | Reports dashboard counts and backend capabilities. |
+| `aicockpit requirements import --format csv\|json --file path --dry-run [--output markdown\|json]` | Parses requirement interchange input through AirframeCore and reports created, updated, unchanged, removed, and conflicted preview counts without mutating canonical state. |
+| `aicockpit requirements import --format csv\|json --file path --apply [--output markdown\|json]` | Applies requirement interchange input to canonical requirement and revision records, rejects conflicted imports, and returns the same created, updated, unchanged, removed, and conflicted counts reported by dry run. |
+| `aicockpit requirements export --format csv\|json` | Exports canonical requirements and requirement revisions through AirframeCore interchange formats. |
 | `aicockpit task propose --id T-XXXX --title title` | Creates a task record and returns the canonical work item. |
 | `aicockpit issue propose --id I-XXXX --title title` | Creates an issue record and returns the canonical work item. |
 | `aicockpit task next` | Returns the first active task or an empty result. |

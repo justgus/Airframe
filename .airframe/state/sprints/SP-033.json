@@ -1,0 +1,45 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-021"
+  },
+  "goal" : "Import existing requirements documentation into canonical requirement records and expose them in the release gate.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Sprints\/Sprint-active.md"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0143"
+    },
+    {
+      "rawValue" : "T-0144"
+    },
+    {
+      "rawValue" : "T-0145"
+    },
+    {
+      "rawValue" : "T-0146"
+    },
+    {
+      "rawValue" : "T-0147"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-033"
+    },
+    "kind" : "sprint",
+    "status" : "active",
+    "title" : "Canonical Requirements Import"
+  }
+}

@@ -96,6 +96,8 @@ struct AgileCockpitRepairPreviewRow: Equatable, Identifiable {
 
 struct AgileCockpitRequirementTraceRow: Equatable, Identifiable {
     let requirementID: String
+    let title: String
+    let statement: String
     let status: String
     let workItems: String
     let evidence: String
@@ -548,11 +550,16 @@ final class AgileCockpitDashboardModel: ObservableObject {
             requirements: canonicalState?.requirements ?? [],
             revisions: canonicalState?.requirementRevisions ?? [],
             evidence: canonicalState?.evidence ?? [],
+            acceptanceCriteria: canonicalState?.acceptanceCriteria ?? [],
             epics: canonicalSnapshot.epics,
             sprints: canonicalSnapshot.sprints,
             tasks: canonicalSnapshot.tasks,
             issues: canonicalSnapshot.issues
         )
+    }
+
+    var requirementCoverageSummary: AirframeRequirementCoverageSummary {
+        requirementTraceabilityIndex.coverageSummary(releaseScope: context.project.activeSprintID?.rawValue ?? context.project.activeEpicID?.rawValue)
     }
 
     var requirementGateSummary: AirframeRequirementReleaseGateSummary {
@@ -564,6 +571,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
             let summary = requirementTraceabilityIndex.traceSummary(for: requirement.id)
             return AgileCockpitRequirementTraceRow(
                 requirementID: requirement.id.rawValue,
+                title: requirement.title,
+                statement: requirement.statement,
                 status: requirement.status.description,
                 workItems: summary.workItemIDs.map(\.rawValue).joined(separator: ", "),
                 evidence: summary.evidenceIDs.map(\.rawValue).joined(separator: ", "),
@@ -2260,6 +2269,13 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Release Gate")
                 .font(.headline)
+            HStack(spacing: 12) {
+                gateMetric("Total", "\(model.requirementCoverageSummary.totalRequirementCount)")
+                gateMetric("Assigned", "\(model.requirementCoverageSummary.assignedRequirementCount)")
+                gateMetric("Implemented", "\(model.requirementCoverageSummary.implementedRequirementCount)")
+                gateMetric("Verified", "\(model.requirementCoverageSummary.verifiedRequirementCount)")
+                gateMetric("Unassigned", "\(model.requirementCoverageSummary.unassignedRequirementCount)")
+            }
             LabeledContent("Scope", value: model.requirementGateSummary.releaseScope ?? "All requirements")
             LabeledContent("Can Close", value: model.requirementGateSummary.canClose ? "Yes" : "No")
             HStack(spacing: 12) {
@@ -2298,15 +2314,24 @@ struct ContentView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 82, alignment: .leading)
+                            Text(row.title)
+                                .font(.caption)
+                                .frame(width: 220, alignment: .leading)
                             Text(row.status)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 110, alignment: .leading)
-                            Text(row.workItems.isEmpty ? "No work links" : row.workItems)
+                            Text(row.workItems.isEmpty ? row.statement : row.workItems)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         if !row.evidence.isEmpty || !row.revisions.isEmpty || !row.targetKinds.isEmpty {
                             Text("Evidence: \(row.evidence.isEmpty ? "None" : row.evidence) | Revisions: \(row.revisions.isEmpty ? "None" : row.revisions) | Targets: \(row.targetKinds.isEmpty ? "None" : row.targetKinds)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        if !row.workItems.isEmpty {
+                            Text(row.statement)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)

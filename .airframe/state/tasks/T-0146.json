@@ -1,0 +1,51 @@
+{
+  "acceptanceCriteria" : [
+    "Generated Requirements index lists imported canonical requirements.",
+    "Traceability matrix includes imported requirements and linked work.",
+    "Release gate report uses canonical requirements as the in-scope requirement list."
+  ],
+  "component" : "AICockpit \/ Documentation",
+  "componentsAffected" : [
+
+  ],
+  "dateImplemented" : "2026-06-24",
+  "dateRequested" : "2026-06-24",
+  "dateVerified" : "2026-06-24",
+  "epicID" : {
+    "rawValue" : "EP-021"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Tasks\/Task-unverified.md",
+    "updatedAt" : "2026-06-24T21:29:46Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Canonical requirements must drive human-readable reports and the release gate.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-033"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0146"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Regenerate requirements documentation from canonical state"
+  }
+}

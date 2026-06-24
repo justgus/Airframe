@@ -2,7 +2,7 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **18 backlog Tasks**
+Currently: **9 backlog Tasks**
 
 ---
 
@@ -214,5 +214,4 @@ Closeout must continue to work in the local workspace without relying on a serve
 - TBD
 
 ---
-
-*Last Updated: 2026-06-23 (SP-029 activated)*
+*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*

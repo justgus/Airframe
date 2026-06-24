@@ -1,0 +1,40 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "CWS-NFR-005"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
+  "statement" : "Human-only verification, Sprint closure, Epic closure, release closeout, destructive repair, and policy mutation shall remain protected by AirframeCore authority evaluation.\n\n## 5. Version 1.0 Boundary\n\nVersion 1.0 should include:\n\n- Canonical repo-local state model.\n- Basic requirement records.\n- Requirement-to-work and requirement-to-test trace links.\n- Summary test evidence.\n- CI evidence link fields.\n- CSV and JSON requirement import\/export.\n- Generated Markdown projections.\n- Data health diagnostics.\n- Initial AgileCockpit release gate visibility.\n\nVersion 1.0 should not include:\n\n- Native DOORS integration.\n- Full enterprise requirements management.\n- Full document-template authoring.\n- Server-based synchronization.\n- Mandated code comments for every requirement.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Authority Preservation",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}
