@@ -21,9 +21,9 @@ Add human-facing AgileCockpit controls for Sprint and Epic status mutation, incl
 | ------ | ---- | ------ |
 | SP-020 | Add Epic acceptance-criteria state and close-eligibility tracking to the planning model. | Closed |
 | SP-021 | Add a dedicated Epic acceptance-criteria tab with human verification actions. | Closed |
-| SP-022 | Enable Sprint close and Epic complete/close only when prerequisites are satisfied. | Active |
-| SP-023 | Archive closed Sprint and Epic records into the documented closed layout and refresh the indexes. | Backlog |
-| SP-024 | Prove the closeout workflow with tests and keep the documentation synchronized. | Backlog |
+| SP-022 | Enable Sprint close and Epic complete/close only when prerequisites are satisfied. | Closed |
+| SP-023 | Archive closed Sprint and Epic records into the documented closed layout and refresh the indexes. | Active |
+| SP-024 | Prove the closeout workflow with tests and keep the documentation synchronized. | Planning |
 
 ### Related Tasks
 
@@ -45,4 +45,4 @@ Add human-facing AgileCockpit controls for Sprint and Epic status mutation, incl
 | T-0114 | Add tests for Sprint and Epic archive updates | Backlog |
 | T-0115 | Add tests for offline local-only closeout behavior | Backlog |
 
-*Last Updated: 2026-06-25 (EP-018 reactivated with SP-022 active)*
+*Last Updated: 2026-06-25 (EP-018 active with SP-023 active and SP-024 planning)*

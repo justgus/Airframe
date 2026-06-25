@@ -4,11 +4,11 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-022: Sprint and Epic Close Gating
+## SP-023: Sprint and Epic Archive Workflow
 
 **Status:** Active
 **Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
-**Goal:** Enable Sprint close and Epic complete/close only when prerequisites are satisfied.
+**Goal:** Archive closed Sprint and Epic records into the documented closed layout and refresh the indexes.
 **Start Date:** 2026-06-25
 **End Date:** TBD
 **Capacity:** TBD
@@ -17,12 +17,33 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
-| T-0107 | Gate Sprint close on verified Tasks and Issues | High | Implemented - Not Verified |
-| T-0108 | Gate Epic close on verified acceptance criteria | High | Implemented - Not Verified |
-| T-0109 | Add close-action messaging and disabled-state behavior | High | Implemented - Not Verified |
+| T-0110 | Move closed Sprint records into `docs/Sprints/Closed/` | High | Backlog |
+| T-0111 | Move closed Epic records into `docs/Epics/Closed/` | High | Backlog |
+| T-0112 | Rewrite sprint and epic index files on close | High | Backlog |
 
 ### Assigned Issues
 
 None.
 
-*Last Updated: 2026-06-25 (SP-022 activated for verification)*
+## SP-024: Regression Coverage and Documentation Sync
+
+**Status:** Planning
+**Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
+**Goal:** Prove the closeout workflow with tests and keep the documentation synchronized.
+**Start Date:** TBD
+**End Date:** TBD
+**Capacity:** TBD
+
+### Candidate Tasks
+
+| Task | Title | Priority | Status |
+| ---- | ----- | -------- | ------ |
+| T-0113 | Add tests for Epic acceptance-criteria verification | High | Backlog |
+| T-0114 | Add tests for Sprint and Epic archive updates | High | Backlog |
+| T-0115 | Add tests for offline local-only closeout behavior | High | Backlog |
+
+### Candidate Issues
+
+None.
+
+*Last Updated: 2026-06-25 (SP-023 active, SP-024 planning)*

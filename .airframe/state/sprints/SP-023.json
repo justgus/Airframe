@@ -12,7 +12,8 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Sprints\/Sprint-backlog.md"
+    "source" : "docs\/Sprints\/Sprint-active.md",
+    "updatedAt" : "2026-06-25T19:10:50Z"
   },
   "notes" : [
 
@@ -33,7 +34,7 @@
       "rawValue" : "SP-023"
     },
     "kind" : "sprint",
-    "status" : "backlog",
+    "status" : "active",
     "title" : "Sprint and Epic Archive Workflow"
   }
 }
