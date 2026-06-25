@@ -1113,12 +1113,16 @@ import Foundation
 
     eligibleModel.closeActiveEpic()
 
-    let epicRecord = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+    let closedSnapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
         .snapshot(project: eligibleModel.context.project)
+    let epicRecord = closedSnapshot
         .epics
         .first { $0.workItem.id == AirframeID("EP-018") }
     #expect(epicRecord?.workItem.status == .closed)
-    #expect(eligibleModel.activeEpicRecord?.workItem.status == .closed)
+    #expect(closedSnapshot.project.activeEpicID == nil)
+    #expect(eligibleModel.canonicalSnapshot.project.activeEpicID == nil)
+    #expect(eligibleModel.activeEpicText == "None")
+    #expect(eligibleModel.activeEpicRecord == nil)
     #expect(eligibleModel.auditRows.last?.action == "OP-HUMAN-CLOSE-EPIC")
     #expect(eligibleModel.statusMessage == "Epic EP-018 closed.")
 }

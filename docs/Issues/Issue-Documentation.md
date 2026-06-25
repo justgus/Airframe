@@ -14,11 +14,11 @@ This is the main index for Agile Airframe Issues. Issues track bugs, regressions
 
 ## Active Issues
 
-Currently: **0 active Issues**
+Currently: **1 active Issue**
 
 | Issue | GitHub Issue | Title | Severity | Sprint | Status |
 | ----- | ------------ | ----- | -------- | ------ | ------ |
-No Issues are currently active or awaiting verification.
+| I-0009 | #147 | Epic close leaves stale active pointers and sprint closeout state | High | None | Resolved - Not Verified |
 
 See: [Issue-active.md](Issue-active.md)
 
@@ -33,7 +33,7 @@ See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **8 verified Issues** | Next available: **I-0009**
+Currently: **8 verified Issues** | Next available: **I-0010**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
@@ -51,12 +51,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 8
+- **Total Issues:** 9
 - **Backlogged:** 0
 - **Active/In Progress:** 0
-- **Resolved - Not Verified:** 0
+- **Resolved - Not Verified:** 1
 - **Verified:** 8
 - **Closed:** 0
-- **Next available:** I-0009
+- **Next available:** I-0010
 
-*Last Updated: 2026-06-23 (historical EP-017 Issues reconciled)*
+*Last Updated: 2026-06-25 (I-0009 resolved pending human verification)*

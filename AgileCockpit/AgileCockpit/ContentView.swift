@@ -393,7 +393,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var activeEpicText: String {
-        context.project.activeEpicID?.rawValue ?? "None"
+        canonicalSnapshot.project.activeEpicID?.rawValue ?? "None"
     }
 
     var activeRecords: [AirframeLocalWorkRecord] {
@@ -500,11 +500,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var epicRecords: [AirframeLocalWorkRecord] {
-        canonicalDashboardRecords.filter { $0.epicID == context.project.activeEpicID }
+        canonicalDashboardRecords.filter { $0.epicID == canonicalSnapshot.project.activeEpicID }
     }
 
     var activeEpicRecord: AirframeLocalWorkRecord? {
-        guard let activeEpicID = context.project.activeEpicID else { return nil }
+        guard let activeEpicID = canonicalSnapshot.project.activeEpicID else { return nil }
         return dashboardRecords.first {
             $0.workItem.kind == .epic && $0.workItem.id == activeEpicID
         }
@@ -518,7 +518,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var epicAcceptanceCriteriaSummary: AirframeEpicAcceptanceCriteriaSummary? {
-        guard let activeEpicID = context.project.activeEpicID else { return nil }
+        guard let activeEpicID = canonicalSnapshot.project.activeEpicID else { return nil }
         if let canonicalSummary = try? canonicalRepository?.epicCriteriaSummary(epicID: activeEpicID),
            canonicalSummary.hasCriteria {
             return canonicalSummary
@@ -559,11 +559,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var requirementCoverageSummary: AirframeRequirementCoverageSummary {
-        requirementTraceabilityIndex.coverageSummary(releaseScope: context.project.activeSprintID?.rawValue ?? context.project.activeEpicID?.rawValue)
+        requirementTraceabilityIndex.coverageSummary(releaseScope: canonicalSnapshot.project.activeSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
     }
 
     var requirementGateSummary: AirframeRequirementReleaseGateSummary {
-        requirementTraceabilityIndex.releaseGateSummary(releaseScope: context.project.activeSprintID?.rawValue ?? context.project.activeEpicID?.rawValue)
+        requirementTraceabilityIndex.releaseGateSummary(releaseScope: canonicalSnapshot.project.activeSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
     }
 
     var requirementTraceRows: [AgileCockpitRequirementTraceRow] {
@@ -583,7 +583,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var requirementGapRows: [AgileCockpitRequirementGapRow] {
-        requirementTraceabilityIndex.gapDiagnostics(releaseScope: context.project.activeSprintID?.rawValue ?? context.project.activeEpicID?.rawValue).map {
+        requirementTraceabilityIndex.gapDiagnostics(releaseScope: canonicalSnapshot.project.activeSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue).map {
             AgileCockpitRequirementGapRow(
                 requirementID: $0.requirementID.rawValue,
                 kind: $0.kind.rawValue,
@@ -648,7 +648,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "\(criterion.id.rawValue) is already verified."
             return
         }
-        guard context.project.activeEpicID != nil else {
+        guard canonicalSnapshot.project.activeEpicID != nil else {
             statusMessage = "No active Epic is configured."
             return
         }
@@ -718,7 +718,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     func closeActiveEpic() {
-        guard let activeEpicID = context.project.activeEpicID else {
+        guard let activeEpicID = canonicalSnapshot.project.activeEpicID else {
             statusMessage = "No active Epic is configured."
             return
         }
@@ -736,6 +736,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 return
             }
             try canonicalRepository.transitionWorkItem(id: activeEpicID, to: .closed)
+            try canonicalRepository.clearActiveEpicID(projectID: context.project.id)
             recordCloseAudit(action: "OP-HUMAN-CLOSE-EPIC", workItemID: activeEpicID)
             try reload(selecting: selectedWorkItemID)
             statusMessage = "Epic \(activeEpicID.rawValue) closed."

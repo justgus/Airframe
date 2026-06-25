@@ -1,0 +1,44 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "AirframeCore",
+    "Canonical State"
+  ],
+  "dateReported" : "2026-06-25",
+  "dateResolved" : "2026-06-25",
+  "dateVerified" : "2026-06-25",
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "When AgileCockpit closes an Epic, canonical project state should clear the active Epic pointer. Active Epic UI, release gate scope, and traceability scope should read the canonical project snapshot rather than stale configuration. Sprint closeout data should not leave a closed Sprint configured as active, and follow-up work should define whether closing a Sprint should advance, clear, or require explicit selection of the next current Sprint.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-25T19:04:52Z"
+  },
+  "notes" : [
+    "Description: Closing EP-021 in AgileCockpit transitioned the Epic to Closed but left the project active Epic pointer on EP-021. The project active Sprint pointer also remained stale on SP-032 after SP-032 and SP-033 were closed, which caused Data Health diagnostics to report closed work as active and exposed that active pointer cleanup was incomplete.",
+    "Resolution: Added canonical active Epic clearing support, wired AgileCockpit Epic close to clear the canonical active Epic pointer, switched active Epic UI and scope reads to canonical project state, repaired EP-021 and SP-033 canonical and Markdown closeout state, and restored the missing SP-029 canonical Sprint record.",
+    "Follow-up: Investigate and define current Sprint advancement behavior after closing a Sprint when another Sprint is already closed, active, or absent. Decide whether AgileCockpit should update `.airframe\/airframe-workspace.json` active pointers or treat canonical project state as the only mutable active pointer source."
+  ],
+  "observedBehavior" : "Closing EP-021 in AgileCockpit transitioned the Epic to Closed but left active project pointers referencing closed EP-021 and SP-032. SP-033 also remained open in canonical Sprint state even though closeout direction expected it to be closed.",
+  "reproductionSteps" : [
+    "Close SP-032 and EP-021 through AgileCockpit.",
+    "Open Data Health diagnostics.",
+    "Observe activeEpicNotActive and activeSprintNotActive diagnostics for closed work."
+  ],
+  "severity" : "high",
+  "workItem" : {
+    "githubIssue" : 147,
+    "id" : {
+      "rawValue" : "I-0009"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Epic close leaves stale active pointers and sprint closeout state"
+  }
+}

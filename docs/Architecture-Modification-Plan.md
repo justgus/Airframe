@@ -3,7 +3,7 @@
 **Status:** Planning  
 **Date:** 2026-06-17  
 **Planning Trigger:** EP-018 data-state inconsistency exposed that Markdown artifacts are carrying both human-readable documentation and canonical workflow state.  
-**Current Work Posture:** EP-018 is moved back to Epic Backlog while canonical workflow-state architecture is planned.
+**Current Work Posture:** EP-018 is active again with SP-022 active for Sprint and Epic close gating verification.
 
 ## Related Planning Documents
 

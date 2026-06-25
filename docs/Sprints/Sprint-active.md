@@ -4,12 +4,12 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-033: Canonical Requirements Import
+## SP-022: Sprint and Epic Close Gating
 
 **Status:** Active
-**Epic:** EP-021: Requirements Traceability and Release Evidence
-**Goal:** Import existing requirements documentation into canonical requirement records and expose them in the release gate.
-**Start Date:** TBD
+**Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
+**Goal:** Enable Sprint close and Epic complete/close only when prerequisites are satisfied.
+**Start Date:** 2026-06-25
 **End Date:** TBD
 **Capacity:** TBD
 
@@ -17,14 +17,12 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
-| T-0143 | Define AICockpit requirements import command contract | High | Implemented - Not Verified |
-| T-0144 | Implement canonical requirements import apply path | High | Implemented - Not Verified |
-| T-0145 | Add Markdown requirements seed import support | High | Implemented - Not Verified |
-| T-0146 | Regenerate requirements documentation from canonical state | High | Implemented - Not Verified |
-| T-0147 | Add requirements import regression coverage | High | Implemented - Not Verified |
+| T-0107 | Gate Sprint close on verified Tasks and Issues | High | Implemented - Not Verified |
+| T-0108 | Gate Epic close on verified acceptance criteria | High | Implemented - Not Verified |
+| T-0109 | Add close-action messaging and disabled-state behavior | High | Implemented - Not Verified |
 
 ### Assigned Issues
 
 None.
 
-*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*
+*Last Updated: 2026-06-25 (SP-022 activated for verification)*

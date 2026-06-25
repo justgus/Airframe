@@ -2,7 +2,7 @@
 
 Implemented Tasks awaiting human verification are listed here.
 
-Currently: **5 unverified Tasks**
+Currently: **8 unverified Tasks**
 
 ---
 
@@ -13,6 +13,85 @@ T-0135 through T-0137 were human verified on 2026-06-24 and moved to [Verified/T
 T-0138 through T-0140 were human verified on 2026-06-24 and moved to [Verified/Task-verified-0138-0140.md](Verified/Task-verified-0138-0140.md).
 
 T-0141 and T-0142 were human verified on 2026-06-24 and moved to [Verified/Task-verified-0141-0142.md](Verified/Task-verified-0141-0142.md).
+
+## T-0107: Gate Sprint close on verified Tasks and Issues
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #113
+**Component:** AgileCockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-018
+**Sprint Assigned:** SP-022
+**Date Requested:** 2026-06-14
+**Date Implemented:** 2026-06-23
+**Date Verified:** TBD
+
+**Rationale:**
+Sprint close must stay blocked until every Sprint task and issue is verified.
+
+**Acceptance Criteria:**
+1. The Sprint close action is disabled or rejected until all assigned Tasks and Issues are verified.
+2. The UI explains why the Sprint cannot close yet.
+3. A successful close transitions the Sprint out of the active state.
+
+**Evidence:**
+- `AirframeSprintCloseEligibility` blocks Sprint close until assigned Tasks and Issues are verified.
+- AgileCockpit disables Sprint close when eligibility is blocked and reports blocking work item IDs.
+- `agileCockpitRejectsSprintCloseUntilAssignedTasksAndIssuesAreVerified`
+- `agileCockpitClosesSprintToReviewWhenAssignedTasksAndIssuesAreVerified`
+- `agileCockpitClosesReviewedSprintAndClearsActiveSprint`
+
+## T-0108: Gate Epic close on verified acceptance criteria
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #114
+**Component:** AgileCockpit / AirframeCore
+**Priority:** High
+**Epic:** EP-018
+**Sprint Assigned:** SP-022
+**Date Requested:** 2026-06-14
+**Date Implemented:** 2026-06-23
+**Date Verified:** TBD
+
+**Rationale:**
+Epic close must stay blocked until every acceptance criterion has been verified by the human reviewer.
+
+**Acceptance Criteria:**
+1. The Epic complete/close action is disabled or rejected until all acceptance criteria are verified.
+2. The UI explains why the Epic cannot close yet.
+3. A successful close transitions the Epic to its closed state.
+
+**Evidence:**
+- `AirframeEpicCloseEligibility` blocks Epic close until all acceptance criteria are verified.
+- AgileCockpit disables Epic close when eligibility is blocked and reports unverified criteria.
+- `agileCockpitGatesEpicCloseOnVerifiedAcceptanceCriteria`
+
+## T-0109: Add close-action messaging and disabled-state behavior
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #115
+**Component:** AgileCockpit
+**Priority:** High
+**Epic:** EP-018
+**Sprint Assigned:** SP-022
+**Date Requested:** 2026-06-14
+**Date Implemented:** 2026-06-23
+**Date Verified:** TBD
+
+**Rationale:**
+Users need clear feedback when Sprint or Epic close is unavailable, denied, or completed.
+
+**Acceptance Criteria:**
+1. Close actions present clear disabled or denied feedback.
+2. Success and failure states are distinguishable in the UI.
+3. The current close eligibility is visible without digging through source data.
+
+**Evidence:**
+- AgileCockpit shows Sprint and Epic close eligibility rows with blocking reasons.
+- Close buttons are disabled until the corresponding eligibility passes.
+- Sprint and Epic close actions set distinct blocked, success, and failure status messages.
+- `agileCockpitRejectsSprintCloseUntilAssignedTasksAndIssuesAreVerified`
+- `agileCockpitGatesEpicCloseOnVerifiedAcceptanceCriteria`
 
 ## T-0143: Define AICockpit requirements import command contract
 
@@ -144,4 +223,4 @@ The import workflow affects Epic release gates and needs regression coverage.
 - `swift test --package-path AirframeCore`
 - `swift test --package-path AICockpit`
 
-*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*
+*Last Updated: 2026-06-25 (T-0107 through T-0109 added for SP-022 verification)*

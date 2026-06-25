@@ -1,4 +1,5 @@
 {
+  "endDate" : "2026-06-25",
   "epicID" : {
     "rawValue" : "EP-018"
   },
@@ -12,7 +13,8 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Sprints\/Sprint-backlog.md"
+    "source" : "docs\/Sprints\/Sprint-backlog.md",
+    "updatedAt" : "2026-06-25T15:53:08Z"
   },
   "notes" : [
 
@@ -33,7 +35,7 @@
       "rawValue" : "SP-022"
     },
     "kind" : "sprint",
-    "status" : "backlog",
+    "status" : "closed",
     "title" : "Sprint and Epic Close Gating"
   }
 }

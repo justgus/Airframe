@@ -66,6 +66,26 @@ find "$installed_app_path/Contents/MacOS" -type f -perm -111 -print0 |
   done
 codesign "${bundle_sign_args[@]}" "$installed_app_path"
 
+install_stamp_path="$installed_app_path/Contents/AirframeInstallStamp.txt"
+install_time_utc="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+git_commit="$(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+source_executable_path="$agile_app_path/Contents/MacOS/AgileCockpit"
+installed_executable_path="$installed_app_path/Contents/MacOS/AgileCockpit"
+source_executable_mtime="$(stat -f '%Sm' -t '%Y-%m-%dT%H:%M:%S%z' "$source_executable_path" 2>/dev/null || echo unknown)"
+installed_executable_mtime="$(stat -f '%Sm' -t '%Y-%m-%dT%H:%M:%S%z' "$installed_executable_path" 2>/dev/null || echo unknown)"
+aicockpit_mtime="$(stat -f '%Sm' -t '%Y-%m-%dT%H:%M:%S%z' "$demo_dir/bin/aicockpit" 2>/dev/null || echo unknown)"
+cat > "$install_stamp_path" <<STAMP
+Installed-At-UTC: $install_time_utc
+Git-Commit: $git_commit
+Source-App: $agile_app_path
+Installed-App: $installed_app_path
+Source-Executable-MTime: $source_executable_mtime
+Installed-Executable-MTime: $installed_executable_mtime
+AICockpit-MTime: $aicockpit_mtime
+STAMP
+touch "$installed_app_path"
+
 echo "Installed LiveDemo artifacts:"
 echo "CLI: $demo_dir/bin/aicockpit"
 echo "App: $installed_app_path"
+echo "Install Stamp: $install_stamp_path"

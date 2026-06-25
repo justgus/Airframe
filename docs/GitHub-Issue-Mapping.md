@@ -117,6 +117,9 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0104 | #108 | EP-018 | Add Epic Acceptance Criteria tab to the planning panel |
 | T-0105 | #110 | EP-018 | Add verification actions for Epic acceptance criteria |
 | T-0106 | #109 | EP-018 | Add accessibility, selection, and evidence behavior for the criteria tab |
+| T-0107 | #113 | EP-018 | Gate Sprint close on verified Tasks and Issues |
+| T-0108 | #114 | EP-018 | Gate Epic close on verified acceptance criteria |
+| T-0109 | #115 | EP-018 | Add close-action messaging and disabled-state behavior |
 | T-0116 | #116 | EP-020 | Define canonical workflow record schemas |
 | T-0117 | #117 | EP-020 | Implement repo-local JSON canonical store |
 | T-0118 | #118 | EP-020 | Encode workflow policy definitions in AirframeCore |
@@ -157,7 +160,10 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | I-0004 | #104 | EP-017 | Status drill-down detail scroll position is retained across item selection |
 | I-0005 | #111 | EP-018 | AgileCockpit header emphasizes app identity over project identity |
 | I-0006 | #112 | EP-018 | AgileCockpit cannot run concurrent project instances |
+| I-0007 | #132 | EP-020 | Verification tab can stall or fail silently while loading queue details |
+| I-0008 | #133 | EP-020 | Canonical state cannot represent Review Sprints and backend label reconciliation |
+| I-0009 | #147 | None | Epic close leaves stale active pointers and sprint closeout state |
 
-Next local Issue ID: `I-0007`.
+Next local Issue ID: `I-0010`.
 
 *Last Updated: 2026-06-24 (T-0141 through T-0147 mapped to GitHub issues #140 through #146)*

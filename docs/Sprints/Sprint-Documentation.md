@@ -12,19 +12,18 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-033**
+Currently: **SP-022**
 
 See: [Sprint-active.md](Sprint-active.md)
 
 ## Sprint Backlog
 
-Currently: **3 backlog Sprints**
+Currently: **2 backlog Sprints**
 
 See: [Sprint-backlog.md](Sprint-backlog.md)
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-022 | Sprint and Epic Close Gating | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | [Sprint-backlog.md](Sprint-backlog.md) | Backlog |
 
@@ -42,7 +41,7 @@ Currently: **1 active Sprint**
 
 | Sprint | Title | Epic | File | Status |
 | ------ | ----- | ---- | ---- | ------ |
-| SP-033 | Canonical Requirements Import | EP-021 | [Sprint-active.md](Sprint-active.md) | Active |
+| SP-022 | Sprint and Epic Close Gating | EP-018 | [Sprint-active.md](Sprint-active.md) | Active |
 
 ## Review Sprints
 
@@ -81,7 +80,7 @@ Currently: **33 Sprints** | Next available: **SP-034**
 | SP-019 | AgileCockpit Human Verification Mutations | EP-017 | T-0096, T-0097, T-0098, T-0099, T-0100 | None | Closed |
 | SP-020 | Epic Acceptance-Criteria Model and Eligibility | EP-018 | T-0101, T-0102, T-0103 | None | Closed |
 | SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | T-0104, T-0105, T-0106 | I-0005, I-0006 | Closed |
-| SP-022 | Sprint and Epic Close Gating | EP-018 | T-0107, T-0108, T-0109 | None | Backlog |
+| SP-022 | Sprint and Epic Close Gating | EP-018 | T-0107, T-0108, T-0109 | None | Active |
 | SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | None | Backlog |
 | SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Backlog |
 | SP-025 | Canonical Store Schema and Validation | EP-020 | T-0116, T-0117, T-0118, T-0119 | None | Closed |
@@ -92,16 +91,16 @@ Currently: **33 Sprints** | Next available: **SP-034**
 | SP-030 | Traceability Graph and Diagnostics | EP-021 | T-0135, T-0136, T-0137 | None | Closed |
 | SP-031 | Evidence Summaries and Release Gates | EP-021 | T-0138, T-0139, T-0140 | None | Closed |
 | SP-032 | Compliance Documents and Regression Coverage | EP-021 | T-0141, T-0142 | None | Closed |
-| SP-033 | Canonical Requirements Import | EP-021 | T-0143, T-0144, T-0145, T-0146, T-0147 | None | Active |
+| SP-033 | Canonical Requirements Import | EP-021 | T-0143, T-0144, T-0145, T-0146, T-0147 | None | Closed |
 
 ## Statistics
 
 - **Total Sprints:** 33
-- **Backlog:** 3
+- **Backlog:** 2
 - **Planning:** 0
 - **Active:** 1
 - **Review:** 0
-- **Closed:** 29
+- **Closed:** 30
 - **Next available:** SP-034
 
-*Last Updated: 2026-06-24 (SP-033 activated)*
+*Last Updated: 2026-06-25 (SP-022 activated for verification)*

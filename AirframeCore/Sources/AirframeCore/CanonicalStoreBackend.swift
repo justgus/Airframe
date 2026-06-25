@@ -241,6 +241,13 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         try store.save(project.clearingActiveSprintID())
     }
 
+    public func clearActiveEpicID(projectID: AirframeID) throws {
+        guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
+            throw AirframeBackendError.missingWorkItem(projectID)
+        }
+        try store.save(project.clearingActiveEpicID())
+    }
+
     public func setActiveSprintID(_ sprintID: AirframeID, projectID: AirframeID) throws {
         guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
             throw AirframeBackendError.missingWorkItem(projectID)
@@ -481,6 +488,22 @@ private extension AirframeCanonicalProjectRecord {
             repository: repository,
             activeEpicID: activeEpicID,
             activeSprintID: nil,
+            epicIDs: epicIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func clearingActiveEpicID() -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: nil,
+            activeSprintID: activeSprintID,
             epicIDs: epicIDs,
             sprintIDs: sprintIDs,
             taskIDs: taskIDs,

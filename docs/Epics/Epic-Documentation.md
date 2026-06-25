@@ -18,11 +18,11 @@ See: [Epic-active.md](Epic-active.md)
 
 | Epic | Title | Status | Start | Close |
 | ---- | ----- | ------ | ----- | ----- |
-| EP-021 | Requirements Traceability and Release Evidence | Active | 2026-06-23 | TBD |
+| EP-018 | AgileCockpit Sprint and Epic Status Controls | Active | 2026-06-15 | TBD |
 
 ## Backlog Epics
 
-Currently: **2 backlog Epics**
+Currently: **1 backlog Epic**
 
 See: [Epic-backlog.md](Epic-backlog.md)
 
@@ -49,10 +49,10 @@ Currently: **21 Epics** | Next available: **EP-022**
 | EP-015 | AgileCockpit Planning Management | Closed | 2026-06-10 | 2026-06-10 |
 | EP-016 | AICockpit to AgileCockpit Refresh Synchronization | Closed | 2026-06-11 | 2026-06-11 |
 | EP-017 | Workflow Status Dashboard and Mutation Authority | Closed | 2026-06-12 | 2026-06-14 |
-| EP-018 | AgileCockpit Sprint and Epic Status Controls | Backlog | 2026-06-15 | TBD |
+| EP-018 | AgileCockpit Sprint and Epic Status Controls | Active | 2026-06-15 | TBD |
 | EP-019 | Airframe Offline-Only Operation | Backlog | TBD | TBD |
 | EP-020 | Canonical Airframe Workflow State | Closed | 2026-06-17 | 2026-06-23 |
-| EP-021 | Requirements Traceability and Release Evidence | Active | 2026-06-23 | TBD |
+| EP-021 | Requirements Traceability and Release Evidence | Closed | 2026-06-23 | 2026-06-24 |
 
 ## Statistics
 
@@ -61,8 +61,8 @@ Currently: **21 Epics** | Next available: **EP-022**
 - **Draft:** 0
 - **Active:** 1
 - **Complete pending close:** 0
-- **Closed:** 18
-- **Backlog:** 2
+- **Closed:** 19
+- **Backlog:** 1
 - **Next available:** EP-022
 
-*Last Updated: 2026-06-23 (EP-021 activated)*
+*Last Updated: 2026-06-25 (EP-018 reactivated with SP-022 active)*

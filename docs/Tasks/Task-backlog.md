@@ -2,78 +2,9 @@
 
 Tasks listed here are proposed and not assigned to an active Sprint.
 
-Currently: **9 backlog Tasks**
+Currently: **6 backlog Tasks**
 
 ---
-
-## T-0107: Gate Sprint close on verified Tasks and Issues
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** TBD
-**Component:** AgileCockpit / AirframeCore
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-022
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-Sprint close must stay blocked until every Sprint task and issue is verified.
-
-**Acceptance Criteria:**
-1. The Sprint close action is disabled or rejected until all assigned Tasks and Issues are verified.
-2. The UI explains why the Sprint cannot close yet.
-3. A successful close transitions the Sprint out of the active state.
-
-**Evidence:**
-- Implemented in AirframeCore traceability index and documentation projector.
-
-## T-0108: Gate Epic close on verified acceptance criteria
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** TBD
-**Component:** AgileCockpit / AirframeCore
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-022
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-Epic close must stay blocked until every acceptance criterion has been verified by the human reviewer.
-
-**Acceptance Criteria:**
-1. The Epic complete/close action is disabled or rejected until all acceptance criteria are verified.
-2. The UI explains why the Epic cannot close yet.
-3. A successful close transitions the Epic to its closed state.
-
-**Evidence:**
-- Implemented in AirframeCore traceability diagnostics and release gate summaries.
-
-## T-0109: Add close-action messaging and disabled-state behavior
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** TBD
-**Component:** AgileCockpit
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-022
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-Users need clear feedback when Sprint or Epic close is unavailable, denied, or completed.
-
-**Acceptance Criteria:**
-1. Close actions present clear disabled or denied feedback.
-2. Success and failure states are distinguishable in the UI.
-3. The current close eligibility is visible without digging through source data.
-
-**Evidence:**
-- Implemented with canonical requirement records and revision history support in AirframeCore.
 
 ## T-0110: Move closed Sprint records into `docs/Sprints/Closed/`
 
@@ -214,4 +145,4 @@ Closeout must continue to work in the local workspace without relying on a serve
 - TBD
 
 ---
-*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*
+*Last Updated: 2026-06-25 (T-0107 through T-0109 moved to Implemented - Not Verified)*

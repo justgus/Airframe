@@ -14,13 +14,10 @@ This is the main index for Agile Airframe Tasks. Tasks track broad implementatio
 
 ## Backlog Tasks
 
-Currently: **9 backlog Tasks**
+Currently: **6 backlog Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0107 | TBD | Gate Sprint close on verified Tasks and Issues | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0108 | TBD | Gate Epic close on verified acceptance criteria | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0109 | TBD | Add close-action messaging and disabled-state behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0112 | TBD | Rewrite sprint and epic index files on close | [Task-backlog.md](Task-backlog.md) | Backlog |
@@ -39,10 +36,13 @@ See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **5 unverified Tasks**
+Currently: **8 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
+| T-0107 | #113 | Gate Sprint close on verified Tasks and Issues | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0108 | #114 | Gate Epic close on verified acceptance criteria | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0109 | #115 | Add close-action messaging and disabled-state behavior | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0143 | TBD | Define AICockpit requirements import command contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0144 | TBD | Implement canonical requirements import apply path | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 | T-0145 | TBD | Add Markdown requirements seed import support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
@@ -184,11 +184,11 @@ Currently: **133 verified Tasks** | Next available: **T-0148**
 ## Statistics
 
 - **Total Tasks:** 147
-- **Backlog:** 9
+- **Backlog:** 6
 - **Active:** 0
-- **Unverified:** 5
+- **Unverified:** 8
 - **Verified:** 133
 - **Closed:** 0
 - **Next available:** T-0148
 
-*Last Updated: 2026-06-24 (T-0143 through T-0147 implemented pending verification)*
+*Last Updated: 2026-06-25 (T-0107 through T-0109 moved to Implemented - Not Verified)*

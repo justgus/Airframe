@@ -2,30 +2,9 @@
 
 Sprints listed here are attached to an Epic but are not yet in Planning, Active, Review, or Closed status.
 
-Currently: **3 backlog Sprints**
+Currently: **2 backlog Sprints**
 
 ---
-
-## SP-022: Sprint and Epic Close Gating
-
-**Status:** Backlog
-**Epic:** EP-018: AgileCockpit Sprint and Epic Status Controls
-**Goal:** Enable Sprint close and Epic complete/close only when prerequisites are satisfied.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Candidate Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0107 | Gate Sprint close on verified Tasks and Issues | High | Backlog |
-| T-0108 | Gate Epic close on verified acceptance criteria | High | Backlog |
-| T-0109 | Add close-action messaging and disabled-state behavior | High | Backlog |
-
-### Candidate Issues
-
-None.
 
 ## SP-023: Sprint and Epic Archive Workflow
 
@@ -71,4 +50,4 @@ None.
 
 ---
 
-*Last Updated: 2026-06-24 (SP-032 activated; backlog unchanged)*
+*Last Updated: 2026-06-25 (SP-022 activated for verification)*

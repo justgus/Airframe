@@ -118,9 +118,9 @@ Currently: **147 total Tasks**
 | T-0104 | #108 | Add Epic Acceptance Criteria tab to the planning panel | Implemented - Verified |
 | T-0105 | #110 | Add verification actions for Epic acceptance criteria | Implemented - Verified |
 | T-0106 | #109 | Add accessibility, selection, and evidence behavior for the criteria tab | Implemented - Verified |
-| T-0107 | TBD | Gate Sprint close on verified Tasks and Issues | Implemented - Not Verified |
-| T-0108 | TBD | Gate Epic close on verified acceptance criteria | Implemented - Not Verified |
-| T-0109 | TBD | Add close-action messaging and disabled-state behavior | Implemented - Not Verified |
+| T-0107 | #113 | Gate Sprint close on verified Tasks and Issues | Implemented - Not Verified |
+| T-0108 | #114 | Gate Epic close on verified acceptance criteria | Implemented - Not Verified |
+| T-0109 | #115 | Add close-action messaging and disabled-state behavior | Implemented - Not Verified |
 | T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | Implemented - Not Verified |
 | T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | Implemented - Not Verified |
 | T-0112 | TBD | Rewrite sprint and epic index files on close | Implemented - Not Verified |
