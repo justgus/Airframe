@@ -4,7 +4,7 @@ This is the main index for Agile Airframe Epics.
 
 ## All Epics
 
-Currently: **21 Epics** | Next available: **EP-022**
+Currently: **22 Epics** | Next available: **EP-023**
 
 | Epic | Title | Status | Start Date | Close Date |
 | ---- | ----- | ------ | ---------- | ---------- |
@@ -29,13 +29,14 @@ Currently: **21 Epics** | Next available: **EP-022**
 | EP-019 | Airframe Offline-Only Operation | Backlog | TBD | TBD |
 | EP-020 | Canonical Airframe Workflow State | Closed | 2026-06-17 | 2026-06-23 |
 | EP-021 | Requirements Traceability and Release Evidence | Closed | 2026-06-23 | 2026-06-24 |
+| EP-022 | Telemetrix Importer and Canonical Repair Fixes | Active | 2026-06-25 | TBD |
 
 ## Statistics
 
-- **Total Epics:** 21
+- **Total Epics:** 22
 - **Backlog:** 1
-- **Active:** 0
+- **Active:** 1
 - **Closed:** 20
-- **Next available:** EP-022
+- **Next available:** EP-023
 
 *Last Updated: 2026-06-25*

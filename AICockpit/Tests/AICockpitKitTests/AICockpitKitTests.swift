@@ -16,7 +16,7 @@ import Foundation
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
     #expect(help.contains("aicockpit github comment"))
-    #expect(help.contains("--backend local-fixture|github-fixture|github-issues"))
+    #expect(help.contains("--backend canonical|local-fixture|github-fixture|github-issues"))
 }
 
 @Test func configDiagnoseReturnsStableMarkdownContract() {
@@ -178,6 +178,365 @@ import Foundation
     #expect(result.standardOutput.contains("\"rawValue\" : \"REQ-0100\""))
     #expect(result.standardOutput.contains("\"title\" : \"Exported requirement\""))
     #expect(result.standardOutput.contains("\"releaseScope\" : ["))
+}
+
+@Test func stateImportMarkdownIncludesClosedSprintArtifactsFromClosedDirectory() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let closedSprintsDirectory = rootURL.appending(path: "docs/Sprints/Closed")
+    try FileManager.default.createDirectory(at: closedSprintsDirectory, withIntermediateDirectories: true)
+    try Data(
+        """
+        # SP-002: Expanded Schema & Mock Telemetry
+
+        **Status:** Closed
+        **Epic:** EP-002
+        **Goal:** Expand the canonical schema and mock telemetry support.
+        **Start Date:** 2026-06-01
+        **End Date:** 2026-06-02
+        """.utf8
+    ).write(to: closedSprintsDirectory.appending(path: "Sprint-SP-002.md"))
+    try Data(
+        """
+        # SP-003: Workflow, Authority, and Audit Foundation
+
+        **Status:** Closed
+        **Epic:** EP-003
+        **Goal:** Implement the deny-by-default workflow and audit foundation.
+        **Start Date:** 2026-06-02
+        **End Date:** 2026-06-03
+        """.utf8
+    ).write(to: closedSprintsDirectory.appending(path: "Sprint-SP-003.md"))
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "import-markdown",
+        "--config", configPath
+    ])
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let sprint002 = try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-002"))
+    let sprint003 = try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-003"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("sprints: 2"))
+    #expect(sprint002?.workItem.status == .closed)
+    #expect(sprint003?.workItem.status == .closed)
+    #expect(sprint002?.epicID == AirframeID("EP-002"))
+    #expect(sprint003?.epicID == AirframeID("EP-003"))
+}
+
+@Test func stateImportMarkdownPreservesActiveEpicAndSprintStatuses() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    try FileManager.default.createDirectory(at: rootURL.appending(path: "docs/Epics"), withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: rootURL.appending(path: "docs/Sprints"), withIntermediateDirectories: true)
+    try Data(
+        """
+        # EP-010: Active Epic
+
+        **Status:** Active
+        **Owner:** Human
+
+        **Goal:**
+        Preserve the active Epic status during markdown import.
+
+        **Rationale:**
+        Status mapping must not downgrade active work.
+        """.utf8
+    ).write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"))
+    try Data(
+        """
+        # SP-010: Active Sprint
+
+        **Status:** Active
+        **Epic:** EP-010
+        **Goal:** Preserve the active Sprint status during markdown import.
+        **Start Date:** 2026-06-01
+        """.utf8
+    ).write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"))
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "import-markdown",
+        "--config", configPath
+    ])
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let epic = try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-010"))
+    let sprint = try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-010"))
+
+    #expect(result.exitCode == 0)
+    #expect(epic?.workItem.status == .active)
+    #expect(sprint?.workItem.status == .active)
+}
+
+@Test func stateImportMarkdownPreservesBatchTaskBackLinksFromVerifiedDocuments() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let verifiedTasksDirectory = rootURL.appending(path: "docs/Tasks/Verified")
+    try FileManager.default.createDirectory(at: verifiedTasksDirectory, withIntermediateDirectories: true)
+    try Data(
+        """
+        # Verified Tasks T-0001 through T-0002
+
+        **Date Verified:** 2026-06-01
+        **Verified By:** HumanOwner
+        **Sprint:** SP-001
+        **Epic:** EP-001
+
+        The user verified SP-001 on 2026-06-01. The following Tasks are human-verified:
+
+        | Task | GitHub Issue | Title | Status |
+        | ---- | ------------ | ----- | ------ |
+        | T-0001 | #1 | Scaffold AirframeCore Swift package | Implemented - Verified |
+        | T-0002 | #2 | Scaffold AICockpit Swift package executable | Implemented - Verified |
+        """.utf8
+    ).write(to: verifiedTasksDirectory.appending(path: "Task-verified-0001-0002.md"))
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "import-markdown",
+        "--config", configPath
+    ])
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let task1 = try store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0001"))
+    let task2 = try store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-0002"))
+
+    #expect(result.exitCode == 0)
+    #expect(task1?.epicID == AirframeID("EP-001"))
+    #expect(task1?.sprintID == AirframeID("SP-001"))
+    #expect(task2?.epicID == AirframeID("EP-001"))
+    #expect(task2?.sprintID == AirframeID("SP-001"))
+}
+
+@Test func mutationCommandsDefaultToCanonicalPerRecordStoreWhenConfigured() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            epicIDs: [AirframeID("EP-9100")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9100"),
+                kind: .epic,
+                title: "Canonical mutation routing",
+                status: .backlog
+            ),
+            owner: "Airframe",
+            goal: "Route mutations to canonical state.",
+            rationale: "Imported per-record state must be repairable."
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "epic", "status", "EP-9100",
+        "--config", configPath,
+        "--to", "active",
+        "--output", "json"
+    ])
+    let savedEpic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-9100"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"backendKind\" : \"canonical\""))
+    #expect(savedEpic?.workItem.status == .active)
+}
+
+@Test func canonicalStoreBackendCreatesAndLinksTaskRecords() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AICockpitCanonicalCreateTests")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            epicIDs: [AirframeID("EP-9400")],
+            sprintIDs: [AirframeID("SP-9400")],
+            taskIDs: []
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9400"),
+                kind: .epic,
+                title: "Canonical create path",
+                status: .backlog
+            ),
+            owner: "Airframe",
+            goal: "Allow canonical record creation.",
+            rationale: "The CLI create path needs a writable canonical backend."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("SP-9400"),
+                kind: .sprint,
+                title: "Canonical create sprint",
+                status: .backlog
+            ),
+            epicID: AirframeID("EP-9400"),
+            goal: "Create canonical tasks into linked sprint."
+        )
+    )
+
+    let backend = AirframeCanonicalStoreBackend(repository: repository)
+    let taskID = AirframeID("T-9400")
+    try backend.createWorkRecord(
+        AirframeLocalWorkRecord(
+            workItem: AirframeWorkItem(
+                id: taskID,
+                kind: .task,
+                title: "Create canonical task records",
+                status: .backlog
+            ),
+            epicID: AirframeID("EP-9400"),
+            sprintID: AirframeID("SP-9400"),
+            priority: .high,
+            acceptanceCriteria: ["Task can be created in the canonical store."],
+            scope: ["AirframeCore"],
+            constraints: ["No duplicate IDs"],
+            evidenceRequirements: ["Verify epic and sprint links"]
+        )
+    )
+
+    let savedTask = try repository.store.load(AirframeCanonicalTaskRecord.self, id: taskID)
+    let savedEpic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-9400"))
+    let savedSprint = try repository.store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-9400"))
+    let savedProject = try repository.store.load(AirframeCanonicalProjectRecord.self, id: AirframeID("PRJ-AIRFRAME"))
+
+    #expect(backend.capabilities.supportsCreateWorkItem)
+    #expect(savedTask?.workItem.title == "Create canonical task records")
+    #expect(savedTask?.epicID == AirframeID("EP-9400"))
+    #expect(savedTask?.sprintID == AirframeID("SP-9400"))
+    #expect(savedEpic?.taskIDs == [taskID])
+    #expect(savedSprint?.taskIDs == [taskID])
+    #expect(savedProject?.taskIDs.contains(taskID) == true)
+}
+
+@Test func stateRepairRestoresCanonicalActiveEpicFromDiagnostics() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-9200"),
+            epicIDs: [AirframeID("EP-9200")],
+            taskIDs: [AirframeID("T-9200")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9200"),
+                kind: .epic,
+                title: "Restore active Epic",
+                status: .closed
+            ),
+            owner: "Airframe",
+            goal: "Restore an incorrectly closed active Epic.",
+            rationale: "Diagnostics must offer executable canonical repairs.",
+            taskIDs: [AirframeID("T-9200")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-9200"),
+                kind: .task,
+                title: "Open child work",
+                status: .active
+            ),
+            component: "AirframeCore",
+            priority: .high,
+            rationale: "Closed Epic owns open work.",
+            epicID: AirframeID("EP-9200")
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "repair",
+        "--config", configPath,
+        "--action", "restoreEpicToActive",
+        "--id", "EP-9200",
+        "--approve",
+        "--approved-by", "Human",
+        "--output", "json"
+    ])
+    let savedEpic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-9200"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("{"))
+    #expect(result.standardOutput.contains("\"action\" : \"restoreEpicToActive\""))
+    #expect(savedEpic?.workItem.status == .active)
+}
+
+@Test func stateRepairReconcilesCanonicalEpicTaskLinksFromDiagnostics() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            epicIDs: [AirframeID("EP-9300")],
+            taskIDs: [AirframeID("T-9300")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9300"),
+                kind: .epic,
+                title: "Reconcile Epic task links",
+                status: .active
+            ),
+            owner: "Airframe",
+            goal: "Repair relationship drift.",
+            rationale: "Canonical relationship repairs must be executable.",
+            taskIDs: [AirframeID("T-9300")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-9300"),
+                kind: .task,
+                title: "Relationship drift",
+                status: .active
+            ),
+            component: "AirframeCore",
+            priority: .high,
+            rationale: "Task points at the wrong Epic.",
+            epicID: AirframeID("EP-OTHER")
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "repair",
+        "--config", configPath,
+        "--action", "reconcileEpicTaskLinks",
+        "--id", "T-9300",
+        "--approve",
+        "--approved-by", "Human",
+        "--output", "json"
+    ])
+    let savedTask = try repository.store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-9300"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"action\" : \"reconcileEpicTaskLinks\""))
+    #expect(savedTask?.epicID == AirframeID("EP-9300"))
 }
 
 @Test func requirementsImportApplyWritesCanonicalRequirementRecords() throws {

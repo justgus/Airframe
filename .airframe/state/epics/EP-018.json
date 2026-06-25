@@ -45,6 +45,21 @@
     },
     {
       "rawValue" : "I-0014"
+    },
+    {
+      "rawValue" : "I-0015"
+    },
+    {
+      "rawValue" : "I-0016"
+    },
+    {
+      "rawValue" : "I-0017"
+    },
+    {
+      "rawValue" : "I-0018"
+    },
+    {
+      "rawValue" : "I-0019"
     }
   ],
   "metadata" : {
@@ -54,7 +69,7 @@
       "patch" : 0
     },
     "source" : "docs\/Epics\/Epic-backlog.md",
-    "updatedAt" : "2026-06-25T21:17:35Z"
+    "updatedAt" : "2026-06-25T21:56:19Z"
   },
   "notes" : [
     "Acceptance Criteria: 1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated tab or equivalent panel. 2. [x] A human can mark Epic acceptance criteria verified in the UI. 3. [x] A Sprint close action is enabled only after all Sprint Tasks and Issues are verified. 4. [x] An Epic complete or close action is enabled only after all Epic acceptance criteria are verified. 5. [x] Closing a Sprint archives the Sprint record and updates the Sprint index. 6. [x] Closing an Epic archives the Epic record and updates the Epic index. 7. [x] Tests cover local workspace behavior and live GitHub-issues workspace behavior where applicable."

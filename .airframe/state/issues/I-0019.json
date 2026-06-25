@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+    "AICockpit",
+    "Canonical Repair",
+    "CLI Output"
+  ],
+  "dateIdentified" : "2026-06-25",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Repair commands should honor the requested output format consistently, with markdown remaining available only when explicitly requested.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs/Issues/Issue-active.md",
+    "updatedAt" : "2026-06-25T21:56:19Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. state repair --output json emits JSON. 2. Markdown remains available when explicitly requested. 3. Regression coverage proves repair output format selection is stable."
+  ],
+  "observedBehavior" : "aicockpit state repair still emits markdown-style output even when --output json is requested.",
+  "reproductionSteps" : [
+    "Run aicockpit state repair with --output json.",
+    "Inspect the command output.",
+    "Observe markdown-formatted repair output instead of JSON."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "githubIssue" : 156,
+    "id" : {
+      "rawValue" : "I-0019"
+    },
+    "kind" : "issue",
+    "status" : "active",
+    "title" : "state repair ignores --output json and always emits markdown"
+  }
+}

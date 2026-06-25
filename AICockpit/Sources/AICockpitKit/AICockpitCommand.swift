@@ -314,14 +314,20 @@ public enum AICockpitCommand {
             ) { backend, context in
                 let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
-                let canonicalRecords = try AirframeCanonicalStoreRepository(rootURL: rootURL).workRecords()
+                let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+                let canonicalRecords = try repository.workRecords()
+                let snapshot = try repository.snapshot(project: projectContext.project)
                 let backendRecords = try backend.listWorkRecords()
-                let diagnostics = AirframeCanonicalBackendReconciler().diagnostics(
+                let backendDiagnostics = AirframeCanonicalBackendReconciler().diagnostics(
                     canonicalRecords: canonicalRecords,
                     backendRecords: backendRecords
                 )
+                let stateDiagnostics = AirframeCanonicalStateValidator()
+                    .diagnostics(for: snapshot)
+                    .diagnostics
                 let action = try parsed.requiredRepairAction()
                 let requestedIDs = parsed.repeatedValues(for: "--id").map(AirframeID.init)
+                let diagnostics = stateDiagnostics + backendDiagnostics
                 let repairOptions = diagnostics.flatMap(\.repairOptions).filter { option in
                     option.action == action
                         && (requestedIDs.isEmpty || !Set(option.affectedIDs).isDisjoint(with: requestedIDs))
@@ -336,17 +342,33 @@ public enum AICockpitCommand {
                         scopedOption = AirframeCanonicalRepairOption(
                             action: option.action,
                             title: option.title,
-                            affectedIDs: option.affectedIDs.filter { requestedIDs.contains($0) },
+                            affectedIDs: option.affectedIDs,
                             requiresHumanApproval: option.requiresHumanApproval
                         )
                     }
-                    return try AirframeCanonicalBackendRepairer().apply(
+                    if scopedOption.requiresHumanApproval {
+                        _ = try parsed.githubMutationApproval()
+                        scopedOption = AirframeCanonicalRepairOption(
+                            action: scopedOption.action,
+                            title: scopedOption.title,
+                            affectedIDs: scopedOption.affectedIDs,
+                            requiresHumanApproval: false
+                        )
+                    }
+                    if scopedOption.action == .applyBackendStatusLabels
+                        || scopedOption.action == .applyBackendRelationshipLabels {
+                        return try AirframeCanonicalBackendRepairer().apply(
+                            repairOption: scopedOption,
+                            canonicalRecords: canonicalRecords,
+                            backend: backend,
+                            approval: approval,
+                            context: context,
+                            targetProjectID: context.targetProjectID
+                        ).applications
+                    }
+                    return try AirframeCanonicalStateRepairer().apply(
                         repairOption: scopedOption,
-                        canonicalRecords: canonicalRecords,
-                        backend: backend,
-                        approval: approval,
-                        context: context,
-                        targetProjectID: context.targetProjectID
+                        repository: repository
                     ).applications
                 }
                 return try renderRepairResult(
@@ -968,25 +990,25 @@ public enum AICockpitCommand {
           aicockpit version
           aicockpit context [--config path]
           aicockpit config diagnose [--config path] [--output markdown|json]
-          aicockpit state diagnostics [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit state diagnostics [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit state import-markdown [--config path] [--output markdown|json]
           aicockpit state export-markdown [--config path]
           aicockpit requirements import --format csv|json --file path --dry-run [--config path] [--output markdown|json]
           aicockpit requirements import --format csv|json --file path --apply [--config path] [--output markdown|json]
           aicockpit requirements export --format csv|json [--config path]
-          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels [--id ID] --approve --approved-by name [--config path] [--backend github-issues|local-fixture|github-fixture] [--output markdown|json]
+          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileSprintTaskLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
           aicockpit authority demo-denied [--config path]
-          aicockpit project summary [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
-          aicockpit task propose --id T-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit issue propose --id I-XXXX --title title [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit task create --id T-XXXX --title title [--status backlog|active] [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit issue create --id I-XXXX --title title [--status backlog|active] [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit sprint create --id SP-XXXX --title title [--status backlog|planning] [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit epic create --id EP-XXXX --title title [--status proposed|draft|backlog] [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit task|issue|sprint|epic update ID [--title title] [--status value] [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit task|issue|sprint|epic status ID --to value [--config path] [--backend local-fixture|github-fixture] [--store path]
-          aicockpit task next [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
-          aicockpit task packet T-XXXX [--config path] [--backend local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit project summary [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit task propose --id T-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit issue propose --id I-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit task create --id T-XXXX --title title [--status backlog|active] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit issue create --id I-XXXX --title title [--status backlog|active] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit sprint create --id SP-XXXX --title title [--status backlog|planning] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit epic create --id EP-XXXX --title title [--status proposed|draft|backlog] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit task|issue|sprint|epic update ID [--title title] [--status value] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit task|issue|sprint|epic status ID --to value [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit task next [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit task packet T-XXXX [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit work ready T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit github comment T-XXXX --body text --approve --approved-by name [--config path] [--backend github-issues] [--output markdown|json]
@@ -1695,8 +1717,7 @@ private struct AICockpitArguments {
             ?? value(for: "--provider")
             ?? projectContext.configuration.backend.kind
         let rootURL = try? workspaceRootURL(projectContext: projectContext)
-        if !controlledMutationsEnabled,
-           value(for: "--backend") == nil,
+        if value(for: "--backend") == nil,
            let rootURL,
            FileManager.default.fileExists(atPath: rootURL.appending(path: ".airframe/state").path) {
             return AirframeCanonicalStoreBackend(rootURL: rootURL)
@@ -1841,7 +1862,8 @@ private struct AICockpitArguments {
     func requiredRepairAction() throws -> AirframeCanonicalRepairAction {
         let value = try requiredValue(for: "--action")
         guard let action = AirframeCanonicalRepairAction(rawValue: value),
-              action == .applyBackendStatusLabels || action == .applyBackendRelationshipLabels else {
+              action != .moveOpenWorkToAnotherEpic,
+              action != .carryForwardOpenWork else {
             throw AICockpitCommandError.invalidArguments("unsupported repair action \(value)")
         }
         return action

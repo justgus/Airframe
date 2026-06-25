@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "Canonical State",
+    "Markdown Importer"
+  ],
+  "dateIdentified" : "2026-06-25",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Closed sprint artifacts should import the same way closed task and epic artifacts do, preserving the sprint record and its relationships.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs/Issues/Issue-active.md",
+    "updatedAt" : "2026-06-25T21:56:19Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. state import-markdown reads docs/Sprints/Closed/ for sprint artifacts. 2. Closed sprint records import with their original status and relationships intact. 3. Regression coverage proves SP-002 and SP-003 import from closed sprint markdown."
+  ],
+  "observedBehavior" : "state import-markdown omits sprint records from docs/Sprints/Closed/, leaving closed sprint artifacts such as SP-002 and SP-003 out of canonical state.",
+  "reproductionSteps" : [
+    "Run state import-markdown against a workspace with docs/Sprints/Closed/Sprint-SP-002.md and Sprint-SP-003.md present.",
+    "Inspect canonical state for SP-002 and SP-003 after import.",
+    "Observe that the sprint records are missing."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "githubIssue" : 154,
+    "id" : {
+      "rawValue" : "I-0015"
+    },
+    "kind" : "issue",
+    "status" : "active",
+    "title" : "Markdown importer skips closed sprint artifacts under docs/Sprints/Closed"
+  }
+}

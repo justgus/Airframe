@@ -137,8 +137,8 @@ Epic close eligibility now includes related Sprint status and blocks close while
 **Platform:** macOS
 **Component:** AgileCockpit / Canonical State / Refresh Observation
 **Severity:** High
-**Epic:** EP-018
-**Sprint:** SP-024
+**Epic:** EP-022
+**Sprint:** SP-034
 **Date Identified:** 2026-06-25
 **Fix Date:** 2026-06-25
 **Verification Date:** TBD
@@ -157,4 +157,124 @@ AgileCockpit should detect external canonical state changes and refresh visible 
 **Resolution:**
 AgileCockpit now watches canonical state subdirectories, exposes a main dashboard Refresh button, and reloads state on manual refresh from the canonical store.
 
-*Last Updated: 2026-06-25 (I-0014 resolved for SP-024)*
+## I-0015: Markdown importer skips closed sprint artifacts under docs/Sprints/Closed
+
+**Status:** Active
+**GitHub Issue:** #154
+**Platform:** macOS
+**Component:** AirframeCore / Canonical State / Markdown Importer
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-25
+**Fix Date:** TBD
+**Verification Date:** TBD
+
+**Description:**
+`state import-markdown` omits sprint records from `docs/Sprints/Closed/`, leaving closed sprint artifacts such as SP-002 and SP-003 out of canonical state.
+
+**Expected Behavior:**
+Closed sprint artifacts should import the same way closed task and epic artifacts do, preserving the sprint record and its relationships.
+
+**Acceptance Criteria:**
+1. `state import-markdown` reads `docs/Sprints/Closed/` for sprint artifacts.
+2. Closed sprint records import with their original status and relationships intact.
+3. Regression coverage proves SP-002 and SP-003 import from closed sprint markdown.
+
+## I-0016: Markdown importer maps active epic and sprint statuses incorrectly
+
+**Status:** Active
+**GitHub Issue:** #157
+**Platform:** macOS
+**Component:** AirframeCore / Canonical State / Markdown Importer
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-25
+**Fix Date:** TBD
+**Verification Date:** TBD
+
+**Description:**
+Active epics and sprints can import as backlog, which creates blocking diagnostics after a clean markdown import.
+
+**Expected Behavior:**
+Active epic and sprint artifacts should import as active, not backlog, so diagnostics remain clean after a correct markdown import.
+
+**Acceptance Criteria:**
+1. Markdown import preserves active epic and sprint status.
+2. Imported active epics and sprints do not trigger `activeEpicNotActive` or `activeSprintNotActive` diagnostics.
+3. Regression coverage proves active epic and sprint markdown imports as active.
+
+## I-0017: Markdown importer drops task Epic and Sprint back-links from batch documents
+
+**Status:** Active
+**GitHub Issue:** #158
+**Platform:** macOS
+**Component:** AirframeCore / Markdown Importer / Task Batch Imports
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-25
+**Fix Date:** TBD
+**Verification Date:** TBD
+
+**Description:**
+Tasks imported from batch markdown documents can lose their epicID and sprintID relationships, leaving the canonical store with missing task-to-sprint links.
+
+**Expected Behavior:**
+Batch task imports should preserve Epic and Sprint back-links when they are present in the source artifacts.
+
+**Acceptance Criteria:**
+1. Batch task documents import with their Epic and Sprint IDs intact.
+2. Imported tasks do not trigger `taskEpicMissing` or `taskSprintMissing` when the source artifact includes the links.
+3. Regression coverage proves the verified batch files import with correct back-links.
+
+## I-0018: Canonical backend lacks a create path for missing records
+
+**Status:** Active
+**GitHub Issue:** #155
+**Platform:** macOS
+**Component:** AICockpit / AirframeCore / Canonical Store
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-25
+**Fix Date:** TBD
+**Verification Date:** TBD
+
+**Description:**
+The canonical backend can repair and mutate existing records, but it cannot create missing canonical records through the CLI.
+
+**Expected Behavior:**
+The canonical backend should support controlled creation of missing canonical records where the workflow requires it.
+
+**Acceptance Criteria:**
+1. Canonical backend exposes a create path for permitted record kinds.
+2. Missing canonical records needed by repairs can be created without manual JSON edits.
+3. Regression coverage proves the canonical create path works for the intended record types.
+
+## I-0019: state repair ignores --output json and always emits markdown
+
+**Status:** Active
+**GitHub Issue:** #156
+**Platform:** macOS
+**Component:** AICockpit / Canonical Repair / CLI Output
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-25
+**Fix Date:** TBD
+**Verification Date:** TBD
+
+**Description:**
+`aicockpit state repair` still emits markdown-style output even when `--output json` is requested.
+
+**Expected Behavior:**
+Repair commands should honor the requested output format consistently, with markdown remaining available only when explicitly requested.
+
+**Acceptance Criteria:**
+1. `state repair --output json` emits JSON.
+2. Markdown remains available when explicitly requested.
+3. Regression coverage proves repair output format selection is stable.
+
+*Last Updated: 2026-06-25 (I-0015 through I-0019 moved to EP-022/SP-034)*

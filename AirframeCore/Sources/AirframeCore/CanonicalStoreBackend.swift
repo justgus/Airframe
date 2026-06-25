@@ -234,6 +234,149 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         throw AirframeBackendError.missingWorkItem(id)
     }
 
+    public func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        switch record.workItem.kind {
+        case .epic:
+            guard let existing = try store.load(AirframeCanonicalEpicRecord.self, id: record.workItem.id) else {
+                throw AirframeBackendError.missingWorkItem(record.workItem.id)
+            }
+            try store.save(existing.updating(from: record))
+        case .sprint:
+            guard let existing = try store.load(AirframeCanonicalSprintRecord.self, id: record.workItem.id) else {
+                throw AirframeBackendError.missingWorkItem(record.workItem.id)
+            }
+            try store.save(existing.updating(from: record))
+        case .task:
+            guard let existing = try store.load(AirframeCanonicalTaskRecord.self, id: record.workItem.id) else {
+                throw AirframeBackendError.missingWorkItem(record.workItem.id)
+            }
+            try store.save(existing.updating(from: record))
+            try reconcileEpicTaskLinks(epicID: record.epicID, taskID: record.workItem.id)
+            try reconcileSprintTaskLinks(sprintID: record.sprintID, taskID: record.workItem.id)
+        case .issue:
+            guard let existing = try store.load(AirframeCanonicalIssueRecord.self, id: record.workItem.id) else {
+                throw AirframeBackendError.missingWorkItem(record.workItem.id)
+            }
+            try store.save(existing.updating(from: record))
+        }
+    }
+
+    public func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        switch record.workItem.kind {
+        case .epic:
+            guard try store.load(AirframeCanonicalEpicRecord.self, id: record.workItem.id) == nil else {
+                throw AirframeBackendError.duplicateWorkItem(record.workItem.id)
+            }
+            try store.save(
+                AirframeCanonicalEpicRecord(
+                    workItem: record.workItem,
+                    owner: "",
+                    goal: record.scope.first ?? "",
+                    rationale: record.constraints.first ?? "",
+                    startDate: nil,
+                    targetCloseDate: nil,
+                    closeDate: record.workItem.status == .closed ? isoDateString() : nil,
+                    scope: record.scope,
+                    outOfScope: record.constraints,
+                    acceptanceCriterionIDs: [],
+                    sprintIDs: [],
+                    taskIDs: [],
+                    issueIDs: [],
+                    planningDocumentPaths: [],
+                    notes: record.constraints
+                )
+            )
+            try updateProjectRecord { project in
+                var updated = project.addingEpicID(record.workItem.id)
+                if record.workItem.status == .active {
+                    updated = updated.settingActiveEpicID(record.workItem.id)
+                }
+                return updated
+            }
+        case .sprint:
+            guard try store.load(AirframeCanonicalSprintRecord.self, id: record.workItem.id) == nil else {
+                throw AirframeBackendError.duplicateWorkItem(record.workItem.id)
+            }
+            try store.save(
+                AirframeCanonicalSprintRecord(
+                    workItem: record.workItem,
+                    epicID: record.epicID,
+                    goal: record.scope.first ?? "",
+                    startDate: nil,
+                    endDate: record.workItem.status == .review || record.workItem.status == .closed ? isoDateString() : nil,
+                    capacity: nil,
+                    taskIDs: [],
+                    issueIDs: [],
+                    notes: record.constraints
+                )
+            )
+            try updateProjectRecord { project in
+                var updated = project.addingSprintID(record.workItem.id)
+                if record.workItem.status == .active {
+                    updated = updated.settingActiveSprintID(record.workItem.id)
+                }
+                return updated
+            }
+            if let epicID = record.epicID {
+                try reconcileEpicSprintLinks(epicID: epicID, sprintID: record.workItem.id)
+            }
+        case .task:
+            guard try store.load(AirframeCanonicalTaskRecord.self, id: record.workItem.id) == nil else {
+                throw AirframeBackendError.duplicateWorkItem(record.workItem.id)
+            }
+            try store.save(
+                AirframeCanonicalTaskRecord(
+                    workItem: record.workItem,
+                    component: record.scope.first ?? "",
+                    priority: record.priority,
+                    rationale: record.constraints.first ?? "",
+                    epicID: record.epicID,
+                    sprintID: record.sprintID,
+                    dateRequested: nil,
+                    dateImplemented: record.workItem.status == .implementedNotVerified ? isoDateString() : nil,
+                    dateVerified: record.workItem.status == .implementedVerified ? isoDateString() : nil,
+                    currentBehavior: nil,
+                    desiredBehavior: nil,
+                    requirementIDs: [],
+                    acceptanceCriteria: record.acceptanceCriteria,
+                    designApproach: nil,
+                    componentsAffected: record.scope,
+                    implementationDetails: nil,
+                    evidenceIDs: [],
+                    testSteps: record.evidenceRequirements,
+                    notes: record.constraints
+                )
+            )
+            try updateProjectRecord { $0.addingTaskID(record.workItem.id) }
+            try reconcileEpicTaskLinks(epicID: record.epicID, taskID: record.workItem.id)
+            try reconcileSprintTaskLinks(sprintID: record.sprintID, taskID: record.workItem.id)
+        case .issue:
+            guard try store.load(AirframeCanonicalIssueRecord.self, id: record.workItem.id) == nil else {
+                throw AirframeBackendError.duplicateWorkItem(record.workItem.id)
+            }
+            try store.save(
+                AirframeCanonicalIssueRecord(
+                    workItem: record.workItem,
+                    severity: record.priority,
+                    observedBehavior: "",
+                    expectedBehavior: "",
+                    epicID: record.epicID,
+                    sprintID: record.sprintID,
+                    dateReported: nil,
+                    dateResolved: record.workItem.status == .implementedNotVerified ? isoDateString() : nil,
+                    dateVerified: record.workItem.status == .implementedVerified ? isoDateString() : nil,
+                    reproductionSteps: record.evidenceRequirements,
+                    affectedComponents: record.scope,
+                    evidenceIDs: [],
+                    notes: record.constraints
+                )
+            )
+            try updateProjectRecord { $0.addingIssueID(record.workItem.id) }
+            try reconcileEpicIssueLinks(epicID: record.epicID, issueID: record.workItem.id)
+            try reconcileSprintIssueLinks(sprintID: record.sprintID, issueID: record.workItem.id)
+        }
+    }
+
     public func clearActiveSprintID(projectID: AirframeID) throws {
         guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
             throw AirframeBackendError.missingWorkItem(projectID)
@@ -253,6 +396,89 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             throw AirframeBackendError.missingWorkItem(projectID)
         }
         try store.save(project.settingActiveSprintID(sprintID))
+    }
+
+    public func restoreEpicToActive(epicID: AirframeID) throws {
+        try transitionWorkItem(id: epicID, to: .active)
+    }
+
+    public func restoreSprintToActive(sprintID: AirframeID) throws {
+        try transitionWorkItem(id: sprintID, to: .active)
+    }
+
+    public func reconcileEpicSprintLinks(epicID: AirframeID, sprintID: AirframeID) throws {
+        guard let epic = try store.load(AirframeCanonicalEpicRecord.self, id: epicID) else {
+            throw AirframeBackendError.missingWorkItem(epicID)
+        }
+        guard let sprint = try store.load(AirframeCanonicalSprintRecord.self, id: sprintID) else {
+            throw AirframeBackendError.missingWorkItem(sprintID)
+        }
+        try store.save(epic.addingSprintID(sprintID))
+        try store.save(sprint.settingEpicID(epicID))
+    }
+
+    public func reconcileEpicTaskLinks(epicID: AirframeID?, taskID: AirframeID) throws {
+        guard let epicID else { return }
+        guard let epic = try store.load(AirframeCanonicalEpicRecord.self, id: epicID) else {
+            throw AirframeBackendError.missingWorkItem(epicID)
+        }
+        guard let task = try store.load(AirframeCanonicalTaskRecord.self, id: taskID) else {
+            throw AirframeBackendError.missingWorkItem(taskID)
+        }
+        try store.save(epic.addingTaskID(taskID))
+        try store.save(task.settingEpicID(epicID))
+    }
+
+    public func reconcileEpicTaskLinks(epicID: AirframeID, taskID: AirframeID) throws {
+        try reconcileEpicTaskLinks(epicID: Optional(epicID), taskID: taskID)
+    }
+
+    public func reconcileEpicIssueLinks(epicID: AirframeID?, issueID: AirframeID) throws {
+        guard let epicID else { return }
+        guard let epic = try store.load(AirframeCanonicalEpicRecord.self, id: epicID) else {
+            throw AirframeBackendError.missingWorkItem(epicID)
+        }
+        guard let issue = try store.load(AirframeCanonicalIssueRecord.self, id: issueID) else {
+            throw AirframeBackendError.missingWorkItem(issueID)
+        }
+        try store.save(epic.addingIssueID(issueID))
+        try store.save(issue.settingEpicID(epicID))
+    }
+
+    public func reconcileEpicIssueLinks(epicID: AirframeID, issueID: AirframeID) throws {
+        try reconcileEpicIssueLinks(epicID: Optional(epicID), issueID: issueID)
+    }
+
+    public func reconcileSprintTaskLinks(sprintID: AirframeID?, taskID: AirframeID) throws {
+        guard let sprintID else { return }
+        guard let sprint = try store.load(AirframeCanonicalSprintRecord.self, id: sprintID) else {
+            throw AirframeBackendError.missingWorkItem(sprintID)
+        }
+        guard let task = try store.load(AirframeCanonicalTaskRecord.self, id: taskID) else {
+            throw AirframeBackendError.missingWorkItem(taskID)
+        }
+        try store.save(sprint.addingTaskID(taskID))
+        try store.save(task.settingSprintID(sprintID))
+    }
+
+    public func reconcileSprintTaskLinks(sprintID: AirframeID, taskID: AirframeID) throws {
+        try reconcileSprintTaskLinks(sprintID: Optional(sprintID), taskID: taskID)
+    }
+
+    public func reconcileSprintIssueLinks(sprintID: AirframeID?, issueID: AirframeID) throws {
+        guard let sprintID else { return }
+        guard let sprint = try store.load(AirframeCanonicalSprintRecord.self, id: sprintID) else {
+            throw AirframeBackendError.missingWorkItem(sprintID)
+        }
+        guard let issue = try store.load(AirframeCanonicalIssueRecord.self, id: issueID) else {
+            throw AirframeBackendError.missingWorkItem(issueID)
+        }
+        try store.save(sprint.addingIssueID(issueID))
+        try store.save(issue.settingSprintID(sprintID))
+    }
+
+    public func reconcileSprintIssueLinks(sprintID: AirframeID, issueID: AirframeID) throws {
+        try reconcileSprintIssueLinks(sprintID: Optional(sprintID), issueID: issueID)
     }
 
     public func snapshot(project: AirframeProject) throws -> AirframeCanonicalStateSnapshot {
@@ -296,10 +522,19 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             return
         }
     }
+
+    private func updateProjectRecord(
+        _ transform: (AirframeCanonicalProjectRecord) -> AirframeCanonicalProjectRecord
+    ) throws {
+        guard let project = try store.list(AirframeCanonicalProjectRecord.self).first else {
+            throw AirframeBackendError.unwritableStore("canonical store is missing a project record")
+        }
+        try store.save(transform(project))
+    }
 }
 
 public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeBackend {
-    public let capabilities: AirframeBackendCapabilities = .localFilesystem
+    public let capabilities: AirframeBackendCapabilities = .canonicalStore
 
     private let repository: AirframeCanonicalStoreRepository
 
@@ -320,11 +555,11 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
     }
 
     public func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
-        throw AirframeBackendError.readOnlyBackend("direct canonical work record creation")
+        try repository.createWorkRecord(record)
     }
 
     public func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
-        try updateWorkItem(record.workItem)
+        try repository.updateWorkRecord(record)
     }
 
     public func updateWorkItem(_ workItem: AirframeWorkItem) throws {
@@ -442,6 +677,27 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
 }
 
 private extension AirframeCanonicalEpicRecord {
+    func updating(from record: AirframeLocalWorkRecord) -> AirframeCanonicalEpicRecord {
+        AirframeCanonicalEpicRecord(
+            workItem: record.workItem,
+            owner: owner,
+            goal: goal,
+            rationale: rationale,
+            startDate: startDate,
+            targetCloseDate: targetCloseDate,
+            closeDate: record.workItem.status == .closed ? (closeDate ?? isoDateString()) : closeDate,
+            scope: record.scope.isEmpty ? scope : record.scope,
+            outOfScope: record.constraints.isEmpty ? outOfScope : record.constraints,
+            acceptanceCriterionIDs: acceptanceCriterionIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            planningDocumentPaths: planningDocumentPaths,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
     func updatingStatus(_ status: AirframeWorkStatus) -> AirframeCanonicalEpicRecord {
         AirframeCanonicalEpicRecord(
             workItem: workItem.updatingStatus(status),
@@ -457,6 +713,69 @@ private extension AirframeCanonicalEpicRecord {
             sprintIDs: sprintIDs,
             taskIDs: taskIDs,
             issueIDs: issueIDs,
+            planningDocumentPaths: planningDocumentPaths,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingSprintID(_ sprintID: AirframeID) -> AirframeCanonicalEpicRecord {
+        AirframeCanonicalEpicRecord(
+            workItem: workItem,
+            owner: owner,
+            goal: goal,
+            rationale: rationale,
+            startDate: startDate,
+            targetCloseDate: targetCloseDate,
+            closeDate: closeDate,
+            scope: scope,
+            outOfScope: outOfScope,
+            acceptanceCriterionIDs: acceptanceCriterionIDs,
+            sprintIDs: appendUnique(sprintID, to: sprintIDs),
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            planningDocumentPaths: planningDocumentPaths,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingTaskID(_ taskID: AirframeID) -> AirframeCanonicalEpicRecord {
+        AirframeCanonicalEpicRecord(
+            workItem: workItem,
+            owner: owner,
+            goal: goal,
+            rationale: rationale,
+            startDate: startDate,
+            targetCloseDate: targetCloseDate,
+            closeDate: closeDate,
+            scope: scope,
+            outOfScope: outOfScope,
+            acceptanceCriterionIDs: acceptanceCriterionIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: appendUnique(taskID, to: taskIDs),
+            issueIDs: issueIDs,
+            planningDocumentPaths: planningDocumentPaths,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingIssueID(_ issueID: AirframeID) -> AirframeCanonicalEpicRecord {
+        AirframeCanonicalEpicRecord(
+            workItem: workItem,
+            owner: owner,
+            goal: goal,
+            rationale: rationale,
+            startDate: startDate,
+            targetCloseDate: targetCloseDate,
+            closeDate: closeDate,
+            scope: scope,
+            outOfScope: outOfScope,
+            acceptanceCriterionIDs: acceptanceCriterionIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: appendUnique(issueID, to: issueIDs),
             planningDocumentPaths: planningDocumentPaths,
             notes: notes,
             metadata: metadata.updatingTimestamp()
@@ -512,9 +831,104 @@ private extension AirframeCanonicalProjectRecord {
             metadata: metadata.updatingTimestamp()
         )
     }
+
+    func settingActiveEpicID(_ epicID: AirframeID) -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: epicID,
+            activeSprintID: activeSprintID,
+            epicIDs: epicIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingEpicID(_ epicID: AirframeID) -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: activeSprintID,
+            epicIDs: appendUnique(epicID, to: epicIDs),
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingSprintID(_ sprintID: AirframeID) -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: activeSprintID,
+            epicIDs: epicIDs,
+            sprintIDs: appendUnique(sprintID, to: sprintIDs),
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingTaskID(_ taskID: AirframeID) -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: activeSprintID,
+            epicIDs: epicIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: appendUnique(taskID, to: taskIDs),
+            issueIDs: issueIDs,
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingIssueID(_ issueID: AirframeID) -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: activeSprintID,
+            epicIDs: epicIDs,
+            sprintIDs: sprintIDs,
+            taskIDs: taskIDs,
+            issueIDs: appendUnique(issueID, to: issueIDs),
+            backendMappingIDs: backendMappingIDs,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
 }
 
 private extension AirframeCanonicalSprintRecord {
+    func updating(from record: AirframeLocalWorkRecord) -> AirframeCanonicalSprintRecord {
+        AirframeCanonicalSprintRecord(
+            workItem: record.workItem,
+            epicID: record.epicID,
+            goal: record.scope.first ?? goal,
+            startDate: startDate,
+            endDate: record.workItem.status == .review || record.workItem.status == .closed ? (endDate ?? isoDateString()) : endDate,
+            capacity: capacity,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            notes: record.constraints.isEmpty ? notes : record.constraints,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
     func updatingStatus(_ status: AirframeWorkStatus) -> AirframeCanonicalSprintRecord {
         AirframeCanonicalSprintRecord(
             workItem: workItem.updatingStatus(status),
@@ -529,9 +943,79 @@ private extension AirframeCanonicalSprintRecord {
             metadata: metadata.updatingTimestamp()
         )
     }
+
+    func settingEpicID(_ epicID: AirframeID) -> AirframeCanonicalSprintRecord {
+        AirframeCanonicalSprintRecord(
+            workItem: workItem,
+            epicID: epicID,
+            goal: goal,
+            startDate: startDate,
+            endDate: endDate,
+            capacity: capacity,
+            taskIDs: taskIDs,
+            issueIDs: issueIDs,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingTaskID(_ taskID: AirframeID) -> AirframeCanonicalSprintRecord {
+        AirframeCanonicalSprintRecord(
+            workItem: workItem,
+            epicID: epicID,
+            goal: goal,
+            startDate: startDate,
+            endDate: endDate,
+            capacity: capacity,
+            taskIDs: appendUnique(taskID, to: taskIDs),
+            issueIDs: issueIDs,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func addingIssueID(_ issueID: AirframeID) -> AirframeCanonicalSprintRecord {
+        AirframeCanonicalSprintRecord(
+            workItem: workItem,
+            epicID: epicID,
+            goal: goal,
+            startDate: startDate,
+            endDate: endDate,
+            capacity: capacity,
+            taskIDs: taskIDs,
+            issueIDs: appendUnique(issueID, to: issueIDs),
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
 }
 
 private extension AirframeCanonicalTaskRecord {
+    func updating(from record: AirframeLocalWorkRecord) -> AirframeCanonicalTaskRecord {
+        AirframeCanonicalTaskRecord(
+            workItem: record.workItem,
+            component: component,
+            priority: record.priority,
+            rationale: rationale,
+            epicID: record.epicID,
+            sprintID: record.sprintID,
+            dateRequested: dateRequested,
+            dateImplemented: record.workItem.status == .implementedNotVerified ? (dateImplemented ?? isoDateString()) : dateImplemented,
+            dateVerified: record.workItem.status == .implementedVerified ? (dateVerified ?? isoDateString()) : dateVerified,
+            currentBehavior: currentBehavior,
+            desiredBehavior: desiredBehavior,
+            requirementIDs: requirementIDs,
+            acceptanceCriteria: record.acceptanceCriteria.isEmpty ? acceptanceCriteria : record.acceptanceCriteria,
+            designApproach: designApproach,
+            componentsAffected: record.scope.isEmpty ? componentsAffected : record.scope,
+            implementationDetails: implementationDetails,
+            evidenceIDs: evidenceIDs,
+            testSteps: record.evidenceRequirements.isEmpty ? testSteps : record.evidenceRequirements,
+            notes: record.constraints.isEmpty ? notes : record.constraints,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
     func updatingStatus(_ status: AirframeWorkStatus) -> AirframeCanonicalTaskRecord {
         AirframeCanonicalTaskRecord(
             workItem: workItem.updatingStatus(status),
@@ -556,9 +1040,78 @@ private extension AirframeCanonicalTaskRecord {
             metadata: metadata.updatingTimestamp()
         )
     }
+
+    func settingEpicID(_ epicID: AirframeID) -> AirframeCanonicalTaskRecord {
+        AirframeCanonicalTaskRecord(
+            workItem: workItem,
+            component: component,
+            priority: priority,
+            rationale: rationale,
+            epicID: epicID,
+            sprintID: sprintID,
+            dateRequested: dateRequested,
+            dateImplemented: dateImplemented,
+            dateVerified: dateVerified,
+            currentBehavior: currentBehavior,
+            desiredBehavior: desiredBehavior,
+            requirementIDs: requirementIDs,
+            acceptanceCriteria: acceptanceCriteria,
+            designApproach: designApproach,
+            componentsAffected: componentsAffected,
+            implementationDetails: implementationDetails,
+            evidenceIDs: evidenceIDs,
+            testSteps: testSteps,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func settingSprintID(_ sprintID: AirframeID) -> AirframeCanonicalTaskRecord {
+        AirframeCanonicalTaskRecord(
+            workItem: workItem,
+            component: component,
+            priority: priority,
+            rationale: rationale,
+            epicID: epicID,
+            sprintID: sprintID,
+            dateRequested: dateRequested,
+            dateImplemented: dateImplemented,
+            dateVerified: dateVerified,
+            currentBehavior: currentBehavior,
+            desiredBehavior: desiredBehavior,
+            requirementIDs: requirementIDs,
+            acceptanceCriteria: acceptanceCriteria,
+            designApproach: designApproach,
+            componentsAffected: componentsAffected,
+            implementationDetails: implementationDetails,
+            evidenceIDs: evidenceIDs,
+            testSteps: testSteps,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
 }
 
 private extension AirframeCanonicalIssueRecord {
+    func updating(from record: AirframeLocalWorkRecord) -> AirframeCanonicalIssueRecord {
+        AirframeCanonicalIssueRecord(
+            workItem: record.workItem,
+            severity: record.priority,
+            observedBehavior: observedBehavior,
+            expectedBehavior: expectedBehavior,
+            epicID: record.epicID,
+            sprintID: record.sprintID,
+            dateReported: dateReported,
+            dateResolved: record.workItem.status == .implementedNotVerified ? (dateResolved ?? isoDateString()) : dateResolved,
+            dateVerified: record.workItem.status == .implementedVerified ? (dateVerified ?? isoDateString()) : dateVerified,
+            reproductionSteps: record.evidenceRequirements.isEmpty ? reproductionSteps : record.evidenceRequirements,
+            affectedComponents: record.scope.isEmpty ? affectedComponents : record.scope,
+            evidenceIDs: evidenceIDs,
+            notes: record.constraints.isEmpty ? notes : record.constraints,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
     func updatingStatus(_ status: AirframeWorkStatus) -> AirframeCanonicalIssueRecord {
         AirframeCanonicalIssueRecord(
             workItem: workItem.updatingStatus(status),
@@ -577,6 +1130,48 @@ private extension AirframeCanonicalIssueRecord {
             metadata: metadata.updatingTimestamp()
         )
     }
+
+    func settingEpicID(_ epicID: AirframeID) -> AirframeCanonicalIssueRecord {
+        AirframeCanonicalIssueRecord(
+            workItem: workItem,
+            severity: severity,
+            observedBehavior: observedBehavior,
+            expectedBehavior: expectedBehavior,
+            epicID: epicID,
+            sprintID: sprintID,
+            dateReported: dateReported,
+            dateResolved: dateResolved,
+            dateVerified: dateVerified,
+            reproductionSteps: reproductionSteps,
+            affectedComponents: affectedComponents,
+            evidenceIDs: evidenceIDs,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    func settingSprintID(_ sprintID: AirframeID) -> AirframeCanonicalIssueRecord {
+        AirframeCanonicalIssueRecord(
+            workItem: workItem,
+            severity: severity,
+            observedBehavior: observedBehavior,
+            expectedBehavior: expectedBehavior,
+            epicID: epicID,
+            sprintID: sprintID,
+            dateReported: dateReported,
+            dateResolved: dateResolved,
+            dateVerified: dateVerified,
+            reproductionSteps: reproductionSteps,
+            affectedComponents: affectedComponents,
+            evidenceIDs: evidenceIDs,
+            notes: notes,
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+}
+
+private func appendUnique(_ id: AirframeID, to ids: [AirframeID]) -> [AirframeID] {
+    ids.contains(id) ? ids : ids + [id]
 }
 
 private extension AirframeWorkItem {

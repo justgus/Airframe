@@ -1,0 +1,68 @@
+{
+  "acceptanceCriterionIDs" : [
+
+  ],
+  "goal" : "Fix the Telemetrix importer and canonical repair/create gaps without reopening EP-018.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0015"
+    },
+    {
+      "rawValue" : "I-0016"
+    },
+    {
+      "rawValue" : "I-0017"
+    },
+    {
+      "rawValue" : "I-0018"
+    },
+    {
+      "rawValue" : "I-0019"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-active.md",
+    "updatedAt" : "2026-06-25T22:31:28Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. closed sprint artifacts import from docs/Sprints/Closed/. 2. active epic and sprint statuses import as active. 3. batch task back-links are preserved. 4. canonical create and JSON repair output gaps are covered."
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "outOfScope" : [
+
+  ],
+  "planningDocumentPaths" : [
+    "docs\/Issues\/Issue-active.md",
+    "docs\/Issues\/Issue-Documentation.md"
+  ],
+  "rationale" : "The Telemetrix reconciliation work surfaced a small cluster of importer and canonical-backend gaps that belongs in its own active track instead of the closed EP-018 closeout epic.",
+  "scope" : [
+    "Read sprint artifacts from docs/Sprints/Closed/ during import.",
+    "Preserve active status mappings during markdown import.",
+    "Preserve batch task Epic and Sprint back-links during import.",
+    "Support canonical record creation for reconciliation gaps.",
+    "Honor JSON output for canonical repair commands."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-034"
+    }
+  ],
+  "startDate" : "2026-06-25",
+  "taskIDs" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-022"
+    },
+    "kind" : "epic",
+    "status" : "active",
+    "title" : "Telemetrix Importer and Canonical Repair Fixes"
+  }
+}

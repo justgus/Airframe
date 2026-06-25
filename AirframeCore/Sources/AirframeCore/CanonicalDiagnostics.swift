@@ -199,6 +199,132 @@ public struct AirframeCanonicalBackendRepairer: Sendable {
     }
 }
 
+public struct AirframeCanonicalStateRepairer: Sendable {
+    public init() {}
+
+    public func apply(
+        repairOption: AirframeCanonicalRepairOption,
+        repository: AirframeCanonicalStoreRepository
+    ) throws -> AirframeCanonicalBackendRepairResult {
+        guard !repairOption.requiresHumanApproval else {
+            throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+        }
+        let applications: [AirframeCanonicalBackendRepairApplication]
+        switch repairOption.action {
+        case .clearActiveEpicID:
+            applications = try applyClearActiveEpicID(repairOption, repository: repository)
+        case .clearActiveSprintID:
+            applications = try applyClearActiveSprintID(repairOption, repository: repository)
+        case .restoreEpicToActive:
+            applications = try applyRestoreEpicToActive(repairOption, repository: repository)
+        case .restoreSprintToActive:
+            applications = try applyRestoreSprintToActive(repairOption, repository: repository)
+        case .reconcileEpicSprintLinks:
+            applications = try applyPairwiseRepair(repairOption, expectedPrefix: "EP", relatedPrefix: "SP") { epicID, sprintID in
+                try repository.reconcileEpicSprintLinks(epicID: epicID, sprintID: sprintID)
+            }
+        case .reconcileEpicTaskLinks:
+            applications = try applyPairwiseRepair(repairOption, expectedPrefix: "EP", relatedPrefix: "T") { epicID, taskID in
+                try repository.reconcileEpicTaskLinks(epicID: epicID, taskID: taskID)
+            }
+        case .reconcileSprintTaskLinks:
+            applications = try applyPairwiseRepair(repairOption, expectedPrefix: "SP", relatedPrefix: "T") { sprintID, taskID in
+                try repository.reconcileSprintTaskLinks(sprintID: sprintID, taskID: taskID)
+            }
+        case .applyBackendStatusLabels,
+             .applyBackendRelationshipLabels,
+             .moveOpenWorkToAnotherEpic,
+             .carryForwardOpenWork:
+            throw AirframeBackendError.readOnlyBackend("canonical repair action \(repairOption.action.rawValue)")
+        }
+        return AirframeCanonicalBackendRepairResult(applications: applications)
+    }
+
+    private func applyClearActiveEpicID(
+        _ repairOption: AirframeCanonicalRepairOption,
+        repository: AirframeCanonicalStoreRepository
+    ) throws -> [AirframeCanonicalBackendRepairApplication] {
+        let projectID = try projectID(from: repairOption.affectedIDs)
+        try repository.clearActiveEpicID(projectID: projectID)
+        return [application(projectID, action: repairOption.action)]
+    }
+
+    private func applyClearActiveSprintID(
+        _ repairOption: AirframeCanonicalRepairOption,
+        repository: AirframeCanonicalStoreRepository
+    ) throws -> [AirframeCanonicalBackendRepairApplication] {
+        let projectID = try projectID(from: repairOption.affectedIDs)
+        try repository.clearActiveSprintID(projectID: projectID)
+        return [application(projectID, action: repairOption.action)]
+    }
+
+    private func applyRestoreEpicToActive(
+        _ repairOption: AirframeCanonicalRepairOption,
+        repository: AirframeCanonicalStoreRepository
+    ) throws -> [AirframeCanonicalBackendRepairApplication] {
+        let epicIDs = repairOption.affectedIDs.filter { $0.rawValue.hasPrefix("EP-") }
+        guard !epicIDs.isEmpty else {
+            throw AirframeBackendError.missingWorkItem(repairOption.affectedIDs.first ?? AirframeID("EP-UNKNOWN"))
+        }
+        return try epicIDs.map { epicID in
+            try repository.restoreEpicToActive(epicID: epicID)
+            return application(epicID, action: repairOption.action)
+        }
+    }
+
+    private func applyRestoreSprintToActive(
+        _ repairOption: AirframeCanonicalRepairOption,
+        repository: AirframeCanonicalStoreRepository
+    ) throws -> [AirframeCanonicalBackendRepairApplication] {
+        let sprintIDs = repairOption.affectedIDs.filter { $0.rawValue.hasPrefix("SP-") }
+        guard !sprintIDs.isEmpty else {
+            throw AirframeBackendError.missingWorkItem(repairOption.affectedIDs.first ?? AirframeID("SP-UNKNOWN"))
+        }
+        return try sprintIDs.map { sprintID in
+            try repository.restoreSprintToActive(sprintID: sprintID)
+            return application(sprintID, action: repairOption.action)
+        }
+    }
+
+    private func applyPairwiseRepair(
+        _ repairOption: AirframeCanonicalRepairOption,
+        expectedPrefix: String,
+        relatedPrefix: String,
+        repair: (AirframeID, AirframeID) throws -> Void
+    ) throws -> [AirframeCanonicalBackendRepairApplication] {
+        guard let ownerID = repairOption.affectedIDs.first(where: { $0.rawValue.hasPrefix("\(expectedPrefix)-") }) else {
+            throw AirframeBackendError.missingWorkItem(repairOption.affectedIDs.first ?? AirframeID("\(expectedPrefix)-UNKNOWN"))
+        }
+        let relatedIDs = repairOption.affectedIDs.filter { $0.rawValue.hasPrefix("\(relatedPrefix)-") }
+        guard !relatedIDs.isEmpty else {
+            throw AirframeBackendError.missingWorkItem(ownerID)
+        }
+        return try relatedIDs.map { relatedID in
+            try repair(ownerID, relatedID)
+            return application(relatedID, action: repairOption.action)
+        }
+    }
+
+    private func projectID(from ids: [AirframeID]) throws -> AirframeID {
+        guard let projectID = ids.first(where: { $0.rawValue.hasPrefix("PRJ-") }) else {
+            throw AirframeBackendError.missingWorkItem(ids.first ?? AirframeID("PRJ-UNKNOWN"))
+        }
+        return projectID
+    }
+
+    private func application(
+        _ id: AirframeID,
+        action: AirframeCanonicalRepairAction
+    ) -> AirframeCanonicalBackendRepairApplication {
+        AirframeCanonicalBackendRepairApplication(
+            workItemID: id,
+            action: action,
+            applied: true,
+            message: "Applied \(action.rawValue) to \(id.rawValue)."
+        )
+    }
+}
+
 public struct AirframeCanonicalRepairOption: Codable, Equatable, Sendable {
     public let action: AirframeCanonicalRepairAction
     public let title: String

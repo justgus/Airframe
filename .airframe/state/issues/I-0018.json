@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+    "AICockpit",
+    "AirframeCore",
+    "Canonical Store"
+  ],
+  "dateIdentified" : "2026-06-25",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "The canonical backend should support controlled creation of missing canonical records where the workflow requires it.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs/Issues/Issue-active.md",
+    "updatedAt" : "2026-06-25T21:56:19Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Canonical backend exposes a create path for permitted record kinds. 2. Missing canonical records needed by repairs can be created without manual JSON edits. 3. Regression coverage proves the canonical create path works for the intended record types."
+  ],
+  "observedBehavior" : "The canonical backend can repair and mutate existing records, but it cannot create missing canonical records through the CLI.",
+  "reproductionSteps" : [
+    "Attempt to materialize a missing canonical record through the CLI.",
+    "Observe that the canonical backend rejects the create path.",
+    "Note that reconciliation paths requiring record creation are blocked."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "githubIssue" : 155,
+    "id" : {
+      "rawValue" : "I-0018"
+    },
+    "kind" : "issue",
+    "status" : "active",
+    "title" : "Canonical backend lacks a create path for missing records"
+  }
+}

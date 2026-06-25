@@ -65,6 +65,9 @@
     },
     {
       "rawValue" : "EP-019"
+    },
+    {
+      "rawValue" : "EP-022"
     }
   ],
   "id" : {
@@ -118,6 +121,21 @@
     },
     {
       "rawValue" : "I-0014"
+    },
+    {
+      "rawValue" : "I-0015"
+    },
+    {
+      "rawValue" : "I-0016"
+    },
+    {
+      "rawValue" : "I-0017"
+    },
+    {
+      "rawValue" : "I-0018"
+    },
+    {
+      "rawValue" : "I-0019"
     }
   ],
   "metadata" : {
@@ -126,7 +144,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-06-25T21:17:35Z"
+    "updatedAt" : "2026-06-25T21:56:19Z"
   },
   "name" : "Agile Airframe",
   "repository" : "justgus\/Airframe",
@@ -229,6 +247,9 @@
     },
     {
       "rawValue" : "SP-024"
+    },
+    {
+      "rawValue" : "SP-034"
     }
   ],
   "taskIDs" : [

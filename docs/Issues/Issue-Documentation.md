@@ -14,7 +14,7 @@ This is the main index for Agile Airframe Issues. Issues track bugs, regressions
 
 ## Active Issues
 
-Currently: **6 active Issues**
+Currently: **11 active Issues**
 
 | Issue | GitHub Issue | Title | Severity | Sprint | Status |
 | ----- | ------------ | ----- | -------- | ------ | ------ |
@@ -24,6 +24,11 @@ Currently: **6 active Issues**
 | I-0012 | #150 | Close actions do not refresh Sprint and Epic indexes | High | SP-023 | Resolved - Not Verified |
 | I-0013 | #151 | Epic close eligibility ignores open Sprints | High | SP-023 | Resolved - Not Verified |
 | I-0014 | #153 | AgileCockpit does not refresh active Sprint after external state change | High | SP-024 | Resolved - Not Verified |
+| I-0015 | #154 | Markdown importer skips closed sprint artifacts under docs/Sprints/Closed | High | SP-034 | Active |
+| I-0016 | #157 | Markdown importer maps active epic and sprint statuses incorrectly | High | SP-034 | Active |
+| I-0017 | #158 | Markdown importer drops task Epic and Sprint back-links from batch documents | High | SP-034 | Active |
+| I-0018 | #155 | Canonical backend lacks a create path for missing records | High | SP-034 | Active |
+| I-0019 | #156 | state repair ignores --output json and always emits markdown | High | SP-034 | Active |
 
 See: [Issue-active.md](Issue-active.md)
 
@@ -38,7 +43,7 @@ See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **8 verified Issues** | Next available: **I-0015**
+Currently: **8 verified Issues** | Next available: **I-0020**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
@@ -56,12 +61,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 14
+- **Total Issues:** 19
 - **Backlogged:** 0
-- **Active/In Progress:** 0
+- **Active/In Progress:** 5
 - **Resolved - Not Verified:** 6
 - **Verified:** 8
 - **Closed:** 0
-- **Next available:** I-0015
+- **Next available:** I-0020
 
-*Last Updated: 2026-06-25 (I-0014 resolved for SP-024)*
+*Last Updated: 2026-06-25 (I-0015 through I-0019 moved to EP-022/SP-034)*

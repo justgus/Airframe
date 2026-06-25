@@ -51,6 +51,15 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
         supportsDashboardSummary: true
     )
 
+    public static let canonicalStore = AirframeBackendCapabilities(
+        backendKind: "canonical",
+        supportsCreateWorkItem: true,
+        supportsUpdateWorkItem: true,
+        supportsEvidenceAttachment: false,
+        supportsTaskPacket: true,
+        supportsDashboardSummary: true
+    )
+
     public static let githubFixture = AirframeBackendCapabilities(
         backendKind: "github-fixture",
         supportsCreateWorkItem: true,

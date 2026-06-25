@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "Canonical State",
+    "Markdown Importer"
+  ],
+  "dateIdentified" : "2026-06-25",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Active epic and sprint artifacts should import as active, not backlog, so diagnostics remain clean after a correct markdown import.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs/Issues/Issue-active.md",
+    "updatedAt" : "2026-06-25T21:56:19Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Markdown import preserves active epic and sprint status. 2. Imported active epics and sprints do not trigger activeEpicNotActive or activeSprintNotActive diagnostics. 3. Regression coverage proves active epic and sprint markdown imports as active."
+  ],
+  "observedBehavior" : "Active epics and sprints can import as backlog, which creates blocking diagnostics after a clean markdown import.",
+  "reproductionSteps" : [
+    "Import markdown for a workspace containing active Epic and Sprint artifacts.",
+    "Run canonical diagnostics against the imported store.",
+    "Observe activeEpicNotActive or activeSprintNotActive diagnostics."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "githubIssue" : 157,
+    "id" : {
+      "rawValue" : "I-0016"
+    },
+    "kind" : "issue",
+    "status" : "active",
+    "title" : "Markdown importer maps active epic and sprint statuses incorrectly"
+  }
+}

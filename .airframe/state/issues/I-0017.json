@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "Markdown Importer",
+    "Task Batch Imports"
+  ],
+  "dateIdentified" : "2026-06-25",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Batch task imports should preserve Epic and Sprint back-links when they are present in the source artifacts.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs/Issues/Issue-active.md",
+    "updatedAt" : "2026-06-25T21:56:19Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Batch task documents import with their Epic and Sprint IDs intact. 2. Imported tasks do not trigger taskEpicMissing or taskSprintMissing when the source artifact includes the links. 3. Regression coverage proves the verified batch files import with correct back-links."
+  ],
+  "observedBehavior" : "Tasks imported from batch markdown documents can lose their epicID and sprintID relationships, leaving the canonical store with missing task-to-sprint links.",
+  "reproductionSteps" : [
+    "Import the verified batch task markdown documents.",
+    "Inspect the imported task records for epicID and sprintID values.",
+    "Observe missing or empty back-links for tasks that were linked in the source artifacts."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "githubIssue" : 158,
+    "id" : {
+      "rawValue" : "I-0017"
+    },
+    "kind" : "issue",
+    "status" : "active",
+    "title" : "Markdown importer drops task Epic and Sprint back-links from batch documents"
+  }
+}

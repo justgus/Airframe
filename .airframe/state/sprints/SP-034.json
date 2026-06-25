@@ -1,13 +1,9 @@
 {
-  "endDate" : "2026-06-25",
   "epicID" : {
-    "rawValue" : "EP-018"
+    "rawValue" : "EP-022"
   },
-  "goal" : "Prove the closeout workflow with tests and keep the documentation synchronized.",
+  "goal" : "Implement and verify the importer and canonical repair fixes discovered during Telemetrix reconciliation.",
   "issueIDs" : [
-    {
-      "rawValue" : "I-0014"
-    },
     {
       "rawValue" : "I-0015"
     },
@@ -31,28 +27,20 @@
       "patch" : 0
     },
     "source" : "docs\/Sprints\/Sprint-active.md",
-    "updatedAt" : "2026-06-25T21:56:19Z"
+    "updatedAt" : "2026-06-25T22:31:28Z"
   },
   "notes" : [
 
   ],
   "taskIDs" : [
-    {
-      "rawValue" : "T-0113"
-    },
-    {
-      "rawValue" : "T-0114"
-    },
-    {
-      "rawValue" : "T-0115"
-    }
+
   ],
   "workItem" : {
     "id" : {
-      "rawValue" : "SP-024"
+      "rawValue" : "SP-034"
     },
     "kind" : "sprint",
-    "status" : "closed",
-    "title" : "Regression Coverage and Documentation Sync"
+    "status" : "active",
+    "title" : "Telemetrix Importer and Canonical Repair Fixes"
   }
 }
