@@ -14,7 +14,7 @@ This is the main index for Agile Airframe Issues. Issues track bugs, regressions
 
 ## Active Issues
 
-Currently: **5 active Issues**
+Currently: **6 active Issues**
 
 | Issue | GitHub Issue | Title | Severity | Sprint | Status |
 | ----- | ------------ | ----- | -------- | ------ | ------ |
@@ -23,6 +23,7 @@ Currently: **5 active Issues**
 | I-0011 | #149 | Epic close does not archive Markdown Epic record | High | SP-023 | Resolved - Not Verified |
 | I-0012 | #150 | Close actions do not refresh Sprint and Epic indexes | High | SP-023 | Resolved - Not Verified |
 | I-0013 | #151 | Epic close eligibility ignores open Sprints | High | SP-023 | Resolved - Not Verified |
+| I-0014 | #153 | AgileCockpit does not refresh active Sprint after external state change | High | SP-024 | Resolved - Not Verified |
 
 See: [Issue-active.md](Issue-active.md)
 
@@ -37,7 +38,7 @@ See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **8 verified Issues** | Next available: **I-0014**
+Currently: **8 verified Issues** | Next available: **I-0015**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
@@ -55,12 +56,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 13
+- **Total Issues:** 14
 - **Backlogged:** 0
 - **Active/In Progress:** 0
-- **Resolved - Not Verified:** 5
+- **Resolved - Not Verified:** 6
 - **Verified:** 8
 - **Closed:** 0
-- **Next available:** I-0014
+- **Next available:** I-0015
 
-*Last Updated: 2026-06-25 (I-0010 through I-0013 opened for SP-023)*
+*Last Updated: 2026-06-25 (I-0014 resolved for SP-024)*

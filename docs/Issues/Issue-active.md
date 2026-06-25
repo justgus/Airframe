@@ -130,4 +130,31 @@ Epic close eligibility should require all related Sprints for the Epic to be clo
 **Resolution:**
 Epic close eligibility now includes related Sprint status and blocks close while related Sprints remain Backlog, Planning, Active, or Review.
 
-*Last Updated: 2026-06-25 (I-0010 through I-0013 opened for SP-023)*
+## I-0014: AgileCockpit does not refresh active Sprint after external state change
+
+**Status:** Resolved - Not Verified
+**GitHub Issue:** #153
+**Platform:** macOS
+**Component:** AgileCockpit / Canonical State / Refresh Observation
+**Severity:** High
+**Epic:** EP-018
+**Sprint:** SP-024
+**Date Identified:** 2026-06-25
+**Fix Date:** 2026-06-25
+**Verification Date:** TBD
+
+**Description:**
+AgileCockpit did not update to show SP-024 as the active Sprint after canonical state changed. The user had to exit and restart the app before the correct state appeared.
+
+**Expected Behavior:**
+AgileCockpit should detect external canonical state changes and refresh visible active Sprint and Epic state without requiring app restart. The main UI should also expose an explicit Refresh action.
+
+**Acceptance Criteria:**
+1. AgileCockpit observes canonical state directory changes that may be delivered through atomic file replacement.
+2. A main UI Refresh button reloads Airframe state on demand.
+3. Regression coverage proves manual refresh updates active Sprint state from the canonical store.
+
+**Resolution:**
+AgileCockpit now watches canonical state subdirectories, exposes a main dashboard Refresh button, and reloads state on manual refresh from the canonical store.
+
+*Last Updated: 2026-06-25 (I-0014 resolved for SP-024)*

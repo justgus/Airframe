@@ -1,10 +1,13 @@
 {
+  "endDate" : "2026-06-25",
   "epicID" : {
     "rawValue" : "EP-018"
   },
   "goal" : "Prove the closeout workflow with tests and keep the documentation synchronized.",
   "issueIDs" : [
-
+    {
+      "rawValue" : "I-0014"
+    }
   ],
   "metadata" : {
     "schemaVersion" : {
@@ -13,7 +16,7 @@
       "patch" : 0
     },
     "source" : "docs\/Sprints\/Sprint-active.md",
-    "updatedAt" : "2026-06-25T20:26:03Z"
+    "updatedAt" : "2026-06-25T21:17:25Z"
   },
   "notes" : [
 
@@ -34,7 +37,7 @@
       "rawValue" : "SP-024"
     },
     "kind" : "sprint",
-    "status" : "active",
+    "status" : "closed",
     "title" : "Regression Coverage and Documentation Sync"
   }
 }

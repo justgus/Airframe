@@ -1,0 +1,48 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "Canonical State",
+    "Refresh Observation"
+  ],
+  "dateResolved" : "2026-06-25",
+  "dateVerified" : "2026-06-25",
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "AgileCockpit should detect external canonical state changes and refresh visible active Sprint and Epic state without requiring app restart. The main UI should also expose an explicit Refresh action.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-25T21:17:04Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. AgileCockpit observes canonical state directory changes that may be delivered through atomic file replacement. 2. A main UI Refresh button reloads Airframe state on demand. 3. Regression coverage proves manual refresh updates active Sprint state from the canonical store.",
+    "Resolution: AgileCockpit now watches canonical state subdirectories, exposes a main dashboard Refresh button, and reloads state on manual refresh from the canonical store."
+  ],
+  "observedBehavior" : "AgileCockpit did not update to show SP-024 as the active Sprint after canonical state changed. The user had to exit and restart the app before the correct state appeared.",
+  "reproductionSteps" : [
+    "Run AgileCockpit.",
+    "Change activeSprintID in canonical Airframe state through an external workflow.",
+    "Observe that the running AgileCockpit UI continues to show the previous active Sprint until restart."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-024"
+  },
+  "workItem" : {
+    "githubIssue" : 153,
+    "id" : {
+      "rawValue" : "I-0014"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "AgileCockpit does not refresh active Sprint after external state change"
+  }
+}

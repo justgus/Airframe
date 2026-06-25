@@ -492,6 +492,97 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitManualRefreshReloadsCanonicalActiveSprint() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-018: AgileCockpit Sprint and Epic Status Controls
+
+    **Status:** Active
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-022: Close Eligibility
+
+    **Status:** Active
+    **Epic:** EP-018
+
+    ## SP-024: Regression Coverage and Documentation Sync
+
+    **Status:** Active
+    **Epic:** EP-018
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.activeSprintText == "SP-022")
+
+    let projectURL = rootURL.appending(path: ".airframe/state/projects/PRJ-AIRFRAME.json")
+    let projectJSON = try String(contentsOf: projectURL, encoding: .utf8)
+    try projectJSON
+        .replacingOccurrences(
+            of: """
+              "activeSprintID" : {
+                "rawValue" : "SP-022"
+              }
+            """,
+            with: """
+              "activeSprintID" : {
+                "rawValue" : "SP-024"
+              }
+            """
+        )
+        .write(to: projectURL, atomically: true, encoding: .utf8)
+
+    model.refreshFromUserRequest()
+
+    #expect(model.activeSprintText == "SP-024")
+    #expect(model.statusMessage == "Refreshed from Airframe state.")
+}
+
+@Test func agileCockpitWatchesCanonicalStateSubdirectories() throws {
+    let stateURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitWatchURLs")
+        .appending(path: UUID().uuidString)
+        .appending(path: ".airframe/state")
+    try FileManager.default.createDirectory(
+        at: stateURL.appending(path: "projects"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: stateURL.appending(path: "sprints"),
+        withIntermediateDirectories: true
+    )
+
+    let watchedPaths = Set(AgileCockpitDashboardModel.watchURLs(for: stateURL).map {
+        $0.standardizedFileURL.path
+    })
+
+    #expect(watchedPaths.contains(stateURL.standardizedFileURL.path))
+    #expect(watchedPaths.contains(stateURL.appending(path: "projects").standardizedFileURL.path))
+    #expect(watchedPaths.contains(stateURL.appending(path: "sprints").standardizedFileURL.path))
+}
+
+@MainActor
 @Test func agileCockpitShowsSprintEpicMetricsAndAuditRows() throws {
     let model = try AgileCockpitDashboardModel.sample()
 

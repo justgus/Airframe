@@ -811,6 +811,10 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
+    func refreshFromUserRequest() {
+        refreshFromExternalChange(message: "Refreshed from Airframe state.")
+    }
+
     private enum EpicCriterionUpdateError: Error, CustomStringConvertible {
         case criterionNotFound(String)
 
@@ -1999,7 +2003,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private func startFileObservation(observedURLs: [URL]) {
         #if os(macOS)
-        let watchURLs = Set(observedURLs.map(Self.watchURL))
+        let watchURLs = Set(observedURLs.flatMap { Self.watchURLs(for: $0) })
         for url in watchURLs {
             let descriptor = open(url.path, O_EVTONLY)
             guard descriptor >= 0 else { continue }
@@ -2030,11 +2034,25 @@ final class AgileCockpitDashboardModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: workItem)
     }
 
-    private static func watchURL(for url: URL) -> URL {
-        if FileManager.default.fileExists(atPath: url.path) {
-            return url
+    nonisolated static func watchURLs(for url: URL, fileManager: FileManager = .default) -> [URL] {
+        let resolvedURL = fileManager.fileExists(atPath: url.path) ? url : url.deletingLastPathComponent()
+        var isDirectory: ObjCBool = false
+        guard fileManager.fileExists(atPath: resolvedURL.path, isDirectory: &isDirectory),
+              isDirectory.boolValue else {
+            return [resolvedURL]
         }
-        return url.deletingLastPathComponent()
+
+        var urls = [resolvedURL]
+        if let children = try? fileManager.contentsOfDirectory(
+            at: resolvedURL,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ) {
+            urls.append(contentsOf: children.filter { childURL in
+                (try? childURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
+            })
+        }
+        return urls
     }
 
     private func recordsWithStatus(_ status: AirframeWorkStatus) -> [AirframeLocalWorkRecord] {
@@ -2383,6 +2401,13 @@ struct ContentView: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
+                Button {
+                    model.refreshFromUserRequest()
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("agile-cockpit-refresh")
                 Text("Sprint \(model.activeSprintText)")
                     .accessibilityIdentifier("agile-cockpit-active-sprint")
                 Text("Epic \(model.activeEpicText) | \(model.coreInfo.summary)")

@@ -10,6 +10,7 @@
   ],
   "dateImplemented" : "2026-06-25",
   "dateRequested" : "2026-06-14",
+  "dateVerified" : "2026-06-25",
   "epicID" : {
     "rawValue" : "EP-018"
   },
@@ -23,7 +24,7 @@
       "patch" : 0
     },
     "source" : "docs\/Tasks\/Task-backlog.md",
-    "updatedAt" : "2026-06-25T20:26:03Z"
+    "updatedAt" : "2026-06-25T21:17:15Z"
   },
   "notes" : [
     "Implementation: Added AgileCockpit regression coverage proving reviewed Sprint closeout works with only local canonical state and Epic close records human closeout audit rows."
@@ -40,12 +41,12 @@
 
   ],
   "workItem" : {
+    "githubIssue" : 152,
     "id" : {
       "rawValue" : "T-0115"
     },
     "kind" : "task",
-    "status" : "implementedNotVerified",
-    "title" : "Add tests for offline local-only closeout behavior",
-    "githubIssue" : 152
+    "status" : "implementedVerified",
+    "title" : "Add tests for offline local-only closeout behavior"
   }
 }

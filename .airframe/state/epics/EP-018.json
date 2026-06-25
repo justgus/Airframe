@@ -22,6 +22,7 @@
       "rawValue" : "EP-018-AC-07"
     }
   ],
+  "closeDate" : "2026-06-25",
   "goal" : "Add human-facing AgileCockpit controls for Sprint and Epic status mutation, including Epic acceptance-criteria verification, Sprint close gating, and Epic close gating with archive updates.",
   "issueIDs" : [
     {
@@ -41,6 +42,9 @@
     },
     {
       "rawValue" : "I-0013"
+    },
+    {
+      "rawValue" : "I-0014"
     }
   ],
   "metadata" : {
@@ -49,7 +53,8 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Epics\/Epic-backlog.md"
+    "source" : "docs\/Epics\/Epic-backlog.md",
+    "updatedAt" : "2026-06-25T21:17:35Z"
   },
   "notes" : [
     "Acceptance Criteria: 1. [x] AgileCockpit shows Epic acceptance criteria in a dedicated tab or equivalent panel. 2. [x] A human can mark Epic acceptance criteria verified in the UI. 3. [x] A Sprint close action is enabled only after all Sprint Tasks and Issues are verified. 4. [x] An Epic complete or close action is enabled only after all Epic acceptance criteria are verified. 5. [x] Closing a Sprint archives the Sprint record and updates the Sprint index. 6. [x] Closing an Epic archives the Epic record and updates the Epic index. 7. [x] Tests cover local workspace behavior and live GitHub-issues workspace behavior where applicable."
@@ -143,7 +148,7 @@
       "rawValue" : "EP-018"
     },
     "kind" : "epic",
-    "status" : "active",
+    "status" : "closed",
     "title" : "AgileCockpit Sprint and Epic Status Controls"
   }
 }
