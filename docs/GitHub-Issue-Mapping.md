@@ -120,6 +120,7 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0107 | #113 | EP-018 | Gate Sprint close on verified Tasks and Issues |
 | T-0108 | #114 | EP-018 | Gate Epic close on verified acceptance criteria |
 | T-0109 | #115 | EP-018 | Add close-action messaging and disabled-state behavior |
+| T-0115 | #152 | EP-018 | Add tests for offline local-only closeout behavior |
 | T-0116 | #116 | EP-020 | Define canonical workflow record schemas |
 | T-0117 | #117 | EP-020 | Implement repo-local JSON canonical store |
 | T-0118 | #118 | EP-020 | Encode workflow policy definitions in AirframeCore |

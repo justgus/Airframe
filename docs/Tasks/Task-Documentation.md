@@ -23,7 +23,7 @@ Currently: **6 backlog Tasks**
 | T-0112 | TBD | Rewrite sprint and epic index files on close | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0113 | TBD | Add tests for Epic acceptance-criteria verification | [Task-backlog.md](Task-backlog.md) | Backlog |
 | T-0114 | TBD | Add tests for Sprint and Epic archive updates | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0115 | TBD | Add tests for offline local-only closeout behavior | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0115 | #152 | Add tests for offline local-only closeout behavior | [Task-backlog.md](Task-backlog.md) | Implemented - Not Verified |
 See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks

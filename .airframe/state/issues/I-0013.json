@@ -4,13 +4,14 @@
     "AirframeCore",
     "Canonical State"
   ],
+  "dateResolved" : "2026-06-25",
+  "dateVerified" : "2026-06-25",
   "epicID" : {
     "rawValue" : "EP-018"
   },
   "evidenceIDs" : [
 
   ],
-  "dateResolved" : "2026-06-25",
   "expectedBehavior" : "Epic close eligibility should require all related Sprints for the Epic to be closed, or otherwise explicitly excluded by workflow policy, before enabling Epic close.",
   "metadata" : {
     "schemaVersion" : {
@@ -19,7 +20,7 @@
       "patch" : 0
     },
     "source" : "docs\/Issues\/Issue-active.md",
-    "updatedAt" : "2026-06-25T19:10:50Z"
+    "updatedAt" : "2026-06-25T20:22:40Z"
   },
   "notes" : [
     "Acceptance Criteria: 1. Epic close eligibility reports blocked when any related Sprint is Backlog, Planning, Active, or Review. 2. The blocking message identifies the open Sprint IDs. 3. The Close Epic button remains disabled while related Sprints are open. 4. Regression coverage proves an Epic with open Sprints cannot be closed.",
@@ -41,7 +42,7 @@
       "rawValue" : "I-0013"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Epic close eligibility ignores open Sprints"
   }
 }

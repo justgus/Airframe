@@ -4,13 +4,14 @@
     "Documentation",
     "Canonical State"
   ],
+  "dateResolved" : "2026-06-25",
+  "dateVerified" : "2026-06-25",
   "epicID" : {
     "rawValue" : "EP-018"
   },
   "evidenceIDs" : [
 
   ],
-  "dateResolved" : "2026-06-25",
   "expectedBehavior" : "After an authorized Sprint or Epic close, the relevant Markdown projections and indexes should be regenerated or updated deterministically from canonical state.",
   "metadata" : {
     "schemaVersion" : {
@@ -19,7 +20,7 @@
       "patch" : 0
     },
     "source" : "docs\/Issues\/Issue-active.md",
-    "updatedAt" : "2026-06-25T19:10:50Z"
+    "updatedAt" : "2026-06-25T20:22:33Z"
   },
   "notes" : [
     "Acceptance Criteria: 1. Sprint close refreshes Sprint-active.md, Sprint-Documentation.md, and generated Sprint projections. 2. Epic close refreshes Epic-active.md, Epic-Documentation.md, and generated Epic projections. 3. Counts and current\/next IDs remain correct after close. 4. Regression coverage proves the indexes are synchronized after close.",
@@ -41,7 +42,7 @@
       "rawValue" : "I-0012"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Close actions do not refresh Sprint and Epic indexes"
   }
 }

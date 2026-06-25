@@ -8,6 +8,4 @@ Currently: **0 backlog Sprints**
 
 No Sprints are currently in Backlog.
 
----
-
-*Last Updated: 2026-06-25 (SP-023 active, SP-024 planning)*
+*Last Updated: 2026-06-25*

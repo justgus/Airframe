@@ -3,7 +3,7 @@
     "rawValue" : "EP-018"
   },
   "activeSprintID" : {
-    "rawValue" : "SP-023"
+    "rawValue" : "SP-024"
   },
   "backendMappingIDs" : [
 
@@ -129,7 +129,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-06-25T15:53:08Z"
+    "updatedAt" : "2026-06-25T20:26:03Z"
   },
   "name" : "Agile Airframe",
   "repository" : "justgus\/Airframe",

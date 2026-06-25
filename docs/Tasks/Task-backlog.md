@@ -123,14 +123,14 @@ Archiving is a visible workflow change and needs direct regression coverage.
 
 ## T-0115: Add tests for offline local-only closeout behavior
 
-**Status:** Backlog
-**GitHub Issue:** TBD
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #152
 **Component:** AgileCockpitTests / AICockpitTests
 **Priority:** High
 **Epic:** EP-018
 **Sprint Assigned:** SP-024
 **Date Requested:** 2026-06-14
-**Date Implemented:** TBD
+**Date Implemented:** 2026-06-25
 **Date Verified:** TBD
 
 **Rationale:**
@@ -142,7 +142,7 @@ Closeout must continue to work in the local workspace without relying on a serve
 3. Tests prove human-only closeout boundaries are preserved.
 
 **Evidence:**
-- TBD
+- `xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests/AgileCockpitTests/agileCockpitClosesReviewedSprintUsingLocalCanonicalStateOnly -only-testing:AgileCockpitTests/AgileCockpitTests/agileCockpitRecordsEpicCloseWithHumanReviewerAuthority`
 
 ---
 *Last Updated: 2026-06-25 (T-0107 through T-0109 moved to Implemented - Not Verified)*

@@ -1090,6 +1090,43 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitClosesReviewedSprintUsingLocalCanonicalStateOnly() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintStatus: "Review",
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Criterion is verified."]
+    )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.backendStatusText.contains("local-fixture"))
+
+    model.closeActiveSprint()
+
+    let snapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+        .snapshot(project: model.context.project)
+    let sprintRecord = snapshot.sprints.first { $0.workItem.id == AirframeID("SP-022") }
+    #expect(sprintRecord?.workItem.status == .closed)
+    #expect(snapshot.project.activeSprintID == nil)
+    #expect(FileManager.default.fileExists(atPath: rootURL.appending(path: "docs/Sprints/Closed/Sprint-SP-022.md").path))
+    #expect(model.auditRows.last?.action == "OP-HUMAN-CLOSE-SPRINT")
+    #expect(model.auditRows.last?.workItemID == "SP-022")
+    #expect(model.statusMessage == "Sprint SP-022 closed.")
+}
+
+@MainActor
 @Test func agileCockpitGatesEpicCloseOnVerifiedAcceptanceCriteria() throws {
     let configURL = try temporaryLiveConfigurationURL(
         activeSprintID: "SP-022",
@@ -1177,6 +1214,36 @@ import Foundation
     #expect(epicIndex.contains("| EP-018 | AgileCockpit Sprint and Epic Status Controls | Closed |"))
     #expect(eligibleModel.auditRows.last?.action == "OP-HUMAN-CLOSE-EPIC")
     #expect(eligibleModel.statusMessage == "Epic EP-018 closed.")
+}
+
+@MainActor
+@Test func agileCockpitRecordsEpicCloseWithHumanReviewerAuthority() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintStatus: "Closed",
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Verified criterion."]
+    )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    model.closeActiveEpic()
+
+    let closeAudit = try #require(model.auditRows.last)
+    #expect(closeAudit.action == "OP-HUMAN-CLOSE-EPIC")
+    #expect(closeAudit.workItemID == "EP-018")
+    #expect(closeAudit.reason == "allowed")
+    #expect(model.statusMessage == "Epic EP-018 closed.")
 }
 
 @MainActor

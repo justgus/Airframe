@@ -2,55 +2,9 @@
 
 This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issues into focused execution windows.
 
-> Related: [Tasks](../Tasks/Task-Documentation.md) | [Issues](../Issues/Issue-Documentation.md) | [Epics](../Epics/Epic-Documentation.md)
-
-## Organization
-
-- **Sprint-backlog.md**: Sprints attached to an Epic but not yet planned or activated.
-- **Sprint-active.md**: The current Planning or Active Sprint, if one exists.
-- **Closed/**: Archived closed Sprints, one file per Sprint.
-
 ## Current Sprint Record
 
-Currently: **SP-023**
-
-See: [Sprint-active.md](Sprint-active.md)
-
-## Sprint Backlog
-
-Currently: **0 backlog Sprints**
-
-See: [Sprint-backlog.md](Sprint-backlog.md)
-
-| Sprint | Title | Epic | File | Status |
-| ------ | ----- | ---- | ---- | ------ |
-No Sprints are currently in Backlog.
-
-## Planning Sprints
-
-Currently: **1 planning Sprint**
-
-| Sprint | Title | Epic | File | Status |
-| ------ | ----- | ---- | ---- | ------ |
-| SP-024 | Regression Coverage and Documentation Sync | EP-018 | [Sprint-active.md](Sprint-active.md) | Planning |
-
-## Active Sprints
-
-Currently: **1 active Sprint**
-
-| Sprint | Title | Epic | File | Status |
-| ------ | ----- | ---- | ---- | ------ |
-| SP-023 | Sprint and Epic Archive Workflow | EP-018 | [Sprint-active.md](Sprint-active.md) | Active |
-
-## Review Sprints
-
-Currently: **0 review Sprints**
-
-| Sprint | Title | Epic | File | Status |
-| ------ | ----- | ---- | ---- | ------ |
-No Sprints are currently in Review.
-
-See: [Closed/Sprint-SP-017.md](Closed/Sprint-SP-017.md) | [Closed/Sprint-SP-018.md](Closed/Sprint-SP-018.md)
+Currently: **None**
 
 ## All Sprints
 
@@ -80,8 +34,8 @@ Currently: **33 Sprints** | Next available: **SP-034**
 | SP-020 | Epic Acceptance-Criteria Model and Eligibility | EP-018 | T-0101, T-0102, T-0103 | None | Closed |
 | SP-021 | Epic Acceptance-Criteria Tab and Verification UI | EP-018 | T-0104, T-0105, T-0106 | I-0005, I-0006 | Closed |
 | SP-022 | Sprint and Epic Close Gating | EP-018 | T-0107, T-0108, T-0109 | None | Closed |
-| SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | None | Active |
-| SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Planning |
+| SP-023 | Sprint and Epic Archive Workflow | EP-018 | T-0110, T-0111, T-0112 | I-0010, I-0011, I-0012, I-0013 | Closed |
+| SP-024 | Regression Coverage and Documentation Sync | EP-018 | T-0113, T-0114, T-0115 | None | Active |
 | SP-025 | Canonical Store Schema and Validation | EP-020 | T-0116, T-0117, T-0118, T-0119 | None | Closed |
 | SP-026 | Markdown Import and Projection | EP-020 | T-0120, T-0121, T-0122, T-0123 | None | Closed |
 | SP-027 | AICockpit Canonical State Integration | EP-020 | T-0124, T-0125, T-0126, T-0127 | None | Closed |
@@ -97,9 +51,9 @@ Currently: **33 Sprints** | Next available: **SP-034**
 - **Total Sprints:** 33
 - **Backlog:** 0
 - **Planning:** 1
-- **Active:** 1
+- **Active:** 0
 - **Review:** 0
-- **Closed:** 31
+- **Closed:** 32
 - **Next available:** SP-034
 
-*Last Updated: 2026-06-25 (SP-023 active, SP-024 planning)*
+*Last Updated: 2026-06-25*

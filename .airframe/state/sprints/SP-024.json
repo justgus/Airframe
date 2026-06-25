@@ -13,7 +13,7 @@
       "patch" : 0
     },
     "source" : "docs\/Sprints\/Sprint-active.md",
-    "updatedAt" : "2026-06-25T19:10:50Z"
+    "updatedAt" : "2026-06-25T20:26:03Z"
   },
   "notes" : [
 
@@ -34,7 +34,7 @@
       "rawValue" : "SP-024"
     },
     "kind" : "sprint",
-    "status" : "planning",
+    "status" : "active",
     "title" : "Regression Coverage and Documentation Sync"
   }
 }

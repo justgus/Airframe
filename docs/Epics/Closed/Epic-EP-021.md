@@ -9,38 +9,58 @@
 **Goal:**
 Add lightweight repo-coupled requirements traceability, test evidence summaries, release candidate gate visibility, external import/export stubs, and generated compliance documentation support without turning Airframe into a replacement for DOORS.
 
+**Rationale:**
+Airframe work products must connect implementation, tests, evidence, requirements, and release decisions. CI can provide test artifacts and build evidence, but AirframeCore must understand whether in-scope requirements have been implemented, verified, validated, deferred, waived, or blocked. Requirements are fluid during development, so the model must support change and import/export while preserving repo-local development history.
+
+**Scope:**
+- Define canonical requirement, requirement revision, trace link, test case, test result summary, deviation, waiver, release scope, and release gate records.
+- Support requirement lifecycle states including Proposed, Draft, Active, Implemented, Verified, Validated, Deferred, Waived, Superseded, and Removed.
+- Support traceability from requirements to Tasks, Issues, Epics, Sprints, tests, evidence, design records, source references, deviations, waivers, and release scopes.
+- Support summarized test evidence linked to requirements without committing every raw local test run.
+- Support optional links to CI runs, CI artifacts, build results, coverage results, and release candidate evidence.
+- Add CSV and JSON import/export for requirements and traceability data, with dry-run import previews.
+- Reserve adapter boundaries for future external requirements tools such as DOORS while keeping native DOORS integration out of Version 1.0.
+- Add AgileCockpit views for release candidate close criteria, traceability gaps, deviations, waivers, missing test evidence, and missing human approvals.
+- Add generated documentation support for Compliance Verification Matrix, Requirements Traceability Matrix, Bidirectional Requirements Traceability Matrix, deviation or waiver report, test plan, verification report, and release candidate closeout package when templates are available.
+
+**Out of Scope:**
+- Native DOORS integration.
+- Full enterprise requirements management.
+- Mandatory code-comment traceability for every requirement.
+- Storing every raw local test run in the repository.
+- Complex template authoring workflows.
+- Final release closeout automation without human authority.
+
 ### Related Sprints
 
-| Sprint | Goal | Status |
-| ------ | ---- | ------ |
-| SP-029 | Define the canonical requirement record model and interchange formats. | Closed |
-| SP-030 | Add traceability graph queries, revision metadata, and gap diagnostics. | Closed |
-| SP-031 | Add summarized evidence records, release gates, and Cockpit views. | Closed |
-| SP-032 | Generate compliance documents and regression coverage for the migration. | Closed |
-| SP-033 | Import existing requirements documentation into canonical requirement records and expose them in the release gate. | Closed |
+| Sprint | Status |
+| ---- | ---- |
+| SP-029 |  |
+| SP-030 |  |
+| SP-031 |  |
+| SP-032 |  |
+| SP-033 |  |
 
 ### Related Tasks
 
-| Task | Title | Status |
-| ---- | ----- | ------ |
-| T-0132 | Define canonical requirement records | Implemented - Verified |
-| T-0133 | Implement requirement CSV and JSON interchange | Implemented - Verified |
-| T-0134 | Add import preview and conflict reporting | Implemented - Verified |
-| T-0135 | Add traceability graph queries | Implemented - Verified |
-| T-0136 | Add revision metadata and lifecycle diagnostics | Implemented - Verified |
-| T-0137 | Add traceability gap diagnostics | Implemented - Verified |
-| T-0138 | Add summarized evidence records | Implemented - Verified |
-| T-0139 | Add release gate evaluation | Implemented - Verified |
-| T-0140 | Add AgileCockpit release gate visibility | Implemented - Verified |
-| T-0141 | Generate compliance and traceability documents | Implemented - Verified |
-| T-0142 | Add regression tests for import/export, traceability, and gates | Implemented - Verified |
-| T-0143 | Define AICockpit requirements import command contract | Implemented - Not Verified |
-| T-0144 | Implement canonical requirements import apply path | Implemented - Not Verified |
-| T-0145 | Add Markdown requirements seed import support | Implemented - Not Verified |
-| T-0146 | Regenerate requirements documentation from canonical state | Implemented - Not Verified |
-| T-0147 | Add requirements import regression coverage | Implemented - Not Verified |
+| Task | Status |
+| ---- | ---- |
+| T-0132 |  |
+| T-0133 |  |
+| T-0134 |  |
+| T-0135 |  |
+| T-0136 |  |
+| T-0137 |  |
+| T-0138 |  |
+| T-0139 |  |
+| T-0140 |  |
+| T-0141 |  |
+| T-0142 |  |
+| T-0143 |  |
+| T-0144 |  |
+| T-0145 |  |
+| T-0146 |  |
+| T-0147 |  |
 
-### Closeout Notes
-
-- EP-021 was closed by human direction on 2026-06-25 during closeout data repair.
-- SP-033 is closed, while T-0143 through T-0147 remain Implemented - Not Verified.
+**Notes:**
+- Acceptance Criteria: 1. AirframeCore defines canonical records for requirements, revisions, trace links, test evidence summaries, deviations, waivers, release scopes, and release gates. 2. Requirements can be imported from and exported to CSV. 3. Requirements can be imported from and exported to canonical JSON. 4. Import dry runs report created, updated, unchanged, removed, and conflicted records before mutation. 5. AirframeCore can identify traceability gaps for in-scope requirements. 6. Test evidence summaries can link test outcomes to requirement IDs and optional CI artifacts. 7. AgileCockpit shows release candidate gate status, including implemented, verified, validated, deferred, waived, and blocked requirement counts. 8. AirframeCore can explain why a release candidate can or cannot close. 9. Generated traceability and compliance documents can be produced from canonical state using deterministic default layouts or provided templates. 10. Tests cover import/export, traceability diagnostics, release gate evaluation, and evidence-to-requirement linking.

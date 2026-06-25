@@ -1,37 +1,13 @@
 # Epics - Index
 
-This is the main index for Agile Airframe Epics. Epics are implementation milestones that group Sprints and broad Tasks into independently verifiable increments.
-
-> Related: [Tasks](../Tasks/Task-Documentation.md) | [Issues](../Issues/Issue-Documentation.md) | [Sprints](../Sprints/Sprint-Documentation.md)
-
-## Organization
-
-- **Epic-backlog.md**: Proposed Epics queued for future planning.
-- **Epic-active.md**: Draft, Active, or Complete-pending-close Epics.
-- **Closed/**: Archived closed Epics, one file per Epic.
-
-## Active Epics
-
-Currently: **1 active Epic**
-
-See: [Epic-active.md](Epic-active.md)
-
-| Epic | Title | Status | Start | Close |
-| ---- | ----- | ------ | ----- | ----- |
-| EP-018 | AgileCockpit Sprint and Epic Status Controls | Active | 2026-06-15 | TBD |
-
-## Backlog Epics
-
-Currently: **1 backlog Epic**
-
-See: [Epic-backlog.md](Epic-backlog.md)
+This is the main index for Agile Airframe Epics.
 
 ## All Epics
 
 Currently: **21 Epics** | Next available: **EP-022**
 
-| Epic | Title | Status | Start | Close |
-| ---- | ----- | ------ | ----- | ----- |
+| Epic | Title | Status | Start Date | Close Date |
+| ---- | ----- | ------ | ---------- | ---------- |
 | EP-001 | Workspace and Toolchain Baseline | Closed | 2026-06-01 | 2026-06-02 |
 | EP-002 | Core Domain and Configuration Foundation | Closed | 2026-06-01 | 2026-06-02 |
 | EP-003 | Workflow, Authority, and Audit Foundation | Closed | 2026-06-02 | 2026-06-04 |
@@ -46,7 +22,7 @@ Currently: **21 Epics** | Next available: **EP-022**
 | EP-012 | Project-Local Installation | Closed | 2026-06-08 | 2026-06-09 |
 | EP-013 | Controlled GitHub Mutations | Closed | 2026-06-09 | 2026-06-10 |
 | EP-014 | Live Demo Rehearsal and Readiness | Closed | 2026-06-10 | 2026-06-10 |
-| EP-015 | AgileCockpit Planning Management | Closed | 2026-06-10 | 2026-06-10 |
+| EP-015 | AgileCockpit Planning Management | Closed | 2026-06-10 | 2026-06-11 |
 | EP-016 | AICockpit to AgileCockpit Refresh Synchronization | Closed | 2026-06-11 | 2026-06-11 |
 | EP-017 | Workflow Status Dashboard and Mutation Authority | Closed | 2026-06-12 | 2026-06-14 |
 | EP-018 | AgileCockpit Sprint and Epic Status Controls | Active | 2026-06-15 | TBD |
@@ -57,12 +33,9 @@ Currently: **21 Epics** | Next available: **EP-022**
 ## Statistics
 
 - **Total Epics:** 21
-- **Proposed:** 0
-- **Draft:** 0
-- **Active:** 1
-- **Complete pending close:** 0
-- **Closed:** 19
 - **Backlog:** 1
+- **Active:** 1
+- **Closed:** 19
 - **Next available:** EP-022
 
-*Last Updated: 2026-06-25 (EP-018 reactivated with SP-022 active)*
+*Last Updated: 2026-06-25*
