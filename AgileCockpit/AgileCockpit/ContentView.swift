@@ -542,7 +542,15 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var epicCloseEligibility: AirframeEpicCloseEligibility? {
-        epicAcceptanceCriteriaSummary.map(AirframeEpicCloseEligibility.init(criteriaSummary:))
+        guard let summary = epicAcceptanceCriteriaSummary else { return nil }
+        let activeEpicID = summary.epicID
+        let relatedSprints = canonicalSnapshot.sprints
+            .filter { $0.epicID == activeEpicID }
+            .map(\.workItem)
+        return AirframeEpicCloseEligibility(
+            criteriaSummary: summary,
+            relatedSprints: relatedSprints
+        )
     }
 
     var requirementTraceabilityIndex: AirframeRequirementTraceabilityIndex {
@@ -706,6 +714,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             case .review:
                 try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .closed)
                 try canonicalRepository.clearActiveSprintID(projectID: context.project.id)
+                try synchronizeMarkdownProjections()
                 recordCloseAudit(action: "OP-HUMAN-CLOSE-SPRINT", workItemID: activeSprintID)
                 try reload(selecting: selectedWorkItemID)
                 statusMessage = "Sprint \(activeSprintID.rawValue) closed."
@@ -737,6 +746,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             }
             try canonicalRepository.transitionWorkItem(id: activeEpicID, to: .closed)
             try canonicalRepository.clearActiveEpicID(projectID: context.project.id)
+            try synchronizeMarkdownProjections()
             recordCloseAudit(action: "OP-HUMAN-CLOSE-EPIC", workItemID: activeEpicID)
             try reload(selecting: selectedWorkItemID)
             statusMessage = "Epic \(activeEpicID.rawValue) closed."
@@ -976,6 +986,14 @@ final class AgileCockpitDashboardModel: ObservableObject {
         try backend.attachEvidence(evidence, to: id)
     }
 
+    private func synchronizeMarkdownProjections() throws {
+        guard let canonicalRepository, let artifactRootURL else {
+            return
+        }
+        let snapshot = try canonicalRepository.snapshot(project: context.project)
+        try Self.writeMarkdownProjections(snapshot: snapshot, rootURL: artifactRootURL)
+    }
+
     private func reload(selecting id: AirframeID?) throws {
         verificationQueueState = .loading
         records = try backend.listWorkRecords()
@@ -1023,6 +1041,403 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private var canonicalDashboardRecords: [AirframeLocalWorkRecord] {
         Self.localRecords(from: canonicalSnapshot)
+    }
+
+    private static func writeMarkdownProjections(
+        snapshot: AirframeCanonicalStateSnapshot,
+        rootURL: URL
+    ) throws {
+        let fileManager = FileManager.default
+        let projector = AirframeMarkdownArtifactProjector()
+        let epicClosedURL = rootURL.appending(path: "docs/Epics/Closed")
+        let sprintClosedURL = rootURL.appending(path: "docs/Sprints/Closed")
+        let generatedEpicURL = rootURL.appending(path: "docs/generated/Epics")
+        let generatedSprintURL = rootURL.appending(path: "docs/generated/Sprints")
+        try [epicClosedURL, sprintClosedURL, generatedEpicURL, generatedSprintURL].forEach {
+            try fileManager.createDirectory(at: $0, withIntermediateDirectories: true)
+        }
+
+        for epic in snapshot.epics {
+            let markdown = projector.projectEpic(epic)
+            try markdown.write(
+                to: generatedEpicURL.appending(path: "\(epic.workItem.id.rawValue).md"),
+                atomically: true,
+                encoding: .utf8
+            )
+            if epic.workItem.status == .closed {
+                try markdown.write(
+                    to: epicClosedURL.appending(path: "Epic-\(epic.workItem.id.rawValue).md"),
+                    atomically: true,
+                    encoding: .utf8
+                )
+            }
+        }
+
+        for sprint in snapshot.sprints {
+            let markdown = projector.projectSprint(sprint)
+            try markdown.write(
+                to: generatedSprintURL.appending(path: "\(sprint.workItem.id.rawValue).md"),
+                atomically: true,
+                encoding: .utf8
+            )
+            if sprint.workItem.status == .closed {
+                try markdown.write(
+                    to: sprintClosedURL.appending(path: "Sprint-\(sprint.workItem.id.rawValue).md"),
+                    atomically: true,
+                    encoding: .utf8
+                )
+            }
+        }
+
+        let tasksByID = Dictionary(uniqueKeysWithValues: snapshot.tasks.map { ($0.workItem.id, $0) })
+        let issuesByID = Dictionary(uniqueKeysWithValues: snapshot.issues.map { ($0.workItem.id, $0) })
+        let sprintsByID = Dictionary(uniqueKeysWithValues: snapshot.sprints.map { ($0.workItem.id, $0) })
+        let sortedEpics = snapshot.epics.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+        let sortedSprints = snapshot.sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+
+        try sprintActiveMarkdown(
+            sprints: sortedSprints.filter { [.planning, .active].contains($0.workItem.status) },
+            tasksByID: tasksByID,
+            issuesByID: issuesByID
+        ).write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+        try sprintBacklogMarkdown(
+            sprints: sortedSprints.filter { $0.workItem.status == .backlog },
+            tasksByID: tasksByID,
+            issuesByID: issuesByID
+        ).write(to: rootURL.appending(path: "docs/Sprints/Sprint-backlog.md"), atomically: true, encoding: .utf8)
+        try sprintIndexMarkdown(
+            sprints: sortedSprints,
+            tasksByID: tasksByID,
+            issuesByID: issuesByID
+        ).write(
+            to: rootURL.appending(path: "docs/Sprints/Sprint-Documentation.md"),
+            atomically: true,
+            encoding: .utf8
+        )
+        try epicActiveMarkdown(
+            epics: sortedEpics.filter { [.draft, .active, .complete].contains($0.workItem.status) },
+            sprintsByID: sprintsByID,
+            tasksByID: tasksByID,
+            issuesByID: issuesByID
+        ).write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+        try epicBacklogMarkdown(
+            epics: sortedEpics.filter { [.proposed, .backlog].contains($0.workItem.status) }
+        ).write(to: rootURL.appending(path: "docs/Epics/Epic-backlog.md"), atomically: true, encoding: .utf8)
+        try epicIndexMarkdown(epics: sortedEpics).write(
+            to: rootURL.appending(path: "docs/Epics/Epic-Documentation.md"),
+            atomically: true,
+            encoding: .utf8
+        )
+    }
+
+    private static func sprintActiveMarkdown(
+        sprints: [AirframeCanonicalSprintRecord],
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord]
+    ) -> String {
+        var lines = [
+            "# Active Sprint",
+            "",
+            "Sprints listed here are currently in Planning or Active status and are the current execution focus.",
+            "",
+            "---"
+        ]
+        if sprints.isEmpty {
+            lines.append("")
+            lines.append("No Sprints are currently in Planning or Active.")
+        } else {
+            sprints.forEach { appendSprintSection($0, tasksByID: tasksByID, issuesByID: issuesByID, to: &lines) }
+        }
+        lines.append("")
+        lines.append("*Last Updated: \(currentDateString())*")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func sprintBacklogMarkdown(
+        sprints: [AirframeCanonicalSprintRecord],
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord]
+    ) -> String {
+        var lines = [
+            "# Sprint Backlog",
+            "",
+            "Sprints listed here are attached to an Epic but are not yet in Planning, Active, Review, or Closed status.",
+            "",
+            "Currently: **\(sprints.count) backlog Sprint\(sprints.count == 1 ? "" : "s")**",
+            "",
+            "---"
+        ]
+        if sprints.isEmpty {
+            lines.append("")
+            lines.append("No Sprints are currently in Backlog.")
+        } else {
+            sprints.forEach { appendSprintSection($0, tasksByID: tasksByID, issuesByID: issuesByID, to: &lines) }
+        }
+        lines.append("")
+        lines.append("*Last Updated: \(currentDateString())*")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func sprintIndexMarkdown(
+        sprints: [AirframeCanonicalSprintRecord],
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord]
+    ) -> String {
+        let groups = Dictionary(grouping: sprints, by: \.workItem.status)
+        var lines = [
+            "# Sprints - Index",
+            "",
+            "This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issues into focused execution windows.",
+            "",
+            "## Current Sprint Record",
+            "",
+            "Currently: **\(sprints.first { $0.workItem.status == .active }?.workItem.id.rawValue ?? "None")**",
+            "",
+            "## All Sprints",
+            "",
+            "Currently: **\(sprints.count) Sprints** | Next available: **\(nextID(prefix: "SP", existingIDs: sprints.map(\.workItem.id)))**",
+            "",
+            "| Sprint | Title | Epic | Tasks | Issues | Status |",
+            "| ------ | ----- | ---- | ----- | ------ | ------ |"
+        ]
+        for sprint in sprints {
+            let taskIDs = sprintTaskIDs(for: sprint, tasksByID: tasksByID)
+            let issueIDs = sprintIssueIDs(for: sprint, issuesByID: issuesByID)
+            lines.append("| \(sprint.workItem.id.rawValue) | \(sprint.workItem.title) | \(sprint.epicID?.rawValue ?? "None") | \(idList(taskIDs)) | \(idList(issueIDs)) | \(sprint.workItem.status.description) |")
+        }
+        lines.append("")
+        lines.append("## Statistics")
+        lines.append("")
+        lines.append("- **Total Sprints:** \(sprints.count)")
+        lines.append("- **Backlog:** \(groups[.backlog, default: []].count)")
+        lines.append("- **Planning:** \(groups[.planning, default: []].count)")
+        lines.append("- **Active:** \(groups[.active, default: []].count)")
+        lines.append("- **Review:** \(groups[.review, default: []].count)")
+        lines.append("- **Closed:** \(groups[.closed, default: []].count)")
+        lines.append("- **Next available:** \(nextID(prefix: "SP", existingIDs: sprints.map(\.workItem.id)))")
+        lines.append("")
+        lines.append("*Last Updated: \(currentDateString())*")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func epicActiveMarkdown(
+        epics: [AirframeCanonicalEpicRecord],
+        sprintsByID: [AirframeID: AirframeCanonicalSprintRecord],
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord]
+    ) -> String {
+        var lines = [
+            "# Epic Active",
+            "",
+            "Epics listed here are drafted, active, or complete-pending-close and are the current focus of planning or execution.",
+            "",
+            "---"
+        ]
+        if epics.isEmpty {
+            lines.append("")
+            lines.append("No Epics are currently active.")
+        } else {
+            epics.forEach {
+                appendEpicSection($0, sprintsByID: sprintsByID, tasksByID: tasksByID, issuesByID: issuesByID, to: &lines)
+            }
+        }
+        lines.append("")
+        lines.append("*Last Updated: \(currentDateString())*")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func epicBacklogMarkdown(epics: [AirframeCanonicalEpicRecord]) -> String {
+        var lines = [
+            "# Epic Backlog",
+            "",
+            "Epics listed here are proposed and queued for future planning.",
+            "",
+            "Currently: **\(epics.count) backlog Epic\(epics.count == 1 ? "" : "s")**",
+            "",
+            "---"
+        ]
+        if epics.isEmpty {
+            lines.append("")
+            lines.append("No Epics are currently in Backlog.")
+        } else {
+            for epic in epics {
+                lines.append("")
+                lines.append("## \(epic.workItem.id.rawValue): \(epic.workItem.title)")
+                lines.append("")
+                lines.append("**Status:** \(epic.workItem.status.description)")
+                lines.append("**Owner:** \(epic.owner)")
+                lines.append("")
+                lines.append("**Goal:**")
+                lines.append(epic.goal)
+            }
+        }
+        lines.append("")
+        lines.append("*Last Updated: \(currentDateString())*")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func epicIndexMarkdown(epics: [AirframeCanonicalEpicRecord]) -> String {
+        let groups = Dictionary(grouping: epics, by: \.workItem.status)
+        var lines = [
+            "# Epics - Index",
+            "",
+            "This is the main index for Agile Airframe Epics.",
+            "",
+            "## All Epics",
+            "",
+            "Currently: **\(epics.count) Epics** | Next available: **\(nextID(prefix: "EP", existingIDs: epics.map(\.workItem.id)))**",
+            "",
+            "| Epic | Title | Status | Start Date | Close Date |",
+            "| ---- | ----- | ------ | ---------- | ---------- |"
+        ]
+        for epic in epics {
+            lines.append("| \(epic.workItem.id.rawValue) | \(epic.workItem.title) | \(epic.workItem.status.description) | \(epic.startDate ?? "TBD") | \(epic.closeDate ?? "TBD") |")
+        }
+        lines.append("")
+        lines.append("## Statistics")
+        lines.append("")
+        lines.append("- **Total Epics:** \(epics.count)")
+        lines.append("- **Backlog:** \(groups[.backlog, default: []].count)")
+        lines.append("- **Active:** \(groups[.active, default: []].count)")
+        lines.append("- **Closed:** \(groups[.closed, default: []].count)")
+        lines.append("- **Next available:** \(nextID(prefix: "EP", existingIDs: epics.map(\.workItem.id)))")
+        lines.append("")
+        lines.append("*Last Updated: \(currentDateString())*")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func appendSprintSection(
+        _ sprint: AirframeCanonicalSprintRecord,
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord],
+        to lines: inout [String]
+    ) {
+        lines.append("")
+        lines.append("## \(sprint.workItem.id.rawValue): \(sprint.workItem.title)")
+        lines.append("")
+        lines.append("**Status:** \(sprint.workItem.status.description)")
+        lines.append("**Epic:** \(sprint.epicID?.rawValue ?? "TBD")")
+        lines.append("**Goal:** \(sprint.goal)")
+        lines.append("**Start Date:** \(sprint.startDate ?? "TBD")")
+        lines.append("**End Date:** \(sprint.endDate ?? "TBD")")
+        lines.append("**Capacity:** \(sprint.capacity ?? "TBD")")
+        lines.append("")
+        lines.append("### Assigned Tasks")
+        lines.append("")
+        lines.append("| Task | Title | Priority | Status |")
+        lines.append("| ---- | ----- | -------- | ------ |")
+        let taskIDs = sprintTaskIDs(for: sprint, tasksByID: tasksByID)
+        if taskIDs.isEmpty {
+            lines.append("| None |  |  |  |")
+        } else {
+            for taskID in taskIDs {
+                let task = tasksByID[taskID]
+                lines.append("| \(taskID.rawValue) | \(task?.workItem.title ?? "") | \(task?.priority.description ?? "") | \(task?.workItem.status.description ?? "") |")
+            }
+        }
+        lines.append("")
+        lines.append("### Assigned Issues")
+        lines.append("")
+        let issueIDs = sprintIssueIDs(for: sprint, issuesByID: issuesByID)
+        if issueIDs.isEmpty {
+            lines.append("None.")
+        } else {
+            lines.append("| Issue | Title | Severity | Status |")
+            lines.append("| ----- | ----- | -------- | ------ |")
+            for issueID in issueIDs {
+                let issue = issuesByID[issueID]
+                lines.append("| \(issueID.rawValue) | \(issue?.workItem.title ?? "") | \(issue?.severity.description ?? "") | \(issue?.workItem.status.description ?? "") |")
+            }
+        }
+    }
+
+    private static func appendEpicSection(
+        _ epic: AirframeCanonicalEpicRecord,
+        sprintsByID: [AirframeID: AirframeCanonicalSprintRecord],
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord],
+        to lines: inout [String]
+    ) {
+        lines.append("")
+        lines.append("## \(epic.workItem.id.rawValue): \(epic.workItem.title)")
+        lines.append("")
+        lines.append("**Status:** \(epic.workItem.status.description)")
+        lines.append("**Owner:** \(epic.owner)")
+        lines.append("**Start Date:** \(epic.startDate ?? "TBD")")
+        lines.append("**Target Close Date:** \(epic.targetCloseDate ?? "TBD")")
+        lines.append("**Close Date:** \(epic.closeDate ?? "TBD")")
+        lines.append("")
+        lines.append("**Goal:**")
+        lines.append(epic.goal)
+        lines.append("")
+        lines.append("### Related Sprints")
+        lines.append("")
+        lines.append("| Sprint | Goal | Status |")
+        lines.append("| ------ | ---- | ------ |")
+        for sprintID in epic.sprintIDs {
+            let sprint = sprintsByID[sprintID]
+            lines.append("| \(sprintID.rawValue) | \(sprint?.goal ?? "") | \(sprint?.workItem.status.description ?? "") |")
+        }
+        lines.append("")
+        lines.append("### Related Tasks")
+        lines.append("")
+        lines.append("| Task | Title | Status |")
+        lines.append("| ---- | ----- | ------ |")
+        for taskID in epic.taskIDs {
+            let task = tasksByID[taskID]
+            lines.append("| \(taskID.rawValue) | \(task?.workItem.title ?? "") | \(task?.workItem.status.description ?? "") |")
+        }
+        lines.append("")
+        lines.append("### Related Issues")
+        lines.append("")
+        lines.append("| Issue | Title | Status |")
+        lines.append("| ----- | ----- | ------ |")
+        for issueID in epic.issueIDs {
+            let issue = issuesByID[issueID]
+            lines.append("| \(issueID.rawValue) | \(issue?.workItem.title ?? "") | \(issue?.workItem.status.description ?? "") |")
+        }
+    }
+
+    private static func idList(_ ids: [AirframeID]) -> String {
+        ids.isEmpty ? "None" : ids.map(\.rawValue).joined(separator: ", ")
+    }
+
+    private static func sprintTaskIDs(
+        for sprint: AirframeCanonicalSprintRecord,
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord]
+    ) -> [AirframeID] {
+        if !sprint.taskIDs.isEmpty {
+            return sprint.taskIDs
+        }
+        return tasksByID.values
+            .filter { $0.sprintID == sprint.workItem.id }
+            .map(\.workItem.id)
+            .sorted { $0.rawValue < $1.rawValue }
+    }
+
+    private static func sprintIssueIDs(
+        for sprint: AirframeCanonicalSprintRecord,
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord]
+    ) -> [AirframeID] {
+        if !sprint.issueIDs.isEmpty {
+            return sprint.issueIDs
+        }
+        return issuesByID.values
+            .filter { $0.sprintID == sprint.workItem.id }
+            .map(\.workItem.id)
+            .sorted { $0.rawValue < $1.rawValue }
+    }
+
+    private static func nextID(prefix: String, existingIDs: [AirframeID]) -> String {
+        let next = existingIDs.compactMap { id -> Int? in
+            guard id.rawValue.hasPrefix("\(prefix)-") else { return nil }
+            return Int(id.rawValue.dropFirst(prefix.count + 1))
+        }.max().map { $0 + 1 } ?? 1
+        return "\(prefix)-\(String(format: "%03d", next))"
+    }
+
+    private static func currentDateString() -> String {
+        String(ISO8601DateFormatter().string(from: Date()).prefix(10))
     }
 
     private static func canonicalSnapshot(

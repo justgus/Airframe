@@ -1,0 +1,47 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "Documentation",
+    "Canonical State"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "dateResolved" : "2026-06-25",
+  "expectedBehavior" : "After an authorized Sprint or Epic close, the relevant Markdown projections and indexes should be regenerated or updated deterministically from canonical state.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-25T19:10:50Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Sprint close refreshes Sprint-active.md, Sprint-Documentation.md, and generated Sprint projections. 2. Epic close refreshes Epic-active.md, Epic-Documentation.md, and generated Epic projections. 3. Counts and current\/next IDs remain correct after close. 4. Regression coverage proves the indexes are synchronized after close.",
+    "Resolution: AgileCockpit close actions now refresh Sprint and Epic Markdown projections and generated records from canonical state."
+  ],
+  "observedBehavior" : "AgileCockpit Sprint and Epic close actions update canonical JSON state, but human-facing Markdown indexes and projections can remain stale after close.",
+  "reproductionSteps" : [
+    "Close an eligible Sprint or Epic through AgileCockpit.",
+    "Inspect the relevant Sprint or Epic Markdown indexes.",
+    "Observe stale current, active, closed, count, or generated projection data."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-023"
+  },
+  "workItem" : {
+    "githubIssue" : 150,
+    "id" : {
+      "rawValue" : "I-0012"
+    },
+    "kind" : "issue",
+    "status" : "implementedNotVerified",
+    "title" : "Close actions do not refresh Sprint and Epic indexes"
+  }
+}

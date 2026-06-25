@@ -4,7 +4,18 @@
   },
   "goal" : "Archive closed Sprint and Epic records into the documented closed layout and refresh the indexes.",
   "issueIDs" : [
-
+    {
+      "rawValue" : "I-0010"
+    },
+    {
+      "rawValue" : "I-0011"
+    },
+    {
+      "rawValue" : "I-0012"
+    },
+    {
+      "rawValue" : "I-0013"
+    }
   ],
   "metadata" : {
     "schemaVersion" : {

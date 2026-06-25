@@ -1,0 +1,47 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "Documentation",
+    "Canonical State"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "dateResolved" : "2026-06-25",
+  "expectedBehavior" : "When an authorized human closes an Epic, AgileCockpit should preserve the closed Epic as docs\/Epics\/Closed\/Epic-<ID>.md and remove the closed Epic from the active Epic projection.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-25T19:10:50Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Closing an eligible Epic writes docs\/Epics\/Closed\/Epic-<ID>.md. 2. The archived Epic preserves closeout details from canonical state. 3. The active Epic projection no longer contains the closed Epic. 4. Regression coverage proves the archive write occurs during Epic close.",
+    "Resolution: AgileCockpit now writes closed Epic Markdown archives from canonical state after Epic close and refreshes Epic projections."
+  ],
+  "observedBehavior" : "AgileCockpit closeActiveEpic transitions the canonical Epic status and clears the active Epic pointer, but it does not write a closed Epic Markdown record under docs\/Epics\/Closed\/.",
+  "reproductionSteps" : [
+    "Open AgileCockpit with canonical Airframe state.",
+    "Close an eligible Epic.",
+    "Inspect docs\/Epics\/Closed\/ and observe no Epic archive file was written by the close action."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-023"
+  },
+  "workItem" : {
+    "githubIssue" : 149,
+    "id" : {
+      "rawValue" : "I-0011"
+    },
+    "kind" : "issue",
+    "status" : "implementedNotVerified",
+    "title" : "Epic close does not archive Markdown Epic record"
+  }
+}

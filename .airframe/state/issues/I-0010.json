@@ -1,0 +1,47 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "Documentation",
+    "Canonical State"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-018"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "dateResolved" : "2026-06-25",
+  "expectedBehavior" : "When an authorized human closes a reviewed Sprint, AgileCockpit should preserve the closed Sprint as docs\/Sprints\/Closed\/Sprint-<ID>.md and remove the closed Sprint from the active Sprint projection.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-25T19:10:50Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Closing a reviewed Sprint writes docs\/Sprints\/Closed\/Sprint-<ID>.md. 2. The archived Sprint preserves closeout details from canonical state. 3. The active Sprint projection no longer contains the closed Sprint. 4. Regression coverage proves the archive write occurs during Sprint close.",
+    "Resolution: AgileCockpit now writes closed Sprint Markdown archives from canonical state after Sprint close and refreshes Sprint projections."
+  ],
+  "observedBehavior" : "AgileCockpit closeActiveSprint transitions the canonical Sprint status and clears the active Sprint pointer, but it does not write a closed Sprint Markdown record under docs\/Sprints\/Closed\/.",
+  "reproductionSteps" : [
+    "Open AgileCockpit with canonical Airframe state.",
+    "Close an eligible reviewed Sprint.",
+    "Inspect docs\/Sprints\/Closed\/ and observe no Sprint archive file was written by the close action."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-023"
+  },
+  "workItem" : {
+    "githubIssue" : 148,
+    "id" : {
+      "rawValue" : "I-0010"
+    },
+    "kind" : "issue",
+    "status" : "implementedNotVerified",
+    "title" : "Sprint close does not archive Markdown Sprint record"
+  }
+}

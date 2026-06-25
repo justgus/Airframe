@@ -163,7 +163,11 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | I-0007 | #132 | EP-020 | Verification tab can stall or fail silently while loading queue details |
 | I-0008 | #133 | EP-020 | Canonical state cannot represent Review Sprints and backend label reconciliation |
 | I-0009 | #147 | None | Epic close leaves stale active pointers and sprint closeout state |
+| I-0010 | #148 | EP-018 | Sprint close does not archive Markdown Sprint record |
+| I-0011 | #149 | EP-018 | Epic close does not archive Markdown Epic record |
+| I-0012 | #150 | EP-018 | Close actions do not refresh Sprint and Epic indexes |
+| I-0013 | #151 | EP-018 | Epic close eligibility ignores open Sprints |
 
-Next local Issue ID: `I-0010`.
+Next local Issue ID: `I-0014`.
 
-*Last Updated: 2026-06-24 (T-0141 through T-0147 mapped to GitHub issues #140 through #146)*
+*Last Updated: 2026-06-25 (I-0010 through I-0013 mapped to GitHub issues #148 through #151)*

@@ -339,23 +339,38 @@ public struct AirframeSprintCloseEligibility: Codable, Equatable, Sendable {
 public struct AirframeEpicCloseEligibility: Codable, Equatable, Sendable {
     public let criteriaSummary: AirframeEpicAcceptanceCriteriaSummary
     public let eligibility: AirframeCloseEligibility
+    public let blockingSprints: [AirframeWorkItem]
 
-    public init(criteriaSummary: AirframeEpicAcceptanceCriteriaSummary) {
+    public init(
+        criteriaSummary: AirframeEpicAcceptanceCriteriaSummary,
+        relatedSprints: [AirframeWorkItem] = []
+    ) {
         self.criteriaSummary = criteriaSummary
-        if criteriaSummary.allCriteriaVerified {
+        self.blockingSprints = relatedSprints.filter { sprint in
+            sprint.kind == .sprint && sprint.status != .closed
+        }.sorted { $0.id.rawValue < $1.id.rawValue }
+
+        if criteriaSummary.allCriteriaVerified, blockingSprints.isEmpty {
             self.eligibility = .eligible
         } else if criteriaSummary.criteria.isEmpty {
+            let sprintReasons = blockingSprints.map {
+                "\($0.id.rawValue) is \($0.status.description)."
+            }
             self.eligibility = AirframeCloseEligibility(
                 isEligible: false,
-                blockingReasons: ["No acceptance criteria are recorded."]
+                blockingReasons: ["No acceptance criteria are recorded."] + sprintReasons
             )
         } else {
             let unverified = criteriaSummary.criteria.filter { !$0.isVerified }
+            let criteriaReasons = unverified.map {
+                "\($0.id.rawValue) is not verified."
+            }
+            let sprintReasons = blockingSprints.map {
+                "\($0.id.rawValue) is \($0.status.description)."
+            }
             self.eligibility = AirframeCloseEligibility(
                 isEligible: false,
-                blockingReasons: unverified.map {
-                    "\($0.id.rawValue) is not verified."
-                }
+                blockingReasons: criteriaReasons + sprintReasons
             )
         }
     }

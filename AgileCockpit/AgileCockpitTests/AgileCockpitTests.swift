@@ -1070,6 +1070,23 @@ import Foundation
     #expect(model.activeSprintRecord == nil)
     #expect(model.auditRows.last?.action == "OP-HUMAN-CLOSE-SPRINT")
     #expect(model.statusMessage == "Sprint SP-022 closed.")
+
+    let archivedSprint = try String(
+        contentsOf: rootURL.appending(path: "docs/Sprints/Closed/Sprint-SP-022.md"),
+        encoding: .utf8
+    )
+    let activeSprint = try String(
+        contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-active.md"),
+        encoding: .utf8
+    )
+    let sprintIndex = try String(
+        contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-Documentation.md"),
+        encoding: .utf8
+    )
+    #expect(archivedSprint.contains("# SP-022: Close Eligibility"))
+    #expect(archivedSprint.contains("**Status:** Closed"))
+    #expect(!activeSprint.contains("SP-022"))
+    #expect(sprintIndex.contains("| SP-022 | Close Eligibility | EP-018 | T-0107 | I-0007 | Closed |"))
 }
 
 @MainActor
@@ -1094,13 +1111,32 @@ import Foundation
 
     blockedModel.closeActiveEpic()
 
-    var epicContents = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
+    let epicContents = try String(contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"), encoding: .utf8)
     #expect(epicContents.contains("**Status:** Active"))
     #expect(blockedModel.statusMessage.contains("Epic EP-018 cannot close"))
     #expect(blockedModel.statusMessage.contains("EP-018-AC-02"))
 
     try writeCloseActionWorkspace(
         rootURL: rootURL,
+        sprintStatus: "Active",
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Verified criterion.", "[x] Now verified criterion."]
+    )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+    let openSprintModel = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    openSprintModel.closeActiveEpic()
+
+    #expect(openSprintModel.statusMessage.contains("Epic EP-018 cannot close"))
+    #expect(openSprintModel.statusMessage.contains("SP-022 is Active."))
+
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintStatus: "Closed",
         sprintTaskStatus: "Implemented - Verified",
         sprintIssueStatus: "Resolved - Verified",
         epicCriteria: ["[x] Verified criterion.", "[x] Now verified criterion."]
@@ -1110,7 +1146,6 @@ import Foundation
         configurationURL: configURL,
         environment: [:]
     )
-
     eligibleModel.closeActiveEpic()
 
     let closedSnapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
@@ -1123,6 +1158,23 @@ import Foundation
     #expect(eligibleModel.canonicalSnapshot.project.activeEpicID == nil)
     #expect(eligibleModel.activeEpicText == "None")
     #expect(eligibleModel.activeEpicRecord == nil)
+
+    let archivedEpic = try String(
+        contentsOf: rootURL.appending(path: "docs/Epics/Closed/Epic-EP-018.md"),
+        encoding: .utf8
+    )
+    let activeEpic = try String(
+        contentsOf: rootURL.appending(path: "docs/Epics/Epic-active.md"),
+        encoding: .utf8
+    )
+    let epicIndex = try String(
+        contentsOf: rootURL.appending(path: "docs/Epics/Epic-Documentation.md"),
+        encoding: .utf8
+    )
+    #expect(archivedEpic.contains("# EP-018: AgileCockpit Sprint and Epic Status Controls"))
+    #expect(archivedEpic.contains("**Status:** Closed"))
+    #expect(!activeEpic.contains("EP-018"))
+    #expect(epicIndex.contains("| EP-018 | AgileCockpit Sprint and Epic Status Controls | Closed |"))
     #expect(eligibleModel.auditRows.last?.action == "OP-HUMAN-CLOSE-EPIC")
     #expect(eligibleModel.statusMessage == "Epic EP-018 closed.")
 }

@@ -38,11 +38,22 @@ Add human-facing AgileCockpit controls for Sprint and Epic status mutation, incl
 | T-0107 | Gate Sprint close on verified Tasks and Issues | Implemented - Not Verified |
 | T-0108 | Gate Epic close on verified acceptance criteria | Implemented - Not Verified |
 | T-0109 | Add close-action messaging and disabled-state behavior | Implemented - Not Verified |
-| T-0110 | Move closed Sprint records into `docs/Sprints/Closed/` | Backlog |
-| T-0111 | Move closed Epic records into `docs/Epics/Closed/` | Backlog |
-| T-0112 | Rewrite sprint and epic index files on close | Backlog |
+| T-0110 | Move closed Sprint records into `docs/Sprints/Closed/` | Implemented - Not Verified |
+| T-0111 | Move closed Epic records into `docs/Epics/Closed/` | Implemented - Not Verified |
+| T-0112 | Rewrite sprint and epic index files on close | Implemented - Not Verified |
 | T-0113 | Add tests for Epic acceptance-criteria verification | Backlog |
 | T-0114 | Add tests for Sprint and Epic archive updates | Backlog |
 | T-0115 | Add tests for offline local-only closeout behavior | Backlog |
+
+### Related Issues
+
+| Issue | Title | Status |
+| ----- | ----- | ------ |
+| I-0005 | AgileCockpit header emphasizes app identity over project identity | Verified |
+| I-0006 | AgileCockpit cannot run concurrent project instances | Verified |
+| I-0010 | Sprint close does not archive Markdown Sprint record | Resolved - Not Verified |
+| I-0011 | Epic close does not archive Markdown Epic record | Resolved - Not Verified |
+| I-0012 | Close actions do not refresh Sprint and Epic indexes | Resolved - Not Verified |
+| I-0013 | Epic close eligibility ignores open Sprints | Resolved - Not Verified |
 
 *Last Updated: 2026-06-25 (EP-018 active with SP-023 active and SP-024 planning)*

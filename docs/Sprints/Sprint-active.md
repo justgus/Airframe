@@ -17,13 +17,18 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
-| T-0110 | Move closed Sprint records into `docs/Sprints/Closed/` | High | Backlog |
-| T-0111 | Move closed Epic records into `docs/Epics/Closed/` | High | Backlog |
-| T-0112 | Rewrite sprint and epic index files on close | High | Backlog |
+| T-0110 | Move closed Sprint records into `docs/Sprints/Closed/` | High | Implemented - Not Verified |
+| T-0111 | Move closed Epic records into `docs/Epics/Closed/` | High | Implemented - Not Verified |
+| T-0112 | Rewrite sprint and epic index files on close | High | Implemented - Not Verified |
 
 ### Assigned Issues
 
-None.
+| Issue | Title | Severity | Status |
+| ----- | ----- | -------- | ------ |
+| I-0010 | Sprint close does not archive Markdown Sprint record | High | Resolved - Not Verified |
+| I-0011 | Epic close does not archive Markdown Epic record | High | Resolved - Not Verified |
+| I-0012 | Close actions do not refresh Sprint and Epic indexes | High | Resolved - Not Verified |
+| I-0013 | Epic close eligibility ignores open Sprints | High | Resolved - Not Verified |
 
 ## SP-024: Regression Coverage and Documentation Sync
 
