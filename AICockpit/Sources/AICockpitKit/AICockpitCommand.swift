@@ -996,7 +996,7 @@ public enum AICockpitCommand {
           aicockpit requirements import --format csv|json --file path --dry-run [--config path] [--output markdown|json]
           aicockpit requirements import --format csv|json --file path --apply [--config path] [--output markdown|json]
           aicockpit requirements export --format csv|json [--config path]
-          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileSprintTaskLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
+          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|setActiveSprintID|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileSprintTaskLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
           aicockpit authority demo-denied [--config path]
           aicockpit project summary [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]

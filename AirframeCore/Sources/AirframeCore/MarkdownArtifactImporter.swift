@@ -506,24 +506,10 @@ public struct AirframeMarkdownArtifactImporter: Sendable {
     }
 
     private func statusValue(_ rawValue: String?) -> AirframeWorkStatus? {
-        guard let rawValue = normalizedOptional(rawValue)?.lowercased() else {
+        guard let rawValue = normalizedOptional(rawValue) else {
             return nil
         }
-        switch rawValue {
-        case "proposed": return .proposed
-        case "draft": return .draft
-        case "backlog": return .backlog
-        case "planning": return .planning
-        case "active", "in progress": return .active
-        case "review": return .review
-        case "implemented", "implemented - not verified", "resolved", "resolved - not verified":
-            return .implementedNotVerified
-        case "verified", "implemented - verified", "resolved - verified":
-            return .implementedVerified
-        case "complete": return .complete
-        case "closed": return .closed
-        default: return nil
-        }
+        return AirframeWorkStatus.fromMarkdownLabel(rawValue)
     }
 
     private func priorityValue(_ rawValue: String?) -> AirframeWorkPriority {
@@ -919,21 +905,7 @@ private struct AirframeMarkdownRecordSection {
     }
 
     private static func statusValue(_ rawValue: String) -> AirframeWorkStatus? {
-        switch rawValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
-        case "proposed": return .proposed
-        case "draft": return .draft
-        case "backlog": return .backlog
-        case "planning": return .planning
-        case "active", "in progress": return .active
-        case "review": return .review
-        case "implemented", "implemented - not verified", "resolved", "resolved - not verified":
-            return .implementedNotVerified
-        case "verified", "implemented - verified", "resolved - verified":
-            return .implementedVerified
-        case "complete": return .complete
-        case "closed": return .closed
-        default: return nil
-        }
+        AirframeWorkStatus.fromMarkdownLabel(rawValue)
     }
 
     private static func priorityValue(_ rawValue: String?) -> AirframeWorkPriority {

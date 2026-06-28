@@ -28,6 +28,49 @@ public enum AirframeWorkStatus: String, Codable, Equatable, Sendable {
     case closed
 }
 
+extension AirframeWorkStatus {
+    /// Parses a human-authored Markdown status label into a canonical status.
+    ///
+    /// Markdown artifacts decorate status with leading emoji and trailing
+    /// parentheticals, e.g. `🟡 Implemented - Not Verified`, `✅ Closed`, or
+    /// `🔴 Open (backlog, not assigned)`. This normalizes such labels by
+    /// stripping leading non-alphanumeric decoration and any trailing
+    /// parenthetical, then matching the canonical synonyms. Returns `nil` when
+    /// the label does not correspond to a known status.
+    public static func fromMarkdownLabel(_ rawValue: String) -> AirframeWorkStatus? {
+        var normalized = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Drop a trailing parenthetical note, e.g. "Open (backlog, not assigned)".
+        if let parenIndex = normalized.firstIndex(of: "(") {
+            normalized = String(normalized[..<parenIndex])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // Strip leading decoration (status emoji, symbols, separators) so the
+        // first alphabetic character begins the matchable label.
+        if let firstLetter = normalized.firstIndex(where: { $0.isLetter }) {
+            normalized = String(normalized[firstLetter...])
+        }
+
+        switch normalized.lowercased() {
+        case "proposed": return .proposed
+        case "draft": return .draft
+        case "backlog", "open": return .backlog
+        case "planning": return .planning
+        case "active", "in progress": return .active
+        case "review": return .review
+        case "implemented", "implemented - not verified",
+             "resolved", "resolved - not verified":
+            return .implementedNotVerified
+        case "verified", "implemented - verified", "resolved - verified":
+            return .implementedVerified
+        case "complete": return .complete
+        case "closed": return .closed
+        default: return nil
+        }
+    }
+}
+
 extension AirframeWorkStatus: CustomStringConvertible {
     public var description: String {
         switch self {

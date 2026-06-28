@@ -1,0 +1,52 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "Canonical State",
+    "Canonical Diagnostics",
+    "AgileCockpit"
+  ],
+  "dateResolved" : "2026-06-26",
+  "dateVerified" : "2026-06-28",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "For Airframe's current single-user, single-development-path workflow, only one Sprint may be Active at a time. The sole Active Sprint is the current Sprint by default, and project.activeSprintID must agree with it. Data Health should report multiple Active Sprints and should report a mismatch when exactly one Sprint is Active but the project active Sprint pointer is missing or different.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-28T20:57:01Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Canonical diagnostics detect more than one Active Sprint. 2. Canonical diagnostics detect exactly one Active Sprint when project.activeSprintID is missing or points elsewhere. 3. AgileCockpit header and Sprint Work tab use a consistent current Sprint source. 4. Regression coverage proves SP-034 active with nil project pointer is diagnosed or normalized. 5. Repair behavior must not silently choose between multiple Active Sprints.",
+    "Resolution: Added Active Sprint exclusivity diagnostics, an activeSprintPointerMismatch diagnostic with a safe setActiveSprintID repair for the sole-active-Sprint case, preserved missing\/invalid pointer diagnostics, updated AICockpit repair help, made AgileCockpit display and Sprint Work selection use a consistent current Sprint selector, and repaired PRJ-AIRFRAME.activeSprintID to SP-034 through AICockpit.",
+    "Evidence: swift test --package-path AirframeCore passed on 2026-06-26. swift test --package-path AICockpit passed on 2026-06-26. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests passed on 2026-06-26. aicockpit state diagnostics --backend canonical passed with no diagnostics on 2026-06-26."
+  ],
+  "observedBehavior" : "AgileCockpit can show SP-034 as the current active Sprint in dashboard-style views while the header and Sprint Work tab show Sprint None. The active Sprint record exists, but the canonical project activeSprintID pointer is missing or stale, so different views use different current Sprint sources.",
+  "reproductionSteps" : [
+    "Set a canonical Sprint record such as SP-034 to Active.",
+    "Leave the canonical project activeSprintID unset or pointing to a different Sprint.",
+    "Open AgileCockpit.",
+    "Observe that current Sprint displays can disagree, with the dashboard finding the active Sprint record while the header and Sprint Work tab render Sprint None or another pointer value.",
+    "Run Data Health diagnostics and observe that the current mismatch is not reported."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "githubIssue" : 159,
+    "id" : {
+      "rawValue" : "I-0021"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Active Sprint exclusivity is not enforced across canonical state"
+  }
+}

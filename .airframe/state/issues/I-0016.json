@@ -4,7 +4,8 @@
     "Canonical State",
     "Markdown Importer"
   ],
-  "dateIdentified" : "2026-06-25",
+  "dateResolved" : "2026-06-26",
+  "dateVerified" : "2026-06-26",
   "epicID" : {
     "rawValue" : "EP-022"
   },
@@ -18,11 +19,13 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs/Issues/Issue-active.md",
-    "updatedAt" : "2026-06-25T21:56:19Z"
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-26T14:54:50Z"
   },
   "notes" : [
-    "Acceptance Criteria: 1. Markdown import preserves active epic and sprint status. 2. Imported active epics and sprints do not trigger activeEpicNotActive or activeSprintNotActive diagnostics. 3. Regression coverage proves active epic and sprint markdown imports as active."
+    "Acceptance Criteria: 1. Markdown import preserves active epic and sprint status. 2. Imported active epics and sprints do not trigger activeEpicNotActive or activeSprintNotActive diagnostics. 3. Regression coverage proves active epic and sprint markdown imports as active.",
+    "Resolution: Verified markdown status parsing preserves active Epic and Sprint artifacts as active during import.",
+    "Evidence: swift test --package-path AICockpit passed on 2026-06-26, including stateImportMarkdownPreservesActiveEpicAndSprintStatuses. swift test --package-path AirframeCore passed on 2026-06-26. aicockpit state diagnostics --backend canonical passed with no diagnostics on 2026-06-26."
   ],
   "observedBehavior" : "Active epics and sprints can import as backlog, which creates blocking diagnostics after a clean markdown import.",
   "reproductionSteps" : [
@@ -40,7 +43,7 @@
       "rawValue" : "I-0016"
     },
     "kind" : "issue",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Markdown importer maps active epic and sprint statuses incorrectly"
   }
 }

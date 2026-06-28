@@ -159,7 +159,7 @@ AgileCockpit now watches canonical state subdirectories, exposes a main dashboar
 
 ## I-0015: Markdown importer skips closed sprint artifacts under docs/Sprints/Closed
 
-**Status:** Active
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #154
 **Platform:** macOS
 **Component:** AirframeCore / Canonical State / Markdown Importer
@@ -167,7 +167,7 @@ AgileCockpit now watches canonical state subdirectories, exposes a main dashboar
 **Epic:** EP-022
 **Sprint:** SP-034
 **Date Identified:** 2026-06-25
-**Fix Date:** TBD
+**Fix Date:** 2026-06-26
 **Verification Date:** TBD
 
 **Description:**
@@ -181,9 +181,17 @@ Closed sprint artifacts should import the same way closed task and epic artifact
 2. Closed sprint records import with their original status and relationships intact.
 3. Regression coverage proves SP-002 and SP-003 import from closed sprint markdown.
 
+**Resolution:**
+Verified markdown artifact discovery imports closed sprint records from `docs/Sprints/Closed` while preserving their status and relationships.
+
+**Evidence:**
+- `swift test --package-path AICockpit` passed on 2026-06-26, including `stateImportMarkdownIncludesClosedSprintArtifactsFromClosedDirectory`.
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
 ## I-0016: Markdown importer maps active epic and sprint statuses incorrectly
 
-**Status:** Active
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #157
 **Platform:** macOS
 **Component:** AirframeCore / Canonical State / Markdown Importer
@@ -191,7 +199,7 @@ Closed sprint artifacts should import the same way closed task and epic artifact
 **Epic:** EP-022
 **Sprint:** SP-034
 **Date Identified:** 2026-06-25
-**Fix Date:** TBD
+**Fix Date:** 2026-06-26
 **Verification Date:** TBD
 
 **Description:**
@@ -205,9 +213,17 @@ Active epic and sprint artifacts should import as active, not backlog, so diagno
 2. Imported active epics and sprints do not trigger `activeEpicNotActive` or `activeSprintNotActive` diagnostics.
 3. Regression coverage proves active epic and sprint markdown imports as active.
 
+**Resolution:**
+Verified markdown status parsing preserves active Epic and Sprint artifacts as active during import.
+
+**Evidence:**
+- `swift test --package-path AICockpit` passed on 2026-06-26, including `stateImportMarkdownPreservesActiveEpicAndSprintStatuses`.
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
 ## I-0017: Markdown importer drops task Epic and Sprint back-links from batch documents
 
-**Status:** Active
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #158
 **Platform:** macOS
 **Component:** AirframeCore / Markdown Importer / Task Batch Imports
@@ -215,7 +231,7 @@ Active epic and sprint artifacts should import as active, not backlog, so diagno
 **Epic:** EP-022
 **Sprint:** SP-034
 **Date Identified:** 2026-06-25
-**Fix Date:** TBD
+**Fix Date:** 2026-06-26
 **Verification Date:** TBD
 
 **Description:**
@@ -229,9 +245,17 @@ Batch task imports should preserve Epic and Sprint back-links when they are pres
 2. Imported tasks do not trigger `taskEpicMissing` or `taskSprintMissing` when the source artifact includes the links.
 3. Regression coverage proves the verified batch files import with correct back-links.
 
+**Resolution:**
+Verified batch task markdown imports preserve Epic and Sprint back-links from source documents.
+
+**Evidence:**
+- `swift test --package-path AICockpit` passed on 2026-06-26, including `stateImportMarkdownPreservesBatchTaskBackLinksFromVerifiedDocuments`.
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
 ## I-0018: Canonical backend lacks a create path for missing records
 
-**Status:** Active
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #155
 **Platform:** macOS
 **Component:** AICockpit / AirframeCore / Canonical Store
@@ -239,7 +263,7 @@ Batch task imports should preserve Epic and Sprint back-links when they are pres
 **Epic:** EP-022
 **Sprint:** SP-034
 **Date Identified:** 2026-06-25
-**Fix Date:** TBD
+**Fix Date:** 2026-06-26
 **Verification Date:** TBD
 
 **Description:**
@@ -253,9 +277,17 @@ The canonical backend should support controlled creation of missing canonical re
 2. Missing canonical records needed by repairs can be created without manual JSON edits.
 3. Regression coverage proves the canonical create path works for the intended record types.
 
+**Resolution:**
+Verified AICockpit canonical create commands route through the canonical backend and link created records to their owning Epic and Sprint.
+
+**Evidence:**
+- `swift test --package-path AICockpit` passed on 2026-06-26, including `canonicalStoreBackendCreatesAndLinksTaskRecords`.
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
 ## I-0019: state repair ignores --output json and always emits markdown
 
-**Status:** Active
+**Status:** Resolved - Not Verified
 **GitHub Issue:** #156
 **Platform:** macOS
 **Component:** AICockpit / Canonical Repair / CLI Output
@@ -263,7 +295,7 @@ The canonical backend should support controlled creation of missing canonical re
 **Epic:** EP-022
 **Sprint:** SP-034
 **Date Identified:** 2026-06-25
-**Fix Date:** TBD
+**Fix Date:** 2026-06-26
 **Verification Date:** TBD
 
 **Description:**
@@ -277,4 +309,81 @@ Repair commands should honor the requested output format consistently, with mark
 2. Markdown remains available when explicitly requested.
 3. Regression coverage proves repair output format selection is stable.
 
-*Last Updated: 2026-06-25 (I-0015 through I-0019 moved to EP-022/SP-034)*
+**Resolution:**
+Verified `state repair` output rendering honors the requested output format, including JSON.
+
+**Evidence:**
+- `swift test --package-path AICockpit` passed on 2026-06-26, including `stateRepairRestoresCanonicalActiveEpicFromDiagnostics` and `stateRepairReconcilesCanonicalEpicTaskLinksFromDiagnostics`.
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
+## I-0020: Canonical moves can leave stale reverse links on closed work
+
+**Status:** Resolved - Not Verified
+**GitHub Issue:** None
+**Platform:** macOS
+**Component:** AirframeCore / Canonical State / AgileCockpit / AICockpit
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-26
+**Fix Date:** 2026-06-26
+**Verification Date:** TBD
+
+**Description:**
+After I-0015 through I-0019 were moved from EP-018/SP-024 to EP-022/SP-034, Data Health still reported the Issues as owned by closed EP-018. The Issue records and visible documentation showed EP-022/SP-034, but stale reverse links remained in canonical owner records and were not visible in the detail panel.
+
+**Expected Behavior:**
+Moving Tasks or Issues between Epics or Sprints should update child forward links and all owner reverse links through a single canonical operation. AgileCockpit should not hide canonical relationship arrays that Data Health uses for diagnostics.
+
+**Acceptance Criteria:**
+1. Current stale canonical links are repaired so EP-018 and SP-024 no longer own I-0015 through I-0019.
+2. AirframeCore exposes canonical move operations for Tasks and Issues that update old owner links, child forward links, and new owner links together.
+3. `updateWorkRecord` and reconciliation helpers cannot leave Tasks or Issues linked from both old and new Epics or Sprints.
+4. Regression coverage proves moving a Task or Issue off closed work clears stale reverse links.
+5. AgileCockpit detail views expose canonical relationship state or clearly label non-canonical detail text.
+
+**Resolution:**
+Repaired EP-018 and SP-024 canonical reverse links, added canonical `moveTask` and `moveIssue` repository operations, made Task/Issue reconciliation remove stale owner links, reconciled Issue `updateWorkRecord` behavior, and appended canonical relationship data to AgileCockpit status detail text.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
+## I-0021: Active Sprint exclusivity is not enforced across canonical state
+
+**Status:** Resolved - Not Verified
+**GitHub Issue:** #159
+**Platform:** macOS
+**Component:** AirframeCore / Canonical State / Canonical Diagnostics / AgileCockpit
+**Severity:** High
+**Epic:** EP-022
+**Sprint:** SP-034
+**Date Identified:** 2026-06-26
+**Fix Date:** 2026-06-26
+**Verification Date:** TBD
+
+**Description:**
+AgileCockpit can show SP-034 as the current active Sprint in dashboard-style views while the header and Sprint Work tab show Sprint None. The active Sprint record exists, but the canonical project `activeSprintID` pointer is missing or stale, so different views use different current Sprint sources.
+
+**Expected Behavior:**
+For Airframe's current single-user, single-development-path workflow, only one Sprint may be Active at a time. The sole Active Sprint is the current Sprint by default, and `project.activeSprintID` must agree with it. Data Health should report multiple Active Sprints and should report a mismatch when exactly one Sprint is Active but the project active Sprint pointer is missing or different.
+
+**Acceptance Criteria:**
+1. Canonical diagnostics detect more than one Active Sprint.
+2. Canonical diagnostics detect exactly one Active Sprint when `project.activeSprintID` is missing or points elsewhere.
+3. AgileCockpit header and Sprint Work tab use a consistent current Sprint source.
+4. Regression coverage proves SP-034 active with nil project pointer is diagnosed or normalized.
+5. Repair behavior must not silently choose between multiple Active Sprints.
+
+**Resolution:**
+Added Active Sprint exclusivity diagnostics, an `activeSprintPointerMismatch` diagnostic with a safe `setActiveSprintID` repair for the sole-active-Sprint case, preserved missing/invalid pointer diagnostics, updated AICockpit repair help, made AgileCockpit display and Sprint Work selection use a consistent current Sprint selector, and repaired `PRJ-AIRFRAME.activeSprintID` to `SP-034` through AICockpit.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-06-26.
+- `swift test --package-path AICockpit` passed on 2026-06-26.
+- `xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-06-26.
+- `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
+
+*Last Updated: 2026-06-26 (I-0021 resolved locally and awaits verification)*

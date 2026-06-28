@@ -2,7 +2,7 @@
 
 Epics listed here are proposed and queued for future planning.
 
-Currently: **1 backlog Epic**
+Currently: **2 backlog Epics**
 
 ---
 
@@ -14,4 +14,12 @@ Currently: **1 backlog Epic**
 **Goal:**
 Make Airframe fully functional without GitHub or any backend server so the workspace, CLI, and app can operate entirely offline against local files and local state.
 
-*Last Updated: 2026-06-25*
+## EP-023: AgileCockpit Plan Review and Approval
+
+**Status:** Backlog
+**Owner:** Human / Airframe Planning
+
+**Goal:**
+Let AgileCockpit present proposed implementation plans for human review, approval, deferral, or rejection before work begins.
+
+*Last Updated: 2026-06-28*

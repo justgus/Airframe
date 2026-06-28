@@ -480,6 +480,113 @@ import Foundation
     #expect(loadedProject.activeSprintID == nil)
 }
 
+@Test func canonicalRepositoryMoveIssueClearsStaleOwnerLinks() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalMoveIssue-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let issueID = AirframeID("I-0020")
+    try store.save(canonicalEpic(id: "EP-018", status: .closed, issueIDs: [issueID]))
+    try store.save(canonicalEpic(id: "EP-022", status: .active))
+    try store.save(canonicalSprint(id: "SP-024", status: .closed, epicID: AirframeID("EP-018"), issueIDs: [issueID]))
+    try store.save(canonicalSprint(id: "SP-034", status: .active, epicID: AirframeID("EP-022")))
+    try store.save(canonicalIssue(id: issueID, epicID: AirframeID("EP-018"), sprintID: AirframeID("SP-024")))
+
+    try AirframeCanonicalStoreRepository(store: store)
+        .moveIssue(issueID: issueID, toEpicID: AirframeID("EP-022"), toSprintID: AirframeID("SP-034"))
+
+    let oldEpic = try #require(try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-018")))
+    let newEpic = try #require(try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-022")))
+    let oldSprint = try #require(try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-024")))
+    let newSprint = try #require(try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-034")))
+    let issue = try #require(try store.load(AirframeCanonicalIssueRecord.self, id: issueID))
+
+    #expect(!oldEpic.issueIDs.contains(issueID))
+    #expect(newEpic.issueIDs == [issueID])
+    #expect(!oldSprint.issueIDs.contains(issueID))
+    #expect(newSprint.issueIDs == [issueID])
+    #expect(issue.epicID == AirframeID("EP-022"))
+    #expect(issue.sprintID == AirframeID("SP-034"))
+}
+
+@Test func canonicalRepositoryMoveTaskClearsStaleOwnerLinks() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalMoveTask-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let taskID = AirframeID("T-0999")
+    try store.save(canonicalEpic(id: "EP-018", status: .closed, taskIDs: [taskID]))
+    try store.save(canonicalEpic(id: "EP-022", status: .active))
+    try store.save(canonicalSprint(id: "SP-024", status: .closed, epicID: AirframeID("EP-018"), taskIDs: [taskID]))
+    try store.save(canonicalSprint(id: "SP-034", status: .active, epicID: AirframeID("EP-022")))
+    try store.save(canonicalTask(id: taskID, epicID: AirframeID("EP-018"), sprintID: AirframeID("SP-024")))
+
+    try AirframeCanonicalStoreRepository(store: store)
+        .moveTask(taskID: taskID, toEpicID: AirframeID("EP-022"), toSprintID: AirframeID("SP-034"))
+
+    let oldEpic = try #require(try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-018")))
+    let newEpic = try #require(try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-022")))
+    let oldSprint = try #require(try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-024")))
+    let newSprint = try #require(try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-034")))
+    let task = try #require(try store.load(AirframeCanonicalTaskRecord.self, id: taskID))
+
+    #expect(!oldEpic.taskIDs.contains(taskID))
+    #expect(newEpic.taskIDs == [taskID])
+    #expect(!oldSprint.taskIDs.contains(taskID))
+    #expect(newSprint.taskIDs == [taskID])
+    #expect(task.epicID == AirframeID("EP-022"))
+    #expect(task.sprintID == AirframeID("SP-034"))
+}
+
+@Test func canonicalRepositoryUpdateIssueReconcilesOwnerLinks() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalUpdateIssueMove-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let issueID = AirframeID("I-0020")
+    try store.save(canonicalEpic(id: "EP-018", status: .closed, issueIDs: [issueID]))
+    try store.save(canonicalEpic(id: "EP-022", status: .active))
+    try store.save(canonicalSprint(id: "SP-024", status: .closed, epicID: AirframeID("EP-018"), issueIDs: [issueID]))
+    try store.save(canonicalSprint(id: "SP-034", status: .active, epicID: AirframeID("EP-022")))
+    try store.save(canonicalIssue(id: issueID, epicID: AirframeID("EP-018"), sprintID: AirframeID("SP-024")))
+
+    try AirframeCanonicalStoreRepository(store: store).updateWorkRecord(
+        AirframeLocalWorkRecord(
+            workItem: AirframeWorkItem(
+                id: issueID,
+                kind: .issue,
+                title: "Canonical moves can leave stale reverse links on closed work",
+                status: .active
+            ),
+            epicID: AirframeID("EP-022"),
+            sprintID: AirframeID("SP-034"),
+            priority: .high
+        )
+    )
+
+    let oldEpic = try #require(try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-018")))
+    let newEpic = try #require(try store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-022")))
+    let oldSprint = try #require(try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-024")))
+    let newSprint = try #require(try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-034")))
+    let issue = try #require(try store.load(AirframeCanonicalIssueRecord.self, id: issueID))
+
+    #expect(!oldEpic.issueIDs.contains(issueID))
+    #expect(newEpic.issueIDs == [issueID])
+    #expect(!oldSprint.issueIDs.contains(issueID))
+    #expect(newSprint.issueIDs == [issueID])
+    #expect(issue.epicID == AirframeID("EP-022"))
+    #expect(issue.sprintID == AirframeID("SP-034"))
+}
+
 @Test func requirementInterchangeRoundTripsJSONAndCSV() throws {
     let requirement = AirframeCanonicalRequirementRecord(
         id: AirframeID("REQ-0002"),
@@ -948,6 +1055,46 @@ import Foundation
     #expect(result.tasks[0].acceptanceCriteria.count == 3)
     #expect(result.tasks[0].metadata.source == "docs/Tasks/Task-active.md")
     #expect(result.diagnostics.map(\.code).contains(.ambiguousField))
+}
+
+@Test func workStatusParsesEmojiDecoratedMarkdownLabels() {
+    // Human-authored docs decorate status with leading emoji and, for issues,
+    // a trailing parenthetical note. These must map to canonical statuses.
+    #expect(AirframeWorkStatus.fromMarkdownLabel("🟡 Implemented - Not Verified") == .implementedNotVerified)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("✅ Implemented - Verified") == .implementedVerified)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("✅ Resolved - Verified") == .implementedVerified)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("✅ Closed") == .closed)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("🟡 Active") == .active)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("🔴 Open (backlog, not assigned)") == .backlog)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("⚠️ In Progress") == .active)
+    // Plain (undecorated) labels still parse.
+    #expect(AirframeWorkStatus.fromMarkdownLabel("Active") == .active)
+    #expect(AirframeWorkStatus.fromMarkdownLabel("backlog") == .backlog)
+    // Unknown labels yield nil so the importer can flag them.
+    #expect(AirframeWorkStatus.fromMarkdownLabel("🟣 Frobnicated") == nil)
+}
+
+@Test func markdownArtifactImporterParsesEmojiStatusInWorkItemSection() {
+    let markdown = """
+    ## T-0018: Implement SQLiteTelemetryPersistence.append()
+
+    **Status:** 🟡 Implemented - Not Verified
+    **GitHub Issue:** #20
+    **Epic:** EP-002
+    **Sprint Assigned:** SP-004
+    """
+
+    let result = AirframeMarkdownArtifactImporter().importDocument(
+        markdown,
+        sourcePath: "docs/Tasks/Task-unverified.md"
+    )
+
+    #expect(result.tasks.map(\.workItem.id) == [AirframeID("T-0018")])
+    #expect(result.tasks[0].workItem.status == .implementedNotVerified)
+    // A parseable status must not emit a missing-Status diagnostic.
+    #expect(!result.diagnostics.contains {
+        $0.code == .missingRequiredField && $0.message.contains("Status")
+    })
 }
 
 @Test func markdownArtifactImporterImportsRequirementRecordsFromRequirementDocs() {
@@ -1464,6 +1611,67 @@ import Foundation
     #expect(reasonCodes.contains(.epicSprintRelationshipDrift))
     #expect(reasonCodes.contains(.epicTaskRelationshipDrift))
     #expect(reasonCodes.contains(.sprintTaskRelationshipDrift))
+}
+
+@Test func canonicalStateValidatorDetectsSoleActiveSprintPointerMismatch() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeSprintID: nil,
+        sprintIDs: [AirframeID("SP-034")]
+    )
+    let sprint = canonicalSprint(
+        id: "SP-034",
+        status: .active,
+        epicID: AirframeID("EP-022")
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            sprints: [sprint]
+        )
+    )
+    let diagnostic = diagnostics.diagnostics.first { $0.reasonCode == .activeSprintPointerMismatch }
+
+    #expect(diagnostics.status == .blocking)
+    #expect(diagnostic?.affectedIDs == [AirframeID("PRJ-AIRFRAME"), AirframeID("SP-034")])
+    #expect(diagnostic?.message.contains("project.activeSprintID is None") == true)
+    #expect(diagnostic?.repairOptions.first?.action == .setActiveSprintID)
+    #expect(diagnostic?.repairOptions.first?.requiresHumanApproval == false)
+}
+
+@Test func canonicalStateValidatorDetectsMultipleActiveSprintsWithoutRepairSelection() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeSprintID: AirframeID("SP-034"),
+        sprintIDs: [AirframeID("SP-034"), AirframeID("SP-035")]
+    )
+    let sprint034 = canonicalSprint(
+        id: "SP-034",
+        status: .active,
+        epicID: AirframeID("EP-022")
+    )
+    let sprint035 = canonicalSprint(
+        id: "SP-035",
+        status: .active,
+        epicID: AirframeID("EP-022")
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            sprints: [sprint034, sprint035]
+        )
+    )
+    let diagnostic = diagnostics.diagnostics.first { $0.reasonCode == .multipleActiveSprints }
+
+    #expect(diagnostics.status == .blocking)
+    #expect(diagnostic?.affectedIDs == [AirframeID("PRJ-AIRFRAME"), AirframeID("SP-034"), AirframeID("SP-035")])
+    #expect(diagnostic?.repairOptions.isEmpty == true)
 }
 
 @Test func canonicalBackendReconcilerDetectsBackendStatusDriftAndHumanOnlyTransitions() {
@@ -3201,6 +3409,88 @@ private func canonicalTaskRecord(
         component: "AirframeCore",
         priority: .high,
         rationale: "Canonical summary coverage."
+    )
+}
+
+private func canonicalEpic(
+    id: String,
+    status: AirframeWorkStatus,
+    taskIDs: [AirframeID] = [],
+    issueIDs: [AirframeID] = []
+) -> AirframeCanonicalEpicRecord {
+    AirframeCanonicalEpicRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID(id),
+            kind: .epic,
+            title: "Test Epic \(id)",
+            status: status
+        ),
+        owner: "Airframe Tests",
+        goal: "Exercise canonical relationship moves.",
+        rationale: "Regression coverage for stale reverse links.",
+        taskIDs: taskIDs,
+        issueIDs: issueIDs
+    )
+}
+
+private func canonicalSprint(
+    id: String,
+    status: AirframeWorkStatus,
+    epicID: AirframeID,
+    taskIDs: [AirframeID] = [],
+    issueIDs: [AirframeID] = []
+) -> AirframeCanonicalSprintRecord {
+    AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID(id),
+            kind: .sprint,
+            title: "Test Sprint \(id)",
+            status: status
+        ),
+        epicID: epicID,
+        goal: "Exercise canonical relationship moves.",
+        taskIDs: taskIDs,
+        issueIDs: issueIDs
+    )
+}
+
+private func canonicalTask(
+    id: AirframeID,
+    epicID: AirframeID,
+    sprintID: AirframeID
+) -> AirframeCanonicalTaskRecord {
+    AirframeCanonicalTaskRecord(
+        workItem: AirframeWorkItem(
+            id: id,
+            kind: .task,
+            title: "Test Task \(id.rawValue)",
+            status: .active
+        ),
+        component: "AirframeCore",
+        priority: .high,
+        rationale: "Regression coverage for stale reverse links.",
+        epicID: epicID,
+        sprintID: sprintID
+    )
+}
+
+private func canonicalIssue(
+    id: AirframeID,
+    epicID: AirframeID,
+    sprintID: AirframeID
+) -> AirframeCanonicalIssueRecord {
+    AirframeCanonicalIssueRecord(
+        workItem: AirframeWorkItem(
+            id: id,
+            kind: .issue,
+            title: "Test Issue \(id.rawValue)",
+            status: .active
+        ),
+        severity: .high,
+        observedBehavior: "A moved work item can remain linked from its previous owner.",
+        expectedBehavior: "Moving a work item clears stale owner links.",
+        epicID: epicID,
+        sprintID: sprintID
     )
 }
 

@@ -389,7 +389,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var activeSprintText: String {
-        canonicalSnapshot.project.activeSprintID?.rawValue ?? "None"
+        currentSprintID?.rawValue ?? "None"
     }
 
     var activeEpicText: String {
@@ -496,7 +496,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var sprintRecords: [AirframeLocalWorkRecord] {
-        canonicalDashboardRecords.filter { $0.sprintID == canonicalSnapshot.project.activeSprintID }
+        canonicalDashboardRecords.filter { $0.sprintID == currentSprintID }
     }
 
     var epicRecords: [AirframeLocalWorkRecord] {
@@ -511,7 +511,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var activeSprintRecord: AirframeLocalWorkRecord? {
-        guard let activeSprintID = canonicalSnapshot.project.activeSprintID else { return nil }
+        guard let activeSprintID = currentSprintID else { return nil }
         return canonicalDashboardRecords.first {
             $0.workItem.kind == .sprint && $0.workItem.id == activeSprintID
         }
@@ -534,7 +534,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var sprintCloseEligibility: AirframeSprintCloseEligibility? {
-        guard let activeSprintID = canonicalSnapshot.project.activeSprintID else { return nil }
+        guard let activeSprintID = currentSprintID else { return nil }
         return AirframeSprintCloseEligibility(
             sprintID: activeSprintID,
             assignedWorkItems: sprintRecords.map(\.workItem)
@@ -567,11 +567,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var requirementCoverageSummary: AirframeRequirementCoverageSummary {
-        requirementTraceabilityIndex.coverageSummary(releaseScope: canonicalSnapshot.project.activeSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
+        requirementTraceabilityIndex.coverageSummary(releaseScope: currentSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
     }
 
     var requirementGateSummary: AirframeRequirementReleaseGateSummary {
-        requirementTraceabilityIndex.releaseGateSummary(releaseScope: canonicalSnapshot.project.activeSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
+        requirementTraceabilityIndex.releaseGateSummary(releaseScope: currentSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
     }
 
     var requirementTraceRows: [AgileCockpitRequirementTraceRow] {
@@ -591,7 +591,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var requirementGapRows: [AgileCockpitRequirementGapRow] {
-        requirementTraceabilityIndex.gapDiagnostics(releaseScope: canonicalSnapshot.project.activeSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue).map {
+        requirementTraceabilityIndex.gapDiagnostics(releaseScope: currentSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue).map {
             AgileCockpitRequirementGapRow(
                 requirementID: $0.requirementID.rawValue,
                 kind: $0.kind.rawValue,
@@ -614,9 +614,26 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return canonicalDashboardRecords.first { $0.workItem.id == selectedStatusWorkItemID }
     }
 
+    private var currentSprintID: AirframeID? {
+        if let configuredSprintID = canonicalSnapshot.project.activeSprintID {
+            return configuredSprintID
+        }
+        let activeSprintIDs = canonicalSnapshot.sprints
+            .filter { $0.workItem.status == .active }
+            .map(\.workItem.id)
+            .sorted { $0.rawValue < $1.rawValue }
+        return activeSprintIDs.count == 1 ? activeSprintIDs[0] : nil
+    }
+
     var selectedStatusDetailText: String? {
         guard let selectedStatusWorkItemID else { return nil }
-        return dashboardDetailTextByID[selectedStatusWorkItemID]
+        guard let detailText = dashboardDetailTextByID[selectedStatusWorkItemID] else {
+            return nil
+        }
+        guard let canonicalDetailText = canonicalRelationshipDetailText(for: selectedStatusWorkItemID) else {
+            return detailText
+        }
+        return "\(detailText)\n\n---\n\(canonicalDetailText)"
     }
 
     func showStatusItems(tile: AirframeDashboardStatusTile, row: AirframeDashboardStatusRow) {
@@ -684,7 +701,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     func closeActiveSprint() {
-        guard let activeSprintID = canonicalSnapshot.project.activeSprintID else {
+        guard let activeSprintID = currentSprintID else {
             statusMessage = "No active Sprint is configured."
             return
         }
@@ -1977,6 +1994,40 @@ final class AgileCockpitDashboardModel: ObservableObject {
         lines.append("Report Format:")
         lines.append(record.reportFormat)
         return lines.joined(separator: "\n")
+    }
+
+    private func canonicalRelationshipDetailText(for id: AirframeID) -> String? {
+        if let epic = canonicalSnapshot.epics.first(where: { $0.workItem.id == id }) {
+            return [
+                "Canonical Relationships:",
+                "Related Sprints: \(Self.idList(epic.sprintIDs))",
+                "Related Tasks: \(Self.idList(epic.taskIDs))",
+                "Related Issues: \(Self.idList(epic.issueIDs))"
+            ].joined(separator: "\n")
+        }
+        if let sprint = canonicalSnapshot.sprints.first(where: { $0.workItem.id == id }) {
+            return [
+                "Canonical Relationships:",
+                "Epic: \(sprint.epicID?.rawValue ?? "None")",
+                "Related Tasks: \(Self.idList(sprint.taskIDs))",
+                "Related Issues: \(Self.idList(sprint.issueIDs))"
+            ].joined(separator: "\n")
+        }
+        if let task = canonicalSnapshot.tasks.first(where: { $0.workItem.id == id }) {
+            return [
+                "Canonical Relationships:",
+                "Epic: \(task.epicID?.rawValue ?? "None")",
+                "Sprint: \(task.sprintID?.rawValue ?? "None")"
+            ].joined(separator: "\n")
+        }
+        if let issue = canonicalSnapshot.issues.first(where: { $0.workItem.id == id }) {
+            return [
+                "Canonical Relationships:",
+                "Epic: \(issue.epicID?.rawValue ?? "None")",
+                "Sprint: \(issue.sprintID?.rawValue ?? "None")"
+            ].joined(separator: "\n")
+        }
+        return nil
     }
 
     private static func appendBlock(_ values: [String], to lines: inout [String]) {

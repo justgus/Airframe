@@ -12,10 +12,12 @@ public enum AirframeCanonicalDiagnosticReasonCode: String, Codable, Equatable, S
     case activeSprintMissing
     case activeEpicNotActive
     case activeSprintNotActive
+    case activeSprintPointerMismatch
     case backendRelationshipDrift
     case backendStatusDrift
     case closedEpicOwnsOpenWork
     case epicSprintRelationshipDrift
+    case multipleActiveSprints
     case epicTaskRelationshipDrift
     case sprintTaskRelationshipDrift
     case taskEpicMissing
@@ -29,6 +31,7 @@ public enum AirframeCanonicalRepairAction: String, Codable, Equatable, Sendable 
     case clearActiveSprintID
     case restoreEpicToActive
     case restoreSprintToActive
+    case setActiveSprintID
     case moveOpenWorkToAnotherEpic
     case carryForwardOpenWork
     case reconcileEpicSprintLinks
@@ -219,6 +222,8 @@ public struct AirframeCanonicalStateRepairer: Sendable {
             applications = try applyRestoreEpicToActive(repairOption, repository: repository)
         case .restoreSprintToActive:
             applications = try applyRestoreSprintToActive(repairOption, repository: repository)
+        case .setActiveSprintID:
+            applications = try applySetActiveSprintID(repairOption, repository: repository)
         case .reconcileEpicSprintLinks:
             applications = try applyPairwiseRepair(repairOption, expectedPrefix: "EP", relatedPrefix: "SP") { epicID, sprintID in
                 try repository.reconcileEpicSprintLinks(epicID: epicID, sprintID: sprintID)
@@ -284,6 +289,19 @@ public struct AirframeCanonicalStateRepairer: Sendable {
             try repository.restoreSprintToActive(sprintID: sprintID)
             return application(sprintID, action: repairOption.action)
         }
+    }
+
+    private func applySetActiveSprintID(
+        _ repairOption: AirframeCanonicalRepairOption,
+        repository: AirframeCanonicalStoreRepository
+    ) throws -> [AirframeCanonicalBackendRepairApplication] {
+        let projectID = try projectID(from: repairOption.affectedIDs)
+        let sprintIDs = repairOption.affectedIDs.filter { $0.rawValue.hasPrefix("SP-") }
+        guard sprintIDs.count == 1, let sprintID = sprintIDs.first else {
+            throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+        }
+        try repository.setActiveSprintID(sprintID, projectID: projectID)
+        return [application(projectID, action: repairOption.action)]
     }
 
     private func applyPairwiseRepair(
@@ -424,7 +442,7 @@ public struct AirframeCanonicalStateValidator: Sendable {
 
         var diagnostics: [AirframeCanonicalDiagnostic] = []
         diagnostics.append(contentsOf: activeEpicDiagnostics(project: snapshot.project, epicsByID: epicsByID))
-        diagnostics.append(contentsOf: activeSprintDiagnostics(project: snapshot.project, sprintsByID: sprintsByID))
+        diagnostics.append(contentsOf: activeSprintDiagnostics(project: snapshot.project, sprints: snapshot.sprints, sprintsByID: sprintsByID))
         diagnostics.append(
             contentsOf: closedEpicDiagnostics(
                 epics: snapshot.epics,
@@ -503,9 +521,32 @@ public struct AirframeCanonicalStateValidator: Sendable {
 
     private func activeSprintDiagnostics(
         project: AirframeCanonicalProjectRecord,
+        sprints: [AirframeCanonicalSprintRecord],
         sprintsByID: [AirframeID: AirframeCanonicalSprintRecord]
     ) -> [AirframeCanonicalDiagnostic] {
+        let activeSprintIDs = sprints
+            .filter { $0.workItem.status == .active }
+            .map(\.workItem.id)
+            .sorted { $0.rawValue < $1.rawValue }
+        if activeSprintIDs.count > 1 {
+            return [
+                AirframeCanonicalDiagnostic(
+                    severity: .blocking,
+                    reasonCode: .multipleActiveSprints,
+                    affectedIDs: [project.id] + activeSprintIDs,
+                    message: "Multiple Sprints are Active: \(activeSprintIDs.map(\.rawValue).joined(separator: ", ")). Only one Sprint may be Active in the single-development-path Airframe workflow."
+                )
+            ]
+        }
         guard let activeSprintID = project.activeSprintID else {
+            if activeSprintIDs.count == 1, let soleActiveSprintID = activeSprintIDs.first {
+                return [
+                    activeSprintPointerMismatchDiagnostic(
+                        project: project,
+                        soleActiveSprintID: soleActiveSprintID
+                    )
+                ]
+            }
             return []
         }
         guard let activeSprint = sprintsByID[activeSprintID] else {
@@ -547,7 +588,38 @@ public struct AirframeCanonicalStateValidator: Sendable {
                 )
             ]
         }
+        if activeSprintIDs.count == 1,
+           let soleActiveSprintID = activeSprintIDs.first,
+           activeSprintID != soleActiveSprintID {
+            return [
+                activeSprintPointerMismatchDiagnostic(
+                    project: project,
+                    soleActiveSprintID: soleActiveSprintID
+                )
+            ]
+        }
         return []
+    }
+
+    private func activeSprintPointerMismatchDiagnostic(
+        project: AirframeCanonicalProjectRecord,
+        soleActiveSprintID: AirframeID
+    ) -> AirframeCanonicalDiagnostic {
+        let configuredIDs = project.activeSprintID.map { [$0] } ?? []
+        return AirframeCanonicalDiagnostic(
+            severity: .blocking,
+            reasonCode: .activeSprintPointerMismatch,
+            affectedIDs: [project.id, soleActiveSprintID] + configuredIDs,
+            message: "The sole Active Sprint is \(soleActiveSprintID.rawValue), but project.activeSprintID is \(project.activeSprintID?.rawValue ?? "None").",
+            repairOptions: [
+                AirframeCanonicalRepairOption(
+                    action: .setActiveSprintID,
+                    title: "Set the project active Sprint to \(soleActiveSprintID.rawValue).",
+                    affectedIDs: [project.id, soleActiveSprintID],
+                    requiresHumanApproval: false
+                )
+            ]
+        )
     }
 
     private func closedEpicDiagnostics(

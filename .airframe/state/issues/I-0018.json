@@ -4,7 +4,8 @@
     "AirframeCore",
     "Canonical Store"
   ],
-  "dateIdentified" : "2026-06-25",
+  "dateResolved" : "2026-06-26",
+  "dateVerified" : "2026-06-26",
   "epicID" : {
     "rawValue" : "EP-022"
   },
@@ -18,11 +19,13 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs/Issues/Issue-active.md",
-    "updatedAt" : "2026-06-25T21:56:19Z"
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-26T14:55:00Z"
   },
   "notes" : [
-    "Acceptance Criteria: 1. Canonical backend exposes a create path for permitted record kinds. 2. Missing canonical records needed by repairs can be created without manual JSON edits. 3. Regression coverage proves the canonical create path works for the intended record types."
+    "Acceptance Criteria: 1. Canonical backend exposes a create path for permitted record kinds. 2. Missing canonical records needed by repairs can be created without manual JSON edits. 3. Regression coverage proves the canonical create path works for the intended record types.",
+    "Resolution: Verified AICockpit canonical create commands route through the canonical backend and link created records to their owning Epic and Sprint.",
+    "Evidence: swift test --package-path AICockpit passed on 2026-06-26, including canonicalStoreBackendCreatesAndLinksTaskRecords. swift test --package-path AirframeCore passed on 2026-06-26. aicockpit state diagnostics --backend canonical passed with no diagnostics on 2026-06-26."
   ],
   "observedBehavior" : "The canonical backend can repair and mutate existing records, but it cannot create missing canonical records through the CLI.",
   "reproductionSteps" : [
@@ -40,7 +43,7 @@
       "rawValue" : "I-0018"
     },
     "kind" : "issue",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Canonical backend lacks a create path for missing records"
   }
 }

@@ -1,0 +1,50 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "Canonical State",
+    "AgileCockpit",
+    "AICockpit"
+  ],
+  "dateResolved" : "2026-06-26",
+  "dateVerified" : "2026-06-26",
+  "epicID" : {
+    "rawValue" : "EP-022"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Moving Tasks or Issues between Epics or Sprints should update child forward links and all owner reverse links through a single canonical operation. AgileCockpit should not hide canonical relationship arrays that Data Health uses for diagnostics.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-active.md",
+    "updatedAt" : "2026-06-26T14:46:10Z"
+  },
+  "notes" : [
+    "Acceptance Criteria: 1. Current stale canonical links are repaired so EP-018 and SP-024 no longer own I-0015 through I-0019. 2. AirframeCore exposes canonical move operations for Tasks and Issues that update old owner links, child forward links, and new owner links together. 3. updateWorkRecord and reconciliation helpers cannot leave Tasks or Issues linked from both old and new Epics or Sprints. 4. Regression coverage proves moving a Task or Issue off closed work clears stale reverse links. 5. AgileCockpit detail views expose canonical relationship state or clearly label non-canonical detail text.",
+    "Resolution: Repaired EP-018 and SP-024 canonical reverse links, added canonical moveTask and moveIssue repository operations, made Task\/Issue reconciliation remove stale owner links, reconciled Issue updateWorkRecord behavior, and appended canonical relationship data to AgileCockpit status detail text.",
+    "Evidence: swift test --package-path AirframeCore passed on 2026-06-26. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests passed on 2026-06-26. aicockpit state diagnostics --backend canonical passed with no diagnostics on 2026-06-26."
+  ],
+  "observedBehavior" : "After I-0015 through I-0019 were moved from EP-018\/SP-024 to EP-022\/SP-034, Data Health still reported the Issues as owned by closed EP-018. The Issue records and visible documentation showed EP-022\/SP-034, but stale reverse links remained in canonical owner records and were not visible in the detail panel.",
+  "reproductionSteps" : [
+    "Move active Issues from a closed Epic or Sprint to a new active Epic and Sprint.",
+    "Inspect the moved Issue records and visible AgileCockpit detail text.",
+    "Run Data Health diagnostics.",
+    "Observe that stale reverse links on the closed owner can still trigger closed-work ownership diagnostics."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-034"
+  },
+  "workItem" : {
+    "id" : {
+      "rawValue" : "I-0020"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Canonical moves can leave stale reverse links on closed work"
+  }
+}

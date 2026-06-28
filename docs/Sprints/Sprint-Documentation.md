@@ -4,7 +4,7 @@ This is the main index for Agile Airframe Sprints. Sprints group Tasks and Issue
 
 ## Current Sprint Record
 
-Currently: **SP-034**
+Currently: **None**
 
 ## All Sprints
 
@@ -45,16 +45,16 @@ Currently: **34 Sprints** | Next available: **SP-035**
 | SP-031 | Evidence Summaries and Release Gates | EP-021 | T-0138, T-0139, T-0140 | None | Closed |
 | SP-032 | Compliance Documents and Regression Coverage | EP-021 | T-0141, T-0142 | None | Closed |
 | SP-033 | Canonical Requirements Import | EP-021 | T-0143, T-0144, T-0145, T-0146, T-0147 | None | Closed |
-| SP-034 | Telemetrix Importer and Canonical Repair Fixes | EP-022 | None | I-0015, I-0016, I-0017, I-0018, I-0019 | Active |
+| SP-034 | Telemetrix Importer and Canonical Repair Fixes | EP-022 | None | I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021 | Closed |
 
 ## Statistics
 
 - **Total Sprints:** 34
 - **Backlog:** 0
 - **Planning:** 0
-- **Active:** 1
+- **Active:** 0
 - **Review:** 0
-- **Closed:** 33
+- **Closed:** 34
 - **Next available:** SP-035
 
-*Last Updated: 2026-06-25*
+*Last Updated: 2026-06-28*

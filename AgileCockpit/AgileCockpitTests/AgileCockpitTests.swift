@@ -559,6 +559,64 @@ import Foundation
     #expect(model.statusMessage == "Refreshed from Airframe state.")
 }
 
+@MainActor
+@Test func agileCockpitFallsBackToSoleActiveSprintWhenProjectPointerIsMissing() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-034",
+        activeEpicID: "EP-022",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-022: Telemetrix Importer and Canonical Repair Fixes
+
+    **Status:** Active
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-034: Telemetrix Importer and Canonical Repair Fixes
+
+    **Status:** Active
+    **Epic:** EP-022
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+
+    let projectURL = rootURL.appending(path: ".airframe/state/projects/PRJ-AIRFRAME.json")
+    let projectJSON = try String(contentsOf: projectURL, encoding: .utf8)
+    try projectJSON
+        .replacingOccurrences(
+            of: """
+              "activeSprintID" : {
+                "rawValue" : "SP-034"
+              }
+            """,
+            with: """
+              "activeSprintID" : null
+            """
+        )
+        .write(to: projectURL, atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.activeSprintText == "SP-034")
+    #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-034"))
+    #expect(model.diagnosticRows.map(\.reason).contains("activeSprintPointerMismatch"))
+}
+
 @Test func agileCockpitWatchesCanonicalStateSubdirectories() throws {
     let stateURL = FileManager.default.temporaryDirectory
         .appending(path: "AgileCockpitWatchURLs")
@@ -645,7 +703,8 @@ import Foundation
     model.showStatusItems(tile: epicTile, row: activeRow)
     model.selectedStatusWorkItemID = try #require(activeRow.workItems.first?.id)
 
-    #expect(model.selectedStatusDetailText == """
+    let detailText = try #require(model.selectedStatusDetailText)
+    #expect(detailText.contains("""
     # Active Epics
 
     ## EP-017: Workflow Status Dashboard and Mutation Authority
@@ -656,7 +715,11 @@ import Foundation
 
     **Rationale:**
     The detail pane should expose the whole local artifact text.
-    """)
+    """))
+    #expect(detailText.contains("Canonical Relationships:"))
+    #expect(detailText.contains("Related Sprints: None"))
+    #expect(detailText.contains("Related Tasks: None"))
+    #expect(detailText.contains("Related Issues: None"))
 }
 
 @MainActor
@@ -1202,7 +1265,7 @@ import Foundation
         environment: [:]
     )
 
-    #expect(model.backendStatusText.contains("local-fixture"))
+    #expect(model.backendStatusText.contains("canonical"))
 
     model.closeActiveSprint()
 

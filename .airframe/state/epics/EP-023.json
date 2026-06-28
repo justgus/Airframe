@@ -1,0 +1,53 @@
+{
+  "acceptanceCriterionIDs" : [
+
+  ],
+  "goal" : "Let AgileCockpit present proposed implementation plans for human review, approval, deferral, or rejection before work begins.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Epics\/Epic-backlog.md",
+    "updatedAt" : "2026-06-26T00:00:00Z"
+  },
+  "notes" : [
+    "Idea captured from I-0020 planning discussion on 2026-06-26.",
+    "Candidate acceptance criteria: 1. AgileCockpit can display a proposed plan with scope, file changes, commands, external effects, and verification steps. 2. A human can approve, defer, or reject the proposed plan. 3. Approved plans are recorded as audit/evidence before implementation begins. 4. Planning approval is distinct from human verification and closeout authority."
+  ],
+  "outOfScope" : [
+    "Replacing existing human-only verification or closeout gates.",
+    "Allowing agents to self-approve implementation plans.",
+    "Remote workflow policy changes."
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "Planning conversations currently happen outside the human-facing cockpit. Capturing proposed plans in AgileCockpit would make scope, expected changes, and approval state visible before implementation without conflating planning approval with final verification.",
+  "scope" : [
+    "Define a plan record or presentation model for proposed implementation work.",
+    "Show plan scope, file changes, commands, external effects, and verification criteria in AgileCockpit.",
+    "Support explicit human approve, defer, and reject decisions.",
+    "Record plan decisions in canonical state, audit events, or evidence records as appropriate.",
+    "Preserve existing authority boundaries for human-only verification and closeout."
+  ],
+  "sprintIDs" : [
+
+  ],
+  "taskIDs" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-023"
+    },
+    "kind" : "epic",
+    "status" : "backlog",
+    "title" : "AgileCockpit Plan Review and Approval"
+  }
+}
