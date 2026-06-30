@@ -451,7 +451,7 @@ public enum AICockpitCommand {
 
                 let id = AirframeID(try parsed.requiredValue(for: "--id"))
                 let title = try parsed.requiredValue(for: "--title")
-                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let projectContext = try parsed.canonicalAwareProjectContext()
                 let record = AirframeLocalWorkRecord(
                     workItem: AirframeWorkItem(
                         id: id,
@@ -532,7 +532,7 @@ public enum AICockpitCommand {
 
                 let id = AirframeID(try parsed.requiredValue(for: "--id"))
                 try validateID(id, for: kind)
-                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let projectContext = try parsed.canonicalAwareProjectContext()
                 let status = try parsed.optionalCommandStatus(
                     for: "--status",
                     kind: kind,
@@ -996,7 +996,7 @@ public enum AICockpitCommand {
           aicockpit requirements import --format csv|json --file path --dry-run [--config path] [--output markdown|json]
           aicockpit requirements import --format csv|json --file path --apply [--config path] [--output markdown|json]
           aicockpit requirements export --format csv|json [--config path]
-          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|setActiveSprintID|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileSprintTaskLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
+          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|setActiveEpicID|setActiveSprintID|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileSprintTaskLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
           aicockpit authority demo-denied [--config path]
           aicockpit project summary [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
@@ -1764,6 +1764,11 @@ private struct AICockpitArguments {
             configuration: projectContext.configuration,
             project: canonicalProject
         )
+    }
+
+    func canonicalAwareProjectContext() throws -> AirframeProjectContext {
+        let projectContext = try runtimeResolver.loadContext(explicitPath: value(for: "--config"))
+        return try canonicalProjectContextIfAvailable(projectContext) ?? projectContext
     }
 
     func value(for option: String) -> String? {

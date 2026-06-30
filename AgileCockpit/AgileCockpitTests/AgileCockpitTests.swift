@@ -262,6 +262,74 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitCanonicalStateIgnoresStaleMarkdownRecordsForDisplay() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-CONFIG",
+        activeEpicID: "EP-CONFIG",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-022"),
+            activeSprintID: AirframeID("SP-034"),
+            epicIDs: [AirframeID("EP-022")],
+            sprintIDs: [AirframeID("SP-034")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-022"),
+                kind: .epic,
+                title: "Canonical Epic",
+                status: .active
+            ),
+            owner: "Human",
+            goal: "Use canonical state.",
+            rationale: "Stale Markdown must not drive display."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("SP-034"),
+                kind: .sprint,
+                title: "Canonical Sprint",
+                status: .active
+            ),
+            epicID: AirframeID("EP-022"),
+            goal: "Use canonical state."
+        )
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-999: Stale Markdown Epic
+
+    **Status:** Active
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.activeEpicRecord?.workItem.id == AirframeID("EP-022"))
+    #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-034"))
+    #expect(!model.dashboardRecords.map(\.workItem.id).contains(AirframeID("EP-999")))
+    #expect(model.diagnosticRows.isEmpty)
+}
+
+@MainActor
 @Test func agileCockpitLiveFailurePreservesProjectIdentityWithoutSampleFallback() throws {
     let context = try AirframeConfigurationLoader().context(
         for: try AirframeConfigurationLoader().load(data: liveConfigurationData(backendKind: "github-issues"))
@@ -615,6 +683,57 @@ import Foundation
     #expect(model.activeSprintText == "SP-034")
     #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-034"))
     #expect(model.diagnosticRows.map(\.reason).contains("activeSprintPointerMismatch"))
+}
+
+@MainActor
+@Test func agileCockpitFallsBackToSoleActiveEpicWhenProjectPointerIsMissing() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-034",
+        activeEpicID: "EP-022",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-022: Telemetrix Importer and Canonical Repair Fixes
+
+    **Status:** Active
+
+    **Acceptance Criteria:**
+    1. [ ] closed sprint artifacts import from docs/Sprints/Closed/.
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+
+    let projectURL = rootURL.appending(path: ".airframe/state/projects/PRJ-AIRFRAME.json")
+    let projectJSON = try String(contentsOf: projectURL, encoding: .utf8)
+    try projectJSON
+        .replacingOccurrences(
+            of: """
+              "activeEpicID" : {
+                "rawValue" : "EP-022"
+              }
+            """,
+            with: """
+              "activeEpicID" : null
+            """
+        )
+        .write(to: projectURL, atomically: true, encoding: .utf8)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.activeEpicText == "EP-022")
+    #expect(model.activeEpicRecord?.workItem.id == AirframeID("EP-022"))
+    #expect(model.epicAcceptanceCriteriaSummary?.epicID == AirframeID("EP-022"))
+    #expect(model.epicAcceptanceCriteriaSummary?.criteria.count == 1)
+    #expect(model.diagnosticRows.map(\.reason).contains("activeEpicPointerMismatch"))
 }
 
 @Test func agileCockpitWatchesCanonicalStateSubdirectories() throws {
@@ -1109,6 +1228,7 @@ import Foundation
     **Epic:** EP-018
     **Sprint Assigned:** SP-020
     """.write(to: rootURL.appending(path: "docs/Tasks/Task-active.md"), atomically: true, encoding: .utf8)
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
 
     let model = try AgileCockpitDashboardModel.configured(
         configurationURL: configURL,

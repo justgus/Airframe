@@ -344,6 +344,63 @@ import Foundation
     #expect(savedEpic?.workItem.status == .active)
 }
 
+@Test func createCommandsDefaultOwnershipToCanonicalActivePointersWhenAvailable() throws {
+    let configPath = try temporaryLiveConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-9500"),
+            activeSprintID: AirframeID("SP-9500"),
+            epicIDs: [AirframeID("EP-9500")],
+            sprintIDs: [AirframeID("SP-9500")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9500"),
+                kind: .epic,
+                title: "Canonical active Epic",
+                status: .active
+            ),
+            owner: "Airframe",
+            goal: "Own new work.",
+            rationale: "Canonical state is the source of truth."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("SP-9500"),
+                kind: .sprint,
+                title: "Canonical active Sprint",
+                status: .active
+            ),
+            epicID: AirframeID("EP-9500"),
+            goal: "Own new work."
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "issue", "create",
+        "--config", configPath,
+        "--id", "I-9500",
+        "--title", "Use canonical active owners",
+        "--status", "active",
+        "--output", "json"
+    ])
+    let savedIssue = try repository.store.load(AirframeCanonicalIssueRecord.self, id: AirframeID("I-9500"))
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardOutput.contains("\"backendKind\" : \"canonical\""))
+    #expect(savedIssue?.epicID == AirframeID("EP-9500"))
+    #expect(savedIssue?.sprintID == AirframeID("SP-9500"))
+}
+
 @Test func canonicalStoreBackendCreatesAndLinksTaskRecords() throws {
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AICockpitCanonicalCreateTests")

@@ -1,8 +1,23 @@
 {
   "acceptanceCriterionIDs" : [
-
+    {
+      "rawValue" : "EP-022-AC-01"
+    },
+    {
+      "rawValue" : "EP-022-AC-02"
+    },
+    {
+      "rawValue" : "EP-022-AC-03"
+    },
+    {
+      "rawValue" : "EP-022-AC-04"
+    },
+    {
+      "rawValue" : "EP-022-AC-05"
+    }
   ],
-  "goal" : "Fix the Telemetrix importer and canonical repair/create gaps without reopening EP-018.",
+  "closeDate" : "2026-06-30",
+  "goal" : "Fix the Telemetrix importer and canonical repair\/create gaps without reopening EP-018.",
   "issueIDs" : [
     {
       "rawValue" : "I-0015"
@@ -24,6 +39,9 @@
     },
     {
       "rawValue" : "I-0021"
+    },
+    {
+      "rawValue" : "I-0022"
     }
   ],
   "metadata" : {
@@ -33,22 +51,22 @@
       "patch" : 0
     },
     "source" : "docs\/Epics\/Epic-active.md",
-    "updatedAt" : "2026-06-25T22:31:28Z"
+    "updatedAt" : "2026-06-30T13:17:21Z"
   },
   "notes" : [
-    "Acceptance Criteria: 1. closed sprint artifacts import from docs/Sprints/Closed/. 2. active epic and sprint statuses import as active. 3. batch task back-links are preserved. 4. canonical create and JSON repair output gaps are covered."
+    "Acceptance Criteria: 1. closed sprint artifacts import from docs\/Sprints\/Closed\/. 2. active epic and sprint statuses import as active. 3. batch task back-links are preserved. 4. canonical create and JSON repair output gaps are covered."
   ],
-  "owner" : "Human \/ Airframe Planning",
   "outOfScope" : [
 
   ],
+  "owner" : "Human \/ Airframe Planning",
   "planningDocumentPaths" : [
     "docs\/Issues\/Issue-active.md",
     "docs\/Issues\/Issue-Documentation.md"
   ],
   "rationale" : "The Telemetrix reconciliation work surfaced a small cluster of importer and canonical-backend gaps that belongs in its own active track instead of the closed EP-018 closeout epic.",
   "scope" : [
-    "Read sprint artifacts from docs/Sprints/Closed/ during import.",
+    "Read sprint artifacts from docs\/Sprints\/Closed\/ during import.",
     "Preserve active status mappings during markdown import.",
     "Preserve batch task Epic and Sprint back-links during import.",
     "Support canonical record creation for reconciliation gaps.",
@@ -68,7 +86,7 @@
       "rawValue" : "EP-022"
     },
     "kind" : "epic",
-    "status" : "active",
+    "status" : "closed",
     "title" : "Telemetrix Importer and Canonical Repair Fixes"
   }
 }

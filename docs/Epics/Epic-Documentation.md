@@ -29,15 +29,15 @@ Currently: **23 Epics** | Next available: **EP-024**
 | EP-019 | Airframe Offline-Only Operation | Backlog | TBD | TBD |
 | EP-020 | Canonical Airframe Workflow State | Closed | 2026-06-17 | 2026-06-23 |
 | EP-021 | Requirements Traceability and Release Evidence | Closed | 2026-06-23 | 2026-06-24 |
-| EP-022 | Telemetrix Importer and Canonical Repair Fixes | Active | 2026-06-25 | TBD |
+| EP-022 | Telemetrix Importer and Canonical Repair Fixes | Closed | 2026-06-25 | 2026-06-30 |
 | EP-023 | AgileCockpit Plan Review and Approval | Backlog | TBD | TBD |
 
 ## Statistics
 
 - **Total Epics:** 23
 - **Backlog:** 2
-- **Active:** 1
-- **Closed:** 20
+- **Active:** 0
+- **Closed:** 21
 - **Next available:** EP-024
 
-*Last Updated: 2026-06-28*
+*Last Updated: 2026-06-30*

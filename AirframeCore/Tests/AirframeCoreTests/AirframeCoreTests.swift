@@ -1057,6 +1057,40 @@ import Foundation
     #expect(result.diagnostics.map(\.code).contains(.ambiguousField))
 }
 
+@Test func markdownArtifactImporterPromotesEpicNoteAcceptanceCriteria() {
+    let markdown = """
+    ## EP-022: Telemetrix Importer and Canonical Repair Fixes
+
+    **Status:** Active
+    **Owner:** Human / Airframe Planning
+
+    **Goal:**
+    Fix canonical repair gaps.
+
+    **Notes:**
+    - Acceptance Criteria: 1. closed sprint artifacts import from docs/Sprints/Closed/. 2. active epic and sprint statuses import as active. 3. batch task back-links are preserved. 4. canonical create and JSON repair output gaps are covered.
+    """
+
+    let result = AirframeMarkdownArtifactImporter().importDocument(
+        markdown,
+        sourcePath: "docs/generated/Epics/EP-022.md"
+    )
+
+    #expect(result.epics.map(\.workItem.id) == [AirframeID("EP-022")])
+    #expect(result.epics.first?.acceptanceCriterionIDs == [
+        AirframeID("EP-022-AC-01"),
+        AirframeID("EP-022-AC-02"),
+        AirframeID("EP-022-AC-03"),
+        AirframeID("EP-022-AC-04")
+    ])
+    #expect(result.acceptanceCriteria.map(\.text) == [
+        "closed sprint artifacts import from docs/Sprints/Closed/.",
+        "active epic and sprint statuses import as active.",
+        "batch task back-links are preserved.",
+        "canonical create and JSON repair output gaps are covered."
+    ])
+}
+
 @Test func workStatusParsesEmojiDecoratedMarkdownLabels() {
     // Human-authored docs decorate status with leading emoji and, for issues,
     // a trailing parenthetical note. These must map to canonical statuses.
@@ -1640,6 +1674,64 @@ import Foundation
     #expect(diagnostic?.message.contains("project.activeSprintID is None") == true)
     #expect(diagnostic?.repairOptions.first?.action == .setActiveSprintID)
     #expect(diagnostic?.repairOptions.first?.requiresHumanApproval == false)
+}
+
+@Test func canonicalStateValidatorDetectsSoleActiveEpicPointerMismatch() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: nil,
+        epicIDs: [AirframeID("EP-022")]
+    )
+    let epic = canonicalEpic(id: "EP-022", status: .active)
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            epics: [epic]
+        )
+    )
+    let diagnostic = diagnostics.diagnostics.first { $0.reasonCode == .activeEpicPointerMismatch }
+
+    #expect(diagnostics.status == .blocking)
+    #expect(diagnostic?.affectedIDs == [AirframeID("PRJ-AIRFRAME"), AirframeID("EP-022")])
+    #expect(diagnostic?.message.contains("project.activeEpicID is None") == true)
+    #expect(diagnostic?.repairOptions.first?.action == .setActiveEpicID)
+    #expect(diagnostic?.repairOptions.first?.requiresHumanApproval == false)
+}
+
+@Test func canonicalStateRepairerCanSetSoleActiveEpicPointer() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCoreStateRepair")
+        .appending(path: UUID().uuidString)
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: nil,
+        epicIDs: [AirframeID("EP-022")]
+    )
+    try repository.store.save(project)
+    try repository.store.save(canonicalEpic(id: "EP-022", status: .active))
+    let repairOption = try #require(
+        AirframeCanonicalStateValidator().diagnostics(
+            for: AirframeCanonicalStateSnapshot(
+                project: project,
+                epics: [canonicalEpic(id: "EP-022", status: .active)]
+            )
+        ).diagnostics.first { $0.reasonCode == .activeEpicPointerMismatch }?.repairOptions.first
+    )
+
+    let result = try AirframeCanonicalStateRepairer().apply(
+        repairOption: repairOption,
+        repository: repository
+    )
+    let repairedProject = try #require(try repository.store.load(AirframeCanonicalProjectRecord.self, id: project.id))
+
+    #expect(result.appliedCount == 1)
+    #expect(repairedProject.activeEpicID == AirframeID("EP-022"))
 }
 
 @Test func canonicalStateValidatorDetectsMultipleActiveSprintsWithoutRepairSelection() {

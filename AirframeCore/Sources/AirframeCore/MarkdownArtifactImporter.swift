@@ -667,7 +667,7 @@ private struct AirframeMarkdownRecordSection {
         ownerID: AirframeID,
         metadata: AirframeCanonicalRecordMetadata
     ) -> [AirframeCanonicalAcceptanceCriterionRecord] {
-        numberedBlock("Acceptance Criteria").enumerated().map { offset, rawText in
+        stableUnique(numberedBlock("Acceptance Criteria") + noteAcceptanceCriteria()).enumerated().map { offset, rawText in
             let normalized = Self.checkboxValue(rawText)
             return AirframeCanonicalAcceptanceCriterionRecord(
                 id: AirframeID("\(ownerID.rawValue)-AC-\(String(format: "%02d", offset + 1))"),
@@ -676,6 +676,17 @@ private struct AirframeMarkdownRecordSection {
                 isVerified: normalized.isVerified,
                 metadata: metadata
             )
+        }
+    }
+
+    private func noteAcceptanceCriteria() -> [String] {
+        listBlock("Notes").flatMap { note -> [String] in
+            let prefix = "Acceptance Criteria:"
+            guard note.hasPrefix(prefix) else {
+                return []
+            }
+            let criteriaText = String(note.dropFirst(prefix.count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            return Self.inlineNumberedItems(criteriaText)
         }
     }
 
@@ -946,6 +957,21 @@ private struct AirframeMarkdownRecordSection {
             )
         }
         return (trimmed, false)
+    }
+
+    private static func inlineNumberedItems(_ value: String) -> [String] {
+        guard let regex = try? NSRegularExpression(pattern: #"(?:^|\s)\d+\.\s+(.*?)(?=\s+\d+\.\s+|$)"#) else {
+            return []
+        }
+        let range = NSRange(value.startIndex..<value.endIndex, in: value)
+        return regex.matches(in: value, range: range).compactMap { match in
+            guard match.numberOfRanges > 1,
+                  let textRange = Range(match.range(at: 1), in: value) else {
+                return nil
+            }
+            let text = String(value[textRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+            return text.isEmpty ? nil : text
+        }
     }
 
     private static func recordHeading(from line: String) -> (id: AirframeID, kind: AirframeWorkItemKind, title: String)? {

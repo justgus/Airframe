@@ -393,7 +393,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var activeEpicText: String {
-        canonicalSnapshot.project.activeEpicID?.rawValue ?? "None"
+        currentEpicID?.rawValue ?? "None"
     }
 
     var activeRecords: [AirframeLocalWorkRecord] {
@@ -500,12 +500,12 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var epicRecords: [AirframeLocalWorkRecord] {
-        canonicalDashboardRecords.filter { $0.epicID == canonicalSnapshot.project.activeEpicID }
+        canonicalDashboardRecords.filter { $0.epicID == currentEpicID }
     }
 
     var activeEpicRecord: AirframeLocalWorkRecord? {
-        guard let activeEpicID = canonicalSnapshot.project.activeEpicID else { return nil }
-        return dashboardRecords.first {
+        guard let activeEpicID = currentEpicID else { return nil }
+        return canonicalDashboardRecords.first {
             $0.workItem.kind == .epic && $0.workItem.id == activeEpicID
         }
     }
@@ -518,7 +518,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var epicAcceptanceCriteriaSummary: AirframeEpicAcceptanceCriteriaSummary? {
-        guard let activeEpicID = canonicalSnapshot.project.activeEpicID else { return nil }
+        guard let activeEpicID = currentEpicID else { return nil }
         if let canonicalSummary = try? canonicalRepository?.epicCriteriaSummary(epicID: activeEpicID),
            canonicalSummary.hasCriteria {
             return canonicalSummary
@@ -567,11 +567,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var requirementCoverageSummary: AirframeRequirementCoverageSummary {
-        requirementTraceabilityIndex.coverageSummary(releaseScope: currentSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
+        requirementTraceabilityIndex.coverageSummary(releaseScope: currentSprintID?.rawValue ?? currentEpicID?.rawValue)
     }
 
     var requirementGateSummary: AirframeRequirementReleaseGateSummary {
-        requirementTraceabilityIndex.releaseGateSummary(releaseScope: currentSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue)
+        requirementTraceabilityIndex.releaseGateSummary(releaseScope: currentSprintID?.rawValue ?? currentEpicID?.rawValue)
     }
 
     var requirementTraceRows: [AgileCockpitRequirementTraceRow] {
@@ -591,7 +591,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var requirementGapRows: [AgileCockpitRequirementGapRow] {
-        requirementTraceabilityIndex.gapDiagnostics(releaseScope: currentSprintID?.rawValue ?? canonicalSnapshot.project.activeEpicID?.rawValue).map {
+        requirementTraceabilityIndex.gapDiagnostics(releaseScope: currentSprintID?.rawValue ?? currentEpicID?.rawValue).map {
             AgileCockpitRequirementGapRow(
                 requirementID: $0.requirementID.rawValue,
                 kind: $0.kind.rawValue,
@@ -623,6 +623,23 @@ final class AgileCockpitDashboardModel: ObservableObject {
             .map(\.workItem.id)
             .sorted { $0.rawValue < $1.rawValue }
         return activeSprintIDs.count == 1 ? activeSprintIDs[0] : nil
+    }
+
+    private var currentEpicID: AirframeID? {
+        let configuredEpicID = canonicalSnapshot.project.activeEpicID
+        let activeEpicIDs = canonicalSnapshot.epics
+            .filter { $0.workItem.status == .active }
+            .map(\.workItem.id)
+            .sorted { $0.rawValue < $1.rawValue }
+        if activeEpicIDs.count == 1,
+           let soleActiveEpicID = activeEpicIDs.first,
+           configuredEpicID == nil || configuredEpicID != soleActiveEpicID {
+            return soleActiveEpicID
+        }
+        if let configuredEpicID {
+            return configuredEpicID
+        }
+        return nil
     }
 
     var selectedStatusDetailText: String? {
@@ -673,7 +690,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "\(criterion.id.rawValue) is already verified."
             return
         }
-        guard canonicalSnapshot.project.activeEpicID != nil else {
+        guard currentEpicID != nil else {
             statusMessage = "No active Epic is configured."
             return
         }
@@ -744,7 +761,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     func closeActiveEpic() {
-        guard let activeEpicID = canonicalSnapshot.project.activeEpicID else {
+        guard let activeEpicID = currentEpicID else {
             statusMessage = "No active Epic is configured."
             return
         }
@@ -1590,8 +1607,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         for artifactRecord in artifactRecords {
             detailTextByID[artifactRecord.record.workItem.id] = artifactRecord.detailText
         }
+        let additionalArtifactRecords = preferBackendRecords
+            ? []
+            : uniqueArtifactRecords.map(\.record).filter { !backendIDs.contains($0.workItem.id) }
         return (
-            records: mergedBackendRecords + uniqueArtifactRecords.map(\.record).filter { !backendIDs.contains($0.workItem.id) },
+            records: mergedBackendRecords + additionalArtifactRecords,
             detailTextByID: detailTextByID
         )
     }

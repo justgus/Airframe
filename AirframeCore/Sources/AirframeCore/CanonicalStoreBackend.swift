@@ -400,6 +400,13 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         try store.save(project.settingActiveSprintID(sprintID))
     }
 
+    public func setActiveEpicID(_ epicID: AirframeID, projectID: AirframeID) throws {
+        guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
+            throw AirframeBackendError.missingWorkItem(projectID)
+        }
+        try store.save(project.settingActiveEpicID(epicID))
+    }
+
     public func restoreEpicToActive(epicID: AirframeID) throws {
         try transitionWorkItem(id: epicID, to: .active)
     }

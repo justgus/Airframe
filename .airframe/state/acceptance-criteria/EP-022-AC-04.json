@@ -1,0 +1,22 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-022-AC-04"
+  },
+  "isVerified" : true,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/generated\/Epics\/EP-022.md",
+    "updatedAt" : "2026-06-29T17:44:09Z"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-022"
+  },
+  "text" : "canonical create and JSON repair output gaps are covered."
+}
