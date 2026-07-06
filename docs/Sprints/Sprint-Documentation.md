@@ -8,7 +8,7 @@ Currently: **None**
 
 ## All Sprints
 
-Currently: **34 Sprints** | Next available: **SP-035**
+Currently: **35 Sprints** | Next available: **SP-036**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -46,15 +46,16 @@ Currently: **34 Sprints** | Next available: **SP-035**
 | SP-032 | Compliance Documents and Regression Coverage | EP-021 | T-0141, T-0142 | None | Closed |
 | SP-033 | Canonical Requirements Import | EP-021 | T-0143, T-0144, T-0145, T-0146, T-0147 | None | Closed |
 | SP-034 | Telemetrix Importer and Canonical Repair Fixes | EP-022 | None | I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021 | Closed |
+| SP-035 | Offline-Only Operation Planning Sprint | EP-019 | T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | None | Closed |
 
 ## Statistics
 
-- **Total Sprints:** 34
+- **Total Sprints:** 35
 - **Backlog:** 0
 - **Planning:** 0
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 34
-- **Next available:** SP-035
+- **Closed:** 35
+- **Next available:** SP-036
 
-*Last Updated: 2026-06-30*
+*Last Updated: 2026-07-06*

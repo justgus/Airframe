@@ -194,6 +194,51 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitGitHubConfiguredCanonicalWorkspaceRunsOfflineApplicationFlows() async throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "github-issues"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintTaskStatus: "Implemented - Not Verified",
+        sprintIssueStatus: "Resolved - Not Verified",
+        epicCriteria: ["Criterion remains ready for offline planning."]
+    )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.backendStatusText.contains("canonical"))
+    #expect(model.backendStatusText.contains("GitHub issue mapping off"))
+    #expect(model.statusMessage == "Loaded canonical Airframe workspace.")
+    #expect(model.summary.unverifiedTaskCount == 1)
+    #expect(model.readyRecords.map(\.workItem.id).contains(AirframeID("T-0107")))
+
+    model.selectedSection = .planning
+    #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-022"))
+    #expect(model.activeEpicRecord?.workItem.id == AirframeID("EP-018"))
+    #expect(model.sprintRecords.map(\.workItem.id).contains(AirframeID("T-0107")))
+    #expect(model.epicRecords.map(\.workItem.id).contains(AirframeID("T-0107")))
+
+    model.selectedSection = .verification
+    model.selectVerificationWorkItem(AirframeID("T-0107"))
+    try await waitForVerificationDetailLoaded(model)
+
+    if case .loaded(let packet) = model.verificationDetailState {
+        #expect(packet.workItem.id == AirframeID("T-0107"))
+        #expect(packet.workItem.status == .implementedNotVerified)
+    } else {
+        Issue.record("Expected canonical verification detail to load offline.")
+    }
+}
+
+@MainActor
 @Test func agileCockpitShowsCanonicalDataHealthDiagnosticsForMissingPlanningRecords() throws {
     let configURL = try temporaryLiveConfigurationURL(
         activeSprintID: "SP-028",

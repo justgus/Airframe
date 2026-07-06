@@ -42,6 +42,21 @@ import Foundation
     #expect(result.standardOutput.contains("\"status\" : \"ok\""))
 }
 
+@Test func configDiagnoseExplainsCanonicalLocalFirstOperationForGitHubWorkspace() throws {
+    let config = try temporaryGitHubConfigurationWithCanonicalStatePath()
+    let result = AICockpitCommand.response(arguments: [
+        "config", "diagnose",
+        "--config", config,
+        "--output", "json"
+    ])
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("\"status\" : \"warning\""))
+    #expect(result.standardOutput.contains("\"code\" : \"canonicalStoreUsesLocalBackend\""))
+    #expect(result.standardOutput.contains("GitHub-backed paths are optional"))
+}
+
 @Test func stateDiagnosticsReturnsCanonicalDiagnosticsJSON() {
     let store = temporaryStorePath()
     let created = AICockpitCommand.response(arguments: [
@@ -401,6 +416,78 @@ import Foundation
     #expect(savedIssue?.sprintID == AirframeID("SP-9500"))
 }
 
+@Test func githubConfiguredWorkspaceRunsCanonicalWorkItemCommandsOffline() throws {
+    let configPath = try temporaryGitHubConfigurationWithCanonicalStatePath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try seedCanonicalActiveOwners(repository: repository, epicID: "EP-9600", sprintID: "SP-9600")
+
+    let task = AICockpitCommand.response(arguments: [
+        "task", "create",
+        "--config", configPath,
+        "--id", "T-9600",
+        "--title", "Offline task flow",
+        "--status", "active",
+        "--output", "json"
+    ])
+    let issue = AICockpitCommand.response(arguments: [
+        "issue", "create",
+        "--config", configPath,
+        "--id", "I-9600",
+        "--title", "Offline issue flow",
+        "--status", "active",
+        "--output", "json"
+    ])
+    let sprint = AICockpitCommand.response(arguments: [
+        "sprint", "create",
+        "--config", configPath,
+        "--id", "SP-9601",
+        "--title", "Offline sprint flow",
+        "--status", "planning",
+        "--epic", "EP-9600",
+        "--output", "json"
+    ])
+    let epic = AICockpitCommand.response(arguments: [
+        "epic", "create",
+        "--config", configPath,
+        "--id", "EP-9601",
+        "--title", "Offline epic flow",
+        "--status", "draft",
+        "--output", "json"
+    ])
+    let updated = AICockpitCommand.response(arguments: [
+        "task", "update", "T-9600",
+        "--config", configPath,
+        "--title", "Offline task flow updated",
+        "--output", "json"
+    ])
+    let implemented = AICockpitCommand.response(arguments: [
+        "task", "status", "T-9600",
+        "--config", configPath,
+        "--to", "implemented",
+        "--output", "json"
+    ])
+    let packet = AICockpitCommand.response(arguments: [
+        "task", "packet", "T-9600",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let summary = AICockpitCommand.response(arguments: [
+        "project", "summary",
+        "--config", configPath,
+        "--output", "json"
+    ])
+
+    for result in [task, issue, sprint, epic, updated, implemented, packet, summary] {
+        #expect(result.exitCode == 0)
+        #expect(result.standardError.isEmpty)
+        #expect(result.standardOutput.contains("\"backendKind\" : \"canonical\""))
+    }
+    #expect(implemented.standardOutput.contains("\"status\" : \"implementedNotVerified\""))
+    #expect(packet.standardOutput.contains("\"kind\" : \"taskPacket\""))
+    #expect(summary.standardOutput.contains("\"kind\" : \"projectSummary\""))
+}
+
 @Test func canonicalStoreBackendCreatesAndLinksTaskRecords() throws {
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AICockpitCanonicalCreateTests")
@@ -634,6 +721,188 @@ import Foundation
     #expect(result.standardOutput.contains("\"removedCount\" : 1"))
     #expect(savedRequirement?.title == "Apply requirement")
     #expect(removedRequirement == nil)
+}
+
+@Test func stateExportMarkdownProjectsRequirementReportsAndReturns() throws {
+    let configPath = try temporaryCanonicalRequirementsConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    try store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-9700"),
+                kind: .task,
+                title: "Export Markdown regression",
+                status: .active
+            ),
+            component: "AICockpit",
+            priority: .high,
+            rationale: "Export should finish after projecting requirement reports.",
+            requirementIDs: [AirframeID("REQ-9700")]
+        )
+    )
+    try store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9700"),
+            title: "Markdown export completes",
+            statement: "AICockpit shall export generated Markdown projections and exit.",
+            status: .implemented,
+            traceLinks: [
+                AirframeRequirementLink(
+                    id: AirframeID("LINK-REQ-9700-T-9700"),
+                    targetKind: AirframeRequirementTraceTargetKind.task.rawValue,
+                    targetID: "T-9700"
+                )
+            ]
+        )
+    )
+
+    let result = AICockpitCommand.response(arguments: [
+        "state", "export-markdown",
+        "--config", configPath
+    ])
+    let taskProjection = try String(
+        contentsOf: rootURL.appending(path: "docs/generated/Tasks/T-9700.md"),
+        encoding: .utf8
+    )
+    let requirementProjection = try String(
+        contentsOf: rootURL.appending(path: "docs/generated/Requirements/Requirements-Traceability-Matrix.md"),
+        encoding: .utf8
+    )
+
+    #expect(result.exitCode == 0)
+    #expect(result.standardError.isEmpty)
+    #expect(result.standardOutput.contains("canonicalMarkdownExport"))
+    #expect(taskProjection.contains("T-9700"))
+    #expect(requirementProjection.contains("REQ-9700"))
+}
+
+@Test func githubConfiguredCanonicalSprintAndEpicWorkflowCommandsStayLocalOffline() throws {
+    let configPath = try temporaryGitHubConfigurationWithCanonicalStatePath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe"
+        )
+    )
+
+    let epicCreate = AICockpitCommand.response(arguments: [
+        "epic", "create",
+        "--config", configPath,
+        "--id", "EP-9600",
+        "--title", "Offline Epic workflow",
+        "--status", "proposed",
+        "--scope", "Exercise local Epic workflow transitions.",
+        "--output", "json"
+    ])
+    let sprintCreate = AICockpitCommand.response(arguments: [
+        "sprint", "create",
+        "--config", configPath,
+        "--id", "SP-9600",
+        "--title", "Offline Sprint workflow",
+        "--status", "backlog",
+        "--epic", "EP-9600",
+        "--scope", "Exercise local Sprint workflow transitions.",
+        "--output", "json"
+    ])
+    let sprintPlanning = AICockpitCommand.response(arguments: [
+        "sprint", "status", "SP-9600",
+        "--config", configPath,
+        "--to", "planning",
+        "--output", "json"
+    ])
+    let sprintActive = AICockpitCommand.response(arguments: [
+        "sprint", "status", "SP-9600",
+        "--config", configPath,
+        "--to", "active",
+        "--output", "json"
+    ])
+    let sprintReview = AICockpitCommand.response(arguments: [
+        "sprint", "status", "SP-9600",
+        "--config", configPath,
+        "--to", "review",
+        "--output", "json"
+    ])
+    let epicDraft = AICockpitCommand.response(arguments: [
+        "epic", "status", "EP-9600",
+        "--config", configPath,
+        "--to", "draft",
+        "--output", "json"
+    ])
+    let epicBacklog = AICockpitCommand.response(arguments: [
+        "epic", "status", "EP-9600",
+        "--config", configPath,
+        "--to", "backlog",
+        "--output", "json"
+    ])
+    let epicActive = AICockpitCommand.response(arguments: [
+        "epic", "status", "EP-9600",
+        "--config", configPath,
+        "--to", "active",
+        "--output", "json"
+    ])
+    let epicComplete = AICockpitCommand.response(arguments: [
+        "epic", "status", "EP-9600",
+        "--config", configPath,
+        "--to", "complete",
+        "--output", "json"
+    ])
+    let deniedSprintClose = AICockpitCommand.response(arguments: [
+        "sprint", "status", "SP-9600",
+        "--config", configPath,
+        "--to", "closed",
+        "--output", "json"
+    ])
+    let deniedEpicClose = AICockpitCommand.response(arguments: [
+        "epic", "status", "EP-9600",
+        "--config", configPath,
+        "--to", "closed",
+        "--output", "json"
+    ])
+    let export = AICockpitCommand.response(arguments: [
+        "state", "export-markdown",
+        "--config", configPath
+    ])
+
+    let sprint = try repository.store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-9600"))
+    let epic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-9600"))
+    let project = try repository.store.load(AirframeCanonicalProjectRecord.self, id: AirframeID("PRJ-AIRFRAME"))
+    let sprintProjection = try String(
+        contentsOf: rootURL.appending(path: "docs/generated/Sprints/SP-9600.md"),
+        encoding: .utf8
+    )
+    let epicProjection = try String(
+        contentsOf: rootURL.appending(path: "docs/generated/Epics/EP-9600.md"),
+        encoding: .utf8
+    )
+
+    #expect(epicCreate.exitCode == 0)
+    #expect(epicCreate.standardOutput.contains("\"backendKind\" : \"canonical\""))
+    #expect(epicCreate.standardOutput.contains("\"supportsGitHubIssues\" : false"))
+    #expect(sprintCreate.exitCode == 0)
+    #expect(sprintPlanning.exitCode == 0)
+    #expect(sprintActive.exitCode == 0)
+    #expect(sprintReview.exitCode == 0)
+    #expect(epicDraft.exitCode == 0)
+    #expect(epicBacklog.exitCode == 0)
+    #expect(epicActive.exitCode == 0)
+    #expect(epicComplete.exitCode == 0)
+    #expect(deniedSprintClose.exitCode == 64)
+    #expect(deniedSprintClose.standardOutput.contains("sprint closure is human-only"))
+    #expect(deniedEpicClose.exitCode == 64)
+    #expect(deniedEpicClose.standardOutput.contains("epic closure is human-only"))
+    #expect(export.exitCode == 0)
+    #expect(export.standardOutput.contains("canonicalMarkdownExport"))
+    #expect(sprint?.workItem.status == .review)
+    #expect(epic?.workItem.status == .complete)
+    #expect(project?.activeSprintID == AirframeID("SP-9600"))
+    #expect(project?.activeEpicID == nil)
+    #expect(project?.epicIDs.contains(AirframeID("EP-9600")) == true)
+    #expect(sprintProjection.contains("**Status:** Review"))
+    #expect(epicProjection.contains("**Status:** Complete"))
 }
 
 @Test func stateImportMarkdownSeedsCanonicalRequirementsFromRequirementDocs() throws {
@@ -1222,6 +1491,87 @@ private func temporaryLiveConfigurationPath() throws -> String {
         """.utf8
     ).write(to: configURL)
     return configURL.path
+}
+
+private func temporaryGitHubConfigurationWithCanonicalStatePath() throws -> String {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AICockpitGitHubConfigWithCanonicalState")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: ".airframe/state"),
+        withIntermediateDirectories: true
+    )
+    let configURL = rootURL.appending(path: "airframe-workspace.json")
+    try Data(
+        """
+        {
+          "schemaVersion": 1,
+          "workspace": {
+            "id": { "rawValue": "WS-AIRFRAME-LIVE" },
+            "name": "Airframe Live Demo",
+            "rootPath": "."
+          },
+          "projects": [
+            {
+              "id": { "rawValue": "PRJ-AIRFRAME" },
+              "name": "Agile Airframe",
+              "repository": "justgus/Airframe",
+              "activeSprintID": { "rawValue": "SP-035" },
+              "activeEpicID": { "rawValue": "EP-019" }
+            }
+          ],
+          "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },
+          "backend": {
+            "kind": "github-issues",
+            "location": "justgus/Airframe"
+          }
+        }
+        """.utf8
+    ).write(to: configURL)
+    return configURL.path
+}
+
+private func seedCanonicalActiveOwners(
+    repository: AirframeCanonicalStoreRepository,
+    epicID: String,
+    sprintID: String
+) throws {
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID(epicID),
+            activeSprintID: AirframeID(sprintID),
+            epicIDs: [AirframeID(epicID)],
+            sprintIDs: [AirframeID(sprintID)]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID(epicID),
+                kind: .epic,
+                title: "Canonical active Epic",
+                status: .active
+            ),
+            owner: "Airframe",
+            goal: "Own local-only work.",
+            rationale: "Canonical state is the source of truth."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID(sprintID),
+                kind: .sprint,
+                title: "Canonical active Sprint",
+                status: .active
+            ),
+            epicID: AirframeID(epicID),
+            goal: "Own local-only work."
+        )
+    )
 }
 
 private func temporaryCanonicalRequirementsConfigurationPath() throws -> String {

@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "The local-only backend target is explicit for workspace, CLI, and app operation.",
+    "Missing GitHub credentials or unavailable GitHub tooling does not make local-only operation fail.",
+    "Configuration diagnostics explain optional GitHub-backed behavior without blocking local workflows."
+  ],
+  "component" : "Define how Airframe should launch and operate with canonical repo-local state or local filesystem backend only, including configuration and diagnostics behavior.",
+  "componentsAffected" : [
+    "Define how Airframe should launch and operate with canonical repo-local state or local filesystem backend only, including configuration and diagnostics behavior."
+  ],
+  "dateImplemented" : "2026-07-01",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-019"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:45:55Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-035"
+  },
+  "testSteps" : [
+    "AICockpit context, config diagnostics, or targeted tests showing local-only profile behavior."
+  ],
+  "workItem" : {
+    "githubIssue" : 162,
+    "id" : {
+      "rawValue" : "T-0149"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Define local-only operating profile"
+  }
+}

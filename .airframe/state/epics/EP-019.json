@@ -19,6 +19,7 @@
       "rawValue" : "EP-019-AC-06"
     }
   ],
+  "closeDate" : "2026-07-06",
   "goal" : "Make Airframe fully functional without GitHub or any backend server so the workspace, CLI, and app can operate entirely offline against local files and local state.",
   "issueIDs" : [
 
@@ -29,7 +30,8 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Epics\/Epic-backlog.md"
+    "source" : "docs\/Epics\/Epic-backlog.md",
+    "updatedAt" : "2026-07-06T14:47:13Z"
   },
   "notes" : [
     "Acceptance Criteria: 1. Airframe can launch and operate with only the local filesystem backend configured. 2. AICockpit can read, create, update, and transition supported work items offline. 3. AgileCockpit can load the dashboard, review view, planning view, and verification flows offline. 4. Sprint and Epic workflows do not require GitHub access or any remote server for core local operation. 5. Offline regression tests pass without network access or GitHub credentials. 6. GitHub-backed paths remain optional and do not block local workflows when unavailable.",
@@ -57,17 +59,36 @@
     "Add offline regression coverage for project load, dashboard display, task packets, verification, planning, and archive updates."
   ],
   "sprintIDs" : [
-
+    {
+      "rawValue" : "SP-035"
+    }
   ],
   "taskIDs" : [
-
+    {
+      "rawValue" : "T-0148"
+    },
+    {
+      "rawValue" : "T-0149"
+    },
+    {
+      "rawValue" : "T-0150"
+    },
+    {
+      "rawValue" : "T-0151"
+    },
+    {
+      "rawValue" : "T-0152"
+    },
+    {
+      "rawValue" : "T-0153"
+    }
   ],
   "workItem" : {
     "id" : {
       "rawValue" : "EP-019"
     },
     "kind" : "epic",
-    "status" : "backlog",
+    "status" : "closed",
     "title" : "Airframe Offline-Only Operation"
   }
 }

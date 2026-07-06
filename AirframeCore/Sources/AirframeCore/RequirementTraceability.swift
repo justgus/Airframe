@@ -118,6 +118,20 @@ public struct AirframeRequirementReleaseGateSummary: Codable, Equatable, Sendabl
     }
 }
 
+private struct AirframeInferredRequirementTraceMatches: Sendable {
+    let workItemIDs: Set<AirframeID>
+    let evidenceIDs: Set<AirframeID>
+    let acceptanceCriterionIDs: Set<AirframeID>
+    let targetKinds: Set<String>
+
+    static let empty = AirframeInferredRequirementTraceMatches(
+        workItemIDs: [],
+        evidenceIDs: [],
+        acceptanceCriterionIDs: [],
+        targetKinds: []
+    )
+}
+
 public struct AirframeRequirementTraceabilityIndex: Sendable {
     public let requirements: [AirframeCanonicalRequirementRecord]
     public let revisions: [AirframeCanonicalRequirementRevisionRecord]
@@ -132,6 +146,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     private let revisionsByRequirementID: [AirframeID: [AirframeCanonicalRequirementRevisionRecord]]
     private let evidenceByID: [AirframeID: AirframeCanonicalEvidenceSummaryRecord]
     private let acceptanceCriteriaByID: [AirframeID: AirframeCanonicalAcceptanceCriterionRecord]
+    private let inferredMatchesByRequirementID: [AirframeID: AirframeInferredRequirementTraceMatches]
 
     public init(
         requirements: [AirframeCanonicalRequirementRecord] = [],
@@ -143,24 +158,49 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         tasks: [AirframeCanonicalTaskRecord] = [],
         issues: [AirframeCanonicalIssueRecord] = []
     ) {
-        self.requirements = requirements.sorted { $0.id.rawValue < $1.id.rawValue }
-        self.revisions = revisions.sorted {
+        let sortedRequirements = requirements.sorted { $0.id.rawValue < $1.id.rawValue }
+        let sortedRevisions = revisions.sorted {
             $0.requirementID.rawValue == $1.requirementID.rawValue
                 ? $0.revisionNumber == $1.revisionNumber
                     ? $0.id.rawValue < $1.id.rawValue
                     : $0.revisionNumber < $1.revisionNumber
                 : $0.requirementID.rawValue < $1.requirementID.rawValue
         }
-        self.evidence = evidence.sorted { $0.id.rawValue < $1.id.rawValue }
-        self.acceptanceCriteria = acceptanceCriteria.sorted { $0.id.rawValue < $1.id.rawValue }
-        self.epics = epics.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
-        self.sprints = sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
-        self.tasks = tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
-        self.issues = issues.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
-        self.requirementsByID = Dictionary(uniqueKeysWithValues: self.requirements.map { ($0.id, $0) })
-        self.revisionsByRequirementID = Dictionary(grouping: self.revisions, by: \.requirementID)
-        self.evidenceByID = Dictionary(uniqueKeysWithValues: self.evidence.map { ($0.id, $0) })
-        self.acceptanceCriteriaByID = Dictionary(uniqueKeysWithValues: self.acceptanceCriteria.map { ($0.id, $0) })
+        let sortedEvidence = evidence.sorted { $0.id.rawValue < $1.id.rawValue }
+        let sortedAcceptanceCriteria = acceptanceCriteria.sorted { $0.id.rawValue < $1.id.rawValue }
+        let sortedEpics = epics.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+        let sortedSprints = sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+        let sortedTasks = tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+        let sortedIssues = issues.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+
+        self.requirements = sortedRequirements
+        self.revisions = sortedRevisions
+        self.evidence = sortedEvidence
+        self.acceptanceCriteria = sortedAcceptanceCriteria
+        self.epics = sortedEpics
+        self.sprints = sortedSprints
+        self.tasks = sortedTasks
+        self.issues = sortedIssues
+        self.requirementsByID = Dictionary(uniqueKeysWithValues: sortedRequirements.map { ($0.id, $0) })
+        self.revisionsByRequirementID = Dictionary(grouping: sortedRevisions, by: \.requirementID)
+        self.evidenceByID = Dictionary(uniqueKeysWithValues: sortedEvidence.map { ($0.id, $0) })
+        self.acceptanceCriteriaByID = Dictionary(uniqueKeysWithValues: sortedAcceptanceCriteria.map { ($0.id, $0) })
+        self.inferredMatchesByRequirementID = Dictionary(
+            uniqueKeysWithValues: sortedRequirements.map { requirement in
+                (
+                    requirement.id,
+                    Self.inferredTraceMatches(
+                        for: requirement,
+                        acceptanceCriteria: sortedAcceptanceCriteria,
+                        epics: sortedEpics,
+                        sprints: sortedSprints,
+                        tasks: sortedTasks,
+                        issues: sortedIssues,
+                        evidence: sortedEvidence
+                    )
+                )
+            }
+        )
     }
 
     public func revisionHistory(for requirementID: AirframeID) -> [AirframeCanonicalRequirementRevisionRecord] {
@@ -238,7 +278,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             evidenceIDs.insert(evidenceRecord.id)
         }
 
-        let inferred = inferredTraceMatches(for: requirement)
+        let inferred = inferredTraceMatches(for: requirementID)
         workItemIDs.formUnion(inferred.workItemIDs)
         evidenceIDs.formUnion(inferred.evidenceIDs)
         acceptanceCriterionIDs.formUnion(inferred.acceptanceCriterionIDs)
@@ -422,9 +462,8 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     }
 
     private func inferredTraceSummary(for requirementID: AirframeID) -> AirframeRequirementTraceSummary {
-        let requirement = requirementsByID[requirementID]
         let revisionIDs = revisionHistory(for: requirementID).map(\.id)
-        let inferred = inferredTraceMatches(for: requirement)
+        let inferred = inferredTraceMatches(for: requirementID)
         return AirframeRequirementTraceSummary(
             requirementID: requirementID,
             revisionIDs: revisionIDs,
@@ -436,16 +475,19 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         )
     }
 
-    private func inferredTraceMatches(for requirement: AirframeCanonicalRequirementRecord?) -> (
-        workItemIDs: Set<AirframeID>,
-        evidenceIDs: Set<AirframeID>,
-        acceptanceCriterionIDs: Set<AirframeID>,
-        targetKinds: Set<String>
-    ) {
-        guard let requirement else {
-            return ([], [], [], [])
-        }
+    private func inferredTraceMatches(for requirementID: AirframeID) -> AirframeInferredRequirementTraceMatches {
+        inferredMatchesByRequirementID[requirementID] ?? .empty
+    }
 
+    private static func inferredTraceMatches(
+        for requirement: AirframeCanonicalRequirementRecord,
+        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord],
+        epics: [AirframeCanonicalEpicRecord],
+        sprints: [AirframeCanonicalSprintRecord],
+        tasks: [AirframeCanonicalTaskRecord],
+        issues: [AirframeCanonicalIssueRecord],
+        evidence: [AirframeCanonicalEvidenceSummaryRecord]
+    ) -> AirframeInferredRequirementTraceMatches {
         let requirementText = "\(requirement.title)\n\(requirement.statement)\n\(requirement.rationale)"
         let requirementTokens = normalizedTokens(requirementText)
         var workItemIDs = Set<AirframeID>()
@@ -498,13 +540,18 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             }
         }
 
-        return (workItemIDs, evidenceIDs, acceptanceCriterionIDs, targetKinds)
+        return AirframeInferredRequirementTraceMatches(
+            workItemIDs: workItemIDs,
+            evidenceIDs: evidenceIDs,
+            acceptanceCriterionIDs: acceptanceCriterionIDs,
+            targetKinds: targetKinds
+        )
     }
 
     private func requirements(matching criterion: AirframeCanonicalAcceptanceCriterionRecord) -> [AirframeID] {
-        let requirementTokens = normalizedTokens(criterion.text)
+        let requirementTokens = Self.normalizedTokens(criterion.text)
         return requirements.compactMap { requirement in
-            let score = matchScore(queryTokens: requirementTokens, candidate: "\(requirement.title) \(requirement.statement)")
+            let score = Self.matchScore(queryTokens: requirementTokens, candidate: "\(requirement.title) \(requirement.statement)")
             if requirement.id == criterion.ownerID || score >= 3 {
                 return requirement.id
             }
@@ -512,7 +559,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         }
     }
 
-    private func searchableText(for epic: AirframeCanonicalEpicRecord) -> String {
+    private static func searchableText(for epic: AirframeCanonicalEpicRecord) -> String {
         [
             epic.workItem.id.rawValue,
             epic.workItem.title,
@@ -527,7 +574,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         .joined(separator: "\n")
     }
 
-    private func searchableText(for sprint: AirframeCanonicalSprintRecord) -> String {
+    private static func searchableText(for sprint: AirframeCanonicalSprintRecord) -> String {
         [
             sprint.workItem.id.rawValue,
             sprint.workItem.title,
@@ -538,7 +585,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         .joined(separator: "\n")
     }
 
-    private func searchableText(for task: AirframeCanonicalTaskRecord) -> String {
+    private static func searchableText(for task: AirframeCanonicalTaskRecord) -> String {
         [
             task.workItem.id.rawValue,
             task.workItem.title,
@@ -557,7 +604,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         .joined(separator: "\n")
     }
 
-    private func searchableText(for issue: AirframeCanonicalIssueRecord) -> String {
+    private static func searchableText(for issue: AirframeCanonicalIssueRecord) -> String {
         [
             issue.workItem.id.rawValue,
             issue.workItem.title,
@@ -571,7 +618,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         .joined(separator: "\n")
     }
 
-    private func searchableText(for evidence: AirframeCanonicalEvidenceSummaryRecord) -> String {
+    private static func searchableText(for evidence: AirframeCanonicalEvidenceSummaryRecord) -> String {
         [
             evidence.id.rawValue,
             evidence.summary,
@@ -583,7 +630,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         .joined(separator: "\n")
     }
 
-    private func normalizedTokens(_ text: String) -> Set<String> {
+    private static func normalizedTokens(_ text: String) -> Set<String> {
         let stopWords: Set<String> = [
             "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has", "have", "in", "is", "it", "of", "on", "or", "shall", "the", "to", "with", "will"
         ]
@@ -595,7 +642,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             .reduce(into: Set<String>()) { $0.insert($1) }
     }
 
-    private func matchScore(queryTokens: Set<String>, candidate: String) -> Int {
+    private static func matchScore(queryTokens: Set<String>, candidate: String) -> Int {
         let candidateTokens = normalizedTokens(candidate)
         let shared = queryTokens.intersection(candidateTokens)
         return shared.count

@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "AgileCockpit loads dashboard, review, planning, and verification flows offline.",
+    "Unavailable GitHub transport or credentials do not block local\/canonical dashboard and workflow use.",
+    "Backend status and diagnostics make optional GitHub behavior visible without requiring it."
+  ],
+  "component" : "Verify and harden AgileCockpit dashboard, review, planning, verification, diagnostics, and refresh behavior using local\/canonical state without GitHub access.",
+  "componentsAffected" : [
+    "Verify and harden AgileCockpit dashboard, review, planning, verification, diagnostics, and refresh behavior using local\/canonical state without GitHub access."
+  ],
+  "dateImplemented" : "2026-07-01",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-019"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:46:02Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-035"
+  },
+  "testSteps" : [
+    "Focused AgileCockpit tests or screenshots\/test output for local\/canonical offline flows."
+  ],
+  "workItem" : {
+    "githubIssue" : 164,
+    "id" : {
+      "rawValue" : "T-0151"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Harden AgileCockpit offline application flows"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "AICockpit can read, create, update, and transition supported Tasks, Issues, Sprints, and Epics offline.",
+    "Task packets and project summary work against local\/canonical state without GitHub credentials.",
+    "GitHub-specific commands remain explicit optional paths and do not affect local command success."
+  ],
+  "component" : "Verify and harden AICockpit local\/canonical read, create, update, transition, task packet, project summary, and planning commands without GitHub access.",
+  "componentsAffected" : [
+    "Verify and harden AICockpit local\/canonical read, create, update, transition, task packet, project summary, and planning commands without GitHub access."
+  ],
+  "dateImplemented" : "2026-07-01",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-019"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:45:46Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-035"
+  },
+  "testSteps" : [
+    "Focused AICockpit tests or command transcripts for canonical\/local offline flows."
+  ],
+  "workItem" : {
+    "githubIssue" : 163,
+    "id" : {
+      "rawValue" : "T-0150"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Harden AICockpit offline work item flows"
+  }
+}

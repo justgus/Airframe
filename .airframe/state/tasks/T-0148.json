@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "All runtime paths that can require GitHub, gh, credentials, network, or a remote server are listed with owning component and call path.",
+    "Each finding is mapped to EP-019 acceptance criteria or marked explicitly out of scope.",
+    "The inventory identifies which paths are required for core local operation and which are optional GitHub-backed behavior."
+  ],
+  "component" : "Audit AirframeCore, AICockpit, AgileCockpit, workspace configuration, and test entry points for hidden GitHub, gh, credential, network, or server assumptions.",
+  "componentsAffected" : [
+    "Audit AirframeCore, AICockpit, AgileCockpit, workspace configuration, and test entry points for hidden GitHub, gh, credential, network, or server assumptions."
+  ],
+  "dateImplemented" : "2026-07-01",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-019"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:45:32Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-035"
+  },
+  "testSteps" : [
+    "Command output or notes from targeted code searches and configuration inspection."
+  ],
+  "workItem" : {
+    "githubIssue" : 161,
+    "id" : {
+      "rawValue" : "T-0148"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Inventory offline runtime dependencies"
+  }
+}

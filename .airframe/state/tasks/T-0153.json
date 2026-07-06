@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "Offline regression tests pass without network access or GitHub credentials.",
+    "GitHub-backed paths remain optional and do not block local workflows when unavailable.",
+    "Verification evidence clearly identifies the offline environment assumptions and commands run."
+  ],
+  "component" : "Add or consolidate regression coverage that proves offline-only operation across AirframeCore, AICockpit, and AgileCockpit without network access or GitHub credentials.",
+  "componentsAffected" : [
+    "Add or consolidate regression coverage that proves offline-only operation across AirframeCore, AICockpit, and AgileCockpit without network access or GitHub credentials."
+  ],
+  "dateImplemented" : "2026-07-01",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-019"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:46:21Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-035"
+  },
+  "testSteps" : [
+    "Passing AirframeCore, AICockpit, and AgileCockpit offline regression test output or equivalent focused evidence."
+  ],
+  "workItem" : {
+    "githubIssue" : 166,
+    "id" : {
+      "rawValue" : "T-0153"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Add offline regression verification suite"
+  }
+}

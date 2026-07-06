@@ -66,7 +66,11 @@ public enum AICockpitCommand {
         if parsed.positionals == ["config", "diagnose"] {
             do {
                 let configuration = try parsed.runtimeResolver.loadConfiguration(explicitPath: parsed.value(for: "--config"))
-                let diagnostics = AirframeConfigurationLoader().diagnostics(for: configuration)
+                let diagnostics = contextualConfigurationDiagnostics(
+                    AirframeConfigurationLoader().diagnostics(for: configuration),
+                    configuration: configuration,
+                    parsed: parsed
+                )
                 return AICockpitCommandResult(
                     exitCode: diagnostics.isValid ? 0 : 78,
                     standardOutput: try render(
@@ -1238,6 +1242,46 @@ public enum AICockpitCommand {
                 outputFormat: outputFormat
             )
         }
+    }
+
+    private static func contextualConfigurationDiagnostics(
+        _ diagnostics: AirframeConfigurationDiagnostics,
+        configuration: AirframeWorkspaceConfiguration,
+        parsed: AICockpitArguments
+    ) -> AirframeConfigurationDiagnostics {
+        guard diagnostics.isValid,
+              configuration.backend.kind.hasPrefix("github"),
+              let projectContext = try? AirframeConfigurationLoader().context(for: configuration),
+              let rootURL = try? parsed.workspaceRootURL(projectContext: projectContext),
+              FileManager.default.fileExists(atPath: rootURL.appending(path: ".airframe/state").path) else {
+            return diagnostics
+        }
+
+        var issues = diagnostics.issues
+        issues.append(
+            AirframeConfigurationDiagnosticIssue(
+                severity: .warning,
+                code: "canonicalStoreUsesLocalBackend",
+                message: "Canonical state exists at .airframe/state; local operation uses the canonical backend before live GitHub, so GitHub-backed paths are optional."
+            )
+        )
+        let status: AirframeConfigurationDiagnosticSeverity
+        if issues.contains(where: { $0.severity == .error }) {
+            status = .error
+        } else if issues.contains(where: { $0.severity == .warning }) {
+            status = .warning
+        } else {
+            status = .ok
+        }
+        return AirframeConfigurationDiagnostics(
+            status: status,
+            workspaceID: diagnostics.workspaceID,
+            defaultProjectID: diagnostics.defaultProjectID,
+            projectCount: diagnostics.projectCount,
+            backendKind: diagnostics.backendKind,
+            backendLocation: diagnostics.backendLocation,
+            issues: issues
+        )
     }
 
     private static func errorResult(

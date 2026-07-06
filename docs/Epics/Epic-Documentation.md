@@ -26,7 +26,7 @@ Currently: **23 Epics** | Next available: **EP-024**
 | EP-016 | AICockpit to AgileCockpit Refresh Synchronization | Closed | 2026-06-11 | 2026-06-11 |
 | EP-017 | Workflow Status Dashboard and Mutation Authority | Closed | 2026-06-12 | 2026-06-14 |
 | EP-018 | AgileCockpit Sprint and Epic Status Controls | Closed | 2026-06-15 | 2026-06-25 |
-| EP-019 | Airframe Offline-Only Operation | Backlog | TBD | TBD |
+| EP-019 | Airframe Offline-Only Operation | Closed | TBD | 2026-07-06 |
 | EP-020 | Canonical Airframe Workflow State | Closed | 2026-06-17 | 2026-06-23 |
 | EP-021 | Requirements Traceability and Release Evidence | Closed | 2026-06-23 | 2026-06-24 |
 | EP-022 | Telemetrix Importer and Canonical Repair Fixes | Closed | 2026-06-25 | 2026-06-30 |
@@ -35,9 +35,9 @@ Currently: **23 Epics** | Next available: **EP-024**
 ## Statistics
 
 - **Total Epics:** 23
-- **Backlog:** 2
+- **Backlog:** 1
 - **Active:** 0
-- **Closed:** 21
+- **Closed:** 22
 - **Next available:** EP-024
 
-*Last Updated: 2026-06-30*
+*Last Updated: 2026-07-06*

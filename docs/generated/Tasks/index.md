@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **147 total Tasks**
+Currently: **153 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 1 |
+| Backlog | 0 |
 | Active | 0 |
-| Implemented - Not Verified | 8 |
-| Implemented - Verified | 138 |
+| Implemented - Not Verified | 6 |
+| Implemented - Verified | 147 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -118,15 +118,15 @@ Currently: **147 total Tasks**
 | T-0104 | #108 | Add Epic Acceptance Criteria tab to the planning panel | Implemented - Verified |
 | T-0105 | #110 | Add verification actions for Epic acceptance criteria | Implemented - Verified |
 | T-0106 | #109 | Add accessibility, selection, and evidence behavior for the criteria tab | Implemented - Verified |
-| T-0107 | #113 | Gate Sprint close on verified Tasks and Issues | Implemented - Not Verified |
-| T-0108 | #114 | Gate Epic close on verified acceptance criteria | Implemented - Not Verified |
-| T-0109 | #115 | Add close-action messaging and disabled-state behavior | Implemented - Not Verified |
-| T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | Implemented - Not Verified |
-| T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | Implemented - Not Verified |
-| T-0112 | TBD | Rewrite sprint and epic index files on close | Implemented - Not Verified |
-| T-0113 | TBD | Add tests for Epic acceptance-criteria verification | Implemented - Not Verified |
-| T-0114 | TBD | Add tests for Sprint and Epic archive updates | Implemented - Not Verified |
-| T-0115 | TBD | Add tests for offline local-only closeout behavior | Backlog |
+| T-0107 | #113 | Gate Sprint close on verified Tasks and Issues | Implemented - Verified |
+| T-0108 | #114 | Gate Epic close on verified acceptance criteria | Implemented - Verified |
+| T-0109 | #115 | Add close-action messaging and disabled-state behavior | Implemented - Verified |
+| T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | Implemented - Verified |
+| T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | Implemented - Verified |
+| T-0112 | TBD | Rewrite sprint and epic index files on close | Implemented - Verified |
+| T-0113 | TBD | Add tests for Epic acceptance-criteria verification | Implemented - Verified |
+| T-0114 | TBD | Add tests for Sprint and Epic archive updates | Implemented - Verified |
+| T-0115 | #152 | Add tests for offline local-only closeout behavior | Implemented - Verified |
 | T-0116 | #116 | Define canonical workflow record schemas | Implemented - Verified |
 | T-0117 | #117 | Implement repo-local JSON canonical store | Implemented - Verified |
 | T-0118 | #118 | Encode workflow policy definitions in AirframeCore | Implemented - Verified |
@@ -152,10 +152,16 @@ Currently: **147 total Tasks**
 | T-0138 | #137 | Implement evidence summaries and CI artifact links | Implemented - Verified |
 | T-0139 | #138 | Add release scope and gate evaluation | Implemented - Verified |
 | T-0140 | #139 | Add AgileCockpit release gate and traceability views | Implemented - Verified |
-| T-0141 | #140 | Generate compliance and traceability documents | Implemented - Verified |
-| T-0142 | #141 | Add regression tests for import/export, traceability, and gates | Implemented - Verified |
-| T-0143 | #142 | Define AICockpit requirements import command contract | Implemented - Verified |
-| T-0144 | #143 | Implement canonical requirements import apply path | Implemented - Verified |
-| T-0145 | #144 | Add Markdown requirements seed import support | Implemented - Verified |
-| T-0146 | #145 | Regenerate requirements documentation from canonical state | Implemented - Verified |
-| T-0147 | #146 | Add requirements import regression coverage | Implemented - Verified |
+| T-0141 | TBD | Generate compliance and traceability documents | Implemented - Verified |
+| T-0142 | TBD | Add regression tests for import/export, traceability, and gates | Implemented - Verified |
+| T-0143 | TBD | Define AICockpit requirements import command contract | Implemented - Verified |
+| T-0144 | TBD | Implement canonical requirements import apply path | Implemented - Verified |
+| T-0145 | TBD | Add Markdown requirements seed import support | Implemented - Verified |
+| T-0146 | TBD | Regenerate requirements documentation from canonical state | Implemented - Verified |
+| T-0147 | TBD | Add requirements import regression coverage | Implemented - Verified |
+| T-0148 | #161 | Inventory offline runtime dependencies | Implemented - Not Verified |
+| T-0149 | #162 | Define local-only operating profile | Implemented - Not Verified |
+| T-0150 | #163 | Harden AICockpit offline work item flows | Implemented - Not Verified |
+| T-0151 | #164 | Harden AgileCockpit offline application flows | Implemented - Not Verified |
+| T-0152 | #165 | Prove Sprint and Epic workflows operate offline | Implemented - Not Verified |
+| T-0153 | #166 | Add offline regression verification suite | Implemented - Not Verified |

@@ -1,0 +1,49 @@
+{
+  "endDate" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-019"
+  },
+  "goal" : "Plan and implement the first offline-only operation pass for AirframeCore, AICockpit, and AgileCockpit.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:46:31Z"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0148"
+    },
+    {
+      "rawValue" : "T-0149"
+    },
+    {
+      "rawValue" : "T-0150"
+    },
+    {
+      "rawValue" : "T-0151"
+    },
+    {
+      "rawValue" : "T-0152"
+    },
+    {
+      "rawValue" : "T-0153"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-035"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Offline-Only Operation Planning Sprint"
+  }
+}
