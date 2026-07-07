@@ -1,0 +1,55 @@
+{
+  "endDate" : "2026-07-07",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "goal" : "Create the first canonical test definition and management slice, including data model, CLI commands, AgileCockpit Tests tab, and EP-023 AC\/test gap coverage planning.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0025"
+    },
+    {
+      "rawValue" : "I-0026"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:03:21Z"
+  },
+  "notes" : [
+    "Activated on 2026-07-06 as the execution focus ahead of EP-023\/SP-036.",
+    "SP-036 was moved to Review because Active -> Backlog is not a valid Sprint lifecycle transition."
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0160"
+    },
+    {
+      "rawValue" : "T-0161"
+    },
+    {
+      "rawValue" : "T-0162"
+    },
+    {
+      "rawValue" : "T-0163"
+    },
+    {
+      "rawValue" : "T-0164"
+    },
+    {
+      "rawValue" : "T-0165"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-037"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Canonical Test Definition and Management Sprint"
+  }
+}

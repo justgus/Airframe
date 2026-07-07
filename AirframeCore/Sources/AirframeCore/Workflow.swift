@@ -100,6 +100,7 @@ public struct AirframeWorkflowTransitionEvaluator: Sendable {
             case (.backlog, .planning),
                  (.planning, .active),
                  (.active, .review),
+                 (.active, .backlog),
                  (.review, .closed),
                  (.review, .backlog):
                 true

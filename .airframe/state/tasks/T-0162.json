@@ -1,0 +1,54 @@
+{
+  "acceptanceCriteria" : [
+    "AICockpit can list canonical tests.",
+    "AICockpit can inspect a single test definition with linked ACs and requirements.",
+    "AICockpit can create or update test definitions within agent authority.",
+    "AICockpit can validate test traceability and emit JSON output."
+  ],
+  "component" : "AICockpit",
+  "componentsAffected" : [
+    "AICockpit",
+    "AirframeCore",
+    "Canonical State"
+  ],
+  "dateImplemented" : "2026-07-06",
+  "dateVerified" : "2026-07-07",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T01:54:18Z"
+  },
+  "notes" : [
+    "Implementation: Added AICockpit tests list, inspect, create, update, and validate commands backed by canonical test records.",
+    "Validation: swift test --package-path AICockpit passed on 2026-07-06. swift test --package-path AirframeCore passed on 2026-07-06."
+  ],
+  "priority" : "high",
+  "rationale" : "Agents need a CLI surface for test definition and management before AgileCockpit can rely on canonical test records.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-037"
+  },
+  "testSteps" : [
+    "Run AICockpit tests for test list, inspect, create, update, validate, and JSON output."
+  ],
+  "workItem" : {
+    "githubIssue" : 169,
+    "id" : {
+      "rawValue" : "T-0162"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Add AICockpit test definition and management commands"
+  }
+}

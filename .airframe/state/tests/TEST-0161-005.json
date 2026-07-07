@@ -1,0 +1,66 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-021-AC-01"
+    },
+    {
+      "rawValue" : "EP-021-AC-09"
+    },
+    {
+      "rawValue" : "EP-021-AC-10"
+    }
+  ],
+  "artifactReferences" : [
+    "docs/generated/Requirements/Requirements-Specification.md",
+    "docs/generated/Requirements/Requirements-Traceability-Matrix.md",
+    "docs/generated/Requirements/Compliance-Verification-Matrix.md"
+  ],
+  "automationCommand" : "swift test --package-path AICockpit",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Generated compliance artifacts remain deterministic.",
+    "Traceability documents continue to compile from canonical state."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0161-005"
+  },
+  "kind" : "ui",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T21:15:00Z"
+  },
+  "notes" : [
+    "Seed test for generated compliance documentation."
+  ],
+  "objective" : "Verify generated compliance and traceability documents remain deterministic for the current Airframe dataset.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "RT-FR-016"
+    },
+    {
+      "rawValue" : "RT-IE-003"
+    },
+    {
+      "rawValue" : "RT-IE-004"
+    },
+    {
+      "rawValue" : "CWS-FR-015"
+    }
+  ],
+  "workItemIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Export the generated compliance documents.",
+    "Compare the outputs against canonical state.",
+    "Confirm the traceability matrices remain deterministic."
+  ],
+  "title" : "Compliance document generation coverage"
+}

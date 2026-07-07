@@ -8,6 +8,24 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitLaunchControllerExposesValidStartupPhase() {
+    let controller = AgileCockpitLaunchController(
+        environment: [:],
+        currentDirectoryURL: URL(fileURLWithPath: FileManager.default.temporaryDirectory.path)
+    )
+
+    switch controller.phase {
+    case .loading(let message, let progress):
+        #expect(!message.isEmpty)
+        #expect(progress >= 0.0)
+    case .loaded(let model):
+        #expect(!model.statusMessage.isEmpty)
+    default:
+        Issue.record("Launch controller should start in a displayable phase.")
+    }
+}
+
+@MainActor
 @Test func agileCockpitSampleDashboardContextIsAvailable() throws {
     let model = try AgileCockpitDashboardModel.sample()
 
@@ -66,6 +84,34 @@ import Foundation
     model.selectedPlanningTab = .epicCriteria
 
     #expect(model.selectedPlanningTab == .epicCriteria)
+}
+
+@MainActor
+@Test func agileCockpitTestsTabIncludesCanonicalTestCoverageAndSelection() throws {
+    let configURL = try temporaryCanonicalTestsConfigurationURL()
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(AgileCockpitSection.allCases.map(\.rawValue) == [
+        "Dashboard",
+        "Verification",
+        "Sprint & Epic",
+        "Requirements",
+        "Tests",
+        "Metrics & Audit"
+    ])
+    #expect(model.testRows.map(\.id) == ["TEST-018-001"])
+    #expect(model.selectedTestRecord?.id == AirframeID("TEST-018-001"))
+    #expect(model.selectedTestRecord?.requirementIDs == [AirframeID("REQ-018-001")])
+    #expect(model.testCoverageRows.first?.tests == "TEST-018-001")
+    #expect(model.testGapRows.isEmpty)
+
+    model.selectedSection = .tests
+    model.selectTest(try #require(model.selectedTestRecord))
+
+    #expect(model.selectedSection == .tests)
 }
 
 @MainActor
@@ -1409,6 +1455,89 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitReturnsNonCurrentReviewSprintToBacklog() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-037",
+        activeEpicID: "EP-024",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeReviewSprintWorkspace(rootURL: rootURL)
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-037"))
+    #expect(model.reviewSprintRecords.map(\.workItem.id) == [AirframeID("SP-036")])
+    #expect(model.selectedReviewSprintRecord?.workItem.id == AirframeID("SP-036"))
+    #expect(model.selectedReviewSprintWorkRecords.map(\.workItem.id) == [
+        AirframeID("T-0154"),
+        AirframeID("I-0023")
+    ])
+
+    model.returnSelectedReviewSprintToBacklog()
+
+    let snapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+        .snapshot(project: model.context.project)
+    let reviewSprint = try #require(snapshot.sprints.first { $0.workItem.id == AirframeID("SP-036") })
+    #expect(reviewSprint.workItem.status == .backlog)
+    #expect(snapshot.project.activeSprintID == AirframeID("SP-037"))
+    #expect(model.canonicalSnapshot.project.activeSprintID == AirframeID("SP-037"))
+    #expect(model.reviewSprintRecords.isEmpty)
+    #expect(model.auditRows.last?.action == "OP-RETURN-SPRINT-TO-BACKLOG")
+    #expect(model.statusMessage == "Sprint SP-036 returned to Backlog.")
+
+    let backlog = try String(contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-backlog.md"), encoding: .utf8)
+    #expect(backlog.contains("## SP-036: Plan Review Foundations"))
+    #expect(backlog.contains("**Status:** Backlog"))
+}
+
+@MainActor
+@Test func agileCockpitReturnsActiveSprintToBacklogAndClearsActiveSprint() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-022",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    try writeCloseActionWorkspace(
+        rootURL: rootURL,
+        sprintTaskStatus: "Implemented - Verified",
+        sprintIssueStatus: "Resolved - Verified",
+        epicCriteria: ["[x] Criterion is verified."]
+    )
+    try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.activeSprintRecord?.workItem.id == AirframeID("SP-022"))
+    #expect(model.activeSprintRecord?.workItem.status == .active)
+
+    model.returnActiveSprintToBacklog()
+
+    let snapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
+        .snapshot(project: model.context.project)
+    let sprintRecord = try #require(snapshot.sprints.first { $0.workItem.id == AirframeID("SP-022") })
+    #expect(sprintRecord.workItem.status == .backlog)
+    #expect(snapshot.project.activeSprintID == nil)
+    #expect(model.canonicalSnapshot.project.activeSprintID == nil)
+    #expect(model.activeSprintRecord == nil)
+    #expect(model.auditRows.last?.action == "OP-RETURN-SPRINT-TO-BACKLOG")
+    #expect(model.auditRows.last?.workItemID == "SP-022")
+    #expect(model.statusMessage == "Sprint SP-022 returned to Backlog.")
+
+    let backlog = try String(contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-backlog.md"), encoding: .utf8)
+    let active = try String(contentsOf: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), encoding: .utf8)
+    #expect(backlog.contains("## SP-022: Close Eligibility"))
+    #expect(backlog.contains("**Status:** Backlog"))
+    #expect(!active.contains("SP-022"))
+}
+
+@MainActor
 @Test func agileCockpitClosesReviewedSprintUsingLocalCanonicalStateOnly() throws {
     let configURL = try temporaryLiveConfigurationURL(
         activeSprintID: "SP-022",
@@ -1616,6 +1745,91 @@ private func temporaryLiveConfigurationURL(
     return configURL
 }
 
+private func temporaryCanonicalTestsConfigurationURL() throws -> URL {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AgileCockpitCanonicalTests")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    let configURL = rootURL.appending(path: "airframe-workspace.json")
+    try liveConfigurationData(
+        activeSprintID: "SP-018",
+        activeEpicID: "EP-018",
+        backendKind: "local-fixture"
+    ).write(to: configURL)
+
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-018"),
+            activeSprintID: AirframeID("SP-018"),
+            epicIDs: [AirframeID("EP-018")],
+            sprintIDs: [AirframeID("SP-018")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-018"),
+                kind: .epic,
+                title: "Canonical test coverage",
+                status: .active
+            ),
+            owner: "Agile Cockpit",
+            goal: "Surface canonical tests in the UI.",
+            rationale: "Tests tab needs a canonical test set to render."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("SP-018"),
+                kind: .sprint,
+                title: "Canonical test coverage sprint",
+                status: .active
+            ),
+            epicID: AirframeID("EP-018"),
+            goal: "Render the Tests tab."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-018-001"),
+            title: "Canonical test coverage requirement",
+            statement: "The Tests tab shows canonical test definitions and coverage.",
+            status: .active
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalAcceptanceCriterionRecord(
+            id: AirframeID("EP-018-AC-01"),
+            ownerID: AirframeID("EP-018"),
+            text: "The Tests tab lists canonical tests and their linked requirements."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTestRecord(
+            id: AirframeID("TEST-018-001"),
+            title: "Tests tab renders canonical data",
+            objective: "Ensure the Tests tab shows canonical test definitions and trace coverage.",
+            kind: .acceptance,
+            status: .ready,
+            requirementIDs: [AirframeID("REQ-018-001")],
+            acceptanceCriterionIDs: [AirframeID("EP-018-AC-01")],
+            workItemIDs: [AirframeID("EP-018")],
+            steps: ["Open the Tests tab.", "Inspect the canonical test list.", "Review the requirement coverage section."],
+            expectedResults: ["The test is visible.", "Coverage shows the linked requirement.", "No test link gaps are reported."],
+            automationCommand: "swift test --package-path AgileCockpit",
+            artifactReferences: ["AgileCockpit/AgileCockpit/ContentView.swift"],
+            notes: ["Seeded for the Tests tab regression."]
+        )
+    )
+
+    return configURL
+}
+
 private func writeCloseActionWorkspace(
     rootURL: URL,
     sprintStatus: String = "Active",
@@ -1681,6 +1895,82 @@ private func writeCloseActionWorkspace(
     **Severity:** Medium
     **Epic:** EP-018
     **Sprint Assigned:** SP-022
+    """.write(to: rootURL.appending(path: "docs/Issues/Issue-active.md"), atomically: true, encoding: .utf8)
+}
+
+private func writeReviewSprintWorkspace(rootURL: URL) throws {
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Epics"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Sprints"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Tasks"),
+        withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: "docs/Issues"),
+        withIntermediateDirectories: true
+    )
+    try """
+    # Active Epics
+
+    ## EP-023: Plan Review
+
+    **Status:** Backlog
+
+    ## EP-024: Canonical Test Definition and Management
+
+    **Status:** Active
+    """.write(to: rootURL.appending(path: "docs/Epics/Epic-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Sprint
+
+    ## SP-036: Plan Review Foundations
+
+    **Status:** Review
+    **Epic:** EP-023
+
+    ### Assigned Tasks
+
+    | Task | Status |
+    | ---- | ---- |
+    | T-0154 | Backlog |
+
+    ### Assigned Issues
+
+    | Issue | Status |
+    | ---- | ---- |
+    | I-0023 | Resolved - Verified |
+
+    ## SP-037: Canonical Test Definition and Management Sprint
+
+    **Status:** Active
+    **Epic:** EP-024
+    """.write(to: rootURL.appending(path: "docs/Sprints/Sprint-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Tasks
+
+    ## T-0154: Define canonical plan review record and decision model
+
+    **Status:** Backlog
+    **GitHub Issue:** TBD
+    **Priority:** Medium
+    **Epic:** EP-023
+    **Sprint Assigned:** SP-036
+    """.write(to: rootURL.appending(path: "docs/Tasks/Task-active.md"), atomically: true, encoding: .utf8)
+    try """
+    # Active Issues
+
+    ## I-0023: Requirements tab freezes while loading traceability data
+
+    **Status:** Resolved - Verified
+    **Severity:** High
+    **Epic:** EP-023
+    **Sprint Assigned:** SP-036
     """.write(to: rootURL.appending(path: "docs/Issues/Issue-active.md"), atomically: true, encoding: .utf8)
 }
 

@@ -15,6 +15,7 @@ Airframe work products are part of the project repository. A branch, fork, check
 These requirements cover:
 
 - Canonical records for Epics, Sprints, Tasks, Issues, requirements, evidence, and trace links.
+- Canonical records for test definitions, suites, and summarized test runs.
 - Repo-local persistence.
 - Validation diagnostics.
 - Generated documentation projections.
@@ -47,6 +48,7 @@ Airframe shall represent relationships between work products by ID, including:
 - Sprint to Issue.
 - Requirement to Task.
 - Requirement to Test.
+- Acceptance criterion to Test.
 - Requirement to Evidence.
 - Task or Issue to Evidence.
 - Work item to GitHub issue where applicable.
@@ -103,6 +105,8 @@ CI evidence shall supplement, not replace, AirframeCore requirement verification
 ### CWS-FR-011 Requirement Traceability
 
 Airframe shall support traceability between requirements, implementation work, tests, evidence, and release decisions.
+
+Canonical test definitions shall be manageable through AICockpit commands for list, inspect, create, update, and validation. AgileCockpit shall present the same canonical test definitions for human review, including linked acceptance criteria, linked requirements, and traceability gaps. Human verification remains separate from test definition management.
 
 ### CWS-FR-012 Fluid Requirements
 
@@ -175,4 +179,3 @@ Version 1.0 should not include:
 - Full document-template authoring.
 - Server-based synchronization.
 - Mandated code comments for every requirement.
-

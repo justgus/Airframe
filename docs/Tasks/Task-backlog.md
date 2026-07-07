@@ -6,143 +6,89 @@ Currently: **6 backlog Tasks**
 
 ---
 
-## T-0110: Move closed Sprint records into `docs/Sprints/Closed/`
+## T-0154: Define canonical plan review record and decision model
 
-**Status:** Implemented - Not Verified
+**Status:** Backlog
 **GitHub Issue:** TBD
-**Component:** Documentation / AgileCockpit
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-023
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-Sprint close must archive the Sprint record instead of leaving the Sprint in the active list.
+**Component:** AirframeCore canonical model
+**Priority:** Medium
+**Epic:** EP-023
+**Sprint Assigned:** SP-036
 
 **Acceptance Criteria:**
-1. A closed Sprint is written into `docs/Sprints/Closed/`.
-2. The active Sprint file no longer contains the closed Sprint.
-3. The archived Sprint preserves its closeout details.
+1. Canonical state can represent proposed implementation plans, including scope, file changes, commands, external effects, and verification criteria.
+2. Plan decision state supports pending, approved, deferred, and rejected outcomes.
+3. Plan records link to target Epic, Sprint, Tasks, actor context, and audit or evidence records where applicable.
 
-**Evidence:**
-- Implemented in AirframeCore evidence summary records and requirement traceability linkage.
+## T-0155: Add AirframeCore authority and audit support for plan decisions
 
-## T-0111: Move closed Epic records into `docs/Epics/Closed/`
-
-**Status:** Implemented - Not Verified
+**Status:** Backlog
 **GitHub Issue:** TBD
-**Component:** Documentation / AgileCockpit
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-023
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-Epic close must archive the Epic record and preserve the milestone history.
+**Component:** AirframeCore authority and audit policy
+**Priority:** Medium
+**Epic:** EP-023
+**Sprint Assigned:** SP-036
 
 **Acceptance Criteria:**
-1. A closed Epic is written into `docs/Epics/Closed/`.
-2. The active Epic file no longer contains the closed Epic.
-3. The archived Epic preserves its closeout details.
+1. Approve, defer, and reject plan decisions require human authority.
+2. Agents cannot approve their own implementation plans.
+3. Plan decisions emit auditable decision records without weakening verification or closeout gates.
 
-**Evidence:**
-- Implemented in AirframeCore release scope and gate evaluation.
+## T-0156: Add AICockpit plan submission and read commands
 
-## T-0112: Rewrite sprint and epic index files on close
-
-**Status:** Implemented - Not Verified
+**Status:** Backlog
 **GitHub Issue:** TBD
-**Component:** Documentation
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-023
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-The index pages must stay synchronized when a Sprint or Epic is archived.
+**Component:** AICockpit agent-facing plan proposal commands
+**Priority:** Medium
+**Epic:** EP-023
+**Sprint Assigned:** SP-036
 
 **Acceptance Criteria:**
-1. `Sprint-Documentation.md` reflects the closed Sprint.
-2. `Epic-Documentation.md` reflects the closed Epic.
-3. Related counts and next IDs remain correct after close.
+1. AICockpit can submit a proposed implementation plan to canonical state.
+2. AICockpit can read plan status and details for agent workflow coordination.
+3. AICockpit cannot approve, defer, reject, verify, or close plan-controlled work through human-only paths.
 
-**Evidence:**
-- Implemented in AgileCockpit traceability and release gate views.
+## T-0157: Add AgileCockpit plan review UI
 
-## T-0113: Add tests for Epic acceptance-criteria verification
-
-**Status:** Implemented - Not Verified
+**Status:** Backlog
 **GitHub Issue:** TBD
-**Component:** AgileCockpitTests / AirframeCoreTests
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-024
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-The acceptance-criteria path needs regression coverage before it can be trusted for closeout.
+**Component:** AgileCockpit human-facing plan review surface
+**Priority:** Medium
+**Epic:** EP-023
+**Sprint Assigned:** SP-036
 
 **Acceptance Criteria:**
-1. Tests prove criteria can be marked verified.
-2. Tests prove close eligibility changes after verification.
-3. Tests prove the tab renders the expected criteria set.
+1. AgileCockpit displays proposed plan scope, file changes, commands, external effects, and verification criteria.
+2. The plan review surface clearly shows current decision state and target work context.
+3. Plan review UI remains distinct from implementation verification and Sprint/Epic closeout UI.
 
-**Evidence:**
-- Implemented in AICockpit export projections for compliance and traceability documents.
+## T-0158: Wire AgileCockpit human plan decision actions
 
-## T-0114: Add tests for Sprint and Epic archive updates
-
-**Status:** Implemented - Not Verified
+**Status:** Backlog
 **GitHub Issue:** TBD
-**Component:** AgileCockpitTests / Documentation
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-024
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-23
-**Date Verified:** TBD
-
-**Rationale:**
-Archiving is a visible workflow change and needs direct regression coverage.
+**Component:** AgileCockpit approve defer reject actions through AirframeCore
+**Priority:** Medium
+**Epic:** EP-023
+**Sprint Assigned:** SP-036
 
 **Acceptance Criteria:**
-1. Tests prove Sprint archive files are updated on close.
-2. Tests prove Epic archive files are updated on close.
-3. Tests prove the index files remain synchronized after close.
+1. A human reviewer can approve, defer, or reject a proposed plan from AgileCockpit.
+2. Decision actions update canonical plan state and audit or evidence records as designed.
+3. AICockpit and other agent contexts remain unable to perform human-only plan decision actions.
 
-**Evidence:**
-- Implemented with regression coverage in AirframeCoreTests and AgileCockpit build verification.
+## T-0159: Add plan review regression coverage and workflow documentation
 
-## T-0115: Add tests for offline local-only closeout behavior
-
-**Status:** Implemented - Not Verified
-**GitHub Issue:** #152
-**Component:** AgileCockpitTests / AICockpitTests
-**Priority:** High
-**Epic:** EP-018
-**Sprint Assigned:** SP-024
-**Date Requested:** 2026-06-14
-**Date Implemented:** 2026-06-25
-**Date Verified:** TBD
-
-**Rationale:**
-Closeout must continue to work in the local workspace without relying on a server or GitHub.
+**Status:** Backlog
+**GitHub Issue:** TBD
+**Component:** Regression coverage and documentation for plan review workflow
+**Priority:** Medium
+**Epic:** EP-023
+**Sprint Assigned:** SP-036
 
 **Acceptance Criteria:**
-1. Tests prove closeout works locally without network access.
-2. Tests prove GitHub-specific paths remain optional.
-3. Tests prove human-only closeout boundaries are preserved.
-
-**Evidence:**
-- `xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests/AgileCockpitTests/agileCockpitClosesReviewedSprintUsingLocalCanonicalStateOnly -only-testing:AgileCockpitTests/AgileCockpitTests/agileCockpitRecordsEpicCloseWithHumanReviewerAuthority`
+1. Regression tests cover canonical model, command, UI, and authority boundaries for plan review.
+2. Documentation explains plan submission, human approval, deferral, rejection, and implementation handoff.
+3. Verification evidence identifies commands run and residual risks.
 
 ---
-*Last Updated: 2026-06-25 (T-0107 through T-0109 moved to Implemented - Not Verified)*
+*Last Updated: 2026-07-06*

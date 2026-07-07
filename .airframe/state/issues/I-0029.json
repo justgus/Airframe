@@ -1,0 +1,47 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "AICockpit",
+    "Canonical State"
+  ],
+  "dateReported" : "2026-07-07",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Implemented - Not Verified issue work items should be allowed to return to Backlog or Active, and Active issue work items should be allowed to return to Backlog, subject to the usual authority and workflow checks.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:55:00Z"
+  },
+  "notes" : [
+    "This issue records a workflow requirement that was not previously captured in the policy model.",
+    "Required rollback transitions: Implemented - Not Verified -> Backlog, Implemented - Not Verified -> Active, and Active -> Backlog.",
+    "The implementation should preserve normal authority evaluation and should not weaken human-only closeout controls.",
+    "Acceptance Criteria: Canonical workflow policy allows the required rollback transitions for Issues.",
+    "Acceptance Criteria: AICockpit status commands expose the allowed rollback transitions and reject disallowed ones with a clear reason.",
+    "Acceptance Criteria: Workflow and command tests cover the rollback paths and preserve the existing human-only gates."
+  ],
+  "observedBehavior" : "The current issue workflow rejects Implemented - Not Verified -> Active transitions, which blocks the requested rollback path. Active -> Backlog remains the only currently allowed rollback path visible in the policy model.",
+  "reproductionSteps" : [
+    "Attempt to move an Issue from Implemented - Not Verified to Active using AICockpit.",
+    "Observe that the transition is rejected by workflow validation.",
+    "Attempt to move an Issue from Active to Backlog using the current workflow.",
+    "Observe the current policy behavior and compare it with the requested rollback requirement."
+  ],
+  "severity" : "high",
+  "workItem" : {
+    "id" : {
+      "rawValue" : "I-0029"
+    },
+    "kind" : "issue",
+    "status" : "backlog",
+    "title" : "Allow implemented-not-verified and active issue rollback transitions"
+  }
+}

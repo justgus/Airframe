@@ -8,7 +8,7 @@ Currently: **None**
 
 ## All Sprints
 
-Currently: **35 Sprints** | Next available: **SP-036**
+Currently: **37 Sprints** | Next available: **SP-038**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -47,15 +47,17 @@ Currently: **35 Sprints** | Next available: **SP-036**
 | SP-033 | Canonical Requirements Import | EP-021 | T-0143, T-0144, T-0145, T-0146, T-0147 | None | Closed |
 | SP-034 | Telemetrix Importer and Canonical Repair Fixes | EP-022 | None | I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021 | Closed |
 | SP-035 | Offline-Only Operation Planning Sprint | EP-019 | T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | None | Closed |
+| SP-036 | AgileCockpit Plan Review Foundations | EP-023 | T-0154, T-0155, T-0156, T-0157, T-0158, T-0159 | I-0023, I-0024 | Backlog |
+| SP-037 | Canonical Test Definition and Management Sprint | EP-024 | T-0160, T-0161, T-0162, T-0163, T-0164, T-0165 | I-0025, I-0026 | Closed |
 
 ## Statistics
 
-- **Total Sprints:** 35
-- **Backlog:** 0
+- **Total Sprints:** 37
+- **Backlog:** 1
 - **Planning:** 0
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 35
-- **Next available:** SP-036
+- **Closed:** 36
+- **Next available:** SP-038
 
-*Last Updated: 2026-07-06*
+*Last Updated: 2026-07-07*

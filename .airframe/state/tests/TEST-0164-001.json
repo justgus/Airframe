@@ -1,0 +1,77 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-06"
+    },
+    {
+      "rawValue" : "EP-023-AC-01"
+    },
+    {
+      "rawValue" : "EP-023-AC-02"
+    },
+    {
+      "rawValue" : "EP-023-AC-03"
+    },
+    {
+      "rawValue" : "EP-023-AC-04"
+    }
+  ],
+  "artifactReferences" : [
+    "docs/Epics/Epic-backlog.md",
+    "docs/generated/Epics/EP-023.md",
+    "docs/generated/Requirements/Requirements-Traceability-Matrix.md"
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Requirements without Epic AC coverage are reported from the current RTM.",
+    "EP-023 acceptance criteria exist for the uncovered requirement coverage slice.",
+    "The trace links between the new ACs and the coverage requirements remain stable."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0164-001"
+  },
+  "kind" : "acceptance",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T01:58:40Z"
+  },
+  "notes" : [
+    "Seed test for EP-023 requirement coverage definition."
+  ],
+  "objective" : "Verify requirements without Epic acceptance-criterion coverage are captured and linked through EP-023 final-review acceptance criteria.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "RT-FR-009"
+    },
+    {
+      "rawValue" : "RT-FR-011"
+    },
+    {
+      "rawValue" : "RT-FR-016"
+    },
+    {
+      "rawValue" : "RT-RG-002"
+    },
+    {
+      "rawValue" : "RT-RG-004"
+    }
+  ],
+  "workItemIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Load the current Requirements Traceability Matrix.",
+    "Identify requirements without Epic AC coverage.",
+    "Confirm the EP-023 final-review acceptance criteria exist for the uncovered coverage slice.",
+    "Confirm trace links resolve from the new ACs back to requirements."
+  ],
+  "title" : "EP-023 requirement coverage definition"
+}

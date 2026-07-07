@@ -1,0 +1,22 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-024-AC-03"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : ".airframe/state/epics/EP-024.json",
+    "updatedAt" : "2026-07-07T13:00:00Z"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-024"
+  },
+  "text" : "The canonical Airframe dataset contains deterministic seeded test definitions and suites for the current review scope."
+}

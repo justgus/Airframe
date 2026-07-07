@@ -45,7 +45,7 @@ See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **8 verified Issues** | Next available: **I-0022**
+Currently: **13 verified Issues** | Next available: **I-0027**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
@@ -53,6 +53,11 @@ Currently: **8 verified Issues** | Next available: **I-0022**
 | I-0005-I-0006 | I-0005, I-0006 | [Issue-verified-0005-0006.md](Verified/Issue-verified-0005-0006.md) | Resolved - Verified |
 | I-0007 | I-0007 | [Issue-verified-0007.md](Verified/Issue-verified-0007.md) | Resolved - Verified |
 | I-0008 | I-0008 | [Issue-verified-0008.md](Verified/Issue-verified-0008.md) | Resolved - Verified |
+| I-0022 | I-0022 | [I-0022.md](../generated/Issues/I-0022.md) | Resolved - Verified |
+| I-0023 | I-0023 | [I-0023.md](../generated/Issues/I-0023.md) | Resolved - Verified |
+| I-0024 | I-0024 | [I-0024.md](../generated/Issues/I-0024.md) | Resolved - Verified |
+| I-0025 | I-0025 | [I-0025.md](../generated/Issues/I-0025.md) | Resolved - Verified |
+| I-0026 | I-0026 | [I-0026.md](../generated/Issues/I-0026.md) | Resolved - Verified |
 
 ## Closed Issues
 
@@ -63,12 +68,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 21
+- **Total Issues:** 26
 - **Backlogged:** 0
 - **Active/In Progress:** 0
 - **Resolved - Not Verified:** 13
-- **Verified:** 8
+- **Verified:** 13
 - **Closed:** 0
-- **Next available:** I-0022
+- **Next available:** I-0027
 
-*Last Updated: 2026-06-26 (I-0021 resolved locally and awaits verification)*
+*Last Updated: 2026-07-06 (I-0025 and I-0026 verified)*

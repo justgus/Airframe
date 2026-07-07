@@ -26,6 +26,7 @@ public struct AirframeRequirementTraceSummary: Codable, Equatable, Sendable {
     public let requirementID: AirframeID
     public let revisionIDs: [AirframeID]
     public let acceptanceCriterionIDs: [AirframeID]
+    public let testIDs: [AirframeID]
     public let targetKinds: [String]
     public let workItemIDs: [AirframeID]
     public let evidenceIDs: [AirframeID]
@@ -33,12 +34,14 @@ public struct AirframeRequirementTraceSummary: Codable, Equatable, Sendable {
 
     public var hasWorkItemTrace: Bool { !workItemIDs.isEmpty }
     public var hasAcceptanceCriterionTrace: Bool { !acceptanceCriterionIDs.isEmpty }
+    public var hasTestTrace: Bool { !testIDs.isEmpty }
     public var hasEvidenceTrace: Bool { !evidenceIDs.isEmpty }
 
     public init(
         requirementID: AirframeID,
         revisionIDs: [AirframeID],
         acceptanceCriterionIDs: [AirframeID] = [],
+        testIDs: [AirframeID] = [],
         targetKinds: [String],
         workItemIDs: [AirframeID],
         evidenceIDs: [AirframeID],
@@ -47,6 +50,7 @@ public struct AirframeRequirementTraceSummary: Codable, Equatable, Sendable {
         self.requirementID = requirementID
         self.revisionIDs = revisionIDs
         self.acceptanceCriterionIDs = acceptanceCriterionIDs
+        self.testIDs = testIDs
         self.targetKinds = targetKinds
         self.workItemIDs = workItemIDs
         self.evidenceIDs = evidenceIDs
@@ -122,12 +126,14 @@ private struct AirframeInferredRequirementTraceMatches: Sendable {
     let workItemIDs: Set<AirframeID>
     let evidenceIDs: Set<AirframeID>
     let acceptanceCriterionIDs: Set<AirframeID>
+    let testIDs: Set<AirframeID>
     let targetKinds: Set<String>
 
     static let empty = AirframeInferredRequirementTraceMatches(
         workItemIDs: [],
         evidenceIDs: [],
         acceptanceCriterionIDs: [],
+        testIDs: [],
         targetKinds: []
     )
 }
@@ -137,6 +143,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     public let revisions: [AirframeCanonicalRequirementRevisionRecord]
     public let evidence: [AirframeCanonicalEvidenceSummaryRecord]
     public let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
+    public let tests: [AirframeCanonicalTestRecord]
     public let epics: [AirframeCanonicalEpicRecord]
     public let sprints: [AirframeCanonicalSprintRecord]
     public let tasks: [AirframeCanonicalTaskRecord]
@@ -146,6 +153,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     private let revisionsByRequirementID: [AirframeID: [AirframeCanonicalRequirementRevisionRecord]]
     private let evidenceByID: [AirframeID: AirframeCanonicalEvidenceSummaryRecord]
     private let acceptanceCriteriaByID: [AirframeID: AirframeCanonicalAcceptanceCriterionRecord]
+    private let testsByID: [AirframeID: AirframeCanonicalTestRecord]
     private let inferredMatchesByRequirementID: [AirframeID: AirframeInferredRequirementTraceMatches]
 
     public init(
@@ -153,6 +161,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         revisions: [AirframeCanonicalRequirementRevisionRecord] = [],
         evidence: [AirframeCanonicalEvidenceSummaryRecord] = [],
         acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
+        tests: [AirframeCanonicalTestRecord] = [],
         epics: [AirframeCanonicalEpicRecord] = [],
         sprints: [AirframeCanonicalSprintRecord] = [],
         tasks: [AirframeCanonicalTaskRecord] = [],
@@ -168,6 +177,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         }
         let sortedEvidence = evidence.sorted { $0.id.rawValue < $1.id.rawValue }
         let sortedAcceptanceCriteria = acceptanceCriteria.sorted { $0.id.rawValue < $1.id.rawValue }
+        let sortedTests = tests.sorted { $0.id.rawValue < $1.id.rawValue }
         let sortedEpics = epics.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
         let sortedSprints = sprints.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
         let sortedTasks = tasks.sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
@@ -177,6 +187,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         self.revisions = sortedRevisions
         self.evidence = sortedEvidence
         self.acceptanceCriteria = sortedAcceptanceCriteria
+        self.tests = sortedTests
         self.epics = sortedEpics
         self.sprints = sortedSprints
         self.tasks = sortedTasks
@@ -185,6 +196,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         self.revisionsByRequirementID = Dictionary(grouping: sortedRevisions, by: \.requirementID)
         self.evidenceByID = Dictionary(uniqueKeysWithValues: sortedEvidence.map { ($0.id, $0) })
         self.acceptanceCriteriaByID = Dictionary(uniqueKeysWithValues: sortedAcceptanceCriteria.map { ($0.id, $0) })
+        self.testsByID = Dictionary(uniqueKeysWithValues: sortedTests.map { ($0.id, $0) })
         self.inferredMatchesByRequirementID = Dictionary(
             uniqueKeysWithValues: sortedRequirements.map { requirement in
                 (
@@ -192,6 +204,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
                     Self.inferredTraceMatches(
                         for: requirement,
                         acceptanceCriteria: sortedAcceptanceCriteria,
+                        tests: sortedTests,
                         epics: sortedEpics,
                         sprints: sortedSprints,
                         tasks: sortedTasks,
@@ -222,6 +235,10 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         for criterion in acceptanceCriteria where criterion.id == workItemID || criterion.ownerID == workItemID {
             ids.formUnion(requirements(matching: criterion))
         }
+        for test in tests where test.id == workItemID {
+            ids.formUnion(test.requirementIDs)
+            ids.formUnion(test.acceptanceCriterionIDs.flatMap(requirements(matchingCriterionID:)))
+        }
         for issue in issues where issue.workItem.id == workItemID {
             _ = issue
         }
@@ -236,6 +253,9 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         for requirement in requirements where inferredTraceSummary(for: requirement.id).acceptanceCriterionIDs.contains(workItemID) {
             ids.insert(requirement.id)
         }
+        for requirement in requirements where inferredTraceSummary(for: requirement.id).testIDs.contains(workItemID) {
+            ids.insert(requirement.id)
+        }
 
         return ids.sorted { $0.rawValue < $1.rawValue }
     }
@@ -246,6 +266,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         var workItemIDs = Set<AirframeID>()
         var evidenceIDs = Set<AirframeID>()
         var acceptanceCriterionIDs = Set<AirframeID>()
+        var testIDs = Set<AirframeID>()
         var targetKinds = Set<String>()
 
         if let requirement {
@@ -255,13 +276,15 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
                     switch targetKind {
                     case .acceptanceCriterion:
                         acceptanceCriterionIDs.insert(AirframeID(link.targetID))
+                    case .test:
+                        testIDs.insert(AirframeID(link.targetID))
                     case .task, .issue, .epic, .sprint:
                         workItemIDs.insert(AirframeID(link.targetID))
                     case .evidence:
                         evidenceIDs.insert(AirframeID(link.targetID))
                     case .revision:
                         _ = link
-                    case .requirement, .test, .design, .source, .commit:
+                    case .requirement, .design, .source, .commit:
                         break
                     }
                 }
@@ -277,23 +300,42 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         for evidenceRecord in evidence where evidenceRecord.requirementIDs.contains(requirementID) {
             evidenceIDs.insert(evidenceRecord.id)
         }
+        for test in tests where test.requirementIDs.contains(requirementID) || test.acceptanceCriterionIDs.contains(where: { requirements(matchingCriterionID: $0).contains(requirementID) }) {
+            testIDs.insert(test.id)
+            targetKinds.insert(AirframeRequirementTraceTargetKind.test.rawValue)
+        }
 
         let inferred = inferredTraceMatches(for: requirementID)
         workItemIDs.formUnion(inferred.workItemIDs)
         evidenceIDs.formUnion(inferred.evidenceIDs)
         acceptanceCriterionIDs.formUnion(inferred.acceptanceCriterionIDs)
+        testIDs.formUnion(inferred.testIDs)
         targetKinds.formUnion(inferred.targetKinds)
 
         return AirframeRequirementTraceSummary(
             requirementID: requirementID,
             revisionIDs: revisionIDs,
             acceptanceCriterionIDs: acceptanceCriterionIDs.sorted { $0.rawValue < $1.rawValue },
+            testIDs: testIDs.sorted { $0.rawValue < $1.rawValue },
             targetKinds: targetKinds.sorted(),
             workItemIDs: workItemIDs.sorted { $0.rawValue < $1.rawValue },
             evidenceIDs: evidenceIDs.sorted { $0.rawValue < $1.rawValue },
             traceCount: workItemIDs.count + evidenceIDs.count + revisionIDs.count
-                + acceptanceCriterionIDs.count
+                + acceptanceCriterionIDs.count + testIDs.count
         )
+    }
+
+    public func acceptanceCriterionTraceIDs(for requirementID: AirframeID) -> [String] {
+        traceSummary(for: requirementID).acceptanceCriterionIDs.map { criterionID in
+            guard let criterion = acceptanceCriteriaByID[criterionID] else {
+                return criterionID.rawValue
+            }
+            let ownerPrefix = "\(criterion.ownerID.rawValue)-"
+            if criterionID.rawValue.hasPrefix(ownerPrefix) {
+                return criterionID.rawValue
+            }
+            return "\(criterion.ownerID.rawValue)/\(criterionID.rawValue)"
+        }
     }
 
     public func gapDiagnostics(releaseScope: String? = nil) -> [AirframeRequirementTraceGap] {
@@ -359,13 +401,13 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             "",
             "Currently: **\(coverage.totalRequirementCount) requirements**",
             "",
-            "| Requirement | Title | Statement | Verification Method | Compliance | Work Items | Acceptance Criteria | Evidence |",
-            "| ----------- | ----- | --------- | ------------------- | ---------- | ---------- | ------------------- | -------- |"
+            "| Requirement | Title | Statement | Verification Method | Compliance | Work Items | Acceptance Criteria | Tests | Evidence |",
+            "| ----------- | ----- | --------- | ------------------- | ---------- | ---------- | ------------------- | ----- | -------- |"
         ]
         for requirement in requirements {
             let summary = traceSummary(for: requirement.id)
             lines.append(
-                "| \(markdownCell(requirement.id.rawValue)) | \(markdownCell(requirement.title)) | \(markdownCell(requirement.statement)) | \(markdownCell(requirement.verificationMethod.description)) | \(markdownCell(complianceLabel(for: requirement, summary: summary))) | \(markdownCell(summary.workItemIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.acceptanceCriterionIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.evidenceIDs.map(\.rawValue).joined(separator: ", "))) |"
+                "| \(markdownCell(requirement.id.rawValue)) | \(markdownCell(requirement.title)) | \(markdownCell(requirement.statement)) | \(markdownCell(requirement.verificationMethod.description)) | \(markdownCell(complianceLabel(for: requirement, summary: summary))) | \(markdownCell(summary.workItemIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.acceptanceCriterionIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.testIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.evidenceIDs.map(\.rawValue).joined(separator: ", "))) |"
             )
         }
         return lines.joined(separator: "\n") + "\n"
@@ -375,13 +417,12 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         var lines: [String] = [
             "# Requirements Traceability Matrix",
             "",
-            "| Requirement | Title | Status | Work Items | Acceptance Criteria | Evidence | Revisions | Trace Targets |",
-            "| ----------- | ----- | ------ | ---------- | ------------------- | -------- | --------- | ------------- |"
+            "| Requirement | Title | Status | Epic Acceptance Criteria |",
+            "| ----------- | ----- | ------ | ------------------------ |"
         ]
         for requirement in requirements {
-            let summary = traceSummary(for: requirement.id)
             lines.append(
-                "| \(markdownCell(requirement.id.rawValue)) | \(markdownCell(requirement.title)) | \(markdownCell(requirement.status.description)) | \(markdownCell(summary.workItemIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.acceptanceCriterionIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.evidenceIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.revisionIDs.map(\.rawValue).joined(separator: ", "))) | \(markdownCell(summary.targetKinds.joined(separator: ", "))) |"
+                "| \(markdownCell(requirement.id.rawValue)) | \(markdownCell(requirement.title)) | \(markdownCell(requirement.status.description)) | \(markdownCell(acceptanceCriterionTraceIDs(for: requirement.id).joined(separator: ", "))) |"
             )
         }
         return lines.joined(separator: "\n") + "\n"
@@ -394,7 +435,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             "| Work Item or Evidence | Requirements |",
             "| --------------------- | ------------ |"
         ]
-        let identifiers = (epics.map(\.workItem.id) + sprints.map(\.workItem.id) + tasks.map(\.workItem.id) + issues.map(\.workItem.id) + evidence.map(\.id))
+        let identifiers = (epics.map(\.workItem.id) + sprints.map(\.workItem.id) + tasks.map(\.workItem.id) + issues.map(\.workItem.id) + tests.map(\.id) + evidence.map(\.id))
         for identifier in identifiers {
             let requirementIDs = requirementIDs(for: identifier)
             guard !requirementIDs.isEmpty else { continue }
@@ -433,7 +474,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         let scoped = scopedRequirements(releaseScope: releaseScope)
         let assignedRequirementCount = scoped.filter { requirement in
             let summary = traceSummary(for: requirement.id)
-            return summary.hasWorkItemTrace || summary.hasAcceptanceCriterionTrace || summary.hasEvidenceTrace
+            return summary.hasWorkItemTrace || summary.hasAcceptanceCriterionTrace || summary.hasTestTrace || summary.hasEvidenceTrace
         }.count
         let implementedRequirementCount = scoped.filter { requirement in
             let summary = traceSummary(for: requirement.id)
@@ -441,7 +482,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         }.count
         let verifiedRequirementCount = scoped.filter { requirement in
             let summary = traceSummary(for: requirement.id)
-            return (summary.hasAcceptanceCriterionTrace || summary.hasEvidenceTrace) && requirement.status == .verified
+            return (summary.hasAcceptanceCriterionTrace || summary.hasTestTrace || summary.hasEvidenceTrace) && requirement.status == .verified
         }.count
         return AirframeRequirementCoverageSummary(
             totalRequirementCount: scoped.count,
@@ -468,10 +509,11 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             requirementID: requirementID,
             revisionIDs: revisionIDs,
             acceptanceCriterionIDs: inferred.acceptanceCriterionIDs.sorted { $0.rawValue < $1.rawValue },
+            testIDs: inferred.testIDs.sorted { $0.rawValue < $1.rawValue },
             targetKinds: inferred.targetKinds.sorted(),
             workItemIDs: inferred.workItemIDs.sorted { $0.rawValue < $1.rawValue },
             evidenceIDs: inferred.evidenceIDs.sorted { $0.rawValue < $1.rawValue },
-            traceCount: inferred.workItemIDs.count + inferred.evidenceIDs.count + revisionIDs.count + inferred.acceptanceCriterionIDs.count
+            traceCount: inferred.workItemIDs.count + inferred.evidenceIDs.count + revisionIDs.count + inferred.acceptanceCriterionIDs.count + inferred.testIDs.count
         )
     }
 
@@ -482,6 +524,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     private static func inferredTraceMatches(
         for requirement: AirframeCanonicalRequirementRecord,
         acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord],
+        tests: [AirframeCanonicalTestRecord],
         epics: [AirframeCanonicalEpicRecord],
         sprints: [AirframeCanonicalSprintRecord],
         tasks: [AirframeCanonicalTaskRecord],
@@ -493,6 +536,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         var workItemIDs = Set<AirframeID>()
         var evidenceIDs = Set<AirframeID>()
         var acceptanceCriterionIDs = Set<AirframeID>()
+        var testIDs = Set<AirframeID>()
         var targetKinds = Set<String>()
 
         for criterion in acceptanceCriteria {
@@ -502,6 +546,20 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
                 workItemIDs.insert(criterion.ownerID)
                 targetKinds.insert(AirframeRequirementTraceTargetKind.acceptanceCriterion.rawValue)
                 targetKinds.insert(AirframeRequirementTraceTargetKind.epic.rawValue)
+            }
+        }
+
+        for test in tests {
+            let explicitlyLinked = test.requirementIDs.contains(requirement.id)
+            let criterionLinked = test.acceptanceCriterionIDs.contains { criterionID in
+                acceptanceCriteria.contains { criterion in
+                    criterion.id == criterionID &&
+                        requirementsMatch(requirement: requirement, criterion: criterion)
+                }
+            }
+            if explicitlyLinked || criterionLinked || matchScore(queryTokens: requirementTokens, candidate: searchableText(for: test)) >= 3 {
+                testIDs.insert(test.id)
+                targetKinds.insert(AirframeRequirementTraceTargetKind.test.rawValue)
             }
         }
 
@@ -544,19 +602,31 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             workItemIDs: workItemIDs,
             evidenceIDs: evidenceIDs,
             acceptanceCriterionIDs: acceptanceCriterionIDs,
+            testIDs: testIDs,
             targetKinds: targetKinds
         )
     }
 
     private func requirements(matching criterion: AirframeCanonicalAcceptanceCriterionRecord) -> [AirframeID] {
-        let requirementTokens = Self.normalizedTokens(criterion.text)
         return requirements.compactMap { requirement in
-            let score = Self.matchScore(queryTokens: requirementTokens, candidate: "\(requirement.title) \(requirement.statement)")
-            if requirement.id == criterion.ownerID || score >= 3 {
+            if requirement.id == criterion.ownerID || Self.requirementsMatch(requirement: requirement, criterion: criterion) {
                 return requirement.id
             }
             return nil
         }
+    }
+
+    private func requirements(matchingCriterionID criterionID: AirframeID) -> [AirframeID] {
+        guard let criterion = acceptanceCriteriaByID[criterionID] else { return [] }
+        return requirements(matching: criterion)
+    }
+
+    private static func requirementsMatch(
+        requirement: AirframeCanonicalRequirementRecord,
+        criterion: AirframeCanonicalAcceptanceCriterionRecord
+    ) -> Bool {
+        let requirementTokens = normalizedTokens(criterion.text)
+        return matchScore(queryTokens: requirementTokens, candidate: "\(requirement.title) \(requirement.statement)") >= 3
     }
 
     private static func searchableText(for epic: AirframeCanonicalEpicRecord) -> String {
@@ -618,6 +688,25 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         .joined(separator: "\n")
     }
 
+    private static func searchableText(for test: AirframeCanonicalTestRecord) -> String {
+        [
+            test.id.rawValue,
+            test.title,
+            test.objective,
+            test.kind.rawValue,
+            test.status.rawValue,
+            test.requirementIDs.map(\.rawValue).joined(separator: " "),
+            test.acceptanceCriterionIDs.map(\.rawValue).joined(separator: " "),
+            test.workItemIDs.map(\.rawValue).joined(separator: " "),
+            test.steps.joined(separator: " "),
+            test.expectedResults.joined(separator: " "),
+            test.automationCommand ?? "",
+            test.artifactReferences.joined(separator: " "),
+            test.notes.joined(separator: " ")
+        ]
+        .joined(separator: "\n")
+    }
+
     private static func searchableText(for evidence: AirframeCanonicalEvidenceSummaryRecord) -> String {
         [
             evidence.id.rawValue,
@@ -651,7 +740,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     fileprivate func complianceLabel(for requirement: AirframeCanonicalRequirementRecord, summary: AirframeRequirementTraceSummary) -> String {
         switch requirement.status {
         case .implemented, .verified, .validated:
-            if summary.hasWorkItemTrace || summary.hasAcceptanceCriterionTrace || summary.hasEvidenceTrace {
+            if summary.hasWorkItemTrace || summary.hasAcceptanceCriterionTrace || summary.hasTestTrace || summary.hasEvidenceTrace {
                 return "Complies"
             }
             return "Not demonstrated"
@@ -666,7 +755,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         case .active:
             return summary.hasWorkItemTrace ? "In progress" : "Not yet assigned"
         case .draft, .proposed:
-            return summary.hasWorkItemTrace || summary.hasAcceptanceCriterionTrace ? "In progress" : "Not yet assigned"
+            return summary.hasWorkItemTrace || summary.hasAcceptanceCriterionTrace || summary.hasTestTrace ? "In progress" : "Not yet assigned"
         }
     }
 

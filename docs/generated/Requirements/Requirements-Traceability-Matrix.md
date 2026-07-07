@@ -1,205 +1,205 @@
 # Requirements Traceability Matrix
 
-| Requirement | Title | Status | Work Items | Acceptance Criteria | Evidence | Revisions | Trace Targets |
-| ----------- | ----- | ------ | ---------- | ------------------- | -------- | --------- | ------------- |
-| AC-DR-001 | Dashboard Data | Draft | EP-004, EP-006, EP-008, EP-019, EP-020, EP-021, I-0006, I-0021, I-0022, SP-005, SP-006, SP-011 | EP-004-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint |
-| AC-DR-002 | Entity Data | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-013, SP-015, SP-016, SP-019, SP-027, SP-028, SP-031, T-0099, T-0115, T-0145, T-0150 | EP-020-AC-01, EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-DR-003 | Metrics Data | Draft | EP-002, EP-003, EP-006, EP-008, EP-019, EP-020, EP-021, I-0006, I-0022, SP-006 |  |  |  | epic, issue, sprint |
-| AC-DR-004 | Local Presentation State | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0013, I-0014, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-025, SP-027, SP-028, T-0145, T-0148, T-0149, T-0150, T-0151, T-0152 | EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-001 | Project Dashboard | Draft | EP-003, EP-019, EP-020, I-0005, I-0006, I-0008, I-0021, I-0022, SP-011 |  |  |  | epic, issue, sprint |
-| AC-FR-002 | Recently Completed Work | Draft | EP-003, EP-004, EP-005, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0007, I-0008, I-0015, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-007, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-018, SP-019, SP-025, SP-028, T-0102, T-0150 | EP-004-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-003 | Active Work | Draft | EP-003, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0020, I-0021, I-0022, SP-006, SP-007, SP-015, SP-020, SP-025, SP-027, T-0102, T-0103, T-0115 | EP-022-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-004 | Upcoming Work | Draft | EP-002, EP-003, EP-006, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0008, I-0009, I-0013, I-0014, I-0016, I-0020, I-0021, I-0022, SP-002, SP-005, SP-006, SP-007, SP-010, SP-012, SP-013, SP-015, SP-016, SP-020, SP-025, SP-026, SP-027, T-0102, T-0103, T-0115, T-0152 | EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-005 | Blocked Work | Draft | EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0022 |  |  |  | epic, issue |
-| AC-FR-006 | Ready for Human Verification | Draft | EP-003, EP-004, EP-005, EP-006, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-013, SP-015, SP-020, T-0101 | EP-004-AC-03, EP-005-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-007 | Verification Review | Draft | EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0022, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-010, SP-013, SP-015, SP-020 | EP-005-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint |
-| AC-FR-008 | Accept Work | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-025, SP-026, SP-027, SP-028, T-0102, T-0115, T-0146, T-0149, T-0152 | EP-003-AC-02, EP-020-AC-01, EP-020-AC-08 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-009 | Reject Work | Draft | EP-003, EP-005, EP-006, EP-018, EP-019, EP-020, EP-021, EP-023, I-0007, I-0008, I-0010, I-0011, I-0012, I-0021, I-0022, SP-003, SP-004, SP-005, SP-007, SP-013, SP-015, SP-020, SP-025, SP-027, SP-028, T-0115, T-0146 |  |  |  | epic, issue, sprint, task |
-| AC-FR-010 | Sprint Control | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0021, I-0022, SP-002, SP-003, SP-005, SP-006, SP-007, SP-012, SP-015, SP-019, SP-020, SP-025, SP-027, T-0110, T-0114, T-0115, T-0152 |  |  |  | epic, issue, sprint, task |
-| AC-FR-011 | Epic Control | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0021, I-0022, SP-002, SP-005, SP-006, SP-007, SP-015, SP-020, SP-025, SP-027, T-0101, T-0108, T-0111, T-0114, T-0115, T-0152 |  |  |  | epic, issue, sprint, task |
-| AC-FR-012 | Issue / Task Review | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0015, I-0017, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-013, SP-014, SP-015, SP-016, SP-019, SP-026, SP-027, SP-028, T-0107, T-0149, T-0150, T-0151 | EP-004-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-013 | Metrics Display | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0013, I-0018, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, T-0102 | EP-005-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-014 | Audit Visibility | Draft | EP-003, EP-005, EP-006, EP-007, EP-019, EP-020, EP-021, EP-023, SP-007 | EP-003-AC-05 |  |  | acceptanceCriterion, epic, sprint |
-| AC-FR-015 | Multi-Project View | Draft | EP-006, EP-007, EP-019, EP-020, I-0006, I-0008, I-0021, SP-007, SP-011 |  |  |  | epic, issue, sprint |
-| AC-FR-016 | Project-Specific View | Draft | EP-006, EP-007, EP-019, EP-020, EP-023, I-0008, SP-010 |  |  |  | epic, issue, sprint |
-| AC-FR-017 | Backend-Agnostic Operation Display | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-023, I-0005, I-0006, I-0008, I-0009, I-0020, I-0021, I-0022, SP-006, SP-010, T-0149 | EP-007-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-FR-018 | Denied Operation Reporting | Draft | EP-002, EP-003, EP-006, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0010, I-0011, I-0021, I-0022, SP-002, SP-003, SP-006, SP-013, SP-015, T-0146, T-0152 |  |  |  | epic, issue, sprint, task |
-| AC-IR-001 | Airframe Core API | Draft | EP-001, EP-002, EP-003, EP-007, EP-008, EP-019, EP-020, I-0006, I-0009, I-0021, I-0022, SP-007, SP-008, SP-009, SP-011, SP-012 |  |  |  | epic, issue, sprint |
-| AC-IR-002 | Configuration Interface | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, I-0005, I-0006, I-0008, I-0009, I-0021, I-0022, SP-001, SP-002, SP-005, SP-007, SP-009, SP-011, SP-014, SP-015, T-0049, T-0148, T-0149 |  |  |  | epic, issue, sprint, task |
-| AC-IR-003 | Export Interface | Draft | EP-004, EP-005, EP-019, EP-020, EP-021, EP-022, I-0006, I-0008, I-0009, I-0012, I-0018, I-0019, I-0021, I-0022, SP-005, SP-007, SP-015, SP-025, SP-027, SP-028, T-0143, T-0145 | EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-IR-004 | Accessibility Interface | Draft | EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, I-0020, I-0022 | EP-006-AC-05 |  |  | acceptanceCriterion, epic, issue |
-| AC-NFR-001 | Usability | Draft | EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0008, I-0009, I-0013, I-0020, I-0021, I-0022, SP-004, SP-005, SP-007, SP-008, SP-010, SP-013, SP-015, SP-019, SP-020, SP-025, SP-028, T-0103, T-0151 |  |  |  | epic, issue, sprint, task |
-| AC-NFR-002 | Accessibility | Draft |  |  |  |  |  |
-| AC-NFR-003 | Performance | Draft | EP-002, EP-003, EP-004, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, I-0006, I-0007, I-0008, I-0014, I-0018, I-0021, I-0022, SP-005, SP-006, SP-011, SP-028, SP-031, T-0151 | EP-004-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-NFR-004 | Reliability | Draft | EP-007, EP-008, I-0006, I-0009, I-0020, I-0021, I-0022, SP-010, SP-015 |  |  |  | epic, issue, sprint |
-| AC-NFR-005 | Backend Independence | Draft | EP-003, EP-004, EP-007, EP-008, EP-019, EP-020, I-0006, I-0008, I-0022, SP-003, SP-004, SP-005, SP-006, SP-014, SP-015, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-NFR-006 | Maintainability | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, SP-002, SP-003, SP-005, SP-006, SP-010, SP-013, SP-014, SP-015, SP-016, SP-019 |  |  |  | epic, issue, sprint |
-| AC-SR-001 | Certified Actor Identity | Draft | EP-002, EP-003, EP-019, EP-020, I-0006, I-0022, SP-013, T-0152 | EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-SR-002 | No Self-Declared Authority | Draft | EP-003, EP-023, I-0006, SP-003, SP-015 |  |  |  | epic, issue, sprint |
-| AC-SR-003 | Human-Only Operations | Draft | EP-003, EP-005, EP-008, EP-019, EP-020, EP-023, I-0006, I-0008, I-0010, I-0011, I-0020, I-0022, SP-003, SP-008, SP-016, T-0152 | EP-003-AC-02, EP-020-AC-08 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-SR-004 | Project Context Binding | Draft | EP-001, EP-002, EP-003, EP-006, EP-008, EP-019, EP-020, I-0006, I-0007, I-0009, I-0020, I-0021, I-0022, SP-002, SP-012, SP-014, SP-016, T-0148, T-0149, T-0152 |  |  |  | epic, issue, sprint, task |
-| AC-SR-005 | Sensitive Operation Confirmation | Draft | EP-003, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0020, I-0022, SP-001, SP-002, SP-006, SP-007, SP-008, SP-013, SP-015, SP-020, SP-027, T-0101, T-0102, T-0103, T-0113, T-0115, T-0143, T-0148, T-0149, T-0152 | EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-SR-006 | Audit Event Generation | Draft | EP-003, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0006, I-0022, SP-006, SP-013 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint |
-| AC-VR-001 | Dashboard Verification | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0008, I-0009, I-0013, I-0014, I-0020, I-0021, I-0022, SP-001, SP-002, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-025, SP-027, SP-028, T-0065, T-0150, T-0151, T-0152, T-0153 | EP-006-AC-01, EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-VR-002 | Authority Verification | Draft | EP-003, EP-005, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0009, I-0013, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-011, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-027, T-0101, T-0115, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-003-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AC-VR-003 | Workflow Verification | Draft | EP-002, EP-003, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0014, I-0021, I-0022, SP-004, SP-005, SP-006, SP-007, SP-011, SP-012, SP-013, SP-014, SP-016, SP-020, T-0151, T-0152, T-0153 |  |  |  | epic, issue, sprint, task |
-| AC-VR-004 | Metrics Verification | Draft | EP-002, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, I-0006, I-0008, I-0014, I-0021, I-0022, SP-002, SP-005, SP-006, SP-011, SP-012, SP-013, SP-014, SP-016, SP-019, T-0151, T-0152 |  |  |  | epic, issue, sprint, task |
-| AC-VR-005 | Accessibility Verification | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-018, SP-019, T-0055, T-0064, T-0065, T-0072, T-0099, T-0115, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-004-AC-01, EP-018-AC-07, EP-019-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-BR-001 | Backend Independence | Draft | EP-002, EP-003, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-022, I-0008, I-0010, I-0011, I-0017, I-0020, I-0021, I-0022, SP-005, SP-006, SP-007, SP-010, SP-016, T-0149, T-0151 |  |  |  | epic, issue, sprint, task |
-| AF-BR-002 | Initial Backend | Draft | EP-002, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, I-0006, I-0008, I-0021, I-0022, SP-004, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-013, SP-014, SP-016 |  |  |  | epic, issue, sprint |
-| AF-BR-003 | GitHub Backend | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-018, SP-019, SP-028, T-0145, T-0149, T-0150, T-0151 | EP-007-AC-01, EP-007-AC-03, EP-018-AC-07 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-BR-004 | Local Backend | Draft | EP-002, EP-003, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-016, SP-019, SP-025, SP-026, SP-028, T-0115, T-0145, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-019-AC-01, EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-BR-005 | Backend Failure Handling | Draft | EP-002, EP-007, EP-008, EP-019, EP-020, EP-021, I-0007, I-0009, I-0021, SP-006, SP-010, SP-011, SP-013, SP-014 |  |  |  | epic, issue, sprint |
-| AF-DR-001 | Entity Identifiers | Draft | EP-001, EP-002, EP-008, EP-019, EP-020, EP-021, EP-022, I-0008, I-0009, I-0019, I-0020, I-0021, I-0022, SP-002, SP-004, SP-005, SP-006, SP-016, T-0145, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-DR-002 | Required Entity Fields | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0016, I-0020, I-0021, I-0022, SP-002, SP-003, SP-005, SP-006, SP-009, SP-010, SP-011, SP-013, SP-015, SP-016, SP-019, T-0099, T-0148, T-0150 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-DR-003 | Workflow State Records | Draft | EP-002, EP-003, EP-019, EP-020, EP-021, EP-023, I-0008, I-0014, I-0018, I-0021, I-0022, SP-010, SP-013, SP-016, SP-025, SP-027, SP-028, T-0145 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-DR-004 | Evidence Records | Draft | EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0018, I-0020, I-0021, I-0022, SP-003, SP-005, SP-007, SP-008, SP-010, SP-013, SP-016, SP-031, T-0145 | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-DR-005 | Metrics Records | Draft | EP-002, EP-003, EP-007, EP-019, EP-020, EP-021, I-0008, I-0014, I-0015, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-006, SP-010, SP-013, SP-016, SP-028, SP-033, T-0145, T-0149 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-DR-006 | Backend Mapping Records | Draft | EP-002, EP-003, EP-004, EP-005, EP-007, EP-019, EP-020, EP-021, EP-022, I-0008, I-0015, I-0017, I-0018, I-0020, I-0021, I-0022, SP-007, SP-010, SP-011, SP-013, SP-016, SP-028, SP-033, T-0115, T-0144, T-0145, T-0149 | EP-020-AC-01, EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-001 | Canonical Project Model | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-025, SP-026, SP-027, SP-028, SP-029, T-0007, T-0099, T-0101, T-0102, T-0116, T-0143, T-0147, T-0148, T-0149, T-0150, T-0151, T-0153 | EP-004-AC-01, EP-020-AC-01, EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-002 | Actor Identity Certification | Draft | EP-002, EP-003, EP-019, EP-020, I-0005, SP-011 |  |  |  | epic, issue, sprint |
-| AF-FR-003 | Actor Type Certification | Draft | EP-003, EP-019, EP-020, EP-021, I-0006, I-0022, SP-002, SP-003, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-FR-004 | Project Context Binding | Draft | EP-002, EP-003, EP-006, EP-019, EP-020, I-0006, I-0009, I-0022, SP-002, SP-016, T-0148, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-FR-005 | Project Scope Mismatch Denial | Draft | EP-002, EP-003, EP-005, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0014, I-0020, I-0021, I-0022, SP-002, SP-003, SP-007, SP-010, SP-013, SP-014, SP-016, T-0148, T-0149, T-0150 |  |  |  | epic, issue, sprint, task |
-| AF-FR-006 | Authority Model | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-008, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0014, I-0020, I-0021, I-0022, SP-002, SP-003, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-020, SP-025, SP-027, SP-028, T-0012, T-0101, T-0148, T-0149, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-FR-007 | Workflow State Model | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-008, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0010, I-0011, I-0013, I-0014, I-0020, I-0021, I-0022, SP-001, SP-002, SP-009, SP-010, SP-011, SP-012, SP-014, SP-016, SP-020, SP-025, SP-027, SP-028, T-0101, T-0102, T-0107, T-0108, T-0149, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-FR-008 | Human-Only Gates | Draft | EP-002, EP-003, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0020, I-0021, I-0022, SP-002, SP-004, SP-005, SP-006, SP-007, SP-008, SP-010, SP-012, SP-013, SP-014, SP-015, SP-016, SP-020, SP-027, SP-028, T-0115, T-0150, T-0152 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-009 | LLM-Allowed Operations | Draft | EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0017, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-018, SP-019, SP-020, T-0026, T-0099, T-0102, T-0150 | EP-003-AC-01, EP-003-AC-02, EP-004-AC-03, EP-005-AC-04, EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-010 | Entity Creation | Draft | EP-002, EP-003, EP-005, EP-006, EP-007, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0009, I-0014, I-0018, I-0021, I-0022, SP-002, SP-007, SP-013, SP-014, SP-016, SP-026, SP-027, T-0145 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-011 | Entity Update | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0014, I-0018, I-0020, I-0021, I-0022, SP-002, SP-007, SP-013, SP-014, SP-016, SP-026, SP-027, T-0145, T-0150, T-0152 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-012 | Entity Query | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0007, I-0008, I-0016, I-0020, I-0021, I-0022, SP-002, SP-003, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-013, SP-015, SP-016, SP-018, SP-019, T-0099, T-0150 | EP-004-AC-01, EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-013 | Sprint Model | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-007, SP-010, SP-012, SP-013, SP-015, SP-016, SP-019, SP-020, SP-025, SP-027, SP-028, T-0101, T-0102, T-0103, T-0115, T-0149, T-0150 |  |  |  | epic, issue, sprint, task |
-| AF-FR-014 | Epic Model | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0009, I-0010, I-0011, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-007, SP-010, SP-013, SP-015, SP-020, SP-025, SP-028, T-0101, T-0102, T-0103 |  |  |  | epic, issue, sprint, task |
-| AF-FR-015 | Verification Model | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0010, I-0011, I-0012, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-013, SP-016, SP-020, SP-021, SP-027, SP-031, T-0101, T-0102, T-0105, T-0108, T-0113, T-0148 | EP-005-AC-04, EP-018-AC-02, EP-020-AC-01, EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-016 | Task Packet Generation | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0007, I-0008, I-0010, I-0011, I-0012, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-007, SP-008, SP-009, SP-010, SP-011, SP-013, SP-014, SP-016, SP-020, SP-021, SP-026, SP-027, T-0021, T-0025, T-0101, T-0102, T-0105, T-0113, T-0125, T-0148, T-0149, T-0150, T-0153 | EP-004-AC-04, EP-018-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-017 | Metrics Computation | Draft | EP-001, EP-002, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, I-0005, I-0006, I-0008, I-0009, I-0010, I-0013, I-0014, I-0016, I-0018, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-025, SP-027, T-0107 | EP-022-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-018 | Audit Event Generation | Draft | EP-003, EP-007, EP-019, EP-020, SP-013 | EP-003-AC-05, EP-020-AC-01 |  |  | acceptanceCriterion, epic, sprint |
-| AF-FR-019 | Backend Adapter Interface | Draft | EP-002, EP-005, EP-007, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0014, I-0021, I-0022, SP-002, SP-010, SP-016, T-0018, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-FR-020 | Backend Capability Model | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0018, I-0020, I-0021, I-0022, SP-002, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-020, SP-028, T-0101, T-0145, T-0148 | EP-019-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-021 | Backend Mapping | Draft | EP-002, EP-003, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, I-0008, I-0009, I-0014, I-0018, I-0020, I-0021, I-0022, SP-002, SP-005, SP-006, SP-007, SP-010, SP-011, SP-014, SP-016, SP-028, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-FR-022 | Local Cache | Draft | EP-002, EP-004, EP-005, EP-006, EP-008, EP-019, EP-020, EP-021, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0014, I-0016, I-0017, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-010, SP-011, SP-012, SP-013, SP-014, SP-016, SP-028, T-0115, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-004-AC-05, EP-019-AC-01, EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-FR-023 | Configuration Model | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0008, I-0009, I-0018, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-013, SP-014, SP-016, SP-020, SP-027, SP-028, T-0008, T-0049, T-0101, T-0143, T-0145, T-0148, T-0149, T-0150, T-0151, T-0153 |  |  |  | epic, issue, sprint, task |
-| AF-IR-001 | Public API | Draft | EP-002, EP-003, EP-007, EP-008, EP-019, SP-007, SP-008 |  |  |  | epic, sprint |
-| AF-IR-002 | Read APIs | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, I-0005, I-0006, I-0009, I-0020, I-0021, I-0022, SP-002, SP-004, SP-005, SP-006, SP-007, SP-009, SP-011, SP-013, SP-014, SP-027, T-0088, T-0150 | EP-020-AC-01, EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-IR-003 | Write APIs | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-010, SP-011, SP-013, SP-014, SP-015, SP-016, SP-020, SP-023, SP-026, SP-027, T-0020, T-0038, T-0114, T-0143, T-0152 | EP-019-AC-04, EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-IR-004 | Authority APIs | Draft | EP-003, EP-019, EP-020, EP-021, SP-013 |  |  |  | epic, sprint |
-| AF-IR-005 | Backend Adapter API | Draft | EP-002, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, I-0005, I-0006, I-0008, I-0009, I-0021, I-0022, SP-002, SP-005, SP-006, SP-007, SP-009, SP-010, T-0018, T-0087, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-IR-006 | Configuration API | Draft | EP-002, EP-003, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, I-0006, I-0009, I-0021, I-0022, SP-002, SP-007, SP-009, SP-011, SP-014, SP-025, T-0049, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-IR-007 | Audit API | Draft | EP-002, EP-003, EP-007, EP-008, EP-019, EP-020, I-0008, I-0022, SP-003, SP-006, SP-013 |  |  |  | epic, issue, sprint |
-| AF-MR-001 | Sprint Progress | Draft | EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, I-0008, I-0009, I-0010, I-0020, I-0021, I-0022, SP-007, SP-013, T-0103 |  |  |  | epic, issue, sprint, task |
-| AF-MR-002 | Burndown | Draft | EP-006, EP-019, EP-020, EP-021, I-0009, I-0021, I-0022, SP-006, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-MR-003 | Velocity | Draft | EP-019, EP-020, EP-021, I-0021, I-0022, SP-002, SP-016 |  |  |  | epic, issue, sprint |
-| AF-MR-004 | Blocked Work | Draft | EP-019, EP-020, EP-021, I-0022 |  |  |  | epic, issue |
-| AF-MR-005 | Recently Completed Work | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0013, I-0014, I-0018, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-007, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-020, SP-025, SP-027, SP-028, T-0149, T-0150, T-0151 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-MR-006 | Upcoming Work | Draft | EP-006, EP-018, EP-019, EP-020, EP-021, EP-022, I-0009, I-0012, I-0014, I-0020, I-0021, I-0022, SP-006, SP-007, SP-015, SP-020, T-0102, T-0103, T-0109, T-0115, T-0152 | EP-019-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-MR-007 | Verification Aging | Draft | EP-005, EP-006, EP-019, EP-020, EP-021, I-0005, I-0006, I-0007, I-0008, I-0022, SP-002, SP-005, SP-006, SP-013, SP-016, T-0101 |  |  |  | epic, issue, sprint, task |
-| AF-NFR-001 | Portability | Draft | EP-001, EP-002, EP-003, EP-019, EP-020, SP-016 |  |  |  | epic, sprint |
-| AF-NFR-002 | Maintainability | Draft | EP-001, EP-002, EP-003, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0021, I-0022, SP-002, SP-003, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-013, SP-014, SP-015, SP-028, T-0148, T-0149, T-0152 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-NFR-003 | Testability | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0008, I-0018, I-0021, SP-003, SP-004, SP-005, SP-006, SP-007, SP-010, SP-011, SP-013, SP-014, SP-016, SP-025, T-0149, T-0151, T-0152 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-NFR-004 | Performance | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, I-0007, I-0008, I-0009, I-0014, I-0018, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-016, SP-027, T-0021, T-0125, T-0149, T-0150, T-0151 | EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-NFR-005 | Reliability | Draft | EP-002, EP-007, EP-008, EP-019, EP-020, I-0006, I-0009, I-0020, I-0021, I-0022, SP-006, SP-009, SP-010, SP-011, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-NFR-006 | Extensibility | Draft | EP-002, EP-003, EP-007, EP-008, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0014, I-0018, I-0022, SP-003, SP-005, SP-006, SP-007, SP-010, SP-011, SP-012, SP-013, SP-016, T-0149, T-0151, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-NFR-007 | Token Efficiency | Draft | EP-004, EP-005, EP-019, EP-020, EP-021, I-0008, I-0022, SP-003, SP-005, SP-007, SP-009, SP-010, SP-013, SP-016, SP-019, T-0145 | EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-SR-001 | Deny by Default | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-019, EP-020, EP-021, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0013, I-0014, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-007, SP-009, SP-010, SP-011, SP-012, SP-014, SP-016, SP-027, T-0012, T-0149, T-0152 | EP-003-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-SR-002 | Credential Scope Validation | Draft | EP-002, EP-003, EP-005, EP-008, EP-020, EP-021, SP-007, SP-013, T-0148 |  |  |  | epic, sprint, task |
-| AF-SR-003 | No Self-Declared Authority | Draft | EP-002, EP-003, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0006, I-0009, I-0021, I-0022, SP-002, SP-003, SP-007, SP-009, SP-011, SP-014, SP-015, T-0049, T-0148, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-SR-004 | Project-Scoped Mutation | Draft | EP-002, EP-003, EP-005, EP-018, EP-019, EP-020, I-0006, I-0008, I-0009, I-0021, I-0022, SP-009, SP-010, SP-011, SP-013, SP-014, SP-016, T-0149 |  |  |  | epic, issue, sprint, task |
-| AF-SR-005 | Cross-Project Delegation | Draft | EP-002, EP-019, EP-020, I-0009, I-0022, SP-010, SP-013 |  |  |  | epic, issue, sprint |
-| AF-SR-006 | Human-Only Operation Enforcement | Draft | EP-002, EP-003, EP-005, EP-006, EP-019, EP-020, I-0006, I-0008, I-0020, I-0022, SP-008, SP-016, T-0149, T-0152 | EP-003-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-SR-007 | Sensitive Operation Policy | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-019, EP-020, EP-021, EP-023, SP-007, SP-012, SP-013, T-0145, T-0152 |  |  |  | epic, sprint, task |
-| AF-SR-008 | Audit Trail Integrity | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, I-0006, I-0008, I-0009, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-006, SP-009, SP-011, SP-013, SP-014, SP-016, T-0145, T-0148, T-0149, T-0152 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AF-VR-001 | Domain Model Tests | Draft | EP-002, EP-007, EP-020, EP-021, SP-002, SP-028, T-0007, T-0150, T-0151 | EP-020-AC-09 |  |  | acceptanceCriterion, epic, sprint, task |
-| AF-VR-002 | Identity Tests | Draft |  |  |  |  |  |
-| AF-VR-003 | Authority Tests | Draft | EP-018, EP-019, EP-020, EP-021, SP-012, SP-013 |  |  |  | epic, sprint |
-| AF-VR-004 | Project Scope Tests | Draft | EP-002, EP-018, EP-019, EP-020, EP-021, I-0008, I-0009, I-0022, SP-012, SP-013, SP-014, T-0150 |  |  |  | epic, issue, sprint, task |
-| AF-VR-005 | Workflow Tests | Draft | EP-003, EP-018, EP-019, EP-020, I-0008, SP-012, SP-013, SP-014, T-0131, T-0150, T-0151, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-VR-006 | Backend Adapter Tests | Draft | EP-002, EP-004, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, SP-004, SP-005, SP-006, SP-010, SP-011, SP-012, SP-013, SP-014, T-0149, T-0150, T-0151, T-0152 |  |  |  | epic, sprint, task |
-| AF-VR-007 | Metrics Tests | Draft | EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, I-0008, I-0013, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, T-0115, T-0150, T-0151, T-0152 |  |  |  | epic, issue, sprint, task |
-| AF-VR-008 | Audit Tests | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0008, I-0009, I-0010, I-0011, I-0013, I-0016, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-018, SP-019, SP-025, SP-027, SP-028, T-0055, T-0072, T-0074, T-0114, T-0115, T-0131, T-0147, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-003-AC-05, EP-004-AC-01, EP-007-AC-01, EP-018-AC-07, EP-019-AC-06, EP-020-AC-01, EP-020-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-DR-001 | Task Packet Data | Draft | EP-004, EP-005, EP-019, EP-020, EP-021, I-0006, I-0022, SP-005 |  |  |  | epic, issue, sprint |
-| AIC-DR-002 | Entity Proposal Data | Draft | EP-002, EP-004, EP-005, EP-006, EP-007, EP-019, EP-020, EP-021, I-0006, I-0009, I-0020, I-0021, I-0022, SP-002, SP-009, SP-010, SP-011, SP-016, T-0150 |  |  |  | epic, issue, sprint, task |
-| AIC-DR-003 | Evidence Data | Draft | EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0009, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-004, SP-007, SP-010, SP-013, SP-027, SP-028, SP-031, T-0145, T-0150 | EP-004-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-DR-004 | Output Data Minimization | Draft | EP-008, EP-019, I-0019, I-0022, T-0148 |  |  |  | epic, issue, task |
-| AIC-FR-001 | Command-Line Interface | Draft | EP-005, EP-007 |  |  |  | epic |
-| AIC-FR-002 | Project Context Discovery | Draft | EP-002, EP-003, EP-008, EP-019, EP-020, I-0006, I-0009, I-0022, SP-002, SP-007, SP-009, SP-011, SP-014, T-0049, T-0148, T-0149 |  |  |  | epic, issue, sprint, task |
-| AIC-FR-003 | Propose Issue | Draft | EP-003, EP-005, EP-018, EP-020, I-0006, I-0020, I-0022, SP-002, SP-003, SP-009, SP-011 |  |  |  | epic, issue, sprint |
-| AIC-FR-004 | Propose Task | Draft | EP-003, EP-005, EP-018, EP-019, EP-020, I-0017, I-0020, I-0022, SP-003, T-0150 |  |  |  | epic, issue, sprint, task |
-| AIC-FR-005 | Retrieve Next Task | Draft | EP-005, EP-018, EP-019, EP-020, EP-023, I-0009, SP-007, SP-015, SP-019, SP-026, SP-027 | EP-005-AC-03 |  |  | acceptanceCriterion, epic, issue, sprint |
-| AIC-FR-006 | Generate Task Packet | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-007, SP-010, SP-013, SP-014, SP-015, SP-020, SP-021, SP-026, SP-027, SP-028, T-0101, T-0102, T-0103, T-0105, T-0113, T-0146, T-0148, T-0150, T-0153 | EP-004-AC-04, EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-FR-007 | Attach Evidence | Draft | EP-001, EP-004, EP-005, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0007, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-004, SP-005, SP-007, SP-008, SP-010, SP-013, SP-014, SP-031, T-0091, T-0148, T-0150, T-0153 | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01, EP-021-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-FR-008 | Mark Ready for Human Verification | Draft | EP-003, EP-004, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-010, SP-013, SP-016, SP-020, T-0102, T-0150 | EP-004-AC-03, EP-005-AC-04, EP-006-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-FR-009 | Project Summary | Draft | EP-004, EP-005, SP-027 |  |  |  | epic, sprint |
-| AIC-FR-010 | Multi-Project Summary Restrictions | Draft | EP-003, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0009, I-0020, I-0021, I-0022, SP-002, SP-003, SP-006, SP-009, SP-010, SP-011, SP-014, SP-026, SP-027, T-0149, T-0150 | EP-003-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-FR-011 | Deny Human-Only Operations | Draft | EP-003, EP-004, EP-005, EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0013, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-007, SP-008, SP-010, SP-015, SP-019, SP-020, SP-025, SP-027, SP-028, T-0102, T-0114, T-0115, T-0150, T-0152 | EP-003-AC-02, EP-018-AC-03 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-FR-012 | Project Scope Mismatch Detection | Draft | EP-002, EP-003, EP-019, EP-020, EP-021, I-0006, I-0009, I-0021, I-0022, SP-002, SP-007, SP-009, SP-011, SP-012, SP-014, SP-016 |  |  |  | epic, issue, sprint |
-| AIC-FR-013 | Structured Output | Draft | EP-005, EP-020, EP-021, EP-022, I-0009, I-0018, I-0019, T-0027 |  |  |  | epic, issue, task |
-| AIC-FR-014 | Dry-Run Mode | Draft | EP-001, EP-003, EP-007, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0008, I-0009, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-005, SP-007, SP-009, SP-010, SP-013, SP-014, T-0145, T-0149, T-0153 |  |  |  | epic, issue, sprint, task |
-| AIC-FR-015 | Audit Display | Draft | EP-003, EP-007, EP-020, EP-021, EP-023, I-0022, SP-013, T-0017 |  |  |  | epic, issue, sprint, task |
-| AIC-IR-001 | Airframe Core API | Draft | EP-001, EP-002, EP-003, EP-005, EP-007, EP-008, EP-019, EP-020, I-0006, I-0020, I-0021, SP-007, SP-008, SP-011, SP-012 |  |  |  | epic, issue, sprint |
-| AIC-IR-002 | CLI Command Model | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0013, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-013, SP-014, SP-015, SP-019, SP-020, SP-025, SP-026, SP-027, SP-028, T-0024, T-0026, T-0038, T-0101, T-0102, T-0107, T-0115, T-0150, T-0151, T-0152, T-0153 | EP-022-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-IR-003 | Machine-Readable Output | Draft |  |  |  |  |  |
-| AIC-IR-004 | Error Output | Draft | EP-003, EP-005 | EP-003-AC-04 |  |  | acceptanceCriterion, epic |
-| AIC-IR-005 | Configuration Interface | Draft | EP-002, EP-003, EP-005, EP-019, EP-020, EP-021, I-0006, I-0009, I-0022, SP-002, SP-009, SP-011, T-0049, T-0149 |  |  |  | epic, issue, sprint, task |
-| AIC-NFR-001 | Token Efficiency | Draft | EP-004 |  |  |  | epic |
-| AIC-NFR-002 | Deterministic Output | Draft | EP-003, EP-005, EP-008, EP-020, EP-021, I-0007, I-0019, I-0022, SP-012, SP-025, T-0151 | EP-021-AC-09 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-NFR-003 | Portability | Draft | EP-019, EP-021, I-0006, SP-005, T-0149, T-0152 |  |  |  | epic, issue, sprint, task |
-| AIC-NFR-004 | Reliability | Draft | EP-002, EP-003, EP-005, EP-007, EP-008, EP-019, EP-020, EP-023, I-0006, I-0020, I-0021, I-0022, SP-003, SP-007, SP-010, SP-014, SP-015 |  |  |  | epic, issue, sprint |
-| AIC-NFR-005 | Maintainability | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, SP-002, SP-003, SP-004, SP-005, SP-006, SP-010, SP-013, SP-014, SP-016, SP-019, SP-027, T-0143, T-0148, T-0151, T-0152 |  |  |  | epic, issue, sprint, task |
-| AIC-SR-001 | Certified Agent Identity | Draft | EP-003, I-0006 |  |  |  | epic, issue |
-| AIC-SR-002 | No Actor Spoofing | Draft | I-0006, I-0007, I-0022, SP-003, SP-014, T-0148 |  |  |  | issue, sprint, task |
-| AIC-SR-003 | Project-Scoped Authority | Draft | EP-002, EP-003, EP-005, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0009, I-0010, I-0011, I-0014, I-0021, I-0022, SP-002, SP-012, SP-013, SP-014, T-0149, T-0150 |  |  |  | epic, issue, sprint, task |
-| AIC-SR-004 | Credential Scope Validation | Draft | EP-002, EP-003, EP-006, EP-019, EP-020, EP-021, I-0009, I-0022, T-0148, T-0149 |  |  |  | epic, issue, task |
-| AIC-SR-005 | Deny by Default | Draft | EP-002, EP-003, EP-005, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0013, I-0018, I-0020, I-0021, I-0022, SP-003, SP-007, SP-011, SP-027, T-0012, T-0149 | EP-003-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-SR-006 | Human-Only Gate Protection | Draft | EP-003, EP-005, EP-006, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0021, I-0022, SP-003, SP-004, SP-005, SP-006, SP-014, SP-015, SP-027, T-0152 |  |  |  | epic, issue, sprint, task |
-| AIC-SR-007 | Auditability | Draft | EP-002, EP-003, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0006, I-0020, I-0022, SP-006, SP-012, SP-013, T-0148 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-VR-001 | Command Tests | Draft | SP-014, T-0150, T-0151, T-0152 |  |  |  | sprint, task |
-| AIC-VR-002 | Authority Denial Tests | Draft | EP-003, EP-005, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0020, I-0022, SP-003, SP-005, SP-008, SP-013, SP-014, SP-019, SP-027, T-0115, T-0152, T-0153 | EP-003-AC-01, EP-003-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-VR-003 | Project Scope Tests | Draft | EP-002, EP-003, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0014, I-0018, I-0020, I-0021, I-0022, SP-007, SP-011, SP-012, SP-013, SP-014, T-0065, T-0149, T-0150, T-0151, T-0152, T-0153 |  |  |  | epic, issue, sprint, task |
-| AIC-VR-004 | Task Packet Tests | Draft | EP-018, EP-019, EP-020, SP-003, SP-004, SP-005, SP-014, T-0150 |  |  |  | epic, sprint, task |
-| AIC-VR-005 | Evidence Tests | Draft | EP-001, EP-003, EP-005, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0009, I-0017, I-0018, I-0020, I-0021, I-0022, SP-005, SP-008, SP-010, SP-011, SP-012, SP-013, SP-014, SP-016, SP-020, SP-027, SP-028, T-0101, T-0102, T-0103, T-0115, T-0149, T-0150, T-0152, T-0153 | EP-005-AC-04, EP-019-AC-02 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| AIC-VR-006 | Output Format Tests | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0016, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-018, SP-019, SP-025, SP-028, T-0027, T-0055, T-0065, T-0115, T-0143, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-002-AC-05, EP-004-AC-01, EP-007-AC-01, EP-018-AC-07, EP-019-AC-01, EP-019-AC-04, EP-019-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-001 | Canonical Repo-Local Store | Draft | EP-002, EP-003, EP-005, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0013, I-0014, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-005, SP-011, SP-012, SP-014, SP-016, SP-025, SP-026, SP-027, SP-028, T-0115, T-0117, T-0131, T-0145, T-0146, T-0149, T-0150, T-0151 | EP-020-AC-02, EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-002 | Stable Work Item Identity | Draft | EP-001, EP-003, EP-004, EP-005, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0015, I-0016, I-0017, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-008, SP-009, SP-010, SP-011, SP-013, SP-015, SP-018, T-0102, T-0145, T-0150 | EP-020-AC-01, EP-020-AC-04, EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-003 | Relationship Model | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0008, I-0009, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-018, SP-019, SP-020, SP-025, SP-026, SP-027, SP-028, T-0037, T-0038, T-0053, T-0093, T-0101, T-0102, T-0103, T-0107, T-0115, T-0149, T-0150, T-0152, T-0153 | EP-007-AC-01, EP-018-AC-07, EP-019-AC-04, EP-020-AC-01, EP-021-AC-06, EP-022-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-004 | Workflow Policy Authority | Draft | EP-003, EP-006, EP-017, EP-018, EP-019, EP-020, EP-021, EP-023, I-0008, I-0013, I-0020, SP-002, SP-003, SP-007, SP-013, SP-015, SP-019, SP-025, SP-026, SP-027, SP-028, T-0118, T-0152 | EP-020-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-005 | Markdown Projection | Draft | EP-002, EP-003, EP-004, EP-005, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-010, SP-013, SP-014, SP-015, SP-016, SP-025, SP-026, SP-027, SP-028, SP-033, T-0115, T-0121, T-0123, T-0145, T-0146, T-0147, T-0149, T-0151, T-0152 | EP-020-AC-01, EP-020-AC-04, EP-020-AC-05, EP-020-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-006 | Validation Diagnostics | Draft | EP-002, EP-003, EP-008, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-007, SP-013, SP-015, SP-019, SP-025, SP-026, SP-027, SP-028, T-0119, T-0145, T-0148, T-0151 | EP-020-AC-03 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-007 | Repair Preview | Draft | EP-020, EP-021, EP-023, I-0008, SP-010, SP-013 |  |  |  | epic, issue, sprint |
-| CWS-FR-008 | Audit Events | Draft | EP-002, EP-003, EP-006, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-007, SP-011, SP-012, SP-013, SP-015, SP-016, SP-019, SP-020, SP-027, SP-028, T-0115, T-0127, T-0145, T-0149 | EP-006-AC-04, EP-020-AC-01, EP-022-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-009 | Test Evidence Summary | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0006, I-0007, I-0008, I-0009, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-003, SP-004, SP-005, SP-007, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-016, SP-019, T-0103, T-0109, T-0115, T-0143, T-0145, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-018-AC-07, EP-019-AC-05, EP-019-AC-06, EP-021-AC-06, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-010 | CI Evidence Link | Draft | EP-001, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0013, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-013, SP-014, SP-015, SP-019, T-0145, T-0152, T-0153 | EP-020-AC-01, EP-021-AC-06, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-011 | Requirement Traceability | Draft | EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0020, I-0021, I-0022, SP-004, SP-005, SP-007, SP-008, SP-010, SP-013, SP-033, T-0115, T-0145, T-0146, T-0147 | EP-021-AC-01, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-012 | Fluid Requirements | Draft | EP-019, EP-020, EP-021, I-0018, I-0022, SP-013, T-0144, T-0145 | EP-021-AC-07 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-013 | External Import Export Stubs | Draft | EP-001, EP-002, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0020, I-0021, I-0022, SP-005, SP-006, SP-007, SP-009, SP-010, SP-011, SP-014, SP-025, SP-028, T-0143, T-0144, T-0145, T-0148, T-0149, T-0150, T-0152, T-0153 | EP-019-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-014 | Release Candidate Gate | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-025, SP-027, SP-028, SP-033, T-0045, T-0101, T-0102, T-0107, T-0108, T-0113, T-0140, T-0145, T-0146, T-0147, T-0149, T-0151 | EP-021-AC-01, EP-021-AC-07, EP-021-AC-08, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-FR-015 | Generated Compliance Outputs | Draft | EP-001, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-003, SP-005, SP-007, SP-008, SP-010, SP-011, SP-013, SP-014, SP-016, SP-025, SP-033, T-0045, T-0115, T-0141, T-0144, T-0145, T-0146, T-0147, T-0151, T-0153 | EP-020-AC-05, EP-021-AC-01, EP-021-AC-09 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-NFR-001 | Diffability | Draft | EP-019, EP-020, EP-021, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-012, SP-016, SP-019, SP-025, SP-027, SP-028, T-0115, T-0145, T-0149, T-0150, T-0151 |  |  |  | epic, issue, sprint, task |
-| CWS-NFR-002 | Human Inspectability | Draft | EP-019, EP-020, EP-021, EP-023, I-0005, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-002, SP-007, SP-010, SP-013, SP-016, SP-019, SP-020, SP-025, SP-027, SP-028, T-0115, T-0145, T-0146, T-0149, T-0151 | EP-021-AC-09 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| CWS-NFR-003 | Deterministic Projection | Draft | EP-020, EP-021, I-0010, I-0011, I-0012, I-0022, SP-010, SP-025, SP-026, T-0145 |  |  |  | epic, issue, sprint, task |
-| CWS-NFR-004 | Backward Compatibility | Draft | EP-020, EP-022, I-0016, I-0022, SP-026, SP-027 | EP-020-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint |
-| CWS-NFR-005 | Authority Preservation | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-016, SP-018, SP-019, SP-020, SP-021, SP-022, SP-023, SP-025, SP-026, SP-027, SP-028, SP-029, SP-031, SP-033, SP-035, T-0038, T-0041, T-0058, T-0064, T-0079, T-0085, T-0092, T-0094, T-0096, T-0097, T-0101, T-0102, T-0103, T-0107, T-0108, T-0109, T-0110, T-0111, T-0112, T-0113, T-0114, T-0115, T-0117, T-0119, T-0121, T-0124, T-0126, T-0127, T-0128, T-0129, T-0130, T-0132, T-0133, T-0139, T-0140, T-0143, T-0144, T-0145, T-0146, T-0147, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-001-AC-05, EP-004-AC-05, EP-005-AC-04, EP-006-AC-01, EP-007-AC-01, EP-007-AC-03, EP-019-AC-04, EP-019-AC-06, EP-020-AC-01, EP-020-AC-02, EP-020-AC-04, EP-020-AC-05, EP-020-AC-06, EP-020-AC-07, EP-020-AC-08, EP-020-AC-09, EP-021-AC-01, EP-021-AC-03, EP-021-AC-04, EP-021-AC-06, EP-021-AC-07, EP-021-AC-09, EP-021-AC-10, EP-022-AC-02, EP-022-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-001 | Requirement Records | Draft | EP-002, EP-020, EP-021, I-0012, I-0017, I-0022, SP-016, SP-033, T-0132, T-0144, T-0145 | EP-020-AC-04 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-002 | Requirement Revision State | Draft | EP-018, EP-019, EP-020, EP-021, I-0005, I-0008, I-0009, I-0010, I-0011, I-0014, I-0015, I-0016, I-0017, I-0018, I-0021, I-0022, SP-010, SP-012, SP-013, SP-016, SP-028, T-0137, T-0145, T-0149 | EP-021-AC-07 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-003 | Fluid Requirement Lifecycle | Draft | EP-019, EP-020, EP-021, EP-022, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-004, SP-005, SP-007, SP-010, SP-013, SP-014, SP-019, T-0004, T-0049, T-0067, T-0068, T-0082, T-0090, T-0092, T-0093, T-0094, T-0107, T-0109, T-0110, T-0111, T-0132, T-0133, T-0137, T-0143, T-0144, T-0145, T-0146, T-0147, T-0149 | EP-021-AC-07, EP-022-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-004 | Requirement Source | Draft | EP-020, EP-021, EP-023, I-0009, I-0010, I-0011, I-0014, I-0017, I-0021, I-0022, SP-012, SP-016, SP-025, T-0145, T-0146, T-0147 |  |  |  | epic, issue, sprint, task |
-| RT-FR-005 | Implementation Trace | Draft | EP-004, EP-005, EP-007, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0009, I-0017, I-0018, I-0020, I-0021, I-0022, SP-003, SP-010, SP-013, SP-015, SP-018, SP-019, T-0145, T-0150 | EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-006 | Verification Trace | Draft | EP-003, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0008, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-003, SP-007, SP-009, SP-010, SP-011, SP-013, SP-014, SP-019, T-0145, T-0153 | EP-021-AC-01, EP-021-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-007 | Validation Trace | Draft | EP-003, EP-004, EP-005, EP-019, EP-020, EP-021, EP-023, I-0008, I-0022, SP-007, SP-010, SP-013, T-0145 | EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-008 | Bidirectional Traceability | Draft | EP-001, EP-003, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0009, I-0020, I-0021, I-0022, SP-005, SP-007, SP-010, SP-011, SP-013, T-0135, T-0145, T-0146, T-0147 | EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-009 | Traceability Gap Detection | Draft | EP-001, EP-002, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-013, SP-014, SP-015, SP-020, SP-025, SP-028, T-0103, T-0143, T-0144, T-0145, T-0146, T-0148, T-0149, T-0153 | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01, EP-021-AC-05, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-010 | Release Scope | Draft | EP-008, EP-020, EP-021, EP-023, I-0008, I-0009, SP-007, SP-013, T-0145, T-0146 |  |  |  | epic, issue, sprint, task |
-| RT-FR-011 | Release Gate Summary | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0003, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-011, SP-012, SP-013, SP-014, SP-015, SP-019, SP-020, SP-027, SP-033, T-0003, T-0005, T-0011, T-0017, T-0020, T-0022, T-0026, T-0029, T-0030, T-0032, T-0038, T-0040, T-0041, T-0043, T-0045, T-0048, T-0054, T-0056, T-0057, T-0058, T-0059, T-0060, T-0063, T-0071, T-0073, T-0076, T-0078, T-0079, T-0084, T-0085, T-0096, T-0097, T-0098, T-0099, T-0100, T-0101, T-0102, T-0103, T-0104, T-0105, T-0106, T-0107, T-0108, T-0109, T-0110, T-0111, T-0112, T-0113, T-0114, T-0115, T-0124, T-0128, T-0129, T-0130, T-0135, T-0136, T-0138, T-0139, T-0140, T-0141, T-0142, T-0143, T-0144, T-0145, T-0146, T-0147, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-018-AC-02, EP-018-AC-03, EP-018-AC-04, EP-021-AC-01, EP-021-AC-05, EP-021-AC-07, EP-021-AC-08, EP-021-AC-10, EP-022-AC-05 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-012 | Deviation And Waiver Records | Draft | EP-003, EP-008, EP-019, EP-020, EP-021, EP-023, I-0008, I-0009, I-0022, SP-007, SP-010, SP-013, SP-033, T-0145, T-0146 | EP-021-AC-01 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-013 | Test Result Summaries | Draft | EP-001, EP-019, EP-020, EP-021, EP-022, EP-023, I-0006, I-0008, I-0009, I-0014, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-010, SP-013, SP-014, SP-031, T-0103, T-0145, T-0148, T-0153 | EP-021-AC-01, EP-021-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-014 | CI Integration Link | Draft | EP-001, EP-005, EP-006, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0009, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-007, SP-008, SP-010, SP-013, SP-027, T-0145, T-0153 | EP-021-AC-01, EP-021-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-015 | Code Reference Trace | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-023, I-0005, I-0006, I-0008, I-0009, I-0012, I-0013, I-0014, I-0017, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-010, SP-012, SP-013, SP-014, SP-018, SP-025, SP-028, SP-033, T-0092, T-0093, T-0115, T-0137, T-0144, T-0145, T-0146, T-0147, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-020-AC-01, EP-020-AC-06, EP-021-AC-01, EP-021-AC-06 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-FR-016 | Compliance Document Generation | Draft | EP-001, EP-004, EP-005, EP-007, EP-008, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0009, I-0010, I-0011, I-0015, I-0016, I-0017, I-0018, I-0020, I-0021, I-0022, SP-002, SP-003, SP-007, SP-008, SP-010, SP-011, SP-013, SP-016, SP-025, SP-026, SP-033, T-0045, T-0115, T-0125, T-0141, T-0142, T-0143, T-0144, T-0145, T-0146, T-0147, T-0151 | EP-021-AC-01, EP-021-AC-04, EP-021-AC-09, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-IE-001 | CSV Import | Draft | EP-020, EP-021, I-0008, SP-013, T-0143, T-0145 |  |  |  | epic, issue, sprint, task |
-| RT-IE-002 | CSV Export | Draft | EP-020, EP-021, I-0009, I-0022, SP-013, T-0143, T-0145 |  |  |  | epic, issue, sprint, task |
-| RT-IE-003 | JSON Import Export | Draft | EP-004, EP-019, EP-020, EP-021, EP-022, EP-023, I-0008, I-0009, I-0012, I-0015, I-0017, I-0018, I-0022, SP-010, SP-013, SP-025, SP-026, SP-033, T-0132, T-0143, T-0144, T-0145, T-0147 | EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-IE-004 | Diffable Workflow | Draft | EP-006, EP-007, EP-018, EP-019, EP-020, EP-021, EP-023, I-0008, I-0018, I-0022, SP-006, SP-007, SP-014, T-0143, T-0144, T-0145, T-0147 | EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-IE-005 | External Tool Stubs | Draft | EP-006, EP-008, EP-018, EP-020, EP-021, EP-023, I-0009, I-0015, I-0022, SP-007, SP-013, SP-033, T-0139, T-0143, T-0145, T-0146, T-0147 | EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-RG-001 | Configurable Gate Policy | Draft | EP-019, EP-020, EP-021, I-0009, I-0022, SP-007 |  |  |  | epic, issue, sprint |
-| RT-RG-002 | Default Gate Policy | Draft | EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-023, I-0005, I-0007, I-0008, I-0009, I-0013, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-009, SP-010, SP-012, SP-013, SP-014, SP-015, SP-019, SP-025, SP-027, SP-033, T-0026, T-0045, T-0099, T-0102, T-0107, T-0108, T-0119, T-0136, T-0139, T-0140, T-0145, T-0146, T-0147, T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | EP-021-AC-01, EP-021-AC-05, EP-021-AC-07, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-RG-003 | Gate Explanation | Draft | EP-003, EP-006, EP-008, EP-018, EP-019, EP-020, EP-021, I-0008, I-0009, I-0013, I-0018, I-0020, I-0022, SP-007, T-0101, T-0107, T-0108, T-0145 | EP-021-AC-07, EP-021-AC-08 |  |  | acceptanceCriterion, epic, issue, sprint, task |
-| RT-RG-004 | Human Authority | Draft | EP-001, EP-002, EP-003, EP-004, EP-005, EP-006, EP-007, EP-008, EP-018, EP-019, EP-020, EP-021, EP-022, EP-023, I-0005, I-0006, I-0007, I-0008, I-0009, I-0010, I-0011, I-0012, I-0013, I-0014, I-0015, I-0016, I-0017, I-0018, I-0019, I-0020, I-0021, I-0022, SP-001, SP-002, SP-003, SP-004, SP-005, SP-006, SP-007, SP-008, SP-010, SP-012, SP-013, SP-014, SP-015, SP-016, SP-019, SP-020, SP-025, SP-026, SP-027, SP-028, SP-031, SP-033, T-0103, T-0108, T-0115, T-0133, T-0138, T-0140, T-0142, T-0143, T-0144, T-0145, T-0146, T-0147, T-0148, T-0149, T-0152, T-0153 | EP-005-AC-04, EP-020-AC-01, EP-020-AC-06, EP-020-AC-09, EP-021-AC-01, EP-021-AC-06, EP-021-AC-07, EP-021-AC-09, EP-021-AC-10 |  |  | acceptanceCriterion, epic, issue, sprint, task |
+| Requirement | Title | Status | Epic Acceptance Criteria |
+| ----------- | ----- | ------ | ------------------------ |
+| AC-DR-001 | Dashboard Data | Draft | EP-004-AC-05 |
+| AC-DR-002 | Entity Data | Draft | EP-020-AC-01, EP-021-AC-01 |
+| AC-DR-003 | Metrics Data | Draft |  |
+| AC-DR-004 | Local Presentation State | Draft | EP-019-AC-04 |
+| AC-FR-001 | Project Dashboard | Draft |  |
+| AC-FR-002 | Recently Completed Work | Draft | EP-004-AC-01 |
+| AC-FR-003 | Active Work | Draft | EP-022-AC-02 |
+| AC-FR-004 | Upcoming Work | Draft | EP-019-AC-04 |
+| AC-FR-005 | Blocked Work | Draft |  |
+| AC-FR-006 | Ready for Human Verification | Draft | EP-004-AC-03, EP-005-AC-04 |
+| AC-FR-007 | Verification Review | Draft | EP-005-AC-04 |
+| AC-FR-008 | Accept Work | Draft | EP-003-AC-02, EP-020-AC-01, EP-020-AC-08 |
+| AC-FR-009 | Reject Work | Draft |  |
+| AC-FR-010 | Sprint Control | Draft |  |
+| AC-FR-011 | Epic Control | Draft |  |
+| AC-FR-012 | Issue / Task Review | Draft | EP-004-AC-01, EP-024-AC-03 |
+| AC-FR-013 | Metrics Display | Draft | EP-005-AC-04 |
+| AC-FR-014 | Audit Visibility | Draft | EP-003-AC-05 |
+| AC-FR-015 | Multi-Project View | Draft |  |
+| AC-FR-016 | Project-Specific View | Draft |  |
+| AC-FR-017 | Backend-Agnostic Operation Display | Draft | EP-007-AC-04 |
+| AC-FR-018 | Denied Operation Reporting | Draft |  |
+| AC-IR-001 | Airframe Core API | Draft |  |
+| AC-IR-002 | Configuration Interface | Draft |  |
+| AC-IR-003 | Export Interface | Draft | EP-020-AC-06 |
+| AC-IR-004 | Accessibility Interface | Draft | EP-006-AC-05 |
+| AC-NFR-001 | Usability | Draft |  |
+| AC-NFR-002 | Accessibility | Draft |  |
+| AC-NFR-003 | Performance | Draft | EP-004-AC-05 |
+| AC-NFR-004 | Reliability | Draft |  |
+| AC-NFR-005 | Backend Independence | Draft | EP-019-AC-04 |
+| AC-NFR-006 | Maintainability | Draft |  |
+| AC-SR-001 | Certified Actor Identity | Draft | EP-019-AC-04 |
+| AC-SR-002 | No Self-Declared Authority | Draft |  |
+| AC-SR-003 | Human-Only Operations | Draft | EP-003-AC-02, EP-020-AC-08 |
+| AC-SR-004 | Project Context Binding | Draft |  |
+| AC-SR-005 | Sensitive Operation Confirmation | Draft | EP-019-AC-04 |
+| AC-SR-006 | Audit Event Generation | Draft | EP-020-AC-01 |
+| AC-VR-001 | Dashboard Verification | Draft | EP-006-AC-01, EP-020-AC-01 |
+| AC-VR-002 | Authority Verification | Draft | EP-003-AC-02, EP-024-AC-05 |
+| AC-VR-003 | Workflow Verification | Draft |  |
+| AC-VR-004 | Metrics Verification | Draft |  |
+| AC-VR-005 | Accessibility Verification | Draft | EP-004-AC-01, EP-018-AC-07, EP-019-AC-06 |
+| AF-BR-001 | Backend Independence | Draft |  |
+| AF-BR-002 | Initial Backend | Draft |  |
+| AF-BR-003 | GitHub Backend | Draft | EP-007-AC-01, EP-007-AC-03, EP-018-AC-07 |
+| AF-BR-004 | Local Backend | Draft | EP-019-AC-01, EP-019-AC-04 |
+| AF-BR-005 | Backend Failure Handling | Draft |  |
+| AF-DR-001 | Entity Identifiers | Draft |  |
+| AF-DR-002 | Required Entity Fields | Draft | EP-020-AC-01 |
+| AF-DR-003 | Workflow State Records | Draft | EP-020-AC-01 |
+| AF-DR-004 | Evidence Records | Draft | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01 |
+| AF-DR-005 | Metrics Records | Draft | EP-020-AC-01 |
+| AF-DR-006 | Backend Mapping Records | Draft | EP-020-AC-01, EP-021-AC-01 |
+| AF-FR-001 | Canonical Project Model | Draft | EP-004-AC-01, EP-020-AC-01, EP-021-AC-01 |
+| AF-FR-002 | Actor Identity Certification | Draft |  |
+| AF-FR-003 | Actor Type Certification | Draft |  |
+| AF-FR-004 | Project Context Binding | Draft |  |
+| AF-FR-005 | Project Scope Mismatch Denial | Draft |  |
+| AF-FR-006 | Authority Model | Draft |  |
+| AF-FR-007 | Workflow State Model | Draft |  |
+| AF-FR-008 | Human-Only Gates | Draft | EP-020-AC-01 |
+| AF-FR-009 | LLM-Allowed Operations | Draft | EP-003-AC-01, EP-003-AC-02, EP-004-AC-03, EP-005-AC-04, EP-020-AC-01 |
+| AF-FR-010 | Entity Creation | Draft | EP-020-AC-01 |
+| AF-FR-011 | Entity Update | Draft | EP-020-AC-01, EP-024-AC-04 |
+| AF-FR-012 | Entity Query | Draft | EP-004-AC-01, EP-020-AC-01 |
+| AF-FR-013 | Sprint Model | Draft |  |
+| AF-FR-014 | Epic Model | Draft |  |
+| AF-FR-015 | Verification Model | Draft | EP-005-AC-04, EP-018-AC-02, EP-020-AC-01, EP-021-AC-01, EP-024-AC-05 |
+| AF-FR-016 | Task Packet Generation | Draft | EP-004-AC-04, EP-018-AC-04 |
+| AF-FR-017 | Metrics Computation | Draft | EP-022-AC-05 |
+| AF-FR-018 | Audit Event Generation | Draft | EP-003-AC-05, EP-020-AC-01 |
+| AF-FR-019 | Backend Adapter Interface | Draft |  |
+| AF-FR-020 | Backend Capability Model | Draft | EP-019-AC-01 |
+| AF-FR-021 | Backend Mapping | Draft |  |
+| AF-FR-022 | Local Cache | Draft | EP-004-AC-05, EP-019-AC-01, EP-019-AC-04 |
+| AF-FR-023 | Configuration Model | Draft |  |
+| AF-IR-001 | Public API | Draft |  |
+| AF-IR-002 | Read APIs | Draft | EP-020-AC-01, EP-020-AC-06 |
+| AF-IR-003 | Write APIs | Draft | EP-019-AC-04, EP-020-AC-01 |
+| AF-IR-004 | Authority APIs | Draft |  |
+| AF-IR-005 | Backend Adapter API | Draft |  |
+| AF-IR-006 | Configuration API | Draft |  |
+| AF-IR-007 | Audit API | Draft |  |
+| AF-MR-001 | Sprint Progress | Draft |  |
+| AF-MR-002 | Burndown | Draft |  |
+| AF-MR-003 | Velocity | Draft |  |
+| AF-MR-004 | Blocked Work | Draft |  |
+| AF-MR-005 | Recently Completed Work | Draft | EP-020-AC-01 |
+| AF-MR-006 | Upcoming Work | Draft | EP-019-AC-04 |
+| AF-MR-007 | Verification Aging | Draft |  |
+| AF-NFR-001 | Portability | Draft |  |
+| AF-NFR-002 | Maintainability | Draft | EP-020-AC-01 |
+| AF-NFR-003 | Testability | Draft | EP-020-AC-01 |
+| AF-NFR-004 | Performance | Draft | EP-020-AC-06 |
+| AF-NFR-005 | Reliability | Draft |  |
+| AF-NFR-006 | Extensibility | Draft |  |
+| AF-NFR-007 | Token Efficiency | Draft | EP-020-AC-06 |
+| AF-SR-001 | Deny by Default | Draft | EP-003-AC-02 |
+| AF-SR-002 | Credential Scope Validation | Draft |  |
+| AF-SR-003 | No Self-Declared Authority | Draft |  |
+| AF-SR-004 | Project-Scoped Mutation | Draft |  |
+| AF-SR-005 | Cross-Project Delegation | Draft |  |
+| AF-SR-006 | Human-Only Operation Enforcement | Draft | EP-003-AC-02 |
+| AF-SR-007 | Sensitive Operation Policy | Draft |  |
+| AF-SR-008 | Audit Trail Integrity | Draft | EP-020-AC-01 |
+| AF-VR-001 | Domain Model Tests | Draft | EP-020-AC-09 |
+| AF-VR-002 | Identity Tests | Draft |  |
+| AF-VR-003 | Authority Tests | Draft |  |
+| AF-VR-004 | Project Scope Tests | Draft |  |
+| AF-VR-005 | Workflow Tests | Draft |  |
+| AF-VR-006 | Backend Adapter Tests | Draft |  |
+| AF-VR-007 | Metrics Tests | Draft |  |
+| AF-VR-008 | Audit Tests | Draft | EP-003-AC-05, EP-004-AC-01, EP-007-AC-01, EP-018-AC-07, EP-019-AC-06, EP-020-AC-01, EP-020-AC-02 |
+| AIC-DR-001 | Task Packet Data | Draft |  |
+| AIC-DR-002 | Entity Proposal Data | Draft |  |
+| AIC-DR-003 | Evidence Data | Draft | EP-004-AC-05 |
+| AIC-DR-004 | Output Data Minimization | Draft |  |
+| AIC-FR-001 | Command-Line Interface | Draft |  |
+| AIC-FR-002 | Project Context Discovery | Draft |  |
+| AIC-FR-003 | Propose Issue | Draft |  |
+| AIC-FR-004 | Propose Task | Draft |  |
+| AIC-FR-005 | Retrieve Next Task | Draft | EP-005-AC-03 |
+| AIC-FR-006 | Generate Task Packet | Draft | EP-004-AC-04, EP-020-AC-06, EP-023-AC-02, EP-024-AC-06 |
+| AIC-FR-007 | Attach Evidence | Draft | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01, EP-021-AC-06 |
+| AIC-FR-008 | Mark Ready for Human Verification | Draft | EP-004-AC-03, EP-005-AC-04, EP-006-AC-02 |
+| AIC-FR-009 | Project Summary | Draft |  |
+| AIC-FR-010 | Multi-Project Summary Restrictions | Draft | EP-003-AC-02 |
+| AIC-FR-011 | Deny Human-Only Operations | Draft | EP-003-AC-02, EP-018-AC-03 |
+| AIC-FR-012 | Project Scope Mismatch Detection | Draft |  |
+| AIC-FR-013 | Structured Output | Draft |  |
+| AIC-FR-014 | Dry-Run Mode | Draft |  |
+| AIC-FR-015 | Audit Display | Draft |  |
+| AIC-IR-001 | Airframe Core API | Draft |  |
+| AIC-IR-002 | CLI Command Model | Draft | EP-022-AC-05 |
+| AIC-IR-003 | Machine-Readable Output | Draft |  |
+| AIC-IR-004 | Error Output | Draft | EP-003-AC-04 |
+| AIC-IR-005 | Configuration Interface | Draft |  |
+| AIC-NFR-001 | Token Efficiency | Draft |  |
+| AIC-NFR-002 | Deterministic Output | Draft | EP-021-AC-09 |
+| AIC-NFR-003 | Portability | Draft |  |
+| AIC-NFR-004 | Reliability | Draft |  |
+| AIC-NFR-005 | Maintainability | Draft |  |
+| AIC-SR-001 | Certified Agent Identity | Draft |  |
+| AIC-SR-002 | No Actor Spoofing | Draft |  |
+| AIC-SR-003 | Project-Scoped Authority | Draft |  |
+| AIC-SR-004 | Credential Scope Validation | Draft |  |
+| AIC-SR-005 | Deny by Default | Draft | EP-003-AC-02 |
+| AIC-SR-006 | Human-Only Gate Protection | Draft |  |
+| AIC-SR-007 | Auditability | Draft | EP-020-AC-01 |
+| AIC-VR-001 | Command Tests | Draft |  |
+| AIC-VR-002 | Authority Denial Tests | Draft | EP-003-AC-01, EP-003-AC-02, EP-024-AC-05 |
+| AIC-VR-003 | Project Scope Tests | Draft |  |
+| AIC-VR-004 | Task Packet Tests | Draft |  |
+| AIC-VR-005 | Evidence Tests | Draft | EP-005-AC-04, EP-019-AC-02 |
+| AIC-VR-006 | Output Format Tests | Draft | EP-002-AC-05, EP-004-AC-01, EP-007-AC-01, EP-018-AC-07, EP-019-AC-01, EP-019-AC-04, EP-019-AC-06 |
+| CWS-FR-001 | Canonical Repo-Local Store | Draft | EP-020-AC-02, EP-020-AC-06, EP-024-AC-01 |
+| CWS-FR-002 | Stable Work Item Identity | Draft | EP-020-AC-01, EP-020-AC-04, EP-021-AC-01 |
+| CWS-FR-003 | Relationship Model | Draft | EP-007-AC-01, EP-018-AC-07, EP-019-AC-04, EP-020-AC-01, EP-021-AC-06, EP-022-AC-05, EP-024-AC-02 |
+| CWS-FR-004 | Workflow Policy Authority | Draft | EP-020-AC-01 |
+| CWS-FR-005 | Markdown Projection | Draft | EP-020-AC-01, EP-020-AC-04, EP-020-AC-05, EP-020-AC-06 |
+| CWS-FR-006 | Validation Diagnostics | Draft | EP-020-AC-03 |
+| CWS-FR-007 | Repair Preview | Draft |  |
+| CWS-FR-008 | Audit Events | Draft | EP-006-AC-04, EP-020-AC-01, EP-022-AC-05 |
+| CWS-FR-009 | Test Evidence Summary | Draft | EP-018-AC-07, EP-019-AC-05, EP-019-AC-06, EP-021-AC-06, EP-021-AC-10, EP-024-AC-01, EP-024-AC-02, EP-024-AC-05 |
+| CWS-FR-010 | CI Evidence Link | Draft | EP-020-AC-01, EP-021-AC-06, EP-021-AC-10 |
+| CWS-FR-011 | Requirement Traceability | Draft | EP-021-AC-01, EP-021-AC-10, EP-024-AC-02, EP-024-AC-05 |
+| CWS-FR-012 | Fluid Requirements | Draft | EP-021-AC-07 |
+| CWS-FR-013 | External Import Export Stubs | Draft | EP-019-AC-06 |
+| CWS-FR-014 | Release Candidate Gate | Draft | EP-021-AC-01, EP-021-AC-07, EP-021-AC-08, EP-021-AC-10, EP-024-AC-05 |
+| CWS-FR-015 | Generated Compliance Outputs | Draft | EP-020-AC-05, EP-021-AC-01, EP-021-AC-09, EP-024-AC-01, EP-024-AC-02, EP-024-AC-03 |
+| CWS-NFR-001 | Diffability | Draft | EP-024-AC-01 |
+| CWS-NFR-002 | Human Inspectability | Draft | EP-021-AC-09 |
+| CWS-NFR-003 | Deterministic Projection | Draft |  |
+| CWS-NFR-004 | Backward Compatibility | Draft | EP-020-AC-04 |
+| CWS-NFR-005 | Authority Preservation | Draft | EP-001-AC-05, EP-004-AC-05, EP-005-AC-04, EP-006-AC-01, EP-007-AC-01, EP-007-AC-03, EP-019-AC-04, EP-019-AC-06, EP-020-AC-01, EP-020-AC-02, EP-020-AC-04, EP-020-AC-05, EP-020-AC-06, EP-020-AC-07, EP-020-AC-08, EP-020-AC-09, EP-021-AC-01, EP-021-AC-03, EP-021-AC-04, EP-021-AC-06, EP-021-AC-07, EP-021-AC-09, EP-021-AC-10, EP-022-AC-02, EP-022-AC-04, EP-024-AC-01, EP-024-AC-02, EP-024-AC-04, EP-024-AC-05, EP-024-AC-06 |
+| RT-FR-001 | Requirement Records | Draft | EP-020-AC-04 |
+| RT-FR-002 | Requirement Revision State | Draft | EP-021-AC-07 |
+| RT-FR-003 | Fluid Requirement Lifecycle | Draft | EP-021-AC-07, EP-022-AC-05 |
+| RT-FR-004 | Requirement Source | Draft |  |
+| RT-FR-005 | Implementation Trace | Draft | EP-021-AC-01 |
+| RT-FR-006 | Verification Trace | Draft | EP-021-AC-01, EP-021-AC-06 |
+| RT-FR-007 | Validation Trace | Draft | EP-021-AC-01 |
+| RT-FR-008 | Bidirectional Traceability | Draft | EP-021-AC-10, EP-024-AC-02, EP-024-AC-05 |
+| RT-FR-009 | Traceability Gap Detection | Draft | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01, EP-021-AC-05, EP-021-AC-10, EP-024-AC-02, EP-024-AC-05 |
+| RT-FR-010 | Release Scope | Draft |  |
+| RT-FR-011 | Release Gate Summary | Draft | EP-018-AC-02, EP-018-AC-03, EP-018-AC-04, EP-021-AC-01, EP-021-AC-05, EP-021-AC-07, EP-021-AC-08, EP-021-AC-10, EP-022-AC-05, EP-024-AC-02, EP-024-AC-05, EP-024-AC-06 |
+| RT-FR-012 | Deviation And Waiver Records | Draft | EP-021-AC-01, EP-024-AC-03 |
+| RT-FR-013 | Test Result Summaries | Draft | EP-021-AC-01, EP-021-AC-06, EP-024-AC-01 |
+| RT-FR-014 | CI Integration Link | Draft | EP-021-AC-01, EP-021-AC-06 |
+| RT-FR-015 | Code Reference Trace | Draft | EP-020-AC-01, EP-020-AC-06, EP-021-AC-01, EP-021-AC-06, EP-024-AC-02 |
+| RT-FR-016 | Compliance Document Generation | Draft | EP-021-AC-01, EP-021-AC-04, EP-021-AC-09, EP-021-AC-10, EP-024-AC-01, EP-024-AC-02, EP-024-AC-03 |
+| RT-IE-001 | CSV Import | Draft |  |
+| RT-IE-002 | CSV Export | Draft |  |
+| RT-IE-003 | JSON Import Export | Draft | EP-021-AC-10, EP-024-AC-01 |
+| RT-IE-004 | Diffable Workflow | Draft | EP-021-AC-10 |
+| RT-IE-005 | External Tool Stubs | Draft | EP-021-AC-10 |
+| RT-RG-001 | Configurable Gate Policy | Draft |  |
+| RT-RG-002 | Default Gate Policy | Draft | EP-021-AC-01, EP-021-AC-05, EP-021-AC-07, EP-021-AC-10 |
+| RT-RG-003 | Gate Explanation | Draft | EP-021-AC-07, EP-021-AC-08 |
+| RT-RG-004 | Human Authority | Draft | EP-005-AC-04, EP-020-AC-01, EP-020-AC-06, EP-020-AC-09, EP-021-AC-01, EP-021-AC-06, EP-021-AC-07, EP-021-AC-09, EP-021-AC-10, EP-024-AC-01, EP-024-AC-02, EP-024-AC-05, EP-024-AC-06 |

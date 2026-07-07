@@ -1,0 +1,51 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "AirframeCore",
+    "Requirements Traceability"
+  ],
+  "dateReported" : "2026-07-06",
+  "dateResolved" : "2026-07-06",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "The Requirements Traceability Matrix should contain only the durable trace needed for requirements review: Requirement to acceptance criteria, including the Epic\/AC identifier for each verifying acceptance criterion. Sprint, Task, and Issue expansion should not be included in the matrix.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-backlog.md",
+    "updatedAt" : "2026-07-06T20:58:16Z"
+  },
+  "notes" : [
+    "Acceptance criteria should be uniquely identifiable in the matrix. If AC IDs are not globally unique by themselves, the displayed trace should include the Epic and AC, such as EP-XXX-AC-YY.",
+    "The Requirement-to-Epic\/AC mapping should only change when a Requirement or acceptance criterion changes, so it should be stored or projected from stable canonical links instead of derived during tab rendering.",
+    "Resolution: Requirements Traceability Matrix projection now contains only Requirement, Title, Status, and Epic Acceptance Criteria. Acceptance criterion display includes the owning Epic when needed for uniqueness, and the matrix no longer emits Sprint, Task, Issue, Evidence, Revision, or target-kind columns.",
+    "Evidence: swift test --package-path AirframeCore passed on 2026-07-06 with regression coverage proving task and evidence IDs are excluded from the RTM. swift test --package-path AICockpit passed on 2026-07-06. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests passed on 2026-07-06. Full xcodebuild test built and ran AgileCockpitTests, but AgileCockpitUITests-Runner failed to initialize automation mode."
+  ],
+  "observedBehavior" : "The Requirements Traceability Matrix includes broad Epic, Sprint, Task, and Issue lists for requirements, producing a very large and noisy table.",
+  "reproductionSteps" : [
+    "Open the generated Requirements Traceability Matrix.",
+    "Inspect requirement rows.",
+    "Observe broad lists of Epics, Sprints, Tasks, and Issues rather than a focused Requirement-to-Epic\/AC mapping."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "workItem" : {
+    "githubIssue" : 168,
+    "id" : {
+      "rawValue" : "I-0024"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Requirements traceability matrix includes excessive derived work links"
+  }
+}

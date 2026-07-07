@@ -1,0 +1,58 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-020-AC-01"
+    },
+    {
+      "rawValue" : "EP-020-AC-06"
+    }
+  ],
+  "artifactReferences" : [
+    "AirframeCore/Sources/AirframeCore/CanonicalWorkflowPolicy.swift",
+    "AirframeCore/Sources/AirframeCore/Workflow.swift"
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Human-only workflow operations remain protected.",
+    "Authorized transitions continue to behave deterministically."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0161-002"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T21:15:00Z"
+  },
+  "notes" : [
+    "Seed test for workflow policy and authority boundaries."
+  ],
+  "objective" : "Verify canonical workflow transitions and human-only gates remain protected for the current dataset.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "AF-FR-008"
+    },
+    {
+      "rawValue" : "AF-SR-007"
+    },
+    {
+      "rawValue" : "CWS-NFR-005"
+    }
+  ],
+  "workItemIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Evaluate allowed and denied workflow transitions.",
+    "Confirm human-only gates remain blocked outside approved workflows."
+  ],
+  "title" : "Workflow protection coverage"
+}

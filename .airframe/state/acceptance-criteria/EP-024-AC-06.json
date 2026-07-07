@@ -1,0 +1,22 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-024-AC-06"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : ".airframe/state/epics/EP-024.json",
+    "updatedAt" : "2026-07-07T13:00:00Z"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-024"
+  },
+  "text" : "Requirements without Epic acceptance-criterion coverage have final-review EP-023 acceptance criteria and corresponding test definitions."
+}

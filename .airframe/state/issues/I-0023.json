@@ -1,0 +1,49 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "Requirements"
+  ],
+  "dateReported" : "2026-07-06",
+  "dateResolved" : "2026-07-06",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "The Requirements tab should remain responsive and display requirements content within a reasonable time. Expensive traceability analysis must not block the main UI thread.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/Issues\/Issue-backlog.md",
+    "updatedAt" : "2026-07-06T20:58:12Z"
+  },
+  "notes" : [
+    "May be related to current Requirements Traceability Matrix generation deriving broad Epic, Sprint, Task, and Issue relationships on demand.",
+    "Resolution: AgileCockpit now computes Requirements tab traceability rows once during model load\/refresh and stores them as published state instead of rebuilding the traceability index repeatedly during SwiftUI rendering. The Requirements tab traceability rows use only requirement-to-acceptance-criterion data and no longer derive broad Epic, Sprint, Task, or Issue link text for the matrix.",
+    "Evidence: swift test --package-path AirframeCore passed on 2026-07-06. swift test --package-path AICockpit passed on 2026-07-06. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests passed on 2026-07-06. Full xcodebuild test built and ran AgileCockpitTests, but AgileCockpitUITests-Runner failed to initialize automation mode."
+  ],
+  "observedBehavior" : "Clicking the Requirements tab in AgileCockpit freezes the app with the macOS spinning beachball and does not display content in a reasonable period of time. The user has to force quit AgileCockpit to continue.",
+  "reproductionSteps" : [
+    "Launch AgileCockpit.",
+    "Click the Requirements tab.",
+    "Observe that the app freezes before displaying usable content."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "workItem" : {
+    "githubIssue" : 167,
+    "id" : {
+      "rawValue" : "I-0023"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Requirements tab freezes while loading traceability data"
+  }
+}

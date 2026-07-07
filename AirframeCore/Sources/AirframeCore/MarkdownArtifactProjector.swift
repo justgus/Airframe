@@ -3,7 +3,10 @@ import Foundation
 public struct AirframeMarkdownArtifactProjector: Sendable {
     public init() {}
 
-    public func projectEpic(_ record: AirframeCanonicalEpicRecord) -> String {
+    public func projectEpic(
+        _ record: AirframeCanonicalEpicRecord,
+        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = []
+    ) -> String {
         var lines: [String] = [
             "# \(record.workItem.id.rawValue): \(record.workItem.title)",
             "",
@@ -21,6 +24,7 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
         ]
         appendList("Scope", record.scope, to: &lines)
         appendList("Out of Scope", record.outOfScope, to: &lines)
+        appendAcceptanceCriteria(acceptanceCriteria, to: &lines)
         appendTable(
             title: "Related Sprints",
             headers: ["Sprint", "Status"],
@@ -187,6 +191,18 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
             for id in ids {
                 lines.append("- \(id.rawValue)")
             }
+        }
+    }
+
+    private func appendAcceptanceCriteria(
+        _ acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord],
+        to lines: inout [String]
+    ) {
+        guard !acceptanceCriteria.isEmpty else { return }
+        lines.append("")
+        lines.append("**Acceptance Criteria:**")
+        for criterion in acceptanceCriteria.sorted(by: { $0.id.rawValue < $1.id.rawValue }) {
+            lines.append("- \(criterion.id.rawValue): \(criterion.text)")
         }
     }
 

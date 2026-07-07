@@ -1,0 +1,53 @@
+{
+  "acceptanceCriteria" : [
+    "Requirements without Epic AC coverage are identified from the current RTM.",
+    "Missing acceptance criteria are defined under EP-023.",
+    "Each new EP-023 acceptance criterion links to at least one requirement.",
+    "Each new EP-023 acceptance criterion has at least one corresponding test definition."
+  ],
+  "component" : "EP-023 Acceptance Criteria \/ Requirement Coverage",
+  "componentsAffected" : [
+    "Requirements",
+    "Acceptance Criteria",
+    "Canonical Test Dataset",
+    "EP-023"
+  ],
+  "dateVerified" : "2026-07-07",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:02:59Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "The current RTM shows 93 requirements without Epic acceptance-criterion coverage. These need final-review ACs under EP-023 before tests can verify them.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-037"
+  },
+  "testSteps" : [
+    "Regenerate the RTM and confirm requirements targeted by this task have EP-023 acceptance criteria and linked tests."
+  ],
+  "workItem" : {
+    "githubIssue" : 173,
+    "id" : {
+      "rawValue" : "T-0164"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Define EP-023 acceptance criteria for requirements without AC coverage"
+  }
+}

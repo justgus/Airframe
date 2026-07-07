@@ -1,0 +1,65 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-02"
+    },
+    {
+      "rawValue" : "EP-021-AC-01"
+    },
+    {
+      "rawValue" : "EP-021-AC-10"
+    }
+  ],
+  "artifactReferences" : [
+    "docs/generated/Requirements/Requirements-Traceability-Matrix.md",
+    "docs/generated/Requirements/Bidirectional-Requirements-Traceability-Matrix.md"
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Requirement trace summaries include linked tests.",
+    "Bidirectional traceability resolves from tests back to requirements."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0161-003"
+  },
+  "kind" : "acceptance",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T21:15:00Z"
+  },
+  "notes" : [
+    "Seed test for requirement traceability links."
+  ],
+  "objective" : "Verify that requirements, acceptance criteria, and tests remain traceable in both directions.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "RT-FR-005"
+    },
+    {
+      "rawValue" : "RT-FR-006"
+    },
+    {
+      "rawValue" : "RT-FR-008"
+    },
+    {
+      "rawValue" : "CWS-FR-011"
+    }
+  ],
+  "workItemIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Resolve requirement trace summaries for current canonical records.",
+    "Verify test links are represented in the trace output.",
+    "Confirm reverse lookups from tests to requirements."
+  ],
+  "title" : "Requirement traceability coverage"
+}

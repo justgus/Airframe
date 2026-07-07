@@ -1,0 +1,118 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-020-AC-01"
+    },
+    {
+      "rawValue" : "EP-020-AC-06"
+    },
+    {
+      "rawValue" : "EP-021-AC-01"
+    },
+    {
+      "rawValue" : "EP-021-AC-06"
+    },
+    {
+      "rawValue" : "EP-021-AC-07"
+    },
+    {
+      "rawValue" : "EP-021-AC-09"
+    },
+    {
+      "rawValue" : "EP-021-AC-10"
+    }
+  ],
+  "id" : {
+    "rawValue" : "TS-0161-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T21:15:00Z"
+  },
+  "notes" : [
+    "Seed suite for the canonical Airframe dataset review scope."
+  ],
+  "objective" : "Group the current canonical dataset seed tests under a deterministic suite.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "AF-FR-001"
+    },
+    {
+      "rawValue" : "AF-DR-002"
+    },
+    {
+      "rawValue" : "AF-DR-006"
+    },
+    {
+      "rawValue" : "AF-FR-008"
+    },
+    {
+      "rawValue" : "AF-SR-007"
+    },
+    {
+      "rawValue" : "CWS-NFR-005"
+    },
+    {
+      "rawValue" : "RT-FR-005"
+    },
+    {
+      "rawValue" : "RT-FR-006"
+    },
+    {
+      "rawValue" : "RT-FR-008"
+    },
+    {
+      "rawValue" : "CWS-FR-011"
+    },
+    {
+      "rawValue" : "RT-FR-011"
+    },
+    {
+      "rawValue" : "RT-FR-013"
+    },
+    {
+      "rawValue" : "RT-FR-014"
+    },
+    {
+      "rawValue" : "CWS-FR-009"
+    },
+    {
+      "rawValue" : "CWS-FR-014"
+    },
+    {
+      "rawValue" : "RT-FR-016"
+    },
+    {
+      "rawValue" : "RT-IE-003"
+    },
+    {
+      "rawValue" : "RT-IE-004"
+    },
+    {
+      "rawValue" : "CWS-FR-015"
+    }
+  ],
+  "status" : "ready",
+  "testIDs" : [
+    {
+      "rawValue" : "TEST-0161-001"
+    },
+    {
+      "rawValue" : "TEST-0161-002"
+    },
+    {
+      "rawValue" : "TEST-0161-003"
+    },
+    {
+      "rawValue" : "TEST-0161-004"
+    },
+    {
+      "rawValue" : "TEST-0161-005"
+    }
+  ],
+  "title" : "Airframe dataset seed suite"
+}

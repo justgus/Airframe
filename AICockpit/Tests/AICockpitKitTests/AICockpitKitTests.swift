@@ -13,6 +13,9 @@ import Foundation
     #expect(help.contains("aicockpit state diagnostics"))
     #expect(help.contains("aicockpit requirements import --format csv|json --file path --dry-run"))
     #expect(help.contains("aicockpit requirements export --format csv|json"))
+    #expect(help.contains("aicockpit tests list"))
+    #expect(help.contains("aicockpit tests inspect TEST-ID"))
+    #expect(help.contains("aicockpit tests validate"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
     #expect(help.contains("aicockpit github comment"))
@@ -721,6 +724,263 @@ import Foundation
     #expect(result.standardOutput.contains("\"removedCount\" : 1"))
     #expect(savedRequirement?.title == "Apply requirement")
     #expect(removedRequirement == nil)
+}
+
+@Test func testsListInspectAndValidateCanonicalTestDefinitions() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9700"),
+            title: "Traceability requirement",
+            statement: "The canonical test should trace back to a requirement.",
+            status: .active
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalAcceptanceCriterionRecord(
+            id: AirframeID("EP-9700-AC-01"),
+            ownerID: AirframeID("EP-9700"),
+            text: "The requirement has a matching acceptance criterion."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9700"),
+                kind: .epic,
+                title: "Canonical traceability epic",
+                status: .active
+            ),
+            owner: "Airframe",
+            goal: "Keep canonical tests linked to requirements.",
+            rationale: "The validation command should see a real work item owner."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTestRecord(
+            id: AirframeID("TEST-9700-001"),
+            title: "Canonical traceability",
+            objective: "Keep requirements linked to tests.",
+            kind: .acceptance,
+            status: .ready,
+            requirementIDs: [AirframeID("REQ-9700")],
+            acceptanceCriterionIDs: [AirframeID("EP-9700-AC-01")],
+            workItemIDs: [AirframeID("EP-9700")],
+            steps: ["Load canonical state.", "Inspect the test definition.", "Validate the traceability graph."],
+            expectedResults: ["The test is listed.", "The test can be inspected.", "Validation returns ok."],
+            automationCommand: "swift test --package-path AICockpit",
+            artifactReferences: ["docs/generated/Requirements/Requirements-Traceability-Matrix.md"],
+            notes: ["Seeded via CLI regression test."]
+        )
+    )
+
+    let list = AICockpitCommand.response(arguments: [
+        "tests", "list",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let inspect = AICockpitCommand.response(arguments: [
+        "tests", "inspect", "TEST-9700-001",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let validate = AICockpitCommand.response(arguments: [
+        "tests", "validate",
+        "--config", configPath,
+        "--output", "json"
+    ])
+
+    #expect(list.exitCode == 0)
+    #expect(list.standardOutput.contains("\"kind\" : \"canonicalTestList\""))
+    #expect(list.standardOutput.contains("\"rawValue\" : \"TEST-9700-001\""))
+    #expect(inspect.exitCode == 0)
+    #expect(inspect.standardOutput.contains("\"kind\" : \"canonicalTestInspection\""))
+    #expect(inspect.standardOutput.contains("\"objective\" : \"Keep requirements linked to tests.\""))
+    #expect(validate.exitCode == 0)
+    #expect(validate.standardOutput.contains("\"kind\" : \"canonicalTestValidation\""))
+    #expect(validate.standardOutput.contains("\"status\" : \"ok\""))
+}
+
+@Test func testsCreateAndUpdateCanonicalTestDefinitions() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9701"),
+            title: "Creation requirement",
+            statement: "The test create command persists canonical test records.",
+            status: .active
+        )
+    )
+
+    let created = AICockpitCommand.response(arguments: [
+        "tests", "create",
+        "--config", configPath,
+        "--id", "TEST-9701-001",
+        "--title", "Canonical test create",
+        "--objective", "Persist a canonical test record.",
+        "--kind", "unit",
+        "--status", "ready",
+        "--requirement", "REQ-9701",
+        "--step", "Run the create command.",
+        "--expected", "The record is saved.",
+        "--automation-command", "swift test --package-path AICockpit",
+        "--artifact", "docs/generated/Requirements/Requirements-Traceability-Matrix.md",
+        "--note", "Initial seeded definition.",
+        "--output", "json"
+    ])
+    let updated = AICockpitCommand.response(arguments: [
+        "tests", "update", "TEST-9701-001",
+        "--config", configPath,
+        "--title", "Canonical test create updated",
+        "--objective", "Persist updated canonical test metadata.",
+        "--status", "active",
+        "--note", "Updated via CLI regression test.",
+        "--output", "json"
+    ])
+    let saved = try repository.store.load(AirframeCanonicalTestRecord.self, id: AirframeID("TEST-9701-001"))
+
+    #expect(created.exitCode == 0)
+    #expect(created.standardOutput.contains("\"kind\" : \"canonicalTestCreation\""))
+    #expect(created.standardOutput.contains("\"status\" : \"ready\""))
+    #expect(updated.exitCode == 0)
+    #expect(updated.standardOutput.contains("\"kind\" : \"canonicalTestUpdate\""))
+    #expect(updated.standardOutput.contains("Canonical test create updated"))
+    #expect(saved?.title == "Canonical test create updated")
+    #expect(saved?.objective == "Persist updated canonical test metadata.")
+    #expect(saved?.status == .active)
+    #expect(saved?.requirementIDs == [AirframeID("REQ-9701")])
+}
+
+@Test func acceptanceCriteriaSuitesEpicReadinessAndIssueDetailsUseAICockpitCommands() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-9702")
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9702"),
+                kind: .epic,
+                title: "AICockpit coverage commands",
+                status: .active
+            ),
+            owner: "Airframe",
+            goal: "Manage coverage through AICockpit.",
+            rationale: "Agents should not edit canonical JSON directly."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9702"),
+            title: "Coverage command requirement",
+            statement: "AICockpit shall manage Epic acceptance coverage.",
+            status: .active
+        )
+    )
+
+    let criterion = AICockpitCommand.response(arguments: [
+        "acceptance-criteria", "create",
+        "--config", configPath,
+        "--id", "EP-9702-AC-01",
+        "--owner", "EP-9702",
+        "--text", "Epic coverage is managed through AICockpit.",
+        "--output", "json"
+    ])
+    let test = AICockpitCommand.response(arguments: [
+        "tests", "create",
+        "--config", configPath,
+        "--id", "TEST-9702-001",
+        "--title", "Coverage command test",
+        "--objective", "Verify coverage links.",
+        "--kind", "acceptance",
+        "--status", "ready",
+        "--requirement", "REQ-9702",
+        "--acceptance-criterion", "EP-9702-AC-01",
+        "--work-item", "EP-9702",
+        "--output", "json"
+    ])
+    let suite = AICockpitCommand.response(arguments: [
+        "test-suites", "create",
+        "--config", configPath,
+        "--id", "TS-9702-001",
+        "--title", "Coverage command suite",
+        "--objective", "Group coverage command tests.",
+        "--status", "ready",
+        "--test", "TEST-9702-001",
+        "--requirement", "REQ-9702",
+        "--acceptance-criterion", "EP-9702-AC-01",
+        "--output", "json"
+    ])
+    let coverage = AICockpitCommand.response(arguments: [
+        "epic", "coverage", "EP-9702",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let readiness = AICockpitCommand.response(arguments: [
+        "epic", "ready", "EP-9702",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let issue = AICockpitCommand.response(arguments: [
+        "issue", "create",
+        "--config", configPath,
+        "--backend", "canonical",
+        "--id", "I-9702",
+        "--title", "Issue details through AICockpit",
+        "--status", "active",
+        "--epic", "EP-9702",
+        "--observed", "Issue details previously required direct JSON edits.",
+        "--expected", "AICockpit persists issue detail fields.",
+        "--repro", "Create a detailed issue through AICockpit.",
+        "--component", "AICockpit",
+        "--note", "Regression coverage for I-0027.",
+        "--output", "json"
+    ])
+    let export = AICockpitCommand.response(arguments: [
+        "state", "export-markdown",
+        "--config", configPath
+    ])
+
+    let savedEpic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-9702"))
+    let savedSuite = try repository.store.load(AirframeCanonicalTestSuiteRecord.self, id: AirframeID("TS-9702-001"))
+    let savedIssue = try repository.store.load(AirframeCanonicalIssueRecord.self, id: AirframeID("I-9702"))
+    let epicProjection = try String(
+        contentsOf: rootURL.appending(path: "docs/generated/Epics/EP-9702.md"),
+        encoding: .utf8
+    )
+
+    #expect(criterion.exitCode == 0)
+    #expect(criterion.standardOutput.contains("\"kind\" : \"canonicalAcceptanceCriterionCreation\""))
+    #expect(test.exitCode == 0)
+    #expect(suite.exitCode == 0)
+    #expect(suite.standardOutput.contains("\"kind\" : \"canonicalTestSuiteCreation\""))
+    #expect(coverage.exitCode == 0)
+    #expect(coverage.standardOutput.contains("\"kind\" : \"canonicalEpicCoverage\""))
+    #expect(coverage.standardOutput.contains("\"isReady\" : true"))
+    #expect(readiness.exitCode == 0)
+    #expect(readiness.standardOutput.contains("\"kind\" : \"canonicalEpicReadiness\""))
+    #expect(issue.exitCode == 0)
+    #expect(savedEpic?.acceptanceCriterionIDs == [AirframeID("EP-9702-AC-01")])
+    #expect(savedSuite?.testIDs == [AirframeID("TEST-9702-001")])
+    #expect(savedIssue?.observedBehavior == "Issue details previously required direct JSON edits.")
+    #expect(savedIssue?.expectedBehavior == "AICockpit persists issue detail fields.")
+    #expect(savedIssue?.reproductionSteps == ["Create a detailed issue through AICockpit."])
+    #expect(savedIssue?.affectedComponents == ["AICockpit"])
+    #expect(savedIssue?.notes == ["Regression coverage for I-0027."])
+    #expect(export.exitCode == 0)
+    #expect(epicProjection.contains("**Acceptance Criteria:**"))
+    #expect(epicProjection.contains("EP-9702-AC-01: Epic coverage is managed through AICockpit."))
 }
 
 @Test func stateExportMarkdownProjectsRequirementReportsAndReturns() throws {
@@ -1480,6 +1740,45 @@ private func temporaryLiveConfigurationPath() throws -> String {
               "repository": "justgus/Airframe",
               "activeSprintID": { "rawValue": "SP-009" },
               "activeEpicID": { "rawValue": "EP-009" }
+            }
+          ],
+          "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },
+          "backend": {
+            "kind": "github-fixture",
+            "location": "justgus/Airframe"
+          }
+        }
+        """.utf8
+    ).write(to: configURL)
+    return configURL.path
+}
+
+private func temporaryCanonicalTestConfigurationPath() throws -> String {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AICockpitCanonicalTestConfig")
+        .appending(path: UUID().uuidString)
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(
+        at: rootURL.appending(path: ".airframe/state"),
+        withIntermediateDirectories: true
+    )
+    let configURL = rootURL.appending(path: "airframe-workspace.json")
+    try Data(
+        """
+        {
+          "schemaVersion": 1,
+          "workspace": {
+            "id": { "rawValue": "WS-AIRFRAME-LIVE" },
+            "name": "Airframe Live Demo",
+            "rootPath": "."
+          },
+          "projects": [
+            {
+              "id": { "rawValue": "PRJ-AIRFRAME" },
+              "name": "Agile Airframe",
+              "repository": "justgus/Airframe",
+              "activeSprintID": null,
+              "activeEpicID": { "rawValue": "EP-9700" }
             }
           ],
           "defaultProjectID": { "rawValue": "PRJ-AIRFRAME" },

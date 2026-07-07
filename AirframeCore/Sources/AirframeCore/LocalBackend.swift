@@ -263,8 +263,8 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
 
             let record = state.records[index]
             let operation = AirframeOperation(
-                id: operationID(for: status),
-                category: operationCategory(for: status)
+                id: operationID(kind: record.workItem.kind, from: record.workItem.status, to: status),
+                category: operationCategory(kind: record.workItem.kind, from: record.workItem.status, to: status)
             )
             let transition = AirframeWorkflowTransition(
                 workItemID: id,
@@ -465,8 +465,15 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
         }
     }
 
-    private func operationID(for status: AirframeWorkStatus) -> AirframeID {
-        switch status {
+    private func operationID(
+        kind: AirframeWorkItemKind,
+        from fromStatus: AirframeWorkStatus,
+        to status: AirframeWorkStatus
+    ) -> AirframeID {
+        if kind == .sprint && status == .backlog && [.active, .review].contains(fromStatus) {
+            return AirframeID("OP-RETURN-SPRINT-TO-BACKLOG")
+        }
+        return switch status {
         case .proposed:
             AirframeID("OP-PROPOSE-WORK")
         case .draft:
@@ -490,8 +497,15 @@ public final class AirframeLocalFilesystemBackend: @unchecked Sendable, Airframe
         }
     }
 
-    private func operationCategory(for status: AirframeWorkStatus) -> AirframeOperationCategory {
-        switch status {
+    private func operationCategory(
+        kind: AirframeWorkItemKind,
+        from fromStatus: AirframeWorkStatus,
+        to status: AirframeWorkStatus
+    ) -> AirframeOperationCategory {
+        if kind == .sprint && status == .backlog && [.active, .review].contains(fromStatus) {
+            return .sprintControl
+        }
+        return switch status {
         case .implementedVerified:
             .humanAcceptance
         default:

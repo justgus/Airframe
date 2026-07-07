@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **153 total Tasks**
+Currently: **165 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 0 |
+| Backlog | 6 |
 | Active | 0 |
-| Implemented - Not Verified | 6 |
-| Implemented - Verified | 147 |
+| Implemented - Not Verified | 0 |
+| Implemented - Verified | 159 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -159,9 +159,21 @@ Currently: **153 total Tasks**
 | T-0145 | TBD | Add Markdown requirements seed import support | Implemented - Verified |
 | T-0146 | TBD | Regenerate requirements documentation from canonical state | Implemented - Verified |
 | T-0147 | TBD | Add requirements import regression coverage | Implemented - Verified |
-| T-0148 | #161 | Inventory offline runtime dependencies | Implemented - Not Verified |
-| T-0149 | #162 | Define local-only operating profile | Implemented - Not Verified |
-| T-0150 | #163 | Harden AICockpit offline work item flows | Implemented - Not Verified |
-| T-0151 | #164 | Harden AgileCockpit offline application flows | Implemented - Not Verified |
-| T-0152 | #165 | Prove Sprint and Epic workflows operate offline | Implemented - Not Verified |
-| T-0153 | #166 | Add offline regression verification suite | Implemented - Not Verified |
+| T-0148 | #161 | Inventory offline runtime dependencies | Implemented - Verified |
+| T-0149 | #162 | Define local-only operating profile | Implemented - Verified |
+| T-0150 | #163 | Harden AICockpit offline work item flows | Implemented - Verified |
+| T-0151 | #164 | Harden AgileCockpit offline application flows | Implemented - Verified |
+| T-0152 | #165 | Prove Sprint and Epic workflows operate offline | Implemented - Verified |
+| T-0153 | #166 | Add offline regression verification suite | Implemented - Verified |
+| T-0154 | TBD | Define canonical plan review record and decision model | Backlog |
+| T-0155 | TBD | Add AirframeCore authority and audit support for plan decisions | Backlog |
+| T-0156 | TBD | Add AICockpit plan submission and read commands | Backlog |
+| T-0157 | TBD | Add AgileCockpit plan review UI | Backlog |
+| T-0158 | TBD | Wire AgileCockpit human plan decision actions | Backlog |
+| T-0159 | TBD | Add plan review regression coverage and workflow documentation | Backlog |
+| T-0160 | #170 | Define canonical test records and requirement trace model | Implemented - Verified |
+| T-0161 | #174 | Seed canonical test definitions for the Airframe dataset | Implemented - Verified |
+| T-0162 | #169 | Add AICockpit test definition and management commands | Implemented - Verified |
+| T-0163 | #171 | Add AgileCockpit Tests tab | Implemented - Verified |
+| T-0164 | #173 | Define EP-023 acceptance criteria for requirements without AC coverage | Implemented - Verified |
+| T-0165 | #172 | Verify test management workflow and documentation | Implemented - Verified |

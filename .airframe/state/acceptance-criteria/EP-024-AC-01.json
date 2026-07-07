@@ -1,0 +1,22 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-024-AC-01"
+  },
+  "isVerified" : true,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : ".airframe\/state\/epics\/EP-024.json",
+    "updatedAt" : "2026-07-07T16:38:04Z"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-024"
+  },
+  "text" : "Canonical state includes test definition, test suite, and test run records that persist deterministically in repo-local JSON."
+}

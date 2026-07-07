@@ -386,4 +386,4 @@ Added Active Sprint exclusivity diagnostics, an `activeSprintPointerMismatch` di
 - `xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-06-26.
 - `swift run --package-path AICockpit aicockpit state diagnostics --config .airframe/airframe-workspace.json --backend canonical --output json` passed with no diagnostics on 2026-06-26.
 
-*Last Updated: 2026-06-26 (I-0021 resolved locally and awaits verification)*
+*Last Updated: 2026-07-06*

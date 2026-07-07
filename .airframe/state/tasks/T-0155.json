@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Approve, defer, and reject plan decisions require human authority.",
+    "Agents cannot approve their own implementation plans.",
+    "Plan decisions emit auditable decision records without weakening verification or closeout gates."
+  ],
+  "component" : "AirframeCore authority and audit policy",
+  "componentsAffected" : [
+    "AirframeCore authority and audit policy"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:58:00Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "testSteps" : [
+    "Focused AirframeCore authority and audit tests for plan decision operations."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0155"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add AirframeCore authority and audit support for plan decisions"
+  }
+}

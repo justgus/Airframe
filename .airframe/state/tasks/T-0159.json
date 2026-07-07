@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Regression tests cover canonical model, command, UI, and authority boundaries for plan review.",
+    "Documentation explains plan submission, human approval, deferral, rejection, and implementation handoff.",
+    "Verification evidence identifies commands run and residual risks."
+  ],
+  "component" : "Regression coverage and documentation for plan review workflow",
+  "componentsAffected" : [
+    "Regression coverage and documentation for plan review workflow"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:58:16Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "testSteps" : [
+    "Passing AirframeCore, AICockpit, and AgileCockpit focused or full regression output plus documentation review."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0159"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add plan review regression coverage and workflow documentation"
+  }
+}

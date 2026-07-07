@@ -50,6 +50,21 @@ extension AirframeCanonicalAcceptanceCriterionRecord: AirframeCanonicalFileRecor
     public var canonicalRecordID: AirframeID { id }
 }
 
+extension AirframeCanonicalTestRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "tests"
+    public var canonicalRecordID: AirframeID { id }
+}
+
+extension AirframeCanonicalTestSuiteRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "test-suites"
+    public var canonicalRecordID: AirframeID { id }
+}
+
+extension AirframeCanonicalTestRunRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "test-runs"
+    public var canonicalRecordID: AirframeID { id }
+}
+
 extension AirframeCanonicalEvidenceSummaryRecord: AirframeCanonicalFileRecord {
     public static let canonicalDirectoryName = "evidence"
     public var canonicalRecordID: AirframeID { id }

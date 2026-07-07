@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "A human reviewer can approve, defer, or reject a proposed plan from AgileCockpit.",
+    "Decision actions update canonical plan state and audit or evidence records as designed.",
+    "AICockpit and other agent contexts remain unable to perform human-only plan decision actions."
+  ],
+  "component" : "AgileCockpit approve defer reject actions through AirframeCore",
+  "componentsAffected" : [
+    "AgileCockpit approve defer reject actions through AirframeCore"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:58:16Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "testSteps" : [
+    "Focused AirframeCore and AgileCockpit tests for approved, deferred, rejected, and denied plan decision paths."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0158"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Wire AgileCockpit human plan decision actions"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-01"
+    },
+    {
+      "rawValue" : "EP-024-AC-02"
+    },
+    {
+      "rawValue" : "EP-024-AC-03"
+    },
+    {
+      "rawValue" : "EP-024-AC-04"
+    },
+    {
+      "rawValue" : "EP-024-AC-05"
+    },
+    {
+      "rawValue" : "EP-024-AC-06"
+    }
+  ],
+  "goal" : "Add canonical test definition and management support so Agile Airframe can define tests that verify acceptance criteria and trace back to requirements.",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0025"
+    },
+    {
+      "rawValue" : "I-0026"
+    },
+    {
+      "rawValue" : "I-0027"
+    },
+    {
+      "rawValue" : "I-0029"
+    },
+    {
+      "rawValue" : "I-0028"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:52:21Z"
+  },
+  "notes" : [
+    "Created on 2026-07-06 after the reduced Requirements Traceability Matrix exposed requirements without Epic acceptance-criterion coverage.",
+    "Tests verify acceptance criteria. Requirement test traceability is therefore Requirement -> Epic AC -> Test.",
+    "EP-023 remains the owner for new final-review acceptance criteria needed to cover requirements that currently have no ACs."
+  ],
+  "outOfScope" : [
+
+  ],
+  "owner" : "Human \/ Airframe Planning",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "Agile Airframe has canonical requirements and evidence summaries, but it lacks explicit canonical test definitions and a management surface for tests. Without tests that verify acceptance criteria, requirements without ACs cannot be reviewed or verified cleanly.",
+  "scope" : [
+    "Define canonical test case, test suite, and test run records.",
+    "Model test-to-acceptance-criterion links as the primary verification trace back to requirements.",
+    "Seed test definitions for the current canonical Airframe dataset.",
+    "Add AICockpit commands to manage and validate test definitions.",
+    "Add an AgileCockpit Tests tab for human review of tests, AC coverage, and requirement traceability.",
+    "Define missing EP-023 acceptance criteria for requirements without AC coverage and pair each new AC with a test definition."
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-037"
+    }
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0160"
+    },
+    {
+      "rawValue" : "T-0161"
+    },
+    {
+      "rawValue" : "T-0162"
+    },
+    {
+      "rawValue" : "T-0163"
+    },
+    {
+      "rawValue" : "T-0164"
+    },
+    {
+      "rawValue" : "T-0165"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-024"
+    },
+    "kind" : "epic",
+    "status" : "active",
+    "title" : "Canonical Test Definition and Management"
+  }
+}

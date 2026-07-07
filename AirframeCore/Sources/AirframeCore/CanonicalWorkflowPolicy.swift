@@ -54,7 +54,8 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
             sprintTransition(.planning, .active, "OP-ACTIVATE-SPRINT"),
             sprintTransition(.active, .review, "OP-REVIEW-SPRINT"),
             sprintCloseTransition(),
-            sprintTransition(.review, .backlog, "OP-RETURN-SPRINT-TO-BACKLOG"),
+            sprintReturnToBacklogTransition(from: .active),
+            sprintReturnToBacklogTransition(from: .review),
 
             epicTransition(.proposed, .draft, "OP-DRAFT-EPIC"),
             epicTransition(.draft, .backlog, "OP-BACKLOG-EPIC"),
@@ -207,6 +208,22 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
         )
     }
 
+    private static func sprintReturnToBacklogTransition(
+        from fromStatus: AirframeWorkStatus
+    ) -> AirframeCanonicalWorkflowTransitionRecord {
+        transition(
+            id: "WF-SPRINT-\(fromStatus.rawValue)-backlog",
+            kind: .sprint,
+            from: fromStatus,
+            to: .backlog,
+            operationID: "OP-RETURN-SPRINT-TO-BACKLOG",
+            category: .sprintControl,
+            authorities: [.humanOwner, .humanMaintainer],
+            preconditions: ["Planning priorities changed and a human approved returning the Sprint to Backlog."],
+            sideEffects: ["Clear active Sprint pointer when the returned Sprint is current.", "Update Sprint indexes."]
+        )
+    }
+
     private static func epicCloseTransition() -> AirframeCanonicalWorkflowTransitionRecord {
         transition(
             id: "WF-EPIC-complete-closed",
@@ -248,4 +265,3 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
         )
     }
 }
-

@@ -2,7 +2,7 @@
 
 Implemented Tasks awaiting human verification are listed here.
 
-Currently: **8 unverified Tasks**
+Currently: **11 unverified Tasks**
 
 ---
 
@@ -13,6 +13,91 @@ T-0135 through T-0137 were human verified on 2026-06-24 and moved to [Verified/T
 T-0138 through T-0140 were human verified on 2026-06-24 and moved to [Verified/Task-verified-0138-0140.md](Verified/Task-verified-0138-0140.md).
 
 T-0141 and T-0142 were human verified on 2026-06-24 and moved to [Verified/Task-verified-0141-0142.md](Verified/Task-verified-0141-0142.md).
+
+## T-0162: Add AICockpit test definition and management commands
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #169
+**Component:** AICockpit
+**Priority:** High
+**Epic:** EP-024
+**Sprint Assigned:** SP-037
+**Date Requested:** TBD
+**Date Implemented:** 2026-07-06
+**Date Verified:** TBD
+
+**Rationale:**
+Agents need a CLI surface for test definition and management before AgileCockpit can rely on canonical test records.
+
+**Acceptance Criteria:**
+1. AICockpit can list canonical tests.
+2. AICockpit can inspect a single test definition with linked ACs and requirements.
+3. AICockpit can create or update test definitions within agent authority.
+4. AICockpit can validate test traceability and emit JSON output.
+
+**Resolution:**
+Added AICockpit tests list, inspect, create, update, and validate commands backed by canonical test records and canonical validation output.
+
+**Evidence:**
+- `swift test --package-path AICockpit` passed on 2026-07-06.
+- `swift test --package-path AirframeCore` passed on 2026-07-06.
+
+## T-0161: Seed canonical test definitions for the Airframe dataset
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #174
+**Component:** Canonical Test Dataset
+**Priority:** High
+**Epic:** EP-024
+**Sprint Assigned:** SP-037
+**Date Requested:** TBD
+**Date Implemented:** 2026-07-06
+**Date Verified:** TBD
+
+**Rationale:**
+The canonical Airframe dataset needs explicit tests before requirement coverage can be reviewed through the new Tests surface.
+
+**Acceptance Criteria:**
+1. Canonical test definitions exist for the current Airframe dataset review scope.
+2. Each seeded test links to one or more acceptance criteria.
+3. Seeded test definitions are deterministic and diffable.
+4. Seed data can be regenerated or validated without hand-editing generated outputs.
+
+**Resolution:**
+Seeded five canonical tests and one suite for the current Airframe dataset review scope. The seed records link tests to acceptance criteria and requirements that cover canonical model stability, workflow protection, bidirectional traceability, evidence/gate summaries, and generated compliance output.
+
+**Evidence:**
+- Canonical state diagnostics passed after the seed records were added.
+- Markdown projections exported successfully after the seed records were added.
+
+## T-0160: Define canonical test records and requirement trace model
+
+**Status:** Implemented - Not Verified
+**GitHub Issue:** #170
+**Component:** AirframeCore / Canonical Test Model
+**Priority:** High
+**Epic:** EP-024
+**Sprint Assigned:** SP-037
+**Date Requested:** TBD
+**Date Implemented:** 2026-07-06
+**Date Verified:** TBD
+
+**Rationale:**
+Tests need first-class canonical records so they can verify acceptance criteria and provide requirement traceability without overloading evidence summaries or task records.
+
+**Acceptance Criteria:**
+1. Canonical state includes test case, test suite, and test run records.
+2. Test records can link directly to acceptance criteria.
+3. Requirement traceability can be derived through Requirement -> Epic AC -> Test links.
+4. Canonical diagnostics can identify tests that reference missing requirements, ACs, or work records.
+
+**Resolution:**
+Added canonical test, test suite, and test run records with test kind/status enums; canonical JSON persistence under `state/tests`, `state/test-suites`, and `state/test-runs`; repository load-state support; requirement trace summaries that include test IDs; and canonical diagnostics for tests, suites, and runs that reference missing requirements, acceptance criteria, tests, suites, or work records. Tests can link directly to requirements or through acceptance criteria, and generated requirement specifications include a Tests column while the human-facing RTM remains limited to Requirements -> Epic ACs.
+
+**Evidence:**
+- `swift test --package-path AirframeCore` passed on 2026-07-06.
+- `swift test --package-path AICockpit` passed on 2026-07-06.
+- `xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests` passed on 2026-07-06.
 
 ## T-0107: Gate Sprint close on verified Tasks and Issues
 

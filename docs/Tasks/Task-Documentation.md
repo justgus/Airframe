@@ -18,42 +18,41 @@ Currently: **6 backlog Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0110 | TBD | Move closed Sprint records into `docs/Sprints/Closed/` | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0111 | TBD | Move closed Epic records into `docs/Epics/Closed/` | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0112 | TBD | Rewrite sprint and epic index files on close | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0113 | TBD | Add tests for Epic acceptance-criteria verification | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0114 | TBD | Add tests for Sprint and Epic archive updates | [Task-backlog.md](Task-backlog.md) | Backlog |
-| T-0115 | #152 | Add tests for offline local-only closeout behavior | [Task-backlog.md](Task-backlog.md) | Implemented - Not Verified |
+| T-0154 | TBD | Define canonical plan review record and decision model | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0155 | TBD | Add AirframeCore authority and audit support for plan decisions | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0156 | TBD | Add AICockpit plan submission and read commands | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0157 | TBD | Add AgileCockpit plan review UI | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0158 | TBD | Wire AgileCockpit human plan decision actions | [Task-backlog.md](Task-backlog.md) | Backlog |
+| T-0159 | TBD | Add plan review regression coverage and workflow documentation | [Task-backlog.md](Task-backlog.md) | Backlog |
 See: [Task-backlog.md](Task-backlog.md)
 
 ## Active Tasks
 
-Currently: **0 active Tasks**
+Currently: **4 active Tasks**
 
-None.
+| Task | GitHub Issue | Title | File | Status |
+| ---- | ------------ | ----- | ---- | ------ |
+| T-0162 | #169 | Add AICockpit test definition and management commands | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0163 | #171 | Add AgileCockpit Tests tab | [Task-active.md](Task-active.md) | Active |
+| T-0164 | #173 | Define EP-023 acceptance criteria for requirements without AC coverage | [Task-active.md](Task-active.md) | Active |
+| T-0165 | #172 | Verify test management workflow and documentation | [Task-active.md](Task-active.md) | Active |
 
 See: [Task-active.md](Task-active.md)
 
 ## Unverified Tasks
 
-Currently: **8 unverified Tasks**
+Currently: **10 unverified Tasks**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
-| T-0107 | #113 | Gate Sprint close on verified Tasks and Issues | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0108 | #114 | Gate Epic close on verified acceptance criteria | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0109 | #115 | Add close-action messaging and disabled-state behavior | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0143 | TBD | Define AICockpit requirements import command contract | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0144 | TBD | Implement canonical requirements import apply path | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0145 | TBD | Add Markdown requirements seed import support | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0146 | TBD | Regenerate requirements documentation from canonical state | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
-| T-0147 | TBD | Add requirements import regression coverage | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0160 | #170 | Define canonical test records and requirement trace model | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
+| T-0161 | #174 | Seed canonical test definitions for the Airframe dataset | [Task-unverified.md](Task-unverified.md) | Implemented - Not Verified |
 
 See: [Task-unverified.md](Task-unverified.md)
 
 ## Verified Tasks
 
-Currently: **133 verified Tasks** | Next available: **T-0148**
+Currently: **153 verified Tasks** | Next available: **T-0166**
 
 | Task | GitHub Issue | Title | File | Status |
 | ---- | ------------ | ----- | ---- | ------ |
@@ -183,12 +182,12 @@ Currently: **133 verified Tasks** | Next available: **T-0148**
 
 ## Statistics
 
-- **Total Tasks:** 147
+- **Total Tasks:** 165
 - **Backlog:** 6
-- **Active:** 0
-- **Unverified:** 8
-- **Verified:** 133
+- **Active:** 4
+- **Unverified:** 2
+- **Verified:** 153
 - **Closed:** 0
-- **Next available:** T-0148
+- **Next available:** T-0166
 
-*Last Updated: 2026-06-25 (T-0107 through T-0109 moved to Implemented - Not Verified)*
+*Last Updated: 2026-07-06*

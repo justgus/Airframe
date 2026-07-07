@@ -1,0 +1,54 @@
+{
+  "acceptanceCriteria" : [
+    "Canonical test definitions exist for the current Airframe dataset review scope.",
+    "Each seeded test links to one or more acceptance criteria.",
+    "Seeded test definitions are deterministic and diffable.",
+    "Seed data can be regenerated or validated without hand-editing generated outputs."
+  ],
+  "component" : "Canonical Test Dataset",
+  "componentsAffected" : [
+    "Canonical State",
+    "Requirements",
+    "Acceptance Criteria"
+  ],
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T23:52:25Z"
+  },
+  "notes" : [
+    "Implementation: Seeded five canonical test definitions plus one suite for the current Airframe dataset review scope.",
+    "Traceability: Seed tests link to canonical acceptance criteria and requirements covering canonical model stability, workflow protection, bidirectional traceability, evidence\/gate summaries, and generated compliance output.",
+    "Validation: Canonical state diagnostics and markdown export both passed after the seed records were added."
+  ],
+  "priority" : "high",
+  "rationale" : "The canonical Airframe dataset needs explicit tests before requirement coverage can be reviewed through the new Tests surface.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-037"
+  },
+  "testSteps" : [
+    "Run canonical diagnostics and generated documentation checks against the seeded test dataset."
+  ],
+  "workItem" : {
+    "githubIssue" : 174,
+    "id" : {
+      "rawValue" : "T-0161"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Seed canonical test definitions for the Airframe dataset"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit",
+    "Sprint Workflow",
+    "Canonical State"
+  ],
+  "dateReported" : "2026-07-06",
+  "dateResolved" : "2026-07-06",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "A human reviewer should be able to find Review Sprints that are not the current Active Sprint, inspect their state, and perform allowed human-authorized transitions such as Review -> Backlog.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T22:36:55Z"
+  },
+  "notes" : [
+    "Observed after SP-036 was moved to Review during reprioritization to EP-024\/SP-037.",
+    "The current active Sprint is SP-037, so current-Sprint UI affordances do not expose SP-036.",
+    "This is distinct from I-0025. I-0025 covers workflow authority and policy for returning Active or Review Sprints to Backlog. This issue covers AgileCockpit access to non-current Review Sprints and their allowed actions.",
+    "Resolution: AgileCockpit Sprint Work now lists Review Sprints separately from the current Active Sprint, lets the human select a Review Sprint, shows its Epic, Tasks, Issues, and status, and provides a Return to Backlog action that applies the canonical Review -> Backlog transition, records audit, refreshes state, and regenerates projections.",
+    "Evidence: xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests\/AgileCockpitTests\/agileCockpitReturnsNonCurrentReviewSprintToBacklog passed on 2026-07-06. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests passed on 2026-07-06. swift test --package-path AirframeCore passed on 2026-07-06. swift test --package-path AICockpit passed on 2026-07-06."
+  ],
+  "observedBehavior" : "AgileCockpit exposes the current Active Sprint as the primary Sprint surface. When SP-036 is in Review and SP-037 is Active, there is no visible UI path to select SP-036, inspect it, or perform the policy-allowed Review -> Backlog transition.",
+  "reproductionSteps" : [
+    "Open AgileCockpit with SP-037 as the active Sprint and SP-036 in Review.",
+    "Navigate to the Sprint controls or current Sprint surface.",
+    "Observe that the UI focuses on SP-037.",
+    "Attempt to find SP-036 as a non-current Review Sprint.",
+    "Observe that there is no UI path to view SP-036 or move it back to Backlog."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-037"
+  },
+  "workItem" : {
+    "githubIssue" : 176,
+    "id" : {
+      "rawValue" : "I-0026"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "AgileCockpit cannot view or modify non-current Review Sprint"
+  }
+}

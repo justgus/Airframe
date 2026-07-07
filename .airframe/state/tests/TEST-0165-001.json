@@ -1,0 +1,64 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-04"
+    }
+  ],
+  "artifactReferences" : [
+    "AICockpit/Sources/AICockpitKit/AICockpitCommand.swift",
+    "AICockpit/Tests/AICockpitKitTests/AICockpitKitTests.swift"
+  ],
+  "automationCommand" : "swift test --package-path AICockpit",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "AICockpit test management commands list, inspect, create, update, and validate canonical test definitions.",
+    "Command tests preserve JSON output and authority-bound mutation behavior."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0165-001"
+  },
+  "kind" : "regression",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:00:00Z"
+  },
+  "notes" : [
+    "Covers EP-024 AICockpit test management acceptance criterion."
+  ],
+  "objective" : "Verify AICockpit manages canonical test definitions through the supported agent-facing commands.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "AIC-FR-001"
+    },
+    {
+      "rawValue" : "AIC-FR-013"
+    },
+    {
+      "rawValue" : "AIC-VR-001"
+    },
+    {
+      "rawValue" : "AIC-VR-006"
+    }
+  ],
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0162"
+    },
+    {
+      "rawValue" : "T-0165"
+    }
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run the AICockpit test target.",
+    "Confirm test command coverage for list, inspect, create, update, and validate.",
+    "Confirm JSON output and authority-bound mutation behavior remain covered."
+  ],
+  "title" : "AICockpit test management command coverage"
+}

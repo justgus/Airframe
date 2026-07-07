@@ -6,9 +6,7 @@ import SwiftUI
 struct AgileCockpitApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(
-                model: AgileCockpitDashboardModel.launch()
-            )
+            AgileCockpitRootView()
         }
     }
 }

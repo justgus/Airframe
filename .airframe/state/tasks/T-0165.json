@@ -1,0 +1,53 @@
+{
+  "acceptanceCriteria" : [
+    "AirframeCore tests cover canonical test records and trace validation.",
+    "AICockpit tests cover test management commands.",
+    "AgileCockpit tests cover the Tests tab.",
+    "Documentation explains test definition, management, and requirement trace semantics."
+  ],
+  "component" : "Regression Coverage \/ Documentation",
+  "componentsAffected" : [
+    "AirframeCore",
+    "AICockpit",
+    "AgileCockpit",
+    "Documentation"
+  ],
+  "dateVerified" : "2026-07-07",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:03:03Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "The new test management workflow needs regression coverage and documentation before it can be verified by a human.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-037"
+  },
+  "testSteps" : [
+    "Run AirframeCore, AICockpit, and AgileCockpit focused regression tests and review generated documentation."
+  ],
+  "workItem" : {
+    "githubIssue" : 172,
+    "id" : {
+      "rawValue" : "T-0165"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Verify test management workflow and documentation"
+  }
+}

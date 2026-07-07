@@ -1,0 +1,54 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "AICockpit",
+    "AgileCockpit",
+    "Sprint Workflow"
+  ],
+  "dateReported" : "2026-07-06",
+  "dateResolved" : "2026-07-06",
+  "dateVerified" : "2026-07-06",
+  "epicID" : {
+    "rawValue" : "EP-024"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "A human-authorized workflow should allow a Sprint in Active or Review state to return to Backlog when planning priorities change. The operation must preserve auditability, update or clear active Sprint pointers when needed, and keep task and issue relationships consistent unless a separate reassignment action is explicitly performed.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T23:08:10Z"
+  },
+  "notes" : [
+    "Review -> Backlog is already present in the workflow policy. Active -> Backlog is currently rejected as an invalid transition.",
+    "Recommended authority: human project owner or maintainer only. Agents may propose or report the need, but should not perform reprioritization without explicit human authorization.",
+    "Recommended implementation: expose a controlled Sprint return-to-backlog operation that records human actor, rationale, previous state, target state, and active-pointer effects. If implemented as a direct Active -> Backlog transition, it should be explicitly policy-gated and audited. If implemented as a compound operation, it should not require manual Review as an artificial intermediate step.",
+    "Verification of I-0023 and I-0024 was not the blocker. The failed operation occurred because Active -> Backlog was not an allowed Sprint workflow transition.",
+    "Resolution: AirframeCore now allows Sprint Active -> Backlog as a canonical Sprint-control transition using OP-RETURN-SPRINT-TO-BACKLOG, keeps the operation human-owner\/maintainer controlled, and clears the active Sprint pointer when the returned Sprint is current. AgileCockpit now exposes a Return Active Sprint to Backlog action for the configured Active Sprint.",
+    "Evidence: swift test --package-path AirframeCore passed on 2026-07-06. swift test --package-path AICockpit passed on 2026-07-06. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests\/AgileCockpitTests\/agileCockpitReturnsActiveSprintToBacklogAndClearsActiveSprint passed on 2026-07-06. xcodebuild test -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests passed on 2026-07-06."
+  ],
+  "observedBehavior" : "During reprioritization from SP-036\/EP-023 to SP-037\/EP-024, AICockpit rejected moving SP-036 from Active to Backlog with an invalid workflow transition error. SP-036 had to be moved to Review instead even though the intended planning outcome was to return it to the Backlog.",
+  "reproductionSteps" : [
+    "Start with a Sprint in Active status.",
+    "Run or invoke the Sprint status change to Backlog.",
+    "Observe that the workflow rejects Active -> Backlog as an invalid transition.",
+    "Move the Sprint to Review and observe that Review -> Backlog is policy-defined separately."
+  ],
+  "severity" : "high",
+  "sprintID" : {
+    "rawValue" : "SP-037"
+  },
+  "workItem" : {
+    "githubIssue" : 175,
+    "id" : {
+      "rawValue" : "I-0025"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Active Sprint cannot be returned directly to Backlog"
+  }
+}

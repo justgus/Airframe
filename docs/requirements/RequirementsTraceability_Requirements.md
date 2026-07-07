@@ -56,6 +56,8 @@ Airframe shall support linking requirements to Tasks, Issues, Epics, Sprints, de
 
 Airframe shall support linking requirements to test cases, test results, manual verification records, CI runs, and evidence artifacts.
 
+Canonical test definitions shall be treated as planned verification methods. A test may link directly to requirements, but the preferred final-review path is Requirement -> Epic acceptance criterion -> Test so a test verifies explicit acceptance criteria rather than an ambiguous requirement bundle.
+
 ### RT-FR-007 Validation Trace
 
 Airframe shall support linking requirements to human validation decisions and stakeholder approval evidence.
@@ -107,6 +109,8 @@ Airframe shall support deviation and waiver records linked to affected requireme
 Airframe shall support storing summarized test result records that link to requirements.
 
 Raw test logs may be external artifacts or CI artifacts and do not need to be committed to the repository.
+
+Test definitions are distinct from test result summaries. Definitions describe objective, kind, status, linked requirements, linked acceptance criteria, steps, expected results, automation command, and artifact references. Result summaries capture execution outcomes and may reference the definition they executed.
 
 ### RT-FR-014 CI Integration Link
 
@@ -208,4 +212,3 @@ Version 1.0 should avoid:
 - Deep external requirements-tool synchronization.
 - Mandatory source-code annotation for all requirements.
 - Heavy template authoring workflows.
-

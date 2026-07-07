@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AgileCockpit displays proposed plan scope, file changes, commands, external effects, and verification criteria.",
+    "The plan review surface clearly shows current decision state and target work context.",
+    "Plan review UI remains distinct from implementation verification and Sprint\/Epic closeout UI."
+  ],
+  "component" : "AgileCockpit human-facing plan review surface",
+  "componentsAffected" : [
+    "AgileCockpit human-facing plan review surface"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:58:16Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "testSteps" : [
+    "Focused AgileCockpit tests or UI screenshots\/test output for plan review display."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0157"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add AgileCockpit plan review UI"
+  }
+}

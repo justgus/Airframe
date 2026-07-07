@@ -145,6 +145,43 @@ import Foundation
         command: "swift test --package-path AirframeCore",
         artifactReferences: ["AirframeCore test output"]
     )
+    let test = AirframeCanonicalTestRecord(
+        id: AirframeID("TEST-0116-001"),
+        title: "Canonical records round-trip test",
+        objective: "Verify canonical records encode and decode deterministically.",
+        kind: .unit,
+        status: .ready,
+        requirementIDs: [AirframeID("REQ-CWS-FR-002")],
+        acceptanceCriterionIDs: [criterion.id],
+        workItemIDs: [AirframeID("T-0116")],
+        evidenceIDs: [evidence.id],
+        steps: ["Encode the record.", "Decode the record."],
+        expectedResults: ["Decoded record matches the original."],
+        automationCommand: "swift test --package-path AirframeCore",
+        artifactReferences: ["AirframeCore/Tests/AirframeCoreTests"],
+        notes: ["Canonical test definitions are not execution evidence."]
+    )
+    let testSuite = AirframeCanonicalTestSuiteRecord(
+        id: AirframeID("TS-0116-001"),
+        title: "Canonical record suite",
+        objective: "Group canonical record tests by acceptance criterion.",
+        status: .ready,
+        testIDs: [test.id],
+        requirementIDs: [AirframeID("REQ-CWS-FR-002")],
+        acceptanceCriterionIDs: [criterion.id],
+        notes: ["Suites group test definitions without replacing trace links."]
+    )
+    let testRun = AirframeCanonicalTestRunRecord(
+        id: AirframeID("TR-0116-001"),
+        testID: test.id,
+        suiteID: testSuite.id,
+        result: .passed,
+        evidenceIDs: [evidence.id],
+        command: "swift test --package-path AirframeCore",
+        artifactReferences: ["AirframeCore test output"],
+        environment: "local",
+        notes: ["Runs capture execution results for a test definition."]
+    )
     let mapping = AirframeCanonicalBackendMappingRecord(
         id: AirframeID("MAP-T-0116-GH"),
         localRecordID: AirframeID("T-0116"),
@@ -186,6 +223,24 @@ import Foundation
             AirframeCanonicalEvidenceSummaryRecord.self,
             from: encoder.encode(evidence)
         ).requirementIDs == [AirframeID("REQ-CWS-FR-002")]
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalTestRecord.self,
+            from: encoder.encode(test)
+        ) == test
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalTestSuiteRecord.self,
+            from: encoder.encode(testSuite)
+        ) == testSuite
+    )
+    #expect(
+        try decoder.decode(
+            AirframeCanonicalTestRunRecord.self,
+            from: encoder.encode(testRun)
+        ) == testRun
     )
     #expect(
         try decoder.decode(
@@ -396,6 +451,68 @@ import Foundation
     #expect(try store.list(AirframeCanonicalRequirementRevisionRecord.self).map(\.id) == [AirframeID("REQ-0001-R1")])
 }
 
+@Test func canonicalJSONStorePersistsTestRecords() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalTestStore-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let testRecord = AirframeCanonicalTestRecord(
+        id: AirframeID("TEST-9001"),
+        title: "Requirement traceability model test",
+        objective: "Verify tests can trace requirements through acceptance criteria.",
+        kind: .acceptance,
+        status: .active,
+        requirementIDs: [AirframeID("REQ-9001")],
+        acceptanceCriterionIDs: [AirframeID("AC-9001")],
+        workItemIDs: [AirframeID("T-9001")],
+        steps: ["Load canonical requirements.", "Resolve test traceability."],
+        expectedResults: ["The requirement trace summary includes TEST-9001."]
+    )
+    let suiteRecord = AirframeCanonicalTestSuiteRecord(
+        id: AirframeID("TS-9001"),
+        title: "Requirement traceability suite",
+        objective: "Group requirement traceability tests.",
+        status: .active,
+        testIDs: [testRecord.id],
+        requirementIDs: [AirframeID("REQ-9001")],
+        acceptanceCriterionIDs: [AirframeID("AC-9001")]
+    )
+    let runRecord = AirframeCanonicalTestRunRecord(
+        id: AirframeID("TR-9001"),
+        testID: testRecord.id,
+        suiteID: suiteRecord.id,
+        result: .passed,
+        evidenceIDs: [AirframeID("EV-9001")],
+        command: "swift test --package-path AirframeCore",
+        environment: "local"
+    )
+
+    try store.save(testRecord)
+    try store.save(suiteRecord)
+    try store.save(runRecord)
+
+    let loaded = try #require(
+        try store.load(AirframeCanonicalTestRecord.self, id: AirframeID("TEST-9001"))
+    )
+    let loadedSuite = try #require(
+        try store.load(AirframeCanonicalTestSuiteRecord.self, id: AirframeID("TS-9001"))
+    )
+    let loadedRun = try #require(
+        try store.load(AirframeCanonicalTestRunRecord.self, id: AirframeID("TR-9001"))
+    )
+    let state = try AirframeCanonicalStoreRepository(store: store).loadState()
+
+    #expect(loaded == testRecord)
+    #expect(loadedSuite == suiteRecord)
+    #expect(loadedRun == runRecord)
+    #expect(state.tests == [testRecord])
+    #expect(state.testSuites == [suiteRecord])
+    #expect(state.testRuns == [runRecord])
+}
+
 @Test func canonicalRepositorySprintActivationSetsProjectActiveSprint() throws {
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AirframeCanonicalSprintActivation-\(UUID().uuidString)")
@@ -477,6 +594,48 @@ import Foundation
         try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-032"))
     )
     #expect(loadedSprint.workItem.status == .closed)
+    #expect(loadedProject.activeSprintID == nil)
+}
+
+@Test func canonicalRepositorySprintReturnToBacklogClearsMatchingProjectActiveSprint() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCanonicalSprintBacklogReturn-\(UUID().uuidString)")
+    defer {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        activeEpicID: AirframeID("EP-021"),
+        activeSprintID: AirframeID("SP-032"),
+        sprintIDs: [AirframeID("SP-032")]
+    )
+    let sprint = AirframeCanonicalSprintRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("SP-032"),
+            kind: .sprint,
+            title: "Compliance Documents and Regression Coverage",
+            status: .active
+        ),
+        epicID: AirframeID("EP-021"),
+        goal: "Generate compliance documents and regression coverage."
+    )
+    try store.save(project)
+    try store.save(sprint)
+
+    try AirframeCanonicalStoreRepository(store: store)
+        .transitionWorkItem(id: AirframeID("SP-032"), to: .backlog)
+
+    let loadedProject = try #require(
+        try store.load(AirframeCanonicalProjectRecord.self, id: AirframeID("PRJ-AIRFRAME"))
+    )
+    let loadedSprint = try #require(
+        try store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-032"))
+    )
+    #expect(loadedSprint.workItem.status == .backlog)
     #expect(loadedProject.activeSprintID == nil)
 }
 
@@ -900,6 +1059,17 @@ import Foundation
         text: "Show requirement traceability coverage for requirement-linked work items and evidence.",
         isVerified: true
     )
+    let test = AirframeCanonicalTestRecord(
+        id: AirframeID("TEST-9001"),
+        title: "Traceability report acceptance test",
+        objective: "Verify requirement traceability coverage for requirement-linked acceptance criteria.",
+        kind: .acceptance,
+        status: .active,
+        acceptanceCriterionIDs: [acceptanceCriterion.id],
+        workItemIDs: [task.workItem.id],
+        steps: ["Generate the requirement traceability reports."],
+        expectedResults: ["REQ-9001 links to AC-9001 and TEST-9001."]
+    )
     let evidence = AirframeCanonicalEvidenceSummaryRecord(
         id: AirframeID("EV-9001"),
         workItemIDs: [task.workItem.id],
@@ -917,11 +1087,13 @@ import Foundation
         revisions: [requirementRevision],
         evidence: [evidence],
         acceptanceCriteria: [acceptanceCriterion],
+        tests: [test],
         tasks: [task]
     )
     let summary = index.traceSummary(for: requirement.id)
     let requirementsForTask = index.requirements(for: task.workItem.id)
     let requirementsForCriterion = index.requirements(for: acceptanceCriterion.id)
+    let requirementsForTest = index.requirements(for: test.id)
     let requirementsForEvidence = index.requirements(for: evidence.id)
     let gaps = index.gapDiagnostics(releaseScope: "SP-029")
     let gate = index.releaseGateSummary(releaseScope: "SP-029")
@@ -930,11 +1102,14 @@ import Foundation
 
     #expect(summary.hasWorkItemTrace)
     #expect(summary.hasAcceptanceCriterionTrace)
+    #expect(summary.hasTestTrace)
     #expect(summary.hasEvidenceTrace)
     #expect(summary.acceptanceCriterionIDs == [AirframeID("AC-9001")])
+    #expect(summary.testIDs == [AirframeID("TEST-9001")])
     #expect(summary.revisionIDs == [AirframeID("REQ-9001-R1")])
     #expect(requirementsForTask.map { $0.id } == [requirement.id])
     #expect(requirementsForCriterion.map { $0.id } == [requirement.id])
+    #expect(requirementsForTest.map { $0.id } == [requirement.id])
     #expect(requirementsForEvidence.map { $0.id } == [requirement.id])
     #expect(!gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
     #expect(gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
@@ -943,9 +1118,16 @@ import Foundation
     #expect(!gate.canClose)
     #expect(gate.blockedRequirementIDs.contains(draftRequirement.id))
     #expect(documentation["Requirements/Requirements-Specification.md"]?.contains("Verification Method") == true)
+    #expect(documentation["Requirements/Requirements-Specification.md"]?.contains("TEST-9001") == true)
     #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("REQ-9001") == true)
     #expect(documentation["Requirements/index.md"]?.contains("The system shall link requirements to work and evidence.") == true)
     #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("The system shall link requirements to work and evidence.") == true)
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("Epic Acceptance Criteria") == true)
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("AC-9001") == true)
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("TEST-9001") == false)
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("T-9001") == false)
+    #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("EV-9001") == false)
+    #expect(documentation["Requirements/Bidirectional-Requirements-Traceability-Matrix.md"]?.contains("TEST-9001") == true)
     #expect(documentation["Requirements/Bidirectional-Requirements-Traceability-Matrix.md"]?.contains("T-9001") == true)
     #expect(documentation["Requirements/Release-Gate.md"]?.contains("Can Close") == true)
     #expect(documentation["Requirements/Compliance-Verification-Matrix.md"]?.contains("Requirement") == true)
@@ -1484,6 +1666,12 @@ import Foundation
     #expect(catalog.transitions(for: .task).contains {
         $0.fromStatus == .backlog && $0.toStatus == .active
     })
+    #expect(catalog.transitions(for: .sprint).contains {
+        $0.fromStatus == .active && $0.toStatus == .backlog
+    })
+    #expect(catalog.transitions(for: .sprint).contains {
+        $0.fromStatus == .review && $0.toStatus == .backlog
+    })
     #expect(catalog.transitions(for: .epic).contains {
         $0.fromStatus == .active && $0.toStatus == .backlog
     })
@@ -1501,6 +1689,9 @@ import Foundation
     let sprintClose = try #require(
         catalog.transition(for: .sprint, from: .review, to: .closed)
     )
+    let sprintReturnActive = try #require(
+        catalog.transition(for: .sprint, from: .active, to: .backlog)
+    )
     let epicClose = try #require(
         catalog.transition(for: .epic, from: .complete, to: .closed)
     )
@@ -1513,6 +1704,11 @@ import Foundation
     #expect(sprintClose.requiredAuthorityClasses == [.humanOwner, .humanMaintainer])
     #expect(!sprintClose.requiredAuthorityClasses.contains(.llmAgent))
     #expect(!sprintClose.preconditions.isEmpty)
+    #expect(sprintReturnActive.operation.category == .sprintControl)
+    #expect(sprintReturnActive.operation.requiresConfirmation)
+    #expect(sprintReturnActive.requiredAuthorityClasses == [.humanOwner, .humanMaintainer])
+    #expect(!sprintReturnActive.requiredAuthorityClasses.contains(.llmAgent))
+    #expect(!sprintReturnActive.preconditions.isEmpty)
     #expect(epicClose.operation.category == .epicControl)
     #expect(epicClose.operation.requiresConfirmation)
     #expect(epicClose.requiredAuthorityClasses == [.humanOwner, .humanMaintainer])
@@ -1645,6 +1841,54 @@ import Foundation
     #expect(reasonCodes.contains(.epicSprintRelationshipDrift))
     #expect(reasonCodes.contains(.epicTaskRelationshipDrift))
     #expect(reasonCodes.contains(.sprintTaskRelationshipDrift))
+}
+
+@Test func canonicalStateValidatorDetectsInvalidTestReferences() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe"
+    )
+    let test = AirframeCanonicalTestRecord(
+        id: AirframeID("TEST-MISSING-REFS"),
+        title: "Broken traceability test",
+        objective: "Exercise canonical diagnostics for invalid test links.",
+        kind: .acceptance,
+        requirementIDs: [AirframeID("REQ-MISSING")],
+        acceptanceCriterionIDs: [AirframeID("AC-MISSING")],
+        workItemIDs: [AirframeID("T-MISSING")]
+    )
+    let suite = AirframeCanonicalTestSuiteRecord(
+        id: AirframeID("TS-MISSING-REFS"),
+        title: "Broken traceability suite",
+        objective: "Exercise canonical diagnostics for invalid suite links.",
+        testIDs: [AirframeID("TEST-MISSING")],
+        requirementIDs: [AirframeID("REQ-MISSING-2")],
+        acceptanceCriterionIDs: [AirframeID("AC-MISSING-2")]
+    )
+    let run = AirframeCanonicalTestRunRecord(
+        id: AirframeID("TR-MISSING-REFS"),
+        testID: AirframeID("TEST-MISSING"),
+        suiteID: AirframeID("TS-MISSING")
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            tests: [test],
+            testSuites: [suite],
+            testRuns: [run]
+        )
+    )
+    let reasonCodes = Set(diagnostics.diagnostics.map(\.reasonCode))
+
+    #expect(diagnostics.status == .warning)
+    #expect(reasonCodes.contains(.testRequirementMissing))
+    #expect(reasonCodes.contains(.testAcceptanceCriterionMissing))
+    #expect(reasonCodes.contains(.testWorkItemMissing))
+    #expect(reasonCodes.contains(.testSuiteTestMissing))
+    #expect(reasonCodes.contains(.testRunTestMissing))
+    #expect(reasonCodes.contains(.testRunSuiteMissing))
 }
 
 @Test func canonicalStateValidatorDetectsSoleActiveSprintPointerMismatch() {

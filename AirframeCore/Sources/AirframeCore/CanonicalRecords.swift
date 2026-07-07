@@ -465,6 +465,146 @@ public struct AirframeCanonicalAcceptanceCriterionRecord: Codable, Equatable, Se
     }
 }
 
+public enum AirframeCanonicalTestKind: String, Codable, Equatable, Sendable {
+    case unit
+    case integration
+    case ui
+    case acceptance
+    case regression
+    case dataValidation
+    case manual
+}
+
+public enum AirframeCanonicalTestStatus: String, Codable, Equatable, Sendable {
+    case draft
+    case ready
+    case active
+    case retired
+}
+
+public struct AirframeCanonicalTestRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let title: String
+    public let objective: String
+    public let kind: AirframeCanonicalTestKind
+    public let status: AirframeCanonicalTestStatus
+    public let requirementIDs: [AirframeID]
+    public let acceptanceCriterionIDs: [AirframeID]
+    public let workItemIDs: [AirframeID]
+    public let evidenceIDs: [AirframeID]
+    public let steps: [String]
+    public let expectedResults: [String]
+    public let automationCommand: String?
+    public let artifactReferences: [String]
+    public let notes: [String]
+
+    public init(
+        id: AirframeID,
+        title: String,
+        objective: String,
+        kind: AirframeCanonicalTestKind,
+        status: AirframeCanonicalTestStatus = .draft,
+        requirementIDs: [AirframeID] = [],
+        acceptanceCriterionIDs: [AirframeID] = [],
+        workItemIDs: [AirframeID] = [],
+        evidenceIDs: [AirframeID] = [],
+        steps: [String] = [],
+        expectedResults: [String] = [],
+        automationCommand: String? = nil,
+        artifactReferences: [String] = [],
+        notes: [String] = [],
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.title = title
+        self.objective = objective
+        self.kind = kind
+        self.status = status
+        self.requirementIDs = requirementIDs
+        self.acceptanceCriterionIDs = acceptanceCriterionIDs
+        self.workItemIDs = workItemIDs
+        self.evidenceIDs = evidenceIDs
+        self.steps = steps
+        self.expectedResults = expectedResults
+        self.automationCommand = automationCommand
+        self.artifactReferences = artifactReferences
+        self.notes = notes
+    }
+}
+
+public struct AirframeCanonicalTestSuiteRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let title: String
+    public let objective: String
+    public let status: AirframeCanonicalTestStatus
+    public let testIDs: [AirframeID]
+    public let requirementIDs: [AirframeID]
+    public let acceptanceCriterionIDs: [AirframeID]
+    public let notes: [String]
+
+    public init(
+        id: AirframeID,
+        title: String,
+        objective: String,
+        status: AirframeCanonicalTestStatus = .draft,
+        testIDs: [AirframeID] = [],
+        requirementIDs: [AirframeID] = [],
+        acceptanceCriterionIDs: [AirframeID] = [],
+        notes: [String] = [],
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.title = title
+        self.objective = objective
+        self.status = status
+        self.testIDs = testIDs
+        self.requirementIDs = requirementIDs
+        self.acceptanceCriterionIDs = acceptanceCriterionIDs
+        self.notes = notes
+    }
+}
+
+public struct AirframeCanonicalTestRunRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let testID: AirframeID
+    public let suiteID: AirframeID?
+    public let result: AirframeCanonicalEvidenceResult
+    public let evidenceIDs: [AirframeID]
+    public let command: String?
+    public let artifactReferences: [String]
+    public let environment: String?
+    public let notes: [String]
+
+    public init(
+        id: AirframeID,
+        testID: AirframeID,
+        suiteID: AirframeID? = nil,
+        result: AirframeCanonicalEvidenceResult = .notRun,
+        evidenceIDs: [AirframeID] = [],
+        command: String? = nil,
+        artifactReferences: [String] = [],
+        environment: String? = nil,
+        notes: [String] = [],
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.testID = testID
+        self.suiteID = suiteID
+        self.result = result
+        self.evidenceIDs = evidenceIDs
+        self.command = command
+        self.artifactReferences = artifactReferences
+        self.environment = environment
+        self.notes = notes
+    }
+}
+
 public enum AirframeCanonicalEvidenceResult: String, Codable, Equatable, Sendable {
     case passed
     case failed

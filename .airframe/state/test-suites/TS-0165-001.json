@@ -1,0 +1,73 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-01"
+    },
+    {
+      "rawValue" : "EP-024-AC-02"
+    },
+    {
+      "rawValue" : "EP-024-AC-03"
+    },
+    {
+      "rawValue" : "EP-024-AC-04"
+    },
+    {
+      "rawValue" : "EP-024-AC-05"
+    },
+    {
+      "rawValue" : "EP-024-AC-06"
+    }
+  ],
+  "id" : {
+    "rawValue" : "TS-0165-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:00:00Z"
+  },
+  "notes" : [
+    "Groups EP-024 close-readiness tests by acceptance criterion coverage."
+  ],
+  "objective" : "Verify every EP-024 acceptance criterion has at least one canonical test definition before Epic close review.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "CWS-FR-011"
+    },
+    {
+      "rawValue" : "RT-FR-006"
+    },
+    {
+      "rawValue" : "RT-FR-008"
+    },
+    {
+      "rawValue" : "AIC-VR-001"
+    },
+    {
+      "rawValue" : "AC-FR-007"
+    }
+  ],
+  "status" : "ready",
+  "testIDs" : [
+    {
+      "rawValue" : "TEST-0161-001"
+    },
+    {
+      "rawValue" : "TEST-0161-003"
+    },
+    {
+      "rawValue" : "TEST-0164-001"
+    },
+    {
+      "rawValue" : "TEST-0165-001"
+    },
+    {
+      "rawValue" : "TEST-0165-002"
+    }
+  ],
+  "title" : "EP-024 acceptance criteria coverage"
+}

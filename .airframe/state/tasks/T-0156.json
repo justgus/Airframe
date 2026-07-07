@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AICockpit can submit a proposed implementation plan to canonical state.",
+    "AICockpit can read plan status and details for agent workflow coordination.",
+    "AICockpit cannot approve, defer, reject, verify, or close plan-controlled work through human-only paths."
+  ],
+  "component" : "AICockpit agent-facing plan proposal commands",
+  "componentsAffected" : [
+    "AICockpit agent-facing plan proposal commands"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:58:01Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "testSteps" : [
+    "Focused AICockpit command tests for plan submit\/read behavior and denied human-only decisions."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0156"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add AICockpit plan submission and read commands"
+  }
+}

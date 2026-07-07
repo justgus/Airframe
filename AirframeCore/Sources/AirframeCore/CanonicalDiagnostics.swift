@@ -23,6 +23,12 @@ public enum AirframeCanonicalDiagnosticReasonCode: String, Codable, Equatable, S
     case sprintTaskRelationshipDrift
     case taskEpicMissing
     case taskSprintMissing
+    case testRequirementMissing
+    case testAcceptanceCriterionMissing
+    case testWorkItemMissing
+    case testSuiteTestMissing
+    case testRunTestMissing
+    case testRunSuiteMissing
 }
 
 public enum AirframeCanonicalRepairAction: String, Codable, Equatable, Sendable {
@@ -432,19 +438,34 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
     public let sprints: [AirframeCanonicalSprintRecord]
     public let tasks: [AirframeCanonicalTaskRecord]
     public let issues: [AirframeCanonicalIssueRecord]
+    public let requirements: [AirframeCanonicalRequirementRecord]
+    public let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
+    public let tests: [AirframeCanonicalTestRecord]
+    public let testSuites: [AirframeCanonicalTestSuiteRecord]
+    public let testRuns: [AirframeCanonicalTestRunRecord]
 
     public init(
         project: AirframeCanonicalProjectRecord,
         epics: [AirframeCanonicalEpicRecord] = [],
         sprints: [AirframeCanonicalSprintRecord] = [],
         tasks: [AirframeCanonicalTaskRecord] = [],
-        issues: [AirframeCanonicalIssueRecord] = []
+        issues: [AirframeCanonicalIssueRecord] = [],
+        requirements: [AirframeCanonicalRequirementRecord] = [],
+        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
+        tests: [AirframeCanonicalTestRecord] = [],
+        testSuites: [AirframeCanonicalTestSuiteRecord] = [],
+        testRuns: [AirframeCanonicalTestRunRecord] = []
     ) {
         self.project = project
         self.epics = epics
         self.sprints = sprints
         self.tasks = tasks
         self.issues = issues
+        self.requirements = requirements
+        self.acceptanceCriteria = acceptanceCriteria
+        self.tests = tests
+        self.testSuites = testSuites
+        self.testRuns = testRuns
     }
 }
 
@@ -456,6 +477,10 @@ public struct AirframeCanonicalStateValidator: Sendable {
         let sprintsByID = Dictionary(uniqueKeysWithValues: snapshot.sprints.map { ($0.workItem.id, $0) })
         let tasksByID = Dictionary(uniqueKeysWithValues: snapshot.tasks.map { ($0.workItem.id, $0) })
         let issuesByID = Dictionary(uniqueKeysWithValues: snapshot.issues.map { ($0.workItem.id, $0) })
+        let requirementsByID = Dictionary(uniqueKeysWithValues: snapshot.requirements.map { ($0.id, $0) })
+        let criteriaByID = Dictionary(uniqueKeysWithValues: snapshot.acceptanceCriteria.map { ($0.id, $0) })
+        let testsByID = Dictionary(uniqueKeysWithValues: snapshot.tests.map { ($0.id, $0) })
+        let suitesByID = Dictionary(uniqueKeysWithValues: snapshot.testSuites.map { ($0.id, $0) })
 
         var diagnostics: [AirframeCanonicalDiagnostic] = []
         diagnostics.append(contentsOf: activeEpicDiagnostics(project: snapshot.project, epics: snapshot.epics, epicsByID: epicsByID))
@@ -475,6 +500,21 @@ public struct AirframeCanonicalStateValidator: Sendable {
                 epicsByID: epicsByID,
                 sprintsByID: sprintsByID,
                 tasksByID: tasksByID
+            )
+        )
+        diagnostics.append(
+            contentsOf: testDiagnostics(
+                tests: snapshot.tests,
+                testSuites: snapshot.testSuites,
+                testRuns: snapshot.testRuns,
+                requirementsByID: requirementsByID,
+                criteriaByID: criteriaByID,
+                testsByID: testsByID,
+                suitesByID: suitesByID,
+                tasksByID: tasksByID,
+                issuesByID: issuesByID,
+                epicsByID: epicsByID,
+                sprintsByID: sprintsByID
             )
         )
 
@@ -866,6 +906,125 @@ public struct AirframeCanonicalStateValidator: Sendable {
             }
         }
         return diagnostics
+    }
+
+    private func testDiagnostics(
+        tests: [AirframeCanonicalTestRecord],
+        testSuites: [AirframeCanonicalTestSuiteRecord],
+        testRuns: [AirframeCanonicalTestRunRecord],
+        requirementsByID: [AirframeID: AirframeCanonicalRequirementRecord],
+        criteriaByID: [AirframeID: AirframeCanonicalAcceptanceCriterionRecord],
+        testsByID: [AirframeID: AirframeCanonicalTestRecord],
+        suitesByID: [AirframeID: AirframeCanonicalTestSuiteRecord],
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord],
+        epicsByID: [AirframeID: AirframeCanonicalEpicRecord],
+        sprintsByID: [AirframeID: AirframeCanonicalSprintRecord]
+    ) -> [AirframeCanonicalDiagnostic] {
+        var diagnostics: [AirframeCanonicalDiagnostic] = []
+        for test in tests {
+            for requirementID in test.requirementIDs where requirementsByID[requirementID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testRequirementMissing,
+                        affectedIDs: [test.id, requirementID],
+                        message: "Test \(test.id.rawValue) references missing Requirement \(requirementID.rawValue)."
+                    )
+                )
+            }
+            for criterionID in test.acceptanceCriterionIDs where criteriaByID[criterionID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testAcceptanceCriterionMissing,
+                        affectedIDs: [test.id, criterionID],
+                        message: "Test \(test.id.rawValue) references missing Acceptance Criterion \(criterionID.rawValue)."
+                    )
+                )
+            }
+            for workItemID in test.workItemIDs where !workItemExists(
+                workItemID,
+                tasksByID: tasksByID,
+                issuesByID: issuesByID,
+                epicsByID: epicsByID,
+                sprintsByID: sprintsByID
+            ) {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testWorkItemMissing,
+                        affectedIDs: [test.id, workItemID],
+                        message: "Test \(test.id.rawValue) references missing work item \(workItemID.rawValue)."
+                    )
+                )
+            }
+        }
+        for suite in testSuites {
+            for testID in suite.testIDs where testsByID[testID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testSuiteTestMissing,
+                        affectedIDs: [suite.id, testID],
+                        message: "Test Suite \(suite.id.rawValue) references missing Test \(testID.rawValue)."
+                    )
+                )
+            }
+            for requirementID in suite.requirementIDs where requirementsByID[requirementID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testRequirementMissing,
+                        affectedIDs: [suite.id, requirementID],
+                        message: "Test Suite \(suite.id.rawValue) references missing Requirement \(requirementID.rawValue)."
+                    )
+                )
+            }
+            for criterionID in suite.acceptanceCriterionIDs where criteriaByID[criterionID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testAcceptanceCriterionMissing,
+                        affectedIDs: [suite.id, criterionID],
+                        message: "Test Suite \(suite.id.rawValue) references missing Acceptance Criterion \(criterionID.rawValue)."
+                    )
+                )
+            }
+        }
+        for run in testRuns {
+            if testsByID[run.testID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testRunTestMissing,
+                        affectedIDs: [run.id, run.testID],
+                        message: "Test Run \(run.id.rawValue) references missing Test \(run.testID.rawValue)."
+                    )
+                )
+            }
+            if let suiteID = run.suiteID, suitesByID[suiteID] == nil {
+                diagnostics.append(
+                    AirframeCanonicalDiagnostic(
+                        severity: .warning,
+                        reasonCode: .testRunSuiteMissing,
+                        affectedIDs: [run.id, suiteID],
+                        message: "Test Run \(run.id.rawValue) references missing Test Suite \(suiteID.rawValue)."
+                    )
+                )
+            }
+        }
+        return diagnostics
+    }
+
+    private func workItemExists(
+        _ id: AirframeID,
+        tasksByID: [AirframeID: AirframeCanonicalTaskRecord],
+        issuesByID: [AirframeID: AirframeCanonicalIssueRecord],
+        epicsByID: [AirframeID: AirframeCanonicalEpicRecord],
+        sprintsByID: [AirframeID: AirframeCanonicalSprintRecord]
+    ) -> Bool {
+        tasksByID[id] != nil || issuesByID[id] != nil || epicsByID[id] != nil || sprintsByID[id] != nil
     }
 
     private func isTerminal(_ status: AirframeWorkStatus) -> Bool {

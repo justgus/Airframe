@@ -150,6 +150,24 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | T-0145 | #144 | EP-021 | Add Markdown requirements seed import support |
 | T-0146 | #145 | EP-021 | Regenerate requirements documentation from canonical state |
 | T-0147 | #146 | EP-021 | Add requirements import regression coverage |
+| T-0148 | #161 | EP-019 | Inventory offline runtime dependencies |
+| T-0149 | #162 | EP-019 | Define local-only operating profile |
+| T-0150 | #163 | EP-019 | Harden AICockpit offline work item flows |
+| T-0151 | #164 | EP-019 | Harden AgileCockpit offline application flows |
+| T-0152 | #165 | EP-019 | Prove Sprint and Epic workflows operate offline |
+| T-0153 | #166 | EP-019 | Add offline regression verification suite |
+| T-0154 | TBD | EP-023 | Define canonical plan review record and decision model |
+| T-0155 | TBD | EP-023 | Add AirframeCore authority and audit support for plan decisions |
+| T-0156 | TBD | EP-023 | Add AICockpit plan submission and read commands |
+| T-0157 | TBD | EP-023 | Add AgileCockpit plan review UI |
+| T-0158 | TBD | EP-023 | Wire AgileCockpit human plan decision actions |
+| T-0159 | TBD | EP-023 | Add plan review regression coverage and workflow documentation |
+| T-0160 | #170 | EP-024 | Define canonical test records and requirement trace model |
+| T-0161 | #174 | EP-024 | Seed canonical test definitions for the Airframe dataset |
+| T-0162 | #169 | EP-024 | Add AICockpit test definition and management commands |
+| T-0163 | #171 | EP-024 | Add AgileCockpit Tests tab |
+| T-0164 | #173 | EP-024 | Define EP-023 acceptance criteria for requirements without AC coverage |
+| T-0165 | #172 | EP-024 | Verify test management workflow and documentation |
 
 ## Current Issue Mapping
 
@@ -168,7 +186,11 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | I-0011 | #149 | EP-018 | Epic close does not archive Markdown Epic record |
 | I-0012 | #150 | EP-018 | Close actions do not refresh Sprint and Epic indexes |
 | I-0013 | #151 | EP-018 | Epic close eligibility ignores open Sprints |
+| I-0023 | #167 | EP-023 | Requirements tab freezes while loading traceability data |
+| I-0024 | #168 | EP-023 | Requirements traceability matrix includes excessive derived work links |
+| I-0025 | #175 | EP-024 | Active Sprint cannot be returned directly to Backlog |
+| I-0026 | #176 | EP-024 | AgileCockpit cannot view or modify non-current Review Sprint |
 
-Next local Issue ID: `I-0014`.
+Next local Issue ID: `I-0027`.
 
-*Last Updated: 2026-06-25 (I-0010 through I-0013 mapped to GitHub issues #148 through #151)*
+*Last Updated: 2026-07-06 (I-0026 mapped to GitHub issue #176)*

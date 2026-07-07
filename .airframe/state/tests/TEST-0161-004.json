@@ -1,0 +1,68 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-021-AC-01"
+    },
+    {
+      "rawValue" : "EP-021-AC-06"
+    },
+    {
+      "rawValue" : "EP-021-AC-07"
+    }
+  ],
+  "artifactReferences" : [
+    "docs/generated/Requirements/Compliance-Verification-Matrix.md",
+    "docs/generated/Requirements/Requirements-Specification.md"
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Verification evidence summaries remain linked to requirements.",
+    "Release gate summaries reflect the seeded trace data."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0161-004"
+  },
+  "kind" : "regression",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T21:15:00Z"
+  },
+  "notes" : [
+    "Seed test for evidence and release gate reporting."
+  ],
+  "objective" : "Verify test evidence summaries and release gate reporting remain consistent with canonical requirements.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "RT-FR-011"
+    },
+    {
+      "rawValue" : "RT-FR-013"
+    },
+    {
+      "rawValue" : "RT-FR-014"
+    },
+    {
+      "rawValue" : "CWS-FR-009"
+    },
+    {
+      "rawValue" : "CWS-FR-014"
+    }
+  ],
+  "workItemIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Load test evidence summaries from canonical state.",
+    "Evaluate release gate summary output.",
+    "Check the requirements specification for verification evidence references."
+  ],
+  "title" : "Evidence and gate coverage"
+}

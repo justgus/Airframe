@@ -10,6 +10,9 @@ public struct AirframeCanonicalStoreState: Sendable {
     public let requirements: [AirframeCanonicalRequirementRecord]
     public let requirementRevisions: [AirframeCanonicalRequirementRevisionRecord]
     public let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
+    public let tests: [AirframeCanonicalTestRecord]
+    public let testSuites: [AirframeCanonicalTestSuiteRecord]
+    public let testRuns: [AirframeCanonicalTestRunRecord]
     public let evidence: [AirframeCanonicalEvidenceSummaryRecord]
 
     public init(
@@ -22,6 +25,9 @@ public struct AirframeCanonicalStoreState: Sendable {
         requirements: [AirframeCanonicalRequirementRecord] = [],
         requirementRevisions: [AirframeCanonicalRequirementRevisionRecord] = [],
         acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
+        tests: [AirframeCanonicalTestRecord] = [],
+        testSuites: [AirframeCanonicalTestSuiteRecord] = [],
+        testRuns: [AirframeCanonicalTestRunRecord] = [],
         evidence: [AirframeCanonicalEvidenceSummaryRecord] = []
     ) {
         self.workspaces = workspaces
@@ -33,6 +39,9 @@ public struct AirframeCanonicalStoreState: Sendable {
         self.requirements = requirements
         self.requirementRevisions = requirementRevisions
         self.acceptanceCriteria = acceptanceCriteria
+        self.tests = tests
+        self.testSuites = testSuites
+        self.testRuns = testRuns
         self.evidence = evidence
     }
 }
@@ -59,6 +68,9 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             requirements: store.list(AirframeCanonicalRequirementRecord.self),
             requirementRevisions: store.list(AirframeCanonicalRequirementRevisionRecord.self),
             acceptanceCriteria: store.list(AirframeCanonicalAcceptanceCriterionRecord.self),
+            tests: store.list(AirframeCanonicalTestRecord.self),
+            testSuites: store.list(AirframeCanonicalTestSuiteRecord.self),
+            testRuns: store.list(AirframeCanonicalTestRunRecord.self),
             evidence: store.list(AirframeCanonicalEvidenceSummaryRecord.self)
         )
     }
@@ -125,6 +137,15 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         }
         try store.list(AirframeCanonicalAcceptanceCriterionRecord.self).forEach {
             try store.delete(AirframeCanonicalAcceptanceCriterionRecord.self, id: $0.id)
+        }
+        try store.list(AirframeCanonicalTestRecord.self).forEach {
+            try store.delete(AirframeCanonicalTestRecord.self, id: $0.id)
+        }
+        try store.list(AirframeCanonicalTestSuiteRecord.self).forEach {
+            try store.delete(AirframeCanonicalTestSuiteRecord.self, id: $0.id)
+        }
+        try store.list(AirframeCanonicalTestRunRecord.self).forEach {
+            try store.delete(AirframeCanonicalTestRunRecord.self, id: $0.id)
         }
     }
 
@@ -578,7 +599,12 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             epics: state.epics,
             sprints: state.sprints,
             tasks: state.tasks,
-            issues: state.issues
+            issues: state.issues,
+            requirements: state.requirements,
+            acceptanceCriteria: state.acceptanceCriteria,
+            tests: state.tests,
+            testSuites: state.testSuites,
+            testRuns: state.testRuns
         )
     }
 
@@ -593,7 +619,7 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
                 return
             }
             try store.save(project.settingActiveSprintID(sprint.workItem.id))
-        case .closed:
+        case .backlog, .closed:
             try projects
                 .filter { $0.activeSprintID == sprint.workItem.id }
                 .forEach { try store.save($0.clearingActiveSprintID()) }
@@ -659,7 +685,10 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
             kind: record.workItem.kind,
             fromStatus: record.workItem.status,
             toStatus: status,
-            operation: AirframeOperation(id: operationID(for: status), category: operationCategory(for: status))
+            operation: AirframeOperation(
+                id: operationID(kind: record.workItem.kind, from: record.workItem.status, to: status),
+                category: operationCategory(kind: record.workItem.kind, from: record.workItem.status, to: status)
+            )
         )
         let decision = AirframeWorkflowTransitionEvaluator().evaluate(
             context: context,
@@ -735,8 +764,15 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
         try AirframeCanonicalProjectSummary().dashboardSummary(records: listWorkRecords())
     }
 
-    private func operationID(for status: AirframeWorkStatus) -> AirframeID {
-        switch status {
+    private func operationID(
+        kind: AirframeWorkItemKind,
+        from fromStatus: AirframeWorkStatus,
+        to status: AirframeWorkStatus
+    ) -> AirframeID {
+        if kind == .sprint && status == .backlog && [.active, .review].contains(fromStatus) {
+            return AirframeID("OP-RETURN-SPRINT-TO-BACKLOG")
+        }
+        return switch status {
         case .proposed: AirframeID("OP-PROPOSE-WORK")
         case .draft: AirframeID("OP-DRAFT-WORK")
         case .backlog: AirframeID("OP-RETURN-TO-BACKLOG")
@@ -750,8 +786,15 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
         }
     }
 
-    private func operationCategory(for status: AirframeWorkStatus) -> AirframeOperationCategory {
-        status == .implementedVerified ? .humanAcceptance : .workflowTransition
+    private func operationCategory(
+        kind: AirframeWorkItemKind,
+        from fromStatus: AirframeWorkStatus,
+        to status: AirframeWorkStatus
+    ) -> AirframeOperationCategory {
+        if kind == .sprint && status == .backlog && [.active, .review].contains(fromStatus) {
+            return .sprintControl
+        }
+        return status == .implementedVerified ? .humanAcceptance : .workflowTransition
     }
 }
 

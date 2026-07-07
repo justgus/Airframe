@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Canonical state can represent proposed implementation plans, including scope, file changes, commands, external effects, and verification criteria.",
+    "Plan decision state supports pending, approved, deferred, and rejected outcomes.",
+    "Plan records link to target Epic, Sprint, Tasks, actor context, and audit or evidence records where applicable."
+  ],
+  "component" : "AirframeCore canonical model",
+  "componentsAffected" : [
+    "AirframeCore canonical model"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-023"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T14:58:00Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-036"
+  },
+  "testSteps" : [
+    "Focused AirframeCore tests for plan record persistence and decision state behavior."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0154"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Define canonical plan review record and decision model"
+  }
+}

@@ -11,6 +11,7 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
     case verification = "Verification"
     case planning = "Sprint & Epic"
     case requirements = "Requirements"
+    case tests = "Tests"
     case metrics = "Metrics & Audit"
 
     var id: String { rawValue }
@@ -25,6 +26,8 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
             "planning"
         case .requirements:
             "requirements"
+        case .tests:
+            "tests"
         case .metrics:
             "metrics"
         }
@@ -63,14 +66,14 @@ struct AgileCockpitStatusSelection: Equatable, Identifiable {
     var id: String { row.id }
 }
 
-struct AgileCockpitAuditRow: Equatable, Identifiable {
+struct AgileCockpitAuditRow: Codable, Equatable, Identifiable {
     let id: String
     let action: String
     let workItemID: String
     let reason: String
 }
 
-struct AgileCockpitDiagnosticRow: Equatable, Identifiable {
+struct AgileCockpitDiagnosticRow: Codable, Equatable, Identifiable {
     let id: String
     let severity: String
     let reason: String
@@ -94,20 +97,46 @@ struct AgileCockpitRepairPreviewRow: Equatable, Identifiable {
     }
 }
 
-struct AgileCockpitRequirementTraceRow: Equatable, Identifiable {
+struct AgileCockpitRequirementTraceRow: Codable, Equatable, Identifiable {
     let requirementID: String
     let title: String
     let statement: String
     let status: String
-    let workItems: String
-    let evidence: String
-    let revisions: String
-    let targetKinds: String
+    let acceptanceCriteria: String
 
     var id: String { requirementID }
 }
 
-struct AgileCockpitRequirementGapRow: Equatable, Identifiable {
+struct AgileCockpitRequirementGapRow: Codable, Equatable, Identifiable {
+    let requirementID: String
+    let kind: String
+    let message: String
+
+    var id: String { "\(requirementID)-\(kind)" }
+}
+
+struct AgileCockpitTestRow: Codable, Equatable, Identifiable {
+    let id: String
+    let title: String
+    let objective: String
+    let kind: String
+    let status: String
+    let requirementIDs: String
+    let acceptanceCriterionIDs: String
+    let workItemIDs: String
+}
+
+struct AgileCockpitTestCoverageRow: Codable, Equatable, Identifiable {
+    let requirementID: String
+    let title: String
+    let status: String
+    let acceptanceCriteria: String
+    let tests: String
+
+    var id: String { requirementID }
+}
+
+struct AgileCockpitTestGapRow: Codable, Equatable, Identifiable {
     let requirementID: String
     let kind: String
     let message: String
@@ -137,6 +166,192 @@ enum AgileCockpitVerificationActionState: Equatable {
 
 @MainActor
 final class AgileCockpitDashboardModel: ObservableObject {
+    nonisolated fileprivate struct LaunchData: @unchecked Sendable {
+        let coreInfo: AirframeCoreInfo
+        let context: AirframeProjectContext
+        let configurationDiagnostics: AirframeConfigurationDiagnostics
+        let backend: any AirframeBackend
+        let repairBackend: any AirframeBackend
+        let reviewerContext: AirframeCertifiedContext
+        let artifactRootURL: URL?
+        let canonicalRepository: AirframeCanonicalStoreRepository?
+        let canonicalState: AirframeCanonicalStoreState?
+        let records: [AirframeLocalWorkRecord]
+        let dashboardRecords: [AirframeLocalWorkRecord]
+        let dashboardDetailTextByID: [AirframeID: String]
+        let canonicalSnapshot: AirframeCanonicalStateSnapshot
+        let canonicalDiagnostics: AirframeCanonicalDiagnostics
+        let summary: AirframeDashboardSummary
+        let auditRows: [AgileCockpitAuditRow]
+        let requirementCoverageSummary: AirframeRequirementCoverageSummary
+        let requirementGateSummary: AirframeRequirementReleaseGateSummary
+        let requirementTraceRows: [AgileCockpitRequirementTraceRow]
+        let requirementGapRows: [AgileCockpitRequirementGapRow]
+        let testCoverageRows: [AgileCockpitTestCoverageRow]
+        let testGapRows: [AgileCockpitTestGapRow]
+        let observedURLs: [URL]
+
+        init(
+            coreInfo: AirframeCoreInfo,
+            context: AirframeProjectContext,
+            configurationDiagnostics: AirframeConfigurationDiagnostics,
+            backend: any AirframeBackend,
+            repairBackend: any AirframeBackend,
+            reviewerContext: AirframeCertifiedContext,
+            artifactRootURL: URL?,
+            canonicalRepository: AirframeCanonicalStoreRepository?,
+            canonicalState: AirframeCanonicalStoreState?,
+            records: [AirframeLocalWorkRecord],
+            dashboardRecords: [AirframeLocalWorkRecord],
+            dashboardDetailTextByID: [AirframeID: String],
+            canonicalSnapshot: AirframeCanonicalStateSnapshot,
+            canonicalDiagnostics: AirframeCanonicalDiagnostics,
+            summary: AirframeDashboardSummary,
+            auditRows: [AgileCockpitAuditRow],
+            requirementCoverageSummary: AirframeRequirementCoverageSummary,
+            requirementGateSummary: AirframeRequirementReleaseGateSummary,
+            requirementTraceRows: [AgileCockpitRequirementTraceRow],
+            requirementGapRows: [AgileCockpitRequirementGapRow],
+            testCoverageRows: [AgileCockpitTestCoverageRow],
+            testGapRows: [AgileCockpitTestGapRow],
+            observedURLs: [URL]
+        ) {
+            self.coreInfo = coreInfo
+            self.context = context
+            self.configurationDiagnostics = configurationDiagnostics
+            self.backend = backend
+            self.repairBackend = repairBackend
+            self.reviewerContext = reviewerContext
+            self.artifactRootURL = artifactRootURL
+            self.canonicalRepository = canonicalRepository
+            self.canonicalState = canonicalState
+            self.records = records
+            self.dashboardRecords = dashboardRecords
+            self.dashboardDetailTextByID = dashboardDetailTextByID
+            self.canonicalSnapshot = canonicalSnapshot
+            self.canonicalDiagnostics = canonicalDiagnostics
+            self.summary = summary
+            self.auditRows = auditRows
+            self.requirementCoverageSummary = requirementCoverageSummary
+            self.requirementGateSummary = requirementGateSummary
+            self.requirementTraceRows = requirementTraceRows
+            self.requirementGapRows = requirementGapRows
+            self.testCoverageRows = testCoverageRows
+            self.testGapRows = testGapRows
+            self.observedURLs = observedURLs
+        }
+
+        init(
+            launchPayload payload: LaunchCachePayload,
+            backend: any AirframeBackend,
+            repairBackend: any AirframeBackend,
+            reviewerContext: AirframeCertifiedContext,
+            canonicalRepository: AirframeCanonicalStoreRepository?,
+            canonicalState: AirframeCanonicalStoreState?
+        ) {
+            self.init(
+                coreInfo: .current,
+                context: AirframeProjectContext(
+                    configuration: payload.configuration,
+                    project: payload.project
+                ),
+                configurationDiagnostics: payload.configurationDiagnostics,
+                backend: backend,
+                repairBackend: repairBackend,
+                reviewerContext: reviewerContext,
+                artifactRootURL: payload.artifactRootPath.map { URL(fileURLWithPath: $0) },
+                canonicalRepository: canonicalRepository,
+                canonicalState: canonicalState ?? payload.canonicalState.map(AgileCockpitDashboardModel.cachedState(from:)),
+                records: payload.records,
+                dashboardRecords: payload.dashboardRecords,
+                dashboardDetailTextByID: Dictionary(
+                    uniqueKeysWithValues: payload.dashboardDetailTextByID.map { (AirframeID($0.key), $0.value) }
+                ),
+                canonicalSnapshot: AgileCockpitDashboardModel.cachedSnapshot(from: payload.canonicalSnapshot),
+                canonicalDiagnostics: payload.canonicalDiagnostics,
+                summary: payload.summary,
+                auditRows: payload.auditRows,
+                requirementCoverageSummary: payload.requirementCoverageSummary,
+                requirementGateSummary: payload.requirementGateSummary,
+                requirementTraceRows: payload.requirementTraceRows,
+                requirementGapRows: payload.requirementGapRows,
+                testCoverageRows: payload.testCoverageRows,
+                testGapRows: payload.testGapRows,
+                observedURLs: payload.observedURLs
+            )
+        }
+    }
+
+    nonisolated fileprivate struct LaunchCacheEntry: Codable, Sendable {
+        let fingerprint: String
+        let payload: LaunchCachePayload
+    }
+
+    nonisolated fileprivate struct LaunchCachePayload: Codable, Sendable {
+        nonisolated struct CachedCanonicalState: Codable, Sendable {
+            let workspaces: [AirframeCanonicalWorkspaceRecord]
+            let projects: [AirframeCanonicalProjectRecord]
+            let epics: [AirframeCanonicalEpicRecord]
+            let sprints: [AirframeCanonicalSprintRecord]
+            let tasks: [AirframeCanonicalTaskRecord]
+            let issues: [AirframeCanonicalIssueRecord]
+            let requirements: [AirframeCanonicalRequirementRecord]
+            let requirementRevisions: [AirframeCanonicalRequirementRevisionRecord]
+            let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
+            let tests: [AirframeCanonicalTestRecord]
+            let testSuites: [AirframeCanonicalTestSuiteRecord]
+            let testRuns: [AirframeCanonicalTestRunRecord]
+            let evidence: [AirframeCanonicalEvidenceSummaryRecord]
+        }
+
+        nonisolated struct CachedCanonicalSnapshot: Codable, Sendable {
+            let project: AirframeCanonicalProjectRecord
+            let epics: [AirframeCanonicalEpicRecord]
+            let sprints: [AirframeCanonicalSprintRecord]
+            let tasks: [AirframeCanonicalTaskRecord]
+            let issues: [AirframeCanonicalIssueRecord]
+            let requirements: [AirframeCanonicalRequirementRecord]
+            let acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord]
+            let tests: [AirframeCanonicalTestRecord]
+            let testSuites: [AirframeCanonicalTestSuiteRecord]
+            let testRuns: [AirframeCanonicalTestRunRecord]
+        }
+
+        let configuration: AirframeWorkspaceConfiguration
+        let project: AirframeProject
+        let configurationDiagnostics: AirframeConfigurationDiagnostics
+        let artifactRootPath: String?
+        let observedURLs: [URL]
+        let records: [AirframeLocalWorkRecord]
+        let dashboardRecords: [AirframeLocalWorkRecord]
+        let dashboardDetailTextByID: [String: String]
+        let canonicalState: CachedCanonicalState?
+        let canonicalSnapshot: CachedCanonicalSnapshot
+        let canonicalDiagnostics: AirframeCanonicalDiagnostics
+        let summary: AirframeDashboardSummary
+        let auditRows: [AgileCockpitAuditRow]
+        let requirementCoverageSummary: AirframeRequirementCoverageSummary
+        let requirementGateSummary: AirframeRequirementReleaseGateSummary
+        let requirementTraceRows: [AgileCockpitRequirementTraceRow]
+        let requirementGapRows: [AgileCockpitRequirementGapRow]
+        let testCoverageRows: [AgileCockpitTestCoverageRow]
+        let testGapRows: [AgileCockpitTestGapRow]
+    }
+
+    nonisolated fileprivate struct TraceabilityCacheEntry: Codable, Sendable {
+        let fingerprint: String
+        let payload: TraceabilityCachePayload
+    }
+
+    nonisolated fileprivate struct TraceabilityCachePayload: Codable, Sendable {
+        let requirementCoverageSummary: AirframeRequirementCoverageSummary
+        let requirementGateSummary: AirframeRequirementReleaseGateSummary
+        let requirementTraceRows: [AgileCockpitRequirementTraceRow]
+        let requirementGapRows: [AgileCockpitRequirementGapRow]
+        let testCoverageRows: [AgileCockpitTestCoverageRow]
+        let testGapRows: [AgileCockpitTestGapRow]
+    }
+
     let coreInfo: AirframeCoreInfo
     let context: AirframeProjectContext
     let configurationDiagnostics: AirframeConfigurationDiagnostics
@@ -148,6 +363,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published private(set) var canonicalSnapshot: AirframeCanonicalStateSnapshot
     @Published private(set) var canonicalDiagnostics: AirframeCanonicalDiagnostics
     @Published private(set) var auditRows: [AgileCockpitAuditRow]
+    @Published private(set) var requirementCoverageSummary: AirframeRequirementCoverageSummary
+    @Published private(set) var requirementGateSummary: AirframeRequirementReleaseGateSummary
+    @Published private(set) var requirementTraceRows: [AgileCockpitRequirementTraceRow]
+    @Published private(set) var requirementGapRows: [AgileCockpitRequirementGapRow]
+    @Published private(set) var testCoverageRows: [AgileCockpitTestCoverageRow]
+    @Published private(set) var testGapRows: [AgileCockpitTestGapRow]
+    @Published var selectedTestID: AirframeID?
     @Published private(set) var verificationQueueState: AgileCockpitVerificationQueueState
     @Published private(set) var verificationDetailState: AgileCockpitVerificationDetailState
     @Published private(set) var verificationActionState: AgileCockpitVerificationActionState
@@ -156,6 +378,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published var selectedStatusSelection: AgileCockpitStatusSelection?
     @Published var selectedStatusWorkItemID: AirframeID?
     @Published var selectedPlanningTab: AgileCockpitPlanningTab
+    @Published var selectedReviewSprintID: AirframeID?
     @Published var selectedEpicCriterionID: AirframeID?
     @Published var verificationCommentText: String
     @Published var statusMessage: String
@@ -170,6 +393,47 @@ final class AgileCockpitDashboardModel: ObservableObject {
     private var refreshObserver: NSObjectProtocol?
     private var fileWatchSources: [DispatchSourceFileSystemObject] = []
     private var pendingRefreshWorkItem: DispatchWorkItem?
+
+    fileprivate init(launchData: LaunchData) {
+        self.coreInfo = launchData.coreInfo
+        self.context = launchData.context
+        self.configurationDiagnostics = launchData.configurationDiagnostics
+        self.backend = launchData.backend
+        self.repairBackend = launchData.repairBackend
+        self.reviewerContext = launchData.reviewerContext
+        self.artifactRootURL = launchData.artifactRootURL
+        self.canonicalRepository = launchData.canonicalRepository
+        self.canonicalState = launchData.canonicalState
+        self.auditStore = AirframeAuditEventStore()
+        self.selectedSection = .dashboard
+        self.records = launchData.records
+        self.dashboardRecords = launchData.dashboardRecords
+        self.dashboardDetailTextByID = launchData.dashboardDetailTextByID
+        self.canonicalSnapshot = launchData.canonicalSnapshot
+        self.canonicalDiagnostics = launchData.canonicalDiagnostics
+        self.summary = launchData.summary
+        self.auditRows = launchData.auditRows
+        self.requirementCoverageSummary = launchData.requirementCoverageSummary
+        self.requirementGateSummary = launchData.requirementGateSummary
+        self.requirementTraceRows = launchData.requirementTraceRows
+        self.requirementGapRows = launchData.requirementGapRows
+        self.testCoverageRows = launchData.testCoverageRows
+        self.testGapRows = launchData.testGapRows
+        self.selectedTestID = launchData.canonicalSnapshot.tests.first?.id
+        self.verificationQueueState = .loaded
+        self.verificationDetailState = .empty
+        self.verificationActionState = .idle
+        self.selectedWorkItemID = launchData.records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
+        self.selectedStatusSelection = nil
+        self.selectedStatusWorkItemID = nil
+        self.selectedPlanningTab = .sprintWork
+        self.selectedReviewSprintID = nil
+        self.selectedEpicCriterionID = nil
+        self.verificationCommentText = ""
+        self.statusMessage = "Loaded \(launchData.backend.capabilities.backendKind) Airframe workspace."
+        loadSelectedVerificationDetail()
+        startRefreshObservation(observedURLs: launchData.observedURLs)
+    }
 
     init(
         coreInfo: AirframeCoreInfo = .current,
@@ -215,13 +479,29 @@ final class AgileCockpitDashboardModel: ObservableObject {
             canonicalRepository: canonicalRepository
         )
         self.canonicalSnapshot = canonicalSnapshot
-        self.canonicalDiagnostics = Self.canonicalDiagnostics(
+        let canonicalDiagnostics = Self.canonicalDiagnostics(
             snapshot: canonicalSnapshot,
             canonicalRecords: dashboardData.records,
             backendRecords: loadedRecords
         )
+        self.canonicalDiagnostics = canonicalDiagnostics
         self.summary = Self.canonicalSummary(records: dashboardData.records)
         self.auditRows = auditStore.events.map(Self.auditRow)
+        let requirementState = Self.requirementState(
+            canonicalState: self.canonicalState,
+            canonicalSnapshot: canonicalSnapshot
+        )
+        let testState = Self.testState(
+            canonicalSnapshot: canonicalSnapshot,
+            canonicalDiagnostics: canonicalDiagnostics
+        )
+        self.requirementCoverageSummary = requirementState.coverage
+        self.requirementGateSummary = requirementState.gate
+        self.requirementTraceRows = requirementState.traceRows
+        self.requirementGapRows = requirementState.gapRows
+        self.testCoverageRows = testState.coverageRows
+        self.testGapRows = testState.gapRows
+        self.selectedTestID = canonicalSnapshot.tests.first?.id
         self.verificationQueueState = .loaded
         self.verificationDetailState = .empty
         self.verificationActionState = .idle
@@ -229,11 +509,65 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedStatusSelection = nil
         self.selectedStatusWorkItemID = nil
         self.selectedPlanningTab = .sprintWork
+        self.selectedReviewSprintID = nil
         self.selectedEpicCriterionID = nil
         self.verificationCommentText = ""
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
         startRefreshObservation(observedURLs: observedURLs)
+    }
+
+    fileprivate init(
+        launchPayload payload: LaunchCachePayload,
+        backend: any AirframeBackend,
+        repairBackend: any AirframeBackend,
+        reviewerContext: AirframeCertifiedContext,
+        canonicalRepository: AirframeCanonicalStoreRepository?,
+        canonicalState: AirframeCanonicalStoreState?
+    ) {
+        self.coreInfo = .current
+        self.context = AirframeProjectContext(
+            configuration: payload.configuration,
+            project: payload.project
+        )
+        self.configurationDiagnostics = payload.configurationDiagnostics
+        self.backend = backend
+        self.repairBackend = repairBackend
+        self.reviewerContext = reviewerContext
+        self.artifactRootURL = payload.artifactRootPath.map { URL(fileURLWithPath: $0) }
+        self.canonicalRepository = canonicalRepository
+        self.canonicalState = canonicalState ?? payload.canonicalState.map(Self.cachedState(from:))
+        self.auditStore = AirframeAuditEventStore()
+        self.selectedSection = .dashboard
+        self.records = payload.records
+        self.dashboardRecords = payload.dashboardRecords
+        self.dashboardDetailTextByID = Dictionary(
+            uniqueKeysWithValues: payload.dashboardDetailTextByID.map { (AirframeID($0.key), $0.value) }
+        )
+        self.canonicalSnapshot = Self.cachedSnapshot(from: payload.canonicalSnapshot)
+        self.canonicalDiagnostics = payload.canonicalDiagnostics
+        self.summary = payload.summary
+        self.auditRows = payload.auditRows
+        self.requirementCoverageSummary = payload.requirementCoverageSummary
+        self.requirementGateSummary = payload.requirementGateSummary
+        self.requirementTraceRows = payload.requirementTraceRows
+        self.requirementGapRows = payload.requirementGapRows
+        self.testCoverageRows = payload.testCoverageRows
+        self.testGapRows = payload.testGapRows
+        self.selectedTestID = payload.canonicalSnapshot.tests.first?.id
+        self.verificationQueueState = .loaded
+        self.verificationDetailState = .empty
+        self.verificationActionState = .idle
+        self.selectedWorkItemID = payload.records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
+        self.selectedStatusSelection = nil
+        self.selectedStatusWorkItemID = nil
+        self.selectedPlanningTab = .sprintWork
+        self.selectedReviewSprintID = nil
+        self.selectedEpicCriterionID = nil
+        self.verificationCommentText = ""
+        self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
+        loadSelectedVerificationDetail()
+        startRefreshObservation(observedURLs: payload.observedURLs)
     }
 
     deinit {
@@ -329,6 +663,263 @@ final class AgileCockpitDashboardModel: ObservableObject {
             reviewerContext: reviewer,
             observedURLs: [resolvedConfigurationURL, resolvedStoreURL, artifactRootURL.appending(path: ".airframe/state")],
             artifactRootURL: artifactRootURL
+        )
+    }
+
+    nonisolated fileprivate static func prepareLaunchData(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath),
+        progress: @Sendable (Double, String) -> Void = { _, _ in }
+    ) throws -> LaunchData {
+        let resolver = AirframeRuntimeConfigurationResolver(
+            environment: environment,
+            currentDirectoryURL: currentDirectoryURL
+        )
+
+        progress(0.05, "Resolving workspace.")
+        guard let configurationURL = resolver.configurationURL() else {
+            let context = try AirframeConfigurationLoader().loadSampleContext()
+            let backend = AgileCockpitUnavailableBackend(
+                capabilities: .githubIssuesReadOnly,
+                error: AirframeConfigurationError.missingFile(".airframe/airframe-workspace.json")
+            )
+            let reviewer = try humanReviewerContext(projectID: context.project.id)
+            let canonicalSnapshot = AirframeCanonicalStateSnapshotBuilder().snapshot(
+                project: context.project,
+                records: []
+            )
+            let diagnostics = Self.canonicalDiagnostics(
+                snapshot: canonicalSnapshot,
+                canonicalRecords: [],
+                backendRecords: []
+            )
+            let traceabilityState = Self.traceabilityState(
+                canonicalState: nil,
+                canonicalSnapshot: canonicalSnapshot,
+                canonicalDiagnostics: diagnostics,
+                artifactRootURL: nil
+            )
+            let payload = cachedPayload(
+                context: context,
+                configurationDiagnostics: AirframeConfigurationLoader().diagnostics(for: context.configuration),
+                artifactRootURL: nil,
+                observedURLs: [],
+                canonicalState: nil,
+                canonicalSnapshot: canonicalSnapshot,
+                records: [],
+                dashboardData: (records: [], detailTextByID: [:]),
+                canonicalDiagnostics: diagnostics,
+                summary: Self.canonicalSummary(records: []),
+                auditRows: [],
+                requirementCoverageSummary: traceabilityState.requirementCoverageSummary,
+                requirementGateSummary: traceabilityState.requirementGateSummary,
+                requirementTraceRows: traceabilityState.requirementTraceRows,
+                requirementGapRows: traceabilityState.requirementGapRows,
+                testCoverageRows: traceabilityState.testCoverageRows,
+                testGapRows: traceabilityState.testGapRows
+            )
+            let launchRootURL = Self.launchRootURL(
+                configurationURL: nil,
+                currentDirectoryURL: currentDirectoryURL
+            )
+            saveLaunchCache(
+                payload,
+                fingerprint: "sample:\(currentDirectoryURL.path)",
+                to: launchCacheURL(rootURL: launchRootURL)
+            )
+            progress(1.0, "Workspace ready.")
+            return LaunchData(
+                launchPayload: payload,
+                backend: backend,
+                repairBackend: backend,
+                reviewerContext: reviewer,
+                canonicalRepository: nil,
+                canonicalState: nil
+            )
+        }
+
+        let context = try resolver.loadContext(explicitPath: configurationURL.path)
+        let resolvedStoreURL = resolver.storeURL()
+        let artifactRootURL = Self.artifactRootURL(
+            configurationURL: configurationURL,
+            context: context
+        )
+        let fingerprint = launchFingerprint(
+            configurationURL: configurationURL,
+            storeURL: resolvedStoreURL,
+            artifactRootURL: artifactRootURL,
+            canonicalRepositoryExists: canonicalRepositoryExists(at: artifactRootURL)
+        )
+
+        let launchRootURL = Self.launchRootURL(
+            configurationURL: configurationURL,
+            currentDirectoryURL: currentDirectoryURL
+        )
+
+        if let cachedPayload = loadLaunchCache(
+            from: launchCacheURL(rootURL: launchRootURL),
+            fingerprint: fingerprint
+        ) {
+            progress(0.9, "Loaded cached workspace state.")
+            let backend = try configuredBackend(
+                for: context,
+                artifactRootURL: artifactRootURL,
+                storeURL: resolvedStoreURL,
+                githubIssueTransport: nil
+            )
+            let repairBackend = try configuredRepairBackend(
+                for: context,
+                artifactRootURL: artifactRootURL,
+                fallbackBackend: backend,
+                githubIssueTransport: nil
+            )
+            let reviewer = try humanReviewerContext(projectID: context.project.id)
+            let canonicalRepository = canonicalRepositoryExists(at: artifactRootURL)
+                ? AirframeCanonicalStoreRepository(rootURL: artifactRootURL)
+                : nil
+            let canonicalState = cachedPayload.canonicalState.map(Self.cachedState(from:))
+            progress(1.0, "Workspace ready.")
+            return LaunchData(
+                launchPayload: cachedPayload,
+                backend: backend,
+                repairBackend: repairBackend,
+                reviewerContext: reviewer,
+                canonicalRepository: canonicalRepository,
+                canonicalState: canonicalState
+            )
+        }
+
+        progress(0.2, "Loading configuration.")
+        let backend = try configuredBackend(
+            for: context,
+            artifactRootURL: artifactRootURL,
+            storeURL: resolvedStoreURL,
+            githubIssueTransport: nil
+        )
+        progress(0.35, "Preparing backend.")
+        let repairBackend = try configuredRepairBackend(
+            for: context,
+            artifactRootURL: artifactRootURL,
+            fallbackBackend: backend,
+            githubIssueTransport: nil
+        )
+        let reviewer = try humanReviewerContext(projectID: context.project.id)
+        progress(0.5, "Loading work records.")
+        let loadedRecords = try backend.listWorkRecords()
+        let dashboardData = Self.dashboardData(
+            backendRecords: loadedRecords,
+            artifactRootURL: artifactRootURL,
+            preferBackendRecords: canonicalRepositoryExists(at: artifactRootURL)
+        )
+        let canonicalRepository = canonicalRepositoryExists(at: artifactRootURL)
+            ? AirframeCanonicalStoreRepository(rootURL: artifactRootURL)
+            : nil
+        progress(0.7, "Building canonical snapshot.")
+        let canonicalSnapshot = try Self.canonicalSnapshot(
+            context: context,
+            records: dashboardData.records,
+            canonicalRepository: canonicalRepository
+        )
+        let diagnostics = Self.canonicalDiagnostics(
+            snapshot: canonicalSnapshot,
+            canonicalRecords: dashboardData.records,
+            backendRecords: loadedRecords
+        )
+        let canonicalState = try? canonicalRepository?.loadState()
+        progress(0.85, "Computing traceability.")
+        let traceabilityState = Self.traceabilityState(
+            canonicalState: canonicalState,
+            canonicalSnapshot: canonicalSnapshot,
+            canonicalDiagnostics: diagnostics,
+            artifactRootURL: artifactRootURL
+        )
+        let payload = cachedPayload(
+            context: context,
+            configurationDiagnostics: AirframeConfigurationLoader().diagnostics(for: context.configuration),
+            artifactRootURL: artifactRootURL,
+            observedURLs: [configurationURL, resolvedStoreURL, artifactRootURL.appending(path: ".airframe/state")],
+            canonicalState: canonicalState,
+            canonicalSnapshot: canonicalSnapshot,
+            records: loadedRecords,
+            dashboardData: dashboardData,
+            canonicalDiagnostics: diagnostics,
+            summary: Self.canonicalSummary(records: dashboardData.records),
+            auditRows: [],
+            requirementCoverageSummary: traceabilityState.requirementCoverageSummary,
+            requirementGateSummary: traceabilityState.requirementGateSummary,
+            requirementTraceRows: traceabilityState.requirementTraceRows,
+            requirementGapRows: traceabilityState.requirementGapRows,
+            testCoverageRows: traceabilityState.testCoverageRows,
+            testGapRows: traceabilityState.testGapRows
+        )
+        progress(0.95, "Saving launch cache.")
+        saveLaunchCache(
+            payload,
+            fingerprint: fingerprint,
+            to: launchCacheURL(rootURL: launchRootURL)
+        )
+        progress(1.0, "Workspace ready.")
+        return LaunchData(
+            launchPayload: payload,
+            backend: backend,
+            repairBackend: repairBackend,
+            reviewerContext: reviewer,
+            canonicalRepository: canonicalRepository,
+            canonicalState: canonicalState
+        )
+    }
+
+    nonisolated fileprivate static func cachedLaunchDataForImmediateDisplay(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath)
+    ) throws -> LaunchData? {
+        let resolver = AirframeRuntimeConfigurationResolver(
+            environment: environment,
+            currentDirectoryURL: currentDirectoryURL
+        )
+        let configurationURL = resolver.configurationURL()
+        let launchRootURL = Self.launchRootURL(
+            configurationURL: configurationURL,
+            currentDirectoryURL: currentDirectoryURL
+        )
+        guard let cachedPayload = loadAnyLaunchCache(from: launchCacheURL(rootURL: launchRootURL)) else {
+            return nil
+        }
+
+        let context = AirframeProjectContext(
+            configuration: cachedPayload.configuration,
+            project: cachedPayload.project
+        )
+        let artifactRootURL = cachedPayload.artifactRootPath.map { URL(fileURLWithPath: $0) }
+            ?? configurationURL.map { Self.artifactRootURL(configurationURL: $0, context: context) }
+        guard let artifactRootURL else {
+            return nil
+        }
+
+        let backend = try configuredBackend(
+            for: context,
+            artifactRootURL: artifactRootURL,
+            storeURL: resolver.storeURL(),
+            githubIssueTransport: nil
+        )
+        let repairBackend = try configuredRepairBackend(
+            for: context,
+            artifactRootURL: artifactRootURL,
+            fallbackBackend: backend,
+            githubIssueTransport: nil
+        )
+        let reviewer = try humanReviewerContext(projectID: context.project.id)
+        let canonicalRepository = canonicalRepositoryExists(at: artifactRootURL)
+            ? AirframeCanonicalStoreRepository(rootURL: artifactRootURL)
+            : nil
+        let canonicalState = cachedPayload.canonicalState.map(Self.cachedState(from:))
+        return LaunchData(
+            launchPayload: cachedPayload,
+            backend: backend,
+            repairBackend: repairBackend,
+            reviewerContext: reviewer,
+            canonicalRepository: canonicalRepository,
+            canonicalState: canonicalState
         )
     }
 
@@ -517,6 +1108,35 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
+    var reviewSprintRecords: [AirframeCanonicalSprintRecord] {
+        canonicalSnapshot.sprints
+            .filter { $0.workItem.status == .review }
+            .sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+    }
+
+    var selectedReviewSprintRecord: AirframeCanonicalSprintRecord? {
+        if let selectedReviewSprintID,
+           let selected = reviewSprintRecords.first(where: { $0.workItem.id == selectedReviewSprintID }) {
+            return selected
+        }
+        return reviewSprintRecords.first
+    }
+
+    var selectedReviewSprintWorkRecords: [AirframeLocalWorkRecord] {
+        guard let sprintID = selectedReviewSprintRecord?.workItem.id else { return [] }
+        return canonicalDashboardRecords
+            .filter {
+                $0.sprintID == sprintID &&
+                [.task, .issue].contains($0.workItem.kind)
+            }
+            .sorted {
+                if $0.workItem.kind != $1.workItem.kind {
+                    return $0.workItem.kind == .task
+                }
+                return $0.workItem.id.rawValue < $1.workItem.id.rawValue
+            }
+    }
+
     var epicAcceptanceCriteriaSummary: AirframeEpicAcceptanceCriteriaSummary? {
         guard let activeEpicID = currentEpicID else { return nil }
         if let canonicalSummary = try? canonicalRepository?.epicCriteriaSummary(epicID: activeEpicID),
@@ -553,53 +1173,6 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    var requirementTraceabilityIndex: AirframeRequirementTraceabilityIndex {
-        AirframeRequirementTraceabilityIndex(
-            requirements: canonicalState?.requirements ?? [],
-            revisions: canonicalState?.requirementRevisions ?? [],
-            evidence: canonicalState?.evidence ?? [],
-            acceptanceCriteria: canonicalState?.acceptanceCriteria ?? [],
-            epics: canonicalSnapshot.epics,
-            sprints: canonicalSnapshot.sprints,
-            tasks: canonicalSnapshot.tasks,
-            issues: canonicalSnapshot.issues
-        )
-    }
-
-    var requirementCoverageSummary: AirframeRequirementCoverageSummary {
-        requirementTraceabilityIndex.coverageSummary(releaseScope: currentSprintID?.rawValue ?? currentEpicID?.rawValue)
-    }
-
-    var requirementGateSummary: AirframeRequirementReleaseGateSummary {
-        requirementTraceabilityIndex.releaseGateSummary(releaseScope: currentSprintID?.rawValue ?? currentEpicID?.rawValue)
-    }
-
-    var requirementTraceRows: [AgileCockpitRequirementTraceRow] {
-        requirementTraceabilityIndex.requirements.map { requirement in
-            let summary = requirementTraceabilityIndex.traceSummary(for: requirement.id)
-            return AgileCockpitRequirementTraceRow(
-                requirementID: requirement.id.rawValue,
-                title: requirement.title,
-                statement: requirement.statement,
-                status: requirement.status.description,
-                workItems: summary.workItemIDs.map(\.rawValue).joined(separator: ", "),
-                evidence: summary.evidenceIDs.map(\.rawValue).joined(separator: ", "),
-                revisions: summary.revisionIDs.map(\.rawValue).joined(separator: ", "),
-                targetKinds: summary.targetKinds.joined(separator: ", ")
-            )
-        }
-    }
-
-    var requirementGapRows: [AgileCockpitRequirementGapRow] {
-        requirementTraceabilityIndex.gapDiagnostics(releaseScope: currentSprintID?.rawValue ?? currentEpicID?.rawValue).map {
-            AgileCockpitRequirementGapRow(
-                requirementID: $0.requirementID.rawValue,
-                kind: $0.kind.rawValue,
-                message: $0.message
-            )
-        }
-    }
-
     var selectedEpicAcceptanceCriterion: AirframeEpicAcceptanceCriterion? {
         guard let summary = epicAcceptanceCriteriaSummary else { return nil }
         if let selectedEpicCriterionID,
@@ -612,6 +1185,28 @@ final class AgileCockpitDashboardModel: ObservableObject {
     var selectedStatusRecord: AirframeLocalWorkRecord? {
         guard let selectedStatusWorkItemID else { return nil }
         return canonicalDashboardRecords.first { $0.workItem.id == selectedStatusWorkItemID }
+    }
+
+    var testRows: [AgileCockpitTestRow] {
+        canonicalSnapshot.tests.map {
+            AgileCockpitTestRow(
+                id: $0.id.rawValue,
+                title: $0.title,
+                objective: $0.objective,
+                kind: $0.kind.rawValue,
+                status: $0.status.rawValue,
+                requirementIDs: $0.requirementIDs.map(\.rawValue).joined(separator: ", "),
+                acceptanceCriterionIDs: $0.acceptanceCriterionIDs.map(\.rawValue).joined(separator: ", "),
+                workItemIDs: $0.workItemIDs.map(\.rawValue).joined(separator: ", ")
+            )
+        }
+    }
+
+    var selectedTestRecord: AirframeCanonicalTestRecord? {
+        guard let selectedTestID else {
+            return canonicalSnapshot.tests.first
+        }
+        return canonicalSnapshot.tests.first { $0.id == selectedTestID } ?? canonicalSnapshot.tests.first
     }
 
     private var currentSprintID: AirframeID? {
@@ -679,6 +1274,14 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     func selectEpicAcceptanceCriterion(_ criterion: AirframeEpicAcceptanceCriterion) {
         selectedEpicCriterionID = criterion.id
+    }
+
+    func selectTest(_ test: AirframeCanonicalTestRecord) {
+        selectedTestID = test.id
+    }
+
+    func selectReviewSprint(_ sprint: AirframeCanonicalSprintRecord) {
+        selectedReviewSprintID = sprint.workItem.id
     }
 
     func verifySelectedEpicAcceptanceCriterion() {
@@ -757,6 +1360,61 @@ final class AgileCockpitDashboardModel: ObservableObject {
             }
         } catch {
             statusMessage = "Sprint close failed: \(error)"
+        }
+    }
+
+    func returnSelectedReviewSprintToBacklog() {
+        guard let reviewSprint = selectedReviewSprintRecord else {
+            statusMessage = "No Review Sprint is selected."
+            return
+        }
+        let sprintID = reviewSprint.workItem.id
+        guard reviewSprint.workItem.status == .review else {
+            statusMessage = "Sprint \(sprintID.rawValue) is \(reviewSprint.workItem.status.description), not Review."
+            return
+        }
+        do {
+            guard let canonicalRepository else {
+                statusMessage = "Returning a Review Sprint to Backlog requires canonical Airframe state."
+                return
+            }
+            try canonicalRepository.transitionWorkItem(id: sprintID, to: .backlog)
+            try synchronizeMarkdownProjections()
+            recordCloseAudit(action: "OP-RETURN-SPRINT-TO-BACKLOG", workItemID: sprintID)
+            selectedReviewSprintID = nil
+            try reload(selecting: selectedWorkItemID)
+            statusMessage = "Sprint \(sprintID.rawValue) returned to Backlog."
+        } catch {
+            statusMessage = "Sprint return to Backlog failed: \(error)"
+        }
+    }
+
+    func returnActiveSprintToBacklog() {
+        guard let activeSprintID = currentSprintID else {
+            statusMessage = "No active Sprint is configured."
+            return
+        }
+        guard let activeSprintRecord else {
+            statusMessage = "Configured active Sprint \(activeSprintID.rawValue) was not found."
+            return
+        }
+        guard activeSprintRecord.workItem.status == .active else {
+            statusMessage = "Sprint \(activeSprintID.rawValue) is \(activeSprintRecord.workItem.status.description), not Active."
+            return
+        }
+        do {
+            guard let canonicalRepository else {
+                statusMessage = "Returning an Active Sprint to Backlog requires canonical Airframe state."
+                return
+            }
+            try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .backlog)
+            try canonicalRepository.clearActiveSprintID(projectID: context.project.id)
+            try synchronizeMarkdownProjections()
+            recordCloseAudit(action: "OP-RETURN-SPRINT-TO-BACKLOG", workItemID: activeSprintID)
+            try reload(selecting: selectedWorkItemID)
+            statusMessage = "Sprint \(activeSprintID.rawValue) returned to Backlog."
+        } catch {
+            statusMessage = "Active Sprint return to Backlog failed: \(error)"
         }
     }
 
@@ -1054,6 +1712,24 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
         summary = Self.canonicalSummary(records: dashboardData.records)
         auditRows = auditStore.events.map(Self.auditRow)
+        let traceabilityState = Self.traceabilityState(
+            canonicalState: canonicalState,
+            canonicalSnapshot: canonicalSnapshot,
+            canonicalDiagnostics: canonicalDiagnostics,
+            artifactRootURL: artifactRootURL
+        )
+        requirementCoverageSummary = traceabilityState.requirementCoverageSummary
+        requirementGateSummary = traceabilityState.requirementGateSummary
+        requirementTraceRows = traceabilityState.requirementTraceRows
+        requirementGapRows = traceabilityState.requirementGapRows
+        testCoverageRows = traceabilityState.testCoverageRows
+        testGapRows = traceabilityState.testGapRows
+        if let selectedTestID,
+           !canonicalSnapshot.tests.contains(where: { $0.id == selectedTestID }) {
+            self.selectedTestID = canonicalSnapshot.tests.first?.id
+        } else if selectedTestID == nil {
+            self.selectedTestID = canonicalSnapshot.tests.first?.id
+        }
         selectedWorkItemID = id ?? records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
         if let selectedStatusSelection {
             let refreshedSummary = AirframeDashboardStatusSummary(records: canonicalDashboardRecords)
@@ -1068,6 +1744,10 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 self.selectedStatusWorkItemID = refreshedSelection?.row.workItems.first?.id
             }
         }
+        if let selectedReviewSprintID,
+           !reviewSprintRecords.contains(where: { $0.workItem.id == selectedReviewSprintID }) {
+            self.selectedReviewSprintID = nil
+        }
         verificationQueueState = .loaded
         if let selectedWorkItemID,
            records.contains(where: { $0.workItem.id == selectedWorkItemID && $0.workItem.status == .implementedNotVerified }) {
@@ -1079,6 +1759,96 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     private var canonicalDashboardRecords: [AirframeLocalWorkRecord] {
         Self.localRecords(from: canonicalSnapshot)
+    }
+
+    private struct RequirementState {
+        let coverage: AirframeRequirementCoverageSummary
+        let gate: AirframeRequirementReleaseGateSummary
+        let traceRows: [AgileCockpitRequirementTraceRow]
+        let gapRows: [AgileCockpitRequirementGapRow]
+    }
+
+    nonisolated private static func requirementState(
+        canonicalState: AirframeCanonicalStoreState?,
+        canonicalSnapshot: AirframeCanonicalStateSnapshot
+    ) -> RequirementState {
+        let releaseScope = canonicalSnapshot.project.activeSprintID?.rawValue
+            ?? canonicalSnapshot.project.activeEpicID?.rawValue
+        let index = AirframeRequirementTraceabilityIndex(
+            requirements: canonicalState?.requirements ?? [],
+            revisions: canonicalState?.requirementRevisions ?? [],
+            evidence: canonicalState?.evidence ?? [],
+            acceptanceCriteria: canonicalState?.acceptanceCriteria ?? []
+        )
+        return RequirementState(
+            coverage: index.coverageSummary(releaseScope: releaseScope),
+            gate: index.releaseGateSummary(releaseScope: releaseScope),
+            traceRows: index.requirements.map { requirement in
+                AgileCockpitRequirementTraceRow(
+                    requirementID: requirement.id.rawValue,
+                    title: requirement.title,
+                    statement: requirement.statement,
+                    status: requirement.status.description,
+                    acceptanceCriteria: index.acceptanceCriterionTraceIDs(for: requirement.id).joined(separator: ", ")
+                )
+            },
+            gapRows: index.gapDiagnostics(releaseScope: releaseScope).map {
+                AgileCockpitRequirementGapRow(
+                    requirementID: $0.requirementID.rawValue,
+                    kind: $0.kind.rawValue,
+                    message: $0.message
+                )
+            }
+        )
+    }
+
+    private struct TestState {
+        let coverageRows: [AgileCockpitTestCoverageRow]
+        let gapRows: [AgileCockpitTestGapRow]
+    }
+
+    nonisolated private static func testState(
+        canonicalSnapshot: AirframeCanonicalStateSnapshot,
+        canonicalDiagnostics: AirframeCanonicalDiagnostics? = nil
+    ) -> TestState {
+        let index = AirframeRequirementTraceabilityIndex(
+            requirements: canonicalSnapshot.requirements,
+            revisions: [],
+            evidence: [],
+            acceptanceCriteria: canonicalSnapshot.acceptanceCriteria,
+            tests: canonicalSnapshot.tests,
+            epics: canonicalSnapshot.epics,
+            sprints: canonicalSnapshot.sprints,
+            tasks: canonicalSnapshot.tasks,
+            issues: canonicalSnapshot.issues
+        )
+        let coverageRows = index.requirements.map { requirement in
+            let summary = index.traceSummary(for: requirement.id)
+            return AgileCockpitTestCoverageRow(
+                requirementID: requirement.id.rawValue,
+                title: requirement.title,
+                status: requirement.status.description,
+                acceptanceCriteria: index.acceptanceCriterionTraceIDs(for: requirement.id).joined(separator: ", "),
+                tests: summary.testIDs.map(\.rawValue).joined(separator: ", ")
+            )
+        }
+        let testGapReasonCodes: Set<String> = [
+            "testRequirementMissing",
+            "testAcceptanceCriterionMissing",
+            "testWorkItemMissing",
+            "testSuiteTestMissing",
+            "testRunTestMissing",
+            "testRunSuiteMissing"
+        ]
+        let gapRows: [AgileCockpitTestGapRow] = canonicalDiagnostics?.diagnostics.compactMap { diagnostic in
+            guard testGapReasonCodes.contains(diagnostic.reasonCode.rawValue) else { return nil }
+            return AgileCockpitTestGapRow(
+                requirementID: diagnostic.affectedIDs.first?.rawValue ?? "Unknown",
+                kind: diagnostic.reasonCode.rawValue,
+                message: diagnostic.message
+            )
+        } ?? []
+        return TestState(coverageRows: coverageRows, gapRows: gapRows)
     }
 
     private static func writeMarkdownProjections(
@@ -1478,7 +2248,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         String(ISO8601DateFormatter().string(from: Date()).prefix(10))
     }
 
-    private static func canonicalSnapshot(
+    nonisolated private static func canonicalSnapshot(
         context: AirframeProjectContext,
         records: [AirframeLocalWorkRecord],
         canonicalRepository: AirframeCanonicalStoreRepository?
@@ -1492,11 +2262,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    private static func canonicalSummary(records: [AirframeLocalWorkRecord]) -> AirframeDashboardSummary {
+    nonisolated private static func canonicalSummary(records: [AirframeLocalWorkRecord]) -> AirframeDashboardSummary {
         AirframeCanonicalProjectSummary().dashboardSummary(records: records)
     }
 
-    private static func canonicalDiagnostics(
+    nonisolated private static func canonicalDiagnostics(
         snapshot: AirframeCanonicalStateSnapshot,
         canonicalRecords: [AirframeLocalWorkRecord],
         backendRecords: [AirframeLocalWorkRecord]
@@ -1512,6 +2282,320 @@ final class AgileCockpitDashboardModel: ObservableObject {
                     ? $0.affectedIDs.map(\.rawValue).joined() < $1.affectedIDs.map(\.rawValue).joined()
                     : $0.reasonCode.rawValue < $1.reasonCode.rawValue
             }
+        )
+    }
+
+    nonisolated private static func launchRootURL(
+        configurationURL: URL?,
+        currentDirectoryURL: URL
+    ) -> URL {
+        guard let configurationURL else {
+            return currentDirectoryURL
+        }
+        let workspaceDirectory = configurationURL.deletingLastPathComponent()
+        return workspaceDirectory.lastPathComponent == ".airframe"
+            ? workspaceDirectory.deletingLastPathComponent()
+            : workspaceDirectory
+    }
+
+    nonisolated private static func launchCacheURL(rootURL: URL) -> URL {
+        rootURL
+            .appending(path: ".airframe")
+            .appending(path: "agilecockpit-launch-cache.json")
+    }
+
+    nonisolated private static func loadLaunchCache(
+        from url: URL,
+        fingerprint: String
+    ) -> LaunchCachePayload? {
+        guard let data = try? Data(contentsOf: url),
+              let entry = try? JSONDecoder().decode(LaunchCacheEntry.self, from: data),
+              entry.fingerprint == fingerprint else {
+            return nil
+        }
+        return entry.payload
+    }
+
+    nonisolated private static func loadAnyLaunchCache(from url: URL) -> LaunchCachePayload? {
+        guard let data = try? Data(contentsOf: url),
+              let entry = try? JSONDecoder().decode(LaunchCacheEntry.self, from: data) else {
+            return nil
+        }
+        return entry.payload
+    }
+
+    nonisolated private static func loadTraceabilityCache(
+        from url: URL,
+        fingerprint: String
+    ) -> TraceabilityCachePayload? {
+        guard let data = try? Data(contentsOf: url),
+              let entry = try? JSONDecoder().decode(TraceabilityCacheEntry.self, from: data),
+              entry.fingerprint == fingerprint else {
+            return nil
+        }
+        return entry.payload
+    }
+
+    nonisolated private static func saveTraceabilityCache(
+        _ payload: TraceabilityCachePayload,
+        fingerprint: String,
+        to url: URL
+    ) {
+        do {
+            try FileManager.default.createDirectory(
+                at: url.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            let entry = TraceabilityCacheEntry(fingerprint: fingerprint, payload: payload)
+            let data = try JSONEncoder().encode(entry)
+            try data.write(to: url, options: [.atomic])
+        } catch {
+        }
+    }
+
+    nonisolated private static func traceabilityCacheURL(rootURL: URL) -> URL {
+        rootURL
+            .appending(path: ".airframe")
+            .appending(path: "agilecockpit-traceability-cache.json")
+    }
+
+    nonisolated private static func traceabilityFingerprint(
+        artifactRootURL: URL?,
+        canonicalSnapshot: AirframeCanonicalStateSnapshot
+    ) -> String {
+        guard let artifactRootURL else {
+            return "no-artifact-root"
+        }
+        let stateRoot = artifactRootURL.appending(path: ".airframe/state")
+        let watchedDirectories: [URL] = [
+            stateRoot.appending(path: "requirements"),
+            stateRoot.appending(path: "requirement-revisions"),
+            stateRoot.appending(path: "acceptance-criteria"),
+            stateRoot.appending(path: "tests"),
+            stateRoot.appending(path: "test-suites")
+        ]
+        let metadataEntries = watchedDirectories.flatMap { directory in
+            fingerprintEntries(for: directory)
+        }
+        return metadataEntries.sorted().joined(separator: "\n")
+    }
+
+    nonisolated private static func traceabilityState(
+        canonicalState: AirframeCanonicalStoreState?,
+        canonicalSnapshot: AirframeCanonicalStateSnapshot,
+        canonicalDiagnostics: AirframeCanonicalDiagnostics?,
+        artifactRootURL: URL?
+    ) -> TraceabilityCachePayload {
+        let fingerprint = traceabilityFingerprint(
+            artifactRootURL: artifactRootURL,
+            canonicalSnapshot: canonicalSnapshot
+        )
+        if let artifactRootURL,
+           let cached = loadTraceabilityCache(
+            from: traceabilityCacheURL(rootURL: artifactRootURL),
+            fingerprint: fingerprint
+           ) {
+            return cached
+        }
+
+        let requirementState = requirementState(
+            canonicalState: canonicalState,
+            canonicalSnapshot: canonicalSnapshot
+        )
+        let testState = testState(
+            canonicalSnapshot: canonicalSnapshot,
+            canonicalDiagnostics: canonicalDiagnostics
+        )
+        let payload = TraceabilityCachePayload(
+            requirementCoverageSummary: requirementState.coverage,
+            requirementGateSummary: requirementState.gate,
+            requirementTraceRows: requirementState.traceRows,
+            requirementGapRows: requirementState.gapRows,
+            testCoverageRows: testState.coverageRows,
+            testGapRows: testState.gapRows
+        )
+        if let artifactRootURL {
+            saveTraceabilityCache(
+                payload,
+                fingerprint: fingerprint,
+                to: traceabilityCacheURL(rootURL: artifactRootURL)
+            )
+        }
+        return payload
+    }
+
+    nonisolated private static func saveLaunchCache(
+        _ payload: LaunchCachePayload,
+        fingerprint: String,
+        to url: URL
+    ) {
+        do {
+            try FileManager.default.createDirectory(
+                at: url.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            let entry = LaunchCacheEntry(fingerprint: fingerprint, payload: payload)
+            let data = try JSONEncoder().encode(entry)
+            try data.write(to: url, options: [.atomic])
+        } catch {
+        }
+    }
+
+    nonisolated private static func launchFingerprint(
+        configurationURL: URL?,
+        storeURL: URL,
+        artifactRootURL: URL?,
+        canonicalRepositoryExists: Bool
+    ) -> String {
+        let watchedURLs: [URL] = [
+            configurationURL,
+            storeURL,
+            canonicalRepositoryExists ? artifactRootURL?.appending(path: ".airframe/state") : nil
+        ]
+        .compactMap { $0 }
+        let metadataEntries = watchedURLs.flatMap { watchURL in
+            Self.watchURLs(for: watchURL).flatMap { fingerprintEntries(for: $0) }
+        }
+        return [AirframeCoreInfo.current.summary, metadataEntries.sorted().joined(separator: "\n")]
+            .joined(separator: "\n---\n")
+    }
+
+    nonisolated private static func fingerprintEntries(for url: URL) -> [String] {
+        let fileManager = FileManager.default
+        let resolvedURL = url.standardizedFileURL
+        var isDirectory: ObjCBool = false
+        guard fileManager.fileExists(atPath: resolvedURL.path, isDirectory: &isDirectory) else {
+            return ["missing:\(resolvedURL.path)"]
+        }
+
+        let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .fileSizeKey, .contentModificationDateKey]
+        func entry(for fileURL: URL) -> String {
+            let values = try? fileURL.resourceValues(forKeys: resourceKeys)
+            let kind = values?.isDirectory == true ? "dir" : "file"
+            let size = values?.fileSize ?? -1
+            let modified = values?.contentModificationDate?.timeIntervalSinceReferenceDate ?? -1
+            return "\(fileURL.standardizedFileURL.path)|\(kind)|\(size)|\(modified)"
+        }
+
+        var entries = [entry(for: resolvedURL)]
+        if isDirectory.boolValue,
+           let enumerator = fileManager.enumerator(
+            at: resolvedURL,
+            includingPropertiesForKeys: Array(resourceKeys),
+            options: [.skipsHiddenFiles]
+           ) {
+            while let child = enumerator.nextObject() as? URL {
+                entries.append(entry(for: child))
+            }
+        }
+        return entries
+    }
+
+    nonisolated private static func cachedState(
+        from state: LaunchCachePayload.CachedCanonicalState
+    ) -> AirframeCanonicalStoreState {
+        AirframeCanonicalStoreState(
+            workspaces: state.workspaces,
+            projects: state.projects,
+            epics: state.epics,
+            sprints: state.sprints,
+            tasks: state.tasks,
+            issues: state.issues,
+            requirements: state.requirements,
+            requirementRevisions: state.requirementRevisions,
+            acceptanceCriteria: state.acceptanceCriteria,
+            tests: state.tests,
+            testSuites: state.testSuites,
+            testRuns: state.testRuns,
+            evidence: state.evidence
+        )
+    }
+
+    nonisolated private static func cachedSnapshot(
+        from snapshot: LaunchCachePayload.CachedCanonicalSnapshot
+    ) -> AirframeCanonicalStateSnapshot {
+        AirframeCanonicalStateSnapshot(
+            project: snapshot.project,
+            epics: snapshot.epics,
+            sprints: snapshot.sprints,
+            tasks: snapshot.tasks,
+            issues: snapshot.issues,
+            requirements: snapshot.requirements,
+            acceptanceCriteria: snapshot.acceptanceCriteria,
+            tests: snapshot.tests,
+            testSuites: snapshot.testSuites,
+            testRuns: snapshot.testRuns
+        )
+    }
+
+    nonisolated private static func cachedPayload(
+        context: AirframeProjectContext,
+        configurationDiagnostics: AirframeConfigurationDiagnostics,
+        artifactRootURL: URL?,
+        observedURLs: [URL],
+        canonicalState: AirframeCanonicalStoreState?,
+        canonicalSnapshot: AirframeCanonicalStateSnapshot,
+        records: [AirframeLocalWorkRecord],
+        dashboardData: (records: [AirframeLocalWorkRecord], detailTextByID: [AirframeID: String]),
+        canonicalDiagnostics: AirframeCanonicalDiagnostics,
+        summary: AirframeDashboardSummary,
+        auditRows: [AgileCockpitAuditRow],
+        requirementCoverageSummary: AirframeRequirementCoverageSummary,
+        requirementGateSummary: AirframeRequirementReleaseGateSummary,
+        requirementTraceRows: [AgileCockpitRequirementTraceRow],
+        requirementGapRows: [AgileCockpitRequirementGapRow],
+        testCoverageRows: [AgileCockpitTestCoverageRow],
+        testGapRows: [AgileCockpitTestGapRow]
+    ) -> LaunchCachePayload {
+        LaunchCachePayload(
+            configuration: context.configuration,
+            project: context.project,
+            configurationDiagnostics: configurationDiagnostics,
+            artifactRootPath: artifactRootURL?.path,
+            observedURLs: observedURLs,
+            records: records,
+            dashboardRecords: dashboardData.records,
+            dashboardDetailTextByID: Dictionary(
+                uniqueKeysWithValues: dashboardData.detailTextByID.map { ($0.key.rawValue, $0.value) }
+            ),
+            canonicalState: canonicalState.map {
+                LaunchCachePayload.CachedCanonicalState(
+                    workspaces: $0.workspaces,
+                    projects: $0.projects,
+                    epics: $0.epics,
+                    sprints: $0.sprints,
+                    tasks: $0.tasks,
+                    issues: $0.issues,
+                    requirements: $0.requirements,
+                    requirementRevisions: $0.requirementRevisions,
+                    acceptanceCriteria: $0.acceptanceCriteria,
+                    tests: $0.tests,
+                    testSuites: $0.testSuites,
+                    testRuns: $0.testRuns,
+                    evidence: $0.evidence
+                )
+            },
+            canonicalSnapshot: LaunchCachePayload.CachedCanonicalSnapshot(
+                project: canonicalSnapshot.project,
+                epics: canonicalSnapshot.epics,
+                sprints: canonicalSnapshot.sprints,
+                tasks: canonicalSnapshot.tasks,
+                issues: canonicalSnapshot.issues,
+                requirements: canonicalSnapshot.requirements,
+                acceptanceCriteria: canonicalSnapshot.acceptanceCriteria,
+                tests: canonicalSnapshot.tests,
+                testSuites: canonicalSnapshot.testSuites,
+                testRuns: canonicalSnapshot.testRuns
+            ),
+            canonicalDiagnostics: canonicalDiagnostics,
+            summary: summary,
+            auditRows: auditRows,
+            requirementCoverageSummary: requirementCoverageSummary,
+            requirementGateSummary: requirementGateSummary,
+            requirementTraceRows: requirementTraceRows,
+            requirementGapRows: requirementGapRows,
+            testCoverageRows: testCoverageRows,
+            testGapRows: testGapRows
         )
     }
 
@@ -1558,7 +2642,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
-    private static func artifactRootURL(
+    nonisolated private static func artifactRootURL(
         configurationURL: URL,
         context: AirframeProjectContext
     ) -> URL {
@@ -1575,7 +2659,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
             .standardizedFileURL
     }
 
-    private static func dashboardData(
+    nonisolated private static func canonicalRepositoryExists(at artifactRootURL: URL) -> Bool {
+        FileManager.default.fileExists(atPath: artifactRootURL.appending(path: ".airframe/state").path)
+    }
+
+    nonisolated private static func dashboardData(
         backendRecords: [AirframeLocalWorkRecord],
         artifactRootURL: URL?,
         preferBackendRecords: Bool = false
@@ -1616,7 +2704,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    private static func localArtifactRecords(rootURL: URL) -> [StatusDetailRecord] {
+    nonisolated private static func localArtifactRecords(rootURL: URL) -> [StatusDetailRecord] {
         let files: [(URL, AirframeWorkItemKind)] = [
             (rootURL.appending(path: "docs/Epics/Epic-backlog.md"), .epic),
             (rootURL.appending(path: "docs/Epics/Epic-active.md"), .epic),
@@ -1650,7 +2738,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return fullFileRecords + sectionArtifactRecords + verifiedTaskRecords
     }
 
-    private static func markdownFiles(in directoryURL: URL) -> [URL] {
+    nonisolated private static func markdownFiles(in directoryURL: URL) -> [URL] {
         guard let urls = try? FileManager.default.contentsOfDirectory(
             at: directoryURL,
             includingPropertiesForKeys: nil
@@ -1662,7 +2750,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
     }
 
-    private static func records(
+    nonisolated private static func records(
         from fileURL: URL,
         kind: AirframeWorkItemKind
     ) -> [StatusDetailRecord] {
@@ -1729,7 +2817,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return records
     }
 
-    private static func sectionRecords(
+    nonisolated private static func sectionRecords(
         from fileURL: URL,
         kind: AirframeWorkItemKind
     ) -> [StatusDetailRecord] {
@@ -1780,7 +2868,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
-    private static func tableTaskRecords(from fileURL: URL) -> [StatusDetailRecord] {
+    nonisolated private static func tableTaskRecords(from fileURL: URL) -> [StatusDetailRecord] {
         guard let contents = try? String(contentsOf: fileURL, encoding: .utf8) else {
             return []
         }
@@ -1813,7 +2901,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
-    private static func headingIDAndTitle(
+    nonisolated private static func headingIDAndTitle(
         from line: String,
         kind: AirframeWorkItemKind
     ) -> (id: AirframeID, title: String)? {
@@ -1830,7 +2918,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return (AirframeID(rawID), parts.count > 1 ? parts[1] : rawID)
     }
 
-    private static func idPrefix(for kind: AirframeWorkItemKind) -> String {
+    nonisolated private static func idPrefix(for kind: AirframeWorkItemKind) -> String {
         switch kind {
         case .task:
             "T-"
@@ -1843,7 +2931,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
-    private static func status(from line: String) -> AirframeWorkStatus {
+    nonisolated private static func status(from line: String) -> AirframeWorkStatus {
         let normalized = line
             .replacingOccurrences(of: "**Status:**", with: "")
             .trimmingCharacters(in: .whitespaces)
@@ -1866,7 +2954,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return .backlog
     }
 
-    private static func firstAirframeID(in line: String, prefix: String) -> AirframeID? {
+    nonisolated private static func firstAirframeID(in line: String, prefix: String) -> AirframeID? {
         line
             .split { !$0.isLetter && !$0.isNumber && $0 != "-" }
             .map(String.init)
@@ -1874,21 +2962,21 @@ final class AgileCockpitDashboardModel: ObservableObject {
             .map(AirframeID.init)
     }
 
-    private static func githubIssueNumber(from line: String) -> Int? {
+    nonisolated private static func githubIssueNumber(from line: String) -> Int? {
         line
             .split { !$0.isNumber }
             .compactMap { Int($0) }
             .first
     }
 
-    private static func priority(from line: String) -> AirframeWorkPriority {
+    nonisolated private static func priority(from line: String) -> AirframeWorkPriority {
         let normalized = line.lowercased()
         if normalized.contains("high") { return .high }
         if normalized.contains("low") { return .low }
         return .medium
     }
 
-    private static func acceptanceCriteria(from lines: [String]) -> [String] {
+    nonisolated private static func acceptanceCriteria(from lines: [String]) -> [String] {
         guard let headingIndex = lines.firstIndex(where: { line in
             normalizedHeading(line) == "acceptance criteria"
         }) else {
@@ -1908,7 +2996,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return criteria
     }
 
-    private static func normalizedHeading(_ line: String) -> String {
+    nonisolated private static func normalizedHeading(_ line: String) -> String {
         line
             .trimmingCharacters(in: .whitespaces)
             .trimmingCharacters(in: CharacterSet(charactersIn: "#*:"))
@@ -1916,7 +3004,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             .lowercased()
     }
 
-    private static func markdownListItem(from line: String) -> String? {
+    nonisolated private static func markdownListItem(from line: String) -> String? {
         var text = line.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return nil }
 
@@ -1935,11 +3023,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return text.isEmpty ? nil : text
     }
 
-    private static func criterionIndex(from criterionID: AirframeID) -> Int {
+    nonisolated private static func criterionIndex(from criterionID: AirframeID) -> Int {
         Int(criterionID.rawValue.split(separator: "-").last ?? "") ?? 1
     }
 
-    private static func verifiedCriterionLine(from line: String) -> String {
+    nonisolated private static func verifiedCriterionLine(from line: String) -> String {
         if line.contains("[x]") || line.contains("[X]") {
             return line
         }
@@ -1962,7 +3050,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return line
     }
 
-    private static func epicAcceptanceCriterion(
+    nonisolated private static func epicAcceptanceCriterion(
         epicID: AirframeID,
         index: Int,
         rawText: String
@@ -1985,7 +3073,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    private static func detailText(for record: AirframeLocalWorkRecord) -> String {
+    nonisolated private static func detailText(for record: AirframeLocalWorkRecord) -> String {
         var lines: [String] = []
         lines.append("ID: \(record.workItem.id.rawValue)")
         lines.append("Kind: \(record.workItem.kind.rawValue)")
@@ -2050,7 +3138,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return nil
     }
 
-    private static func appendBlock(_ values: [String], to lines: inout [String]) {
+    nonisolated private static func appendBlock(_ values: [String], to lines: inout [String]) {
         if values.isEmpty {
             lines.append("None recorded.")
         } else {
@@ -2152,7 +3240,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    private static func humanReviewerContext(projectID: AirframeID) throws -> AirframeCertifiedContext {
+    nonisolated private static func humanReviewerContext(projectID: AirframeID) throws -> AirframeCertifiedContext {
         let actor = AirframeActor(
             id: AirframeID("ACTOR-HUMAN-REVIEWER"),
             displayName: "AgileCockpit Reviewer",
@@ -2169,7 +3257,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return try AirframeCertifiedContext(actor: actor, credential: credential, targetProjectID: projectID)
     }
 
-    private static func configuredBackend(
+    nonisolated private static func configuredBackend(
         for context: AirframeProjectContext,
         artifactRootURL: URL,
         storeURL: URL,
@@ -2197,7 +3285,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
-    private static func configuredRepairBackend(
+    nonisolated private static func configuredRepairBackend(
         for context: AirframeProjectContext,
         artifactRootURL: URL,
         fallbackBackend: any AirframeBackend,
@@ -2214,7 +3302,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    private static func capabilities(for backendKind: String) -> AirframeBackendCapabilities {
+    nonisolated private static func capabilities(for backendKind: String) -> AirframeBackendCapabilities {
         switch AirframeBackendKind(rawValue: backendKind) {
         case .localFixture:
             .localFilesystem
@@ -2234,7 +3322,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
     }
 
-    private static func fallback(message: String) -> AgileCockpitDashboardModel {
+    fileprivate static func fallback(message: String) -> AgileCockpitDashboardModel {
         let project = AirframeProject(
             id: AirframeID("PRJ-UNAVAILABLE"),
             name: "Unavailable Project",
@@ -2258,7 +3346,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return model
     }
 
-    private static func fallbackReviewer(projectID: AirframeID) -> AirframeCertifiedContext {
+    nonisolated private static func fallbackReviewer(projectID: AirframeID) -> AirframeCertifiedContext {
         let actor = AirframeActor(
             id: AirframeID("ACTOR-FALLBACK-REVIEWER"),
             displayName: "Fallback Reviewer",
@@ -2289,7 +3377,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         sampleRecord(id: "I-0001", title: "Dashboard status rows need issue counts", kind: .issue, status: .backlog)
     ]
 
-    private static func sampleRecord(
+    nonisolated private static func sampleRecord(
         id: String,
         title: String,
         kind: AirframeWorkItemKind = .task,
@@ -2316,11 +3404,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
-    private static func numericSuffix(from id: String) -> Int? {
+    nonisolated private static func numericSuffix(from id: String) -> Int? {
         Int(id.split(separator: "-").last.map(String.init) ?? "")
     }
 
-    private static func githubIssue(for id: String, kind: AirframeWorkItemKind) -> Int? {
+    nonisolated private static func githubIssue(for id: String, kind: AirframeWorkItemKind) -> Int? {
         switch kind {
         case .task, .issue:
             numericSuffix(from: id)
@@ -2330,37 +3418,37 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 }
 
-private final class AgileCockpitUnavailableBackend: @unchecked Sendable, AirframeBackend {
+nonisolated private final class AgileCockpitUnavailableBackend: @unchecked Sendable, AirframeBackend {
     let capabilities: AirframeBackendCapabilities
 
     private let error: Error
 
-    init(capabilities: AirframeBackendCapabilities, error: Error) {
+    nonisolated init(capabilities: AirframeBackendCapabilities, error: Error) {
         self.capabilities = capabilities
         self.error = error
     }
 
-    func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
+    nonisolated func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
         []
     }
 
-    func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
+    nonisolated func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
         nil
     }
 
-    func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+    nonisolated func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+    nonisolated func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func updateWorkItem(_ workItem: AirframeWorkItem) throws {
+    nonisolated func updateWorkItem(_ workItem: AirframeWorkItem) throws {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func transitionWorkItem(
+    nonisolated func transitionWorkItem(
         id: AirframeID,
         to status: AirframeWorkStatus,
         context: AirframeCertifiedContext?,
@@ -2369,19 +3457,19 @@ private final class AgileCockpitUnavailableBackend: @unchecked Sendable, Airfram
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws {
+    nonisolated func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
+    nonisolated func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
+    nonisolated func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func applyHumanVerification(
+    nonisolated func applyHumanVerification(
         action: AirframeHumanVerificationAction,
         to workItemID: AirframeID,
         context: AirframeCertifiedContext?,
@@ -2390,7 +3478,7 @@ private final class AgileCockpitUnavailableBackend: @unchecked Sendable, Airfram
         throw AirframeBackendError.githubAccessFailed("\(error)")
     }
 
-    func dashboardSummary() throws -> AirframeDashboardSummary {
+    nonisolated func dashboardSummary() throws -> AirframeDashboardSummary {
         AirframeDashboardSummary(
             totalWorkItemCount: 0,
             activeTaskCount: 0,
@@ -2400,6 +3488,164 @@ private final class AgileCockpitUnavailableBackend: @unchecked Sendable, Airfram
             nextTask: nil,
             recentEvidenceCount: 0
         )
+    }
+}
+
+struct AgileCockpitRootView: View {
+    @StateObject private var launcher: AgileCockpitLaunchController
+
+    init(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        currentDirectoryURL: URL = URL(filePath: FileManager.default.currentDirectoryPath)
+    ) {
+        _launcher = StateObject(
+            wrappedValue: AgileCockpitLaunchController(
+                environment: environment,
+                currentDirectoryURL: currentDirectoryURL
+            )
+        )
+    }
+
+    var body: some View {
+        Group {
+            switch launcher.phase {
+            case .loading(let message, let progress):
+                launchLoadingView(message: message, progress: progress)
+            case .loaded(let model):
+                ContentView(model: model)
+                    .id(ObjectIdentifier(model))
+            case .failed(let message):
+                launchFailedView(message: message)
+            }
+        }
+        .task {
+            launcher.beginLoading()
+        }
+    }
+
+    private func launchLoadingView(message: String, progress: Double) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ProgressView(value: progress, total: 1.0)
+            Text("Rebuilding...")
+                .font(.headline)
+            Text(message)
+                .foregroundStyle(.secondary)
+            Text("\(Int(progress * 100))%")
+                .foregroundStyle(.secondary)
+        }
+        .frame(minWidth: 920, minHeight: 640, alignment: .leading)
+        .padding(24)
+    }
+
+    private func launchFailedView(message: String) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Agile Cockpit could not launch.")
+                .font(.headline)
+            Text(message)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Button("Retry") {
+                launcher.retry()
+            }
+            .accessibilityIdentifier("agile-cockpit-launch-retry")
+        }
+        .frame(minWidth: 920, minHeight: 640, alignment: .leading)
+        .padding(24)
+    }
+}
+
+@MainActor
+final class AgileCockpitLaunchController: ObservableObject {
+    enum Phase {
+        case loading(message: String, progress: Double)
+        case loaded(AgileCockpitDashboardModel)
+        case failed(message: String)
+    }
+
+    @Published var phase: Phase = .loading(message: "Preparing workspace state.", progress: 0.0)
+
+    private let environment: [String: String]
+    private let currentDirectoryURL: URL
+    private var refreshOnStartup: Bool
+    private var loadTask: Task<Void, Never>?
+
+    init(
+        environment: [String: String],
+        currentDirectoryURL: URL
+    ) {
+        self.environment = environment
+        self.currentDirectoryURL = currentDirectoryURL
+        if let cachedLaunchData = try? AgileCockpitDashboardModel.cachedLaunchDataForImmediateDisplay(
+            environment: environment,
+            currentDirectoryURL: currentDirectoryURL
+        ) {
+            let model = AgileCockpitDashboardModel(launchData: cachedLaunchData)
+            model.statusMessage = "Loaded cached workspace state."
+            self.phase = .loaded(model)
+            self.refreshOnStartup = false
+        } else if let context = try? AirframeRuntimeConfigurationResolver(
+            environment: environment,
+            currentDirectoryURL: currentDirectoryURL
+        ).loadContext() {
+            let model = AgileCockpitDashboardModel.unavailable(
+                context: context,
+                error: AirframeConfigurationError.invalidConfiguration("Refreshing workspace state.")
+            )
+            model.statusMessage = "Refreshing workspace state."
+            self.phase = .loaded(model)
+            self.refreshOnStartup = true
+        } else {
+            let model = (try? AgileCockpitDashboardModel.sample())
+                ?? AgileCockpitDashboardModel.fallback(message: "Refreshing workspace state.")
+            model.statusMessage = "Refreshing workspace state."
+            self.phase = .loaded(model)
+            self.refreshOnStartup = true
+        }
+    }
+
+    deinit {
+        loadTask?.cancel()
+    }
+
+    func beginLoading() {
+        guard loadTask == nil else { return }
+        guard refreshOnStartup else { return }
+        refreshOnStartup = false
+        loadTask = Task.detached(priority: .userInitiated) { [environment, currentDirectoryURL] in
+            do {
+                let launchData = try AgileCockpitDashboardModel.prepareLaunchData(
+                    environment: environment,
+                    currentDirectoryURL: currentDirectoryURL,
+                    progress: { progress, message in
+                        Task { @MainActor in
+                            if case .loaded(let model) = self.phase {
+                                model.statusMessage = message
+                            }
+                        }
+                    }
+                )
+                await MainActor.run {
+                    self.phase = .loaded(AgileCockpitDashboardModel(launchData: launchData))
+                    self.loadTask = nil
+                }
+            } catch {
+                await MainActor.run {
+                    if case .loaded(let model) = self.phase {
+                        model.statusMessage = "Background refresh failed: \(error)"
+                    } else {
+                        self.phase = .failed(message: "Launch failed: \(error)")
+                    }
+                    self.loadTask = nil
+                }
+            }
+        }
+    }
+
+    func retry() {
+        guard loadTask == nil else { return }
+        refreshOnStartup = true
+        phase = .loading(message: "Rebuilding workspace state.", progress: 0.0)
+        beginLoading()
     }
 }
 
@@ -2501,6 +3747,8 @@ struct ContentView: View {
             planningView
         case .requirements:
             requirementsView
+        case .tests:
+            testsView
         case .metrics:
             metricsView
         }
@@ -2687,6 +3935,19 @@ struct ContentView: View {
         .accessibilityIdentifier("agile-cockpit-requirements")
     }
 
+    private var testsView: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Tests")
+                .font(.headline)
+                .accessibilityIdentifier("agile-cockpit-tests-title")
+            testSummarySection
+            testListAndDetailSection
+            testRequirementCoverageSection
+            testGapSection
+        }
+        .accessibilityIdentifier("agile-cockpit-tests")
+    }
+
     private var planningTabPicker: some View {
         Picker("Sprint and Epic View", selection: $model.selectedPlanningTab) {
             ForEach(AgileCockpitPlanningTab.allCases) { tab in
@@ -2708,6 +3969,7 @@ struct ContentView: View {
                     .font(.headline)
                     .accessibilityIdentifier("agile-cockpit-sprint-view")
                 dashboardSection("Sprint Work", records: model.sprintRecords)
+                reviewSprintsSection
             }
             .accessibilityIdentifier("agile-cockpit-planning-sprint-work")
         case .epicCriteria:
@@ -2727,6 +3989,54 @@ struct ContentView: View {
             }
             .accessibilityIdentifier("agile-cockpit-planning-epic-work")
         }
+    }
+
+    private var reviewSprintsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Review Sprints")
+                .font(.headline)
+            if model.reviewSprintRecords.isEmpty {
+                Text("None")
+                    .foregroundStyle(.secondary)
+            } else {
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(model.reviewSprintRecords, id: \.workItem.id.rawValue) { sprint in
+                            Button {
+                                model.selectReviewSprint(sprint)
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Text(sprint.workItem.id.rawValue)
+                                        .fontWeight(model.selectedReviewSprintRecord?.workItem.id == sprint.workItem.id ? .semibold : .regular)
+                                    Text(sprint.workItem.title)
+                                        .lineLimit(1)
+                                }
+                            }
+                            .buttonStyle(.borderless)
+                            .accessibilityIdentifier("agile-cockpit-review-sprint-\(sprint.workItem.id.rawValue)")
+                        }
+                    }
+                    .frame(minWidth: 220, alignment: .leading)
+
+                    if let sprint = model.selectedReviewSprintRecord {
+                        VStack(alignment: .leading, spacing: 6) {
+                            LabeledContent("Sprint", value: sprint.workItem.id.rawValue)
+                            LabeledContent("Status", value: sprint.workItem.status.description)
+                            LabeledContent("Epic", value: sprint.epicID?.rawValue ?? "None")
+                            LabeledContent("Tasks", value: sprint.taskIDs.map(\.rawValue).joined(separator: ", "))
+                            LabeledContent("Issues", value: sprint.issueIDs.map(\.rawValue).joined(separator: ", "))
+                            Button("Return to Backlog") {
+                                model.returnSelectedReviewSprintToBacklog()
+                            }
+                            .accessibilityIdentifier("agile-cockpit-return-review-sprint-to-backlog")
+                        }
+                        .accessibilityIdentifier("agile-cockpit-review-sprint-detail")
+                    }
+                }
+                dashboardSection("Review Sprint Work", records: model.selectedReviewSprintWorkRecords)
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-review-sprints")
     }
 
     private var closeEligibilitySection: some View {
@@ -2752,6 +4062,13 @@ struct ContentView: View {
                         : "All assigned Tasks and Issues must be verified before close."
                 )
                 .accessibilityIdentifier("agile-cockpit-close-sprint")
+                if model.activeSprintRecord?.workItem.status == .active {
+                    Button("Return Active Sprint to Backlog") {
+                        model.returnActiveSprintToBacklog()
+                    }
+                    .accessibilityHint("Moves the current active Sprint back to Backlog and clears the active Sprint pointer.")
+                    .accessibilityIdentifier("agile-cockpit-return-active-sprint-to-backlog")
+                }
             }
             if let epicEligibility = model.epicCloseEligibility {
                 eligibilityRow(
@@ -2833,16 +4150,10 @@ struct ContentView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 110, alignment: .leading)
-                            Text(row.workItems.isEmpty ? row.statement : row.workItems)
+                            Text(row.acceptanceCriteria.isEmpty ? "No acceptance criteria" : row.acceptanceCriteria)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        if !row.evidence.isEmpty || !row.revisions.isEmpty || !row.targetKinds.isEmpty {
-                            Text("Evidence: \(row.evidence.isEmpty ? "None" : row.evidence) | Revisions: \(row.revisions.isEmpty ? "None" : row.revisions) | Targets: \(row.targetKinds.isEmpty ? "None" : row.targetKinds)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        if !row.workItems.isEmpty {
+                        if !row.acceptanceCriteria.isEmpty {
                             Text(row.statement)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -2877,6 +4188,212 @@ struct ContentView: View {
             }
         }
         .accessibilityIdentifier("agile-cockpit-requirement-traceability")
+    }
+
+    private var testSummarySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Canonical Test Summary")
+                .font(.headline)
+            HStack(spacing: 12) {
+                gateMetric("Tests", "\(model.testRows.count)")
+                gateMetric("Requirements", "\(model.testCoverageRows.count)")
+                gateMetric("Gaps", "\(model.testGapRows.count)")
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-test-summary")
+    }
+
+    private var testListAndDetailSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Test Definitions")
+                .font(.headline)
+            if model.testRows.isEmpty {
+                Text("No canonical tests are recorded.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-tests-empty")
+            } else {
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(model.canonicalSnapshot.tests, id: \.id.rawValue) { test in
+                            Button {
+                                model.selectTest(test)
+                            } label: {
+                                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                    Text(test.id.rawValue)
+                                        .fontWeight(model.selectedTestRecord?.id == test.id ? .semibold : .regular)
+                                        .frame(width: 96, alignment: .leading)
+                                    Text(test.title)
+                                        .lineLimit(1)
+                                    Spacer(minLength: 0)
+                                    Text(test.kind.rawValue)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Text(test.status.rawValue)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 6)
+                                .background(
+                                    model.selectedTestRecord?.id == test.id
+                                        ? Color.accentColor.opacity(0.12)
+                                        : Color.clear
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("\(test.id.rawValue) \(test.title) \(test.kind.rawValue) \(test.status.rawValue)")
+                            .accessibilityIdentifier("agile-cockpit-test-\(test.id.rawValue)")
+                        }
+                    }
+                    .frame(maxWidth: 420, alignment: .leading)
+
+                    Divider()
+
+                    testDetailView
+                }
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-test-definitions")
+    }
+
+    @ViewBuilder
+    private var testDetailView: some View {
+        if let test = model.selectedTestRecord {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(test.id.rawValue)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-selected-test-id")
+                Text(test.title)
+                    .font(.title3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("agile-cockpit-selected-test-title")
+                Text(test.objective)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("agile-cockpit-selected-test-objective")
+                LabeledContent("Kind", value: test.kind.rawValue)
+                LabeledContent("Status", value: test.status.rawValue)
+                LabeledContent("Requirements", value: test.requirementIDs.map(\.rawValue).joined(separator: ", "))
+                LabeledContent("Acceptance Criteria", value: test.acceptanceCriterionIDs.map(\.rawValue).joined(separator: ", "))
+                LabeledContent("Work Items", value: test.workItemIDs.map(\.rawValue).joined(separator: ", "))
+
+                Text("Steps")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                ForEach(test.steps.isEmpty ? ["None recorded."] : test.steps, id: \.self) { step in
+                    Text(step)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Text("Expected Results")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                ForEach(test.expectedResults.isEmpty ? ["None recorded."] : test.expectedResults, id: \.self) { result in
+                    Text(result)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Text("Automation")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(test.automationCommand ?? "None recorded.")
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("Artifacts")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                ForEach(test.artifactReferences.isEmpty ? ["None recorded."] : test.artifactReferences, id: \.self) { artifact in
+                    Text(artifact)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Text("Notes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                ForEach(test.notes.isEmpty ? ["None recorded."] : test.notes, id: \.self) { note in
+                    Text(note)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityIdentifier("agile-cockpit-test-detail")
+        } else {
+            Text("Select a Test definition.")
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("agile-cockpit-test-detail-empty")
+        }
+    }
+
+    private var testRequirementCoverageSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Requirement Coverage")
+                .font(.headline)
+            if model.testCoverageRows.isEmpty {
+                Text("No requirement trace coverage is recorded.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-tests-coverage-empty")
+            } else {
+                ForEach(model.testCoverageRows) { row in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(row.requirementID)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 82, alignment: .leading)
+                            Text(row.title)
+                                .font(.caption)
+                                .frame(width: 220, alignment: .leading)
+                            Text(row.status)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 110, alignment: .leading)
+                            Text(row.tests.isEmpty ? "No tests" : row.tests)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        if !row.acceptanceCriteria.isEmpty {
+                            Text(row.acceptanceCriteria)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-test-requirement-coverage")
+    }
+
+    private var testGapSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Test Link Gaps")
+                .font(.headline)
+            if model.testGapRows.isEmpty {
+                Text("No test link gaps recorded.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-tests-gaps-empty")
+            } else {
+                ForEach(model.testGapRows) { row in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(row.requirementID)
+                                .font(.caption)
+                                .frame(width: 82, alignment: .leading)
+                            Text(row.kind)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 180, alignment: .leading)
+                        }
+                        Text(row.message)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-test-gaps")
     }
 
     private func gateMetric(_ title: String, _ value: String) -> some View {

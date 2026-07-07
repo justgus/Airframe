@@ -1,0 +1,65 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-01"
+    },
+    {
+      "rawValue" : "EP-024-AC-03"
+    },
+    {
+      "rawValue" : "EP-020-AC-01"
+    },
+    {
+      "rawValue" : "EP-021-AC-01"
+    }
+  ],
+  "artifactReferences" : [
+    "docs/generated/Requirements/Requirements-Traceability-Matrix.md",
+    "docs/generated/Requirements/Compliance-Verification-Matrix.md"
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Canonical records encode and decode deterministically.",
+    "Canonical projections remain stable across export runs."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0161-001"
+  },
+  "kind" : "unit",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-06T21:15:00Z"
+  },
+  "notes" : [
+    "Seed test for canonical model and projection stability."
+  ],
+  "objective" : "Verify the canonical Airframe state model round-trips cleanly through JSON and generated projections.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "AF-FR-001"
+    },
+    {
+      "rawValue" : "AF-DR-002"
+    },
+    {
+      "rawValue" : "AF-DR-006"
+    }
+  ],
+  "workItemIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Encode canonical records to JSON.",
+    "Decode the records back into model objects.",
+    "Export markdown projections from canonical state."
+  ],
+  "title" : "Canonical model round-trip"
+}

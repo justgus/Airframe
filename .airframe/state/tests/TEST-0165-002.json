@@ -1,0 +1,64 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-024-AC-05"
+    }
+  ],
+  "artifactReferences" : [
+    "AgileCockpit/AgileCockpit/ContentView.swift",
+    "AgileCockpit/AgileCockpitTests/AgileCockpitTests.swift"
+  ],
+  "automationCommand" : "xcodebuild test -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -destination 'platform=macOS' -only-testing:AgileCockpitTests",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "AgileCockpit exposes a Tests tab backed by canonical test records.",
+    "The Tests tab model includes linked acceptance criteria, requirement coverage, and traceability gap rows for human review."
+  ],
+  "id" : {
+    "rawValue" : "TEST-0165-002"
+  },
+  "kind" : "ui",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-07-07T13:00:00Z"
+  },
+  "notes" : [
+    "Covers EP-024 AgileCockpit Tests tab acceptance criterion."
+  ],
+  "objective" : "Verify AgileCockpit presents canonical tests and trace coverage in the Tests tab for human review.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "AC-FR-007"
+    },
+    {
+      "rawValue" : "AC-FR-012"
+    },
+    {
+      "rawValue" : "RT-FR-006"
+    },
+    {
+      "rawValue" : "RT-FR-008"
+    }
+  ],
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0163"
+    },
+    {
+      "rawValue" : "T-0165"
+    }
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run the AgileCockpit unit test target.",
+    "Open the Tests tab model coverage test.",
+    "Confirm canonical tests, linked requirements, and gap rows are represented."
+  ],
+  "title" : "AgileCockpit Tests tab coverage"
+}
