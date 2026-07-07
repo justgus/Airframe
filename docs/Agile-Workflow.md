@@ -64,8 +64,39 @@ docs/
 7. Every Task and Issue must have a one-to-one GitHub Issue mapping recorded in `docs/GitHub-Issue-Mapping.md`.
 8. Task and Issue creation, backlog moves, and GitHub imports must follow `docs/procedures/GitHub-Issue-Sync-Procedure.md`.
 
+## Implementation Plan Review
+
+Implementation plans are canonical records used to capture proposed implementation work before execution begins. A plan records the target Epic, Sprint, Tasks, scope, expected file changes, commands, external effects, verification criteria, proposer, notes, audit links, and decision state.
+
+Agents may submit proposed plans through AICockpit:
+
+```sh
+swift run --package-path AICockpit aicockpit plans submit \
+  --id PLAN-XXXX \
+  --title "Plan title" \
+  --summary "Short summary" \
+  --task T-XXXX \
+  --scope "What will change" \
+  --file-change "Path or area" \
+  --command "Verification command" \
+  --external-effect "Expected external effect" \
+  --verification "Human-readable verification criterion" \
+  --config .airframe/airframe-workspace.json
+```
+
+Agents may list and inspect plans, but plan decisions are human-only:
+
+```sh
+swift run --package-path AICockpit aicockpit plans list --config .airframe/airframe-workspace.json
+swift run --package-path AICockpit aicockpit plans inspect PLAN-XXXX --config .airframe/airframe-workspace.json
+```
+
+AgileCockpit is the human decision surface. The Plan Review section shows pending, approved, deferred, and rejected plans with their target work context and review packet. Human reviewers may approve, defer, or reject a selected plan, optionally adding a decision note. AirframeCore records each decision as a canonical plan decision plus an audit event.
+
+An approved plan authorizes the implementation handoff for the scoped work. Deferral or rejection leaves the work unapproved for implementation until a new or revised plan is submitted and approved.
+
 ## Initial State
 
 This project currently has no recorded Tasks, Issues, Sprints, or Epics in the Agile documentation tree. The next available identifiers are listed in the corresponding index files.
 
-*Last Updated: 2026-06-01 (Initial setup)*
+*Last Updated: 2026-07-07*

@@ -1,7 +1,4 @@
 {
-  "activeEpicID" : {
-    "rawValue" : "EP-024"
-  },
   "backendMappingIDs" : [
 
   ],
@@ -175,6 +172,9 @@
     },
     {
       "rawValue" : "I-0028"
+    },
+    {
+      "rawValue" : "I-0030"
     }
   ],
   "metadata" : {
@@ -183,7 +183,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-07-07T13:52:21Z"
+    "updatedAt" : "2026-07-07T21:11:24Z"
   },
   "name" : "Agile Airframe",
   "repository" : "justgus\/Airframe",

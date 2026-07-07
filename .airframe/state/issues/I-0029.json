@@ -5,6 +5,8 @@
     "Canonical State"
   ],
   "dateReported" : "2026-07-07",
+  "dateResolved" : "2026-07-07",
+  "dateVerified" : "2026-07-07",
   "epicID" : {
     "rawValue" : "EP-024"
   },
@@ -18,7 +20,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-07-07T13:55:00Z"
+    "updatedAt" : "2026-07-07T20:32:55Z"
   },
   "notes" : [
     "This issue records a workflow requirement that was not previously captured in the policy model.",
@@ -26,7 +28,8 @@
     "The implementation should preserve normal authority evaluation and should not weaken human-only closeout controls.",
     "Acceptance Criteria: Canonical workflow policy allows the required rollback transitions for Issues.",
     "Acceptance Criteria: AICockpit status commands expose the allowed rollback transitions and reject disallowed ones with a clear reason.",
-    "Acceptance Criteria: Workflow and command tests cover the rollback paths and preserve the existing human-only gates."
+    "Acceptance Criteria: Workflow and command tests cover the rollback paths and preserve the existing human-only gates.",
+    "Implemented on 2026-07-07. Evidence: `swift test --package-path AirframeCore` and `swift test --package-path AICockpit` passed; added workflow evaluator and AICockpit issue-status rollback coverage."
   ],
   "observedBehavior" : "The current issue workflow rejects Implemented - Not Verified -> Active transitions, which blocks the requested rollback path. Active -> Backlog remains the only currently allowed rollback path visible in the policy model.",
   "reproductionSteps" : [
@@ -41,7 +44,7 @@
       "rawValue" : "I-0029"
     },
     "kind" : "issue",
-    "status" : "backlog",
+    "status" : "implementedVerified",
     "title" : "Allow implemented-not-verified and active issue rollback transitions"
   }
 }

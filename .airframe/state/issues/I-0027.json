@@ -7,6 +7,7 @@
   ],
   "dateReported" : "2026-07-07",
   "dateResolved" : "2026-07-07",
+  "dateVerified" : "2026-07-07",
   "epicID" : {
     "rawValue" : "EP-024"
   },
@@ -20,7 +21,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-07-07T13:37:25Z"
+    "updatedAt" : "2026-07-07T20:32:52Z"
   },
   "notes" : [
     "Observed while preparing EP-024 for closure review. EP-024 had no acceptance criteria recorded, and AICockpit had no command to create or attach canonical acceptance criteria.",
@@ -52,7 +53,7 @@
       "rawValue" : "I-0027"
     },
     "kind" : "issue",
-    "status" : "implementedNotVerified",
+    "status" : "implementedVerified",
     "title" : "Add AICockpit commands for acceptance criteria, test suites, and Epic readiness"
   }
 }

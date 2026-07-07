@@ -19,6 +19,7 @@
       "rawValue" : "EP-024-AC-06"
     }
   ],
+  "closeDate" : "2026-07-07",
   "goal" : "Add canonical test definition and management support so Agile Airframe can define tests that verify acceptance criteria and trace back to requirements.",
   "issueIDs" : [
     {
@@ -35,6 +36,9 @@
     },
     {
       "rawValue" : "I-0028"
+    },
+    {
+      "rawValue" : "I-0030"
     }
   ],
   "metadata" : {
@@ -43,7 +47,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-07-07T13:52:21Z"
+    "updatedAt" : "2026-07-07T20:45:41Z"
   },
   "notes" : [
     "Created on 2026-07-06 after the reduced Requirements Traceability Matrix exposed requirements without Epic acceptance-criterion coverage.",
@@ -96,7 +100,7 @@
       "rawValue" : "EP-024"
     },
     "kind" : "epic",
-    "status" : "active",
+    "status" : "closed",
     "title" : "Canonical Test Definition and Management"
   }
 }

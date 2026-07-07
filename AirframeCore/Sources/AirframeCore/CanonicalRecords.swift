@@ -605,6 +605,117 @@ public struct AirframeCanonicalTestRunRecord: Codable, Equatable, Sendable {
     }
 }
 
+public enum AirframeCanonicalPlanDecisionState: String, Codable, Equatable, Sendable {
+    case pending
+    case approved
+    case deferred
+    case rejected
+}
+
+extension AirframeCanonicalPlanDecisionState: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .pending:
+            "Pending"
+        case .approved:
+            "Approved"
+        case .deferred:
+            "Deferred"
+        case .rejected:
+            "Rejected"
+        }
+    }
+}
+
+public struct AirframeCanonicalImplementationPlanRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let title: String
+    public let summary: String
+    public let targetEpicID: AirframeID?
+    public let targetSprintID: AirframeID?
+    public let targetTaskIDs: [AirframeID]
+    public let proposedByActorID: AirframeID
+    public let decisionState: AirframeCanonicalPlanDecisionState
+    public let scope: [String]
+    public let fileChanges: [String]
+    public let commands: [String]
+    public let externalEffects: [String]
+    public let verificationCriteria: [String]
+    public let auditEventIDs: [AirframeID]
+    public let evidenceIDs: [AirframeID]
+    public let notes: [String]
+
+    public init(
+        id: AirframeID,
+        title: String,
+        summary: String,
+        proposedByActorID: AirframeID,
+        targetEpicID: AirframeID? = nil,
+        targetSprintID: AirframeID? = nil,
+        targetTaskIDs: [AirframeID] = [],
+        decisionState: AirframeCanonicalPlanDecisionState = .pending,
+        scope: [String] = [],
+        fileChanges: [String] = [],
+        commands: [String] = [],
+        externalEffects: [String] = [],
+        verificationCriteria: [String] = [],
+        auditEventIDs: [AirframeID] = [],
+        evidenceIDs: [AirframeID] = [],
+        notes: [String] = [],
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.title = title
+        self.summary = summary
+        self.targetEpicID = targetEpicID
+        self.targetSprintID = targetSprintID
+        self.targetTaskIDs = targetTaskIDs
+        self.proposedByActorID = proposedByActorID
+        self.decisionState = decisionState
+        self.scope = scope
+        self.fileChanges = fileChanges
+        self.commands = commands
+        self.externalEffects = externalEffects
+        self.verificationCriteria = verificationCriteria
+        self.auditEventIDs = auditEventIDs
+        self.evidenceIDs = evidenceIDs
+        self.notes = notes
+    }
+}
+
+public struct AirframeCanonicalPlanDecisionRecord: Codable, Equatable, Sendable {
+    public let metadata: AirframeCanonicalRecordMetadata
+    public let id: AirframeID
+    public let planID: AirframeID
+    public let outcome: AirframeCanonicalPlanDecisionState
+    public let decidedByActorID: AirframeID
+    public let decidedAt: Date
+    public let note: String?
+    public let auditEventID: AirframeID
+
+    public init(
+        id: AirframeID,
+        planID: AirframeID,
+        outcome: AirframeCanonicalPlanDecisionState,
+        decidedByActorID: AirframeID,
+        decidedAt: Date,
+        auditEventID: AirframeID,
+        note: String? = nil,
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.metadata = metadata
+        self.id = id
+        self.planID = planID
+        self.outcome = outcome
+        self.decidedByActorID = decidedByActorID
+        self.decidedAt = decidedAt
+        self.note = note
+        self.auditEventID = auditEventID
+    }
+}
+
 public enum AirframeCanonicalEvidenceResult: String, Codable, Equatable, Sendable {
     case passed
     case failed

@@ -84,13 +84,26 @@ public struct AirframeWorkflowTransitionEvaluator: Sendable {
         to: AirframeWorkStatus
     ) -> Bool {
         switch kind {
-        case .task, .issue:
+        case .task:
             switch (from, to) {
             case (.backlog, .active),
                  (.active, .implementedNotVerified),
                  (.implementedNotVerified, .implementedVerified),
                  (.implementedVerified, .closed),
                  (.active, .backlog):
+                true
+            default:
+                false
+            }
+        case .issue:
+            switch (from, to) {
+            case (.backlog, .active),
+                 (.active, .implementedNotVerified),
+                 (.implementedNotVerified, .implementedVerified),
+                 (.implementedVerified, .closed),
+                 (.active, .backlog),
+                 (.implementedNotVerified, .active),
+                 (.implementedNotVerified, .backlog):
                 true
             default:
                 false

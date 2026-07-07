@@ -10,6 +10,7 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
     case dashboard = "Dashboard"
     case verification = "Verification"
     case planning = "Sprint & Epic"
+    case planReview = "Plan Review"
     case requirements = "Requirements"
     case tests = "Tests"
     case metrics = "Metrics & Audit"
@@ -24,6 +25,8 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
             "verification"
         case .planning:
             "planning"
+        case .planReview:
+            "plan-review"
         case .requirements:
             "requirements"
         case .tests:
@@ -189,6 +192,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let requirementGapRows: [AgileCockpitRequirementGapRow]
         let testCoverageRows: [AgileCockpitTestCoverageRow]
         let testGapRows: [AgileCockpitTestGapRow]
+        let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
         let observedURLs: [URL]
 
         init(
@@ -214,6 +218,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             requirementGapRows: [AgileCockpitRequirementGapRow],
             testCoverageRows: [AgileCockpitTestCoverageRow],
             testGapRows: [AgileCockpitTestGapRow],
+            implementationPlans: [AirframeCanonicalImplementationPlanRecord],
             observedURLs: [URL]
         ) {
             self.coreInfo = coreInfo
@@ -238,6 +243,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             self.requirementGapRows = requirementGapRows
             self.testCoverageRows = testCoverageRows
             self.testGapRows = testGapRows
+            self.implementationPlans = implementationPlans
             self.observedURLs = observedURLs
         }
 
@@ -277,6 +283,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 requirementGapRows: payload.requirementGapRows,
                 testCoverageRows: payload.testCoverageRows,
                 testGapRows: payload.testGapRows,
+                implementationPlans: (canonicalState ?? payload.canonicalState.map(AgileCockpitDashboardModel.cachedState(from:)))?.implementationPlans ?? [],
                 observedURLs: payload.observedURLs
             )
         }
@@ -301,6 +308,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
             let tests: [AirframeCanonicalTestRecord]
             let testSuites: [AirframeCanonicalTestSuiteRecord]
             let testRuns: [AirframeCanonicalTestRunRecord]
+            let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
+            let planDecisions: [AirframeCanonicalPlanDecisionRecord]
             let evidence: [AirframeCanonicalEvidenceSummaryRecord]
         }
 
@@ -336,6 +345,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let requirementGapRows: [AgileCockpitRequirementGapRow]
         let testCoverageRows: [AgileCockpitTestCoverageRow]
         let testGapRows: [AgileCockpitTestGapRow]
+        let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
     }
 
     nonisolated fileprivate struct TraceabilityCacheEntry: Codable, Sendable {
@@ -369,6 +379,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published private(set) var requirementGapRows: [AgileCockpitRequirementGapRow]
     @Published private(set) var testCoverageRows: [AgileCockpitTestCoverageRow]
     @Published private(set) var testGapRows: [AgileCockpitTestGapRow]
+    @Published private(set) var implementationPlans: [AirframeCanonicalImplementationPlanRecord]
     @Published var selectedTestID: AirframeID?
     @Published private(set) var verificationQueueState: AgileCockpitVerificationQueueState
     @Published private(set) var verificationDetailState: AgileCockpitVerificationDetailState
@@ -380,6 +391,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published var selectedPlanningTab: AgileCockpitPlanningTab
     @Published var selectedReviewSprintID: AirframeID?
     @Published var selectedEpicCriterionID: AirframeID?
+    @Published var selectedPlanID: AirframeID?
+    @Published var planDecisionCommentText: String
     @Published var verificationCommentText: String
     @Published var statusMessage: String
 
@@ -393,6 +406,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     private var refreshObserver: NSObjectProtocol?
     private var fileWatchSources: [DispatchSourceFileSystemObject] = []
     private var pendingRefreshWorkItem: DispatchWorkItem?
+    private var suppressFileRefreshUntil: Date?
 
     fileprivate init(launchData: LaunchData) {
         self.coreInfo = launchData.coreInfo
@@ -419,6 +433,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.requirementGapRows = launchData.requirementGapRows
         self.testCoverageRows = launchData.testCoverageRows
         self.testGapRows = launchData.testGapRows
+        self.implementationPlans = launchData.implementationPlans
         self.selectedTestID = launchData.canonicalSnapshot.tests.first?.id
         self.verificationQueueState = .loaded
         self.verificationDetailState = .empty
@@ -429,6 +444,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedPlanningTab = .sprintWork
         self.selectedReviewSprintID = nil
         self.selectedEpicCriterionID = nil
+        self.selectedPlanID = launchData.implementationPlans.first?.id
+        self.planDecisionCommentText = ""
         self.verificationCommentText = ""
         self.statusMessage = "Loaded \(launchData.backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
@@ -453,13 +470,16 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.repairBackend = repairBackend ?? backend
         self.reviewerContext = reviewerContext
         self.artifactRootURL = artifactRootURL
+        let loadedCanonicalState: AirframeCanonicalStoreState?
         if let artifactRootURL,
            FileManager.default.fileExists(atPath: artifactRootURL.appending(path: ".airframe/state").path) {
             let repository = AirframeCanonicalStoreRepository(rootURL: artifactRootURL)
             self.canonicalRepository = repository
-            self.canonicalState = try? repository.loadState()
+            loadedCanonicalState = try? repository.loadState()
+            self.canonicalState = loadedCanonicalState
         } else {
             self.canonicalRepository = nil
+            loadedCanonicalState = nil
             self.canonicalState = nil
         }
         self.auditStore = auditStore
@@ -501,6 +521,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.requirementGapRows = requirementState.gapRows
         self.testCoverageRows = testState.coverageRows
         self.testGapRows = testState.gapRows
+        let initialImplementationPlans = loadedCanonicalState?.implementationPlans.sorted { $0.id.rawValue < $1.id.rawValue } ?? []
+        self.implementationPlans = initialImplementationPlans
         self.selectedTestID = canonicalSnapshot.tests.first?.id
         self.verificationQueueState = .loaded
         self.verificationDetailState = .empty
@@ -511,6 +533,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedPlanningTab = .sprintWork
         self.selectedReviewSprintID = nil
         self.selectedEpicCriterionID = nil
+        self.selectedPlanID = initialImplementationPlans.first?.id
+        self.planDecisionCommentText = ""
         self.verificationCommentText = ""
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
@@ -536,7 +560,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.reviewerContext = reviewerContext
         self.artifactRootURL = payload.artifactRootPath.map { URL(fileURLWithPath: $0) }
         self.canonicalRepository = canonicalRepository
-        self.canonicalState = canonicalState ?? payload.canonicalState.map(Self.cachedState(from:))
+        let loadedCanonicalState = canonicalState ?? payload.canonicalState.map(Self.cachedState(from:))
+        self.canonicalState = loadedCanonicalState
         self.auditStore = AirframeAuditEventStore()
         self.selectedSection = .dashboard
         self.records = payload.records
@@ -554,6 +579,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.requirementGapRows = payload.requirementGapRows
         self.testCoverageRows = payload.testCoverageRows
         self.testGapRows = payload.testGapRows
+        let initialImplementationPlans = loadedCanonicalState?.implementationPlans.sorted { $0.id.rawValue < $1.id.rawValue } ?? payload.implementationPlans
+        self.implementationPlans = initialImplementationPlans
         self.selectedTestID = payload.canonicalSnapshot.tests.first?.id
         self.verificationQueueState = .loaded
         self.verificationDetailState = .empty
@@ -564,6 +591,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedPlanningTab = .sprintWork
         self.selectedReviewSprintID = nil
         self.selectedEpicCriterionID = nil
+        self.selectedPlanID = initialImplementationPlans.first?.id
+        self.planDecisionCommentText = ""
         self.verificationCommentText = ""
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
@@ -1209,6 +1238,20 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return canonicalSnapshot.tests.first { $0.id == selectedTestID } ?? canonicalSnapshot.tests.first
     }
 
+    var selectedPlanRecord: AirframeCanonicalImplementationPlanRecord? {
+        guard let selectedPlanID else {
+            return implementationPlans.first
+        }
+        return implementationPlans.first { $0.id == selectedPlanID } ?? implementationPlans.first
+    }
+
+    var planReviewStatusText: String {
+        let pendingCount = implementationPlans.filter { $0.decisionState == .pending }.count
+        return pendingCount == 1
+            ? "1 plan pending human decision."
+            : "\(pendingCount) plans pending human decision."
+    }
+
     private var currentSprintID: AirframeID? {
         if let configuredSprintID = canonicalSnapshot.project.activeSprintID {
             return configuredSprintID
@@ -1280,8 +1323,64 @@ final class AgileCockpitDashboardModel: ObservableObject {
         selectedTestID = test.id
     }
 
+    func selectPlan(_ plan: AirframeCanonicalImplementationPlanRecord) {
+        selectedPlanID = plan.id
+        planDecisionCommentText = ""
+    }
+
+    func approveSelectedPlan() {
+        decideSelectedPlan(.approved)
+    }
+
+    func deferSelectedPlan() {
+        decideSelectedPlan(.deferred)
+    }
+
+    func rejectSelectedPlan() {
+        decideSelectedPlan(.rejected)
+    }
+
     func selectReviewSprint(_ sprint: AirframeCanonicalSprintRecord) {
         selectedReviewSprintID = sprint.workItem.id
+    }
+
+    private func decideSelectedPlan(_ outcome: AirframeCanonicalPlanDecisionState) {
+        guard let plan = selectedPlanRecord else {
+            statusMessage = "No implementation plan is selected."
+            return
+        }
+        guard let canonicalRepository else {
+            statusMessage = "Plan decisions require canonical Airframe state."
+            return
+        }
+        let note = planDecisionCommentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        do {
+            let result = try AirframePlanReviewService().decide(
+                planID: plan.id,
+                outcome: outcome,
+                note: note.isEmpty ? nil : note,
+                context: reviewerContext,
+                targetProjectID: context.project.id,
+                repository: canonicalRepository,
+                auditID: AirframeID("AUD-AGILE-PLAN-\(auditStore.events.count + 1)")
+            )
+            auditStore.record(
+                id: result.auditEvent.id,
+                context: reviewerContext,
+                action: result.auditEvent.action,
+                workItemID: plan.id,
+                decision: .allowed(),
+                targetProjectID: context.project.id
+            )
+            let refreshedPlans = try canonicalRepository.loadState().implementationPlans
+            implementationPlans = refreshedPlans.sorted { $0.id.rawValue < $1.id.rawValue }
+            selectedPlanID = plan.id
+            planDecisionCommentText = ""
+            auditRows = auditStore.events.map(Self.auditRow)
+            statusMessage = "\(plan.id.rawValue) \(outcome.description.lowercased())."
+        } catch {
+            statusMessage = "Plan decision failed: \(error)"
+        }
     }
 
     func verifySelectedEpicAcceptanceCriterion() {
@@ -1293,7 +1392,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "\(criterion.id.rawValue) is already verified."
             return
         }
-        guard currentEpicID != nil else {
+        guard let activeEpicID = currentEpicID else {
             statusMessage = "No active Epic is configured."
             return
         }
@@ -1303,6 +1402,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Epic criteria verification requires canonical Airframe state."
                 return
             }
+            suppressFileRefreshUntil = Date().addingTimeInterval(2)
             try canonicalRepository.verifyEpicCriterion(id: criterion.id)
             auditStore.record(
                 id: AirframeID("AUD-AGILE-\(auditStore.events.count + 1)"),
@@ -1312,10 +1412,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 decision: .allowed(),
                 targetProjectID: context.project.id
             )
-            try reload(selecting: selectedWorkItemID)
+            applyVerifiedEpicCriterion(criterion, epicID: activeEpicID)
             selectedEpicCriterionID = criterion.id
             statusMessage = "\(criterion.id.rawValue) verified."
         } catch {
+            suppressFileRefreshUntil = nil
             statusMessage = "Epic criteria verification failed: \(error)"
         }
     }
@@ -1691,6 +1792,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     private func reload(selecting id: AirframeID?) throws {
+        suppressFileRefreshUntil = nil
         verificationQueueState = .loading
         records = try backend.listWorkRecords()
         let dashboardData = Self.dashboardData(
@@ -1724,6 +1826,14 @@ final class AgileCockpitDashboardModel: ObservableObject {
         requirementGapRows = traceabilityState.requirementGapRows
         testCoverageRows = traceabilityState.testCoverageRows
         testGapRows = traceabilityState.testGapRows
+        let refreshedPlans = (try? canonicalRepository?.loadState().implementationPlans) ?? implementationPlans
+        implementationPlans = refreshedPlans.sorted { $0.id.rawValue < $1.id.rawValue }
+        if let selectedPlanID,
+           !implementationPlans.contains(where: { $0.id == selectedPlanID }) {
+        self.selectedPlanID = self.implementationPlans.first?.id
+        } else if selectedPlanID == nil {
+            self.selectedPlanID = implementationPlans.first?.id
+        }
         if let selectedTestID,
            !canonicalSnapshot.tests.contains(where: { $0.id == selectedTestID }) {
             self.selectedTestID = canonicalSnapshot.tests.first?.id
@@ -1755,6 +1865,91 @@ final class AgileCockpitDashboardModel: ObservableObject {
         } else {
             verificationDetailState = .empty
         }
+    }
+
+    private func applyVerifiedEpicCriterion(
+        _ criterion: AirframeEpicAcceptanceCriterion,
+        epicID: AirframeID
+    ) {
+        canonicalSnapshot = Self.snapshot(
+            canonicalSnapshot,
+            verifyingCriterionID: criterion.id
+        )
+        dashboardRecords = dashboardRecords.map { record in
+            guard record.workItem.kind == .epic,
+                  record.workItem.id == epicID else {
+                return record
+            }
+            return AirframeLocalWorkRecord(
+                workItem: record.workItem,
+                epicID: record.epicID,
+                sprintID: record.sprintID,
+                priority: record.priority,
+                acceptanceCriteria: record.acceptanceCriteria.map {
+                    Self.verifiedCriterionText($0, matching: criterion.text) ?? $0
+                },
+                scope: record.scope,
+                constraints: record.constraints,
+                evidenceRequirements: record.evidenceRequirements,
+                protectedPaths: record.protectedPaths,
+                reportFormat: record.reportFormat
+            )
+        }
+        dashboardDetailTextByID[epicID] = canonicalRelationshipDetailText(for: epicID)
+        summary = Self.canonicalSummary(records: dashboardRecords)
+        auditRows = auditStore.events.map(Self.auditRow)
+        if let selectedTestID,
+           !canonicalSnapshot.tests.contains(where: { $0.id == selectedTestID }) {
+            self.selectedTestID = canonicalSnapshot.tests.first?.id
+        } else if selectedTestID == nil {
+            self.selectedTestID = canonicalSnapshot.tests.first?.id
+        }
+        verificationQueueState = .loaded
+    }
+
+    nonisolated private static func snapshot(
+        _ snapshot: AirframeCanonicalStateSnapshot,
+        verifyingCriterionID criterionID: AirframeID
+    ) -> AirframeCanonicalStateSnapshot {
+        AirframeCanonicalStateSnapshot(
+            project: snapshot.project,
+            epics: snapshot.epics,
+            sprints: snapshot.sprints,
+            tasks: snapshot.tasks,
+            issues: snapshot.issues,
+            requirements: snapshot.requirements,
+            acceptanceCriteria: snapshot.acceptanceCriteria.map { criterion in
+                guard criterion.id == criterionID else { return criterion }
+                return AirframeCanonicalAcceptanceCriterionRecord(
+                    id: criterion.id,
+                    ownerID: criterion.ownerID,
+                    text: criterion.text,
+                    isVerified: true,
+                    evidenceIDs: criterion.evidenceIDs,
+                    metadata: criterion.metadata
+                )
+            },
+            tests: snapshot.tests,
+            testSuites: snapshot.testSuites,
+            testRuns: snapshot.testRuns
+        )
+    }
+
+    nonisolated private static func verifiedCriterionText(
+        _ rawText: String,
+        matching criterionText: String
+    ) -> String? {
+        let trimmed = rawText.trimmingCharacters(in: .whitespaces)
+        let uncheckedPrefix = "[ ] "
+        let checkedPrefix = "[x] "
+        if trimmed == criterionText {
+            return checkedPrefix + criterionText
+        }
+        if trimmed.hasPrefix(uncheckedPrefix),
+           String(trimmed.dropFirst(uncheckedPrefix.count)) == criterionText {
+            return rawText.replacingOccurrences(of: uncheckedPrefix, with: checkedPrefix)
+        }
+        return nil
     }
 
     private var canonicalDashboardRecords: [AirframeLocalWorkRecord] {
@@ -2507,6 +2702,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
             tests: state.tests,
             testSuites: state.testSuites,
             testRuns: state.testRuns,
+            implementationPlans: state.implementationPlans,
+            planDecisions: state.planDecisions,
             evidence: state.evidence
         )
     }
@@ -2572,6 +2769,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
                     tests: $0.tests,
                     testSuites: $0.testSuites,
                     testRuns: $0.testRuns,
+                    implementationPlans: $0.implementationPlans,
+                    planDecisions: $0.planDecisions,
                     evidence: $0.evidence
                 )
             },
@@ -2595,7 +2794,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
             requirementTraceRows: requirementTraceRows,
             requirementGapRows: requirementGapRows,
             testCoverageRows: testCoverageRows,
-            testGapRows: testGapRows
+            testGapRows: testGapRows,
+            implementationPlans: canonicalState?.implementationPlans ?? []
         )
     }
 
@@ -3185,6 +3385,11 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     private func scheduleRefresh(message: String) {
+        if let suppressFileRefreshUntil,
+           Date() < suppressFileRefreshUntil {
+            return
+        }
+        suppressFileRefreshUntil = nil
         pendingRefreshWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
             self?.refreshFromExternalChange(message: message)
@@ -3745,6 +3950,8 @@ struct ContentView: View {
             verificationView
         case .planning:
             planningView
+        case .planReview:
+            planReviewView
         case .requirements:
             requirementsView
         case .tests:
@@ -3933,6 +4140,103 @@ struct ContentView: View {
             requirementTraceabilitySection
         }
         .accessibilityIdentifier("agile-cockpit-requirements")
+    }
+
+    private var planReviewView: some View {
+        HStack(alignment: .top, spacing: 20) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Implementation Plans")
+                    .font(.headline)
+                Text(model.planReviewStatusText)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-plan-review-status")
+                ForEach(model.implementationPlans, id: \.id.rawValue) { plan in
+                    Button {
+                        model.selectPlan(plan)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(plan.id.rawValue)
+                                    .fontWeight(model.selectedPlanRecord?.id == plan.id ? .semibold : .regular)
+                                Text(plan.decisionState.description)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Text(plan.title)
+                                .lineLimit(2)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityIdentifier("agile-cockpit-plan-\(plan.id.rawValue)")
+                }
+                if model.implementationPlans.isEmpty {
+                    Text("No implementation plans are recorded.")
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("agile-cockpit-plan-review-empty")
+                }
+            }
+            .frame(maxWidth: 320, alignment: .leading)
+
+            Divider()
+
+            planReviewDetail
+        }
+        .accessibilityIdentifier("agile-cockpit-plan-review")
+    }
+
+    @ViewBuilder
+    private var planReviewDetail: some View {
+        if let plan = model.selectedPlanRecord {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(plan.title)
+                    .font(.title3)
+                    .accessibilityIdentifier("agile-cockpit-selected-plan-title")
+                LabeledContent("Plan", value: plan.id.rawValue)
+                    .accessibilityIdentifier("agile-cockpit-selected-plan-id")
+                LabeledContent("State", value: plan.decisionState.description)
+                    .accessibilityIdentifier("agile-cockpit-selected-plan-state")
+                LabeledContent("Epic", value: plan.targetEpicID?.rawValue ?? "None")
+                LabeledContent("Sprint", value: plan.targetSprintID?.rawValue ?? "None")
+                LabeledContent("Tasks", value: plan.targetTaskIDs.isEmpty ? "None" : plan.targetTaskIDs.map(\.rawValue).joined(separator: ", "))
+                Text(plan.summary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("agile-cockpit-selected-plan-summary")
+
+                packetSection("Scope", values: plan.scope)
+                packetSection("File Changes", values: plan.fileChanges)
+                packetSection("Commands", values: plan.commands)
+                packetSection("External Effects", values: plan.externalEffects)
+                packetSection("Verification", values: plan.verificationCriteria)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Decision Note")
+                        .font(.headline)
+                    TextEditor(text: $model.planDecisionCommentText)
+                        .frame(minHeight: 70)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.secondary.opacity(0.25))
+                        )
+                        .accessibilityIdentifier("agile-cockpit-plan-decision-note")
+                }
+
+                HStack {
+                    Button("Approve") { model.approveSelectedPlan() }
+                        .disabled(plan.decisionState != .pending)
+                        .accessibilityIdentifier("agile-cockpit-approve-plan")
+                    Button("Defer") { model.deferSelectedPlan() }
+                        .disabled(plan.decisionState != .pending)
+                        .accessibilityIdentifier("agile-cockpit-defer-plan")
+                    Button("Reject") { model.rejectSelectedPlan() }
+                        .disabled(plan.decisionState != .pending)
+                        .accessibilityIdentifier("agile-cockpit-reject-plan")
+                }
+            }
+        } else {
+            Text("Select a proposed implementation plan for human review.")
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("agile-cockpit-no-selected-plan")
+        }
     }
 
     private var testsView: some View {

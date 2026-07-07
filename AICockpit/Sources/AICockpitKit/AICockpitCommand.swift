@@ -494,6 +494,154 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals == ["plans", "list"] {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let plans = try repository.loadState().implementationPlans
+                    .sorted { $0.id.rawValue < $1.id.rawValue }
+                    .map(AICockpitPlanSummary.init)
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitPlanCommandEnvelope(
+                            status: "ok",
+                            kind: "canonicalPlanList",
+                            message: "Canonical implementation plans listed",
+                            backendCapabilities: .canonicalStore,
+                            plan: nil,
+                            plans: plans
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalPlanCommandFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals == ["plans", "submit"] {
+            do {
+                try assertLLMAllowed(parsed: parsed, operationID: "OP-SUBMIT-IMPLEMENTATION-PLAN", category: .proposal)
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let context = try parsed.canonicalAwareProjectContext()
+                let plan = try buildPlanRecord(parsed: parsed, projectContext: context)
+                try repository.store.save(plan)
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitPlanCommandEnvelope(
+                            status: "ok",
+                            kind: "canonicalPlanSubmission",
+                            message: "Canonical implementation plan submitted",
+                            backendCapabilities: .canonicalStore,
+                            plan: plan,
+                            plans: []
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch AICockpitCommandError.denied(let decision, let operation) {
+                return AICockpitCommandResult(
+                    exitCode: 77,
+                    standardOutput: deniedOperationText(
+                        decision: decision,
+                        operation: operation,
+                        actorID: AirframeID("ACTOR-LLM"),
+                        projectID: AirframeID("PRJ-AIRFRAME")
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalPlanCommandFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3,
+           parsed.positionals[0] == "plans",
+           parsed.positionals[1] == "inspect" {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let planID = AirframeID(parsed.positionals[2])
+                guard let plan = try repository.store.load(AirframeCanonicalImplementationPlanRecord.self, id: planID) else {
+                    throw AirframeBackendError.missingWorkItem(planID)
+                }
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitPlanCommandEnvelope(
+                            status: "ok",
+                            kind: "canonicalPlanInspection",
+                            message: "Canonical implementation plan loaded",
+                            backendCapabilities: .canonicalStore,
+                            plan: plan,
+                            plans: []
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalPlanCommandFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3,
+           parsed.positionals[0] == "plans",
+           ["approve", "defer", "reject"].contains(parsed.positionals[1]) {
+            do {
+                let context = try parsed.canonicalAwareProjectContext()
+                let certifiedContext = try sampleLLMContext(projectID: context.project.id)
+                let operation = AirframeOperation(
+                    id: AirframeID("OP-HUMAN-\(parsed.positionals[1].uppercased())-PLAN"),
+                    category: .planDecision
+                )
+                let decision = AirframeAuthorityEvaluator().evaluate(
+                    context: certifiedContext,
+                    operation: operation,
+                    targetProjectID: context.project.id
+                )
+                guard decision.isAllowed else {
+                    throw AICockpitCommandError.denied(decision, operation)
+                }
+                return errorResult(
+                    exitCode: 78,
+                    code: "unsupportedPlanDecision",
+                    message: "plan decisions are human-only in AgileCockpit",
+                    outputFormat: outputFormat
+                )
+            } catch AICockpitCommandError.denied(let decision, let operation) {
+                return AICockpitCommandResult(
+                    exitCode: 77,
+                    standardOutput: deniedOperationText(
+                        decision: decision,
+                        operation: operation,
+                        actorID: AirframeID("ACTOR-LLM"),
+                        projectID: AirframeID("PRJ-AIRFRAME")
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalPlanCommandFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
         if parsed.positionals.count == 3,
            parsed.positionals[0] == "acceptance-criteria",
            parsed.positionals[1] == "inspect" {
@@ -1370,6 +1518,110 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals.count == 2,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "list" {
+            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
+                let records = try backend.listWorkRecords()
+                    .filter { $0.workItem.kind == kind }
+                    .sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+                return try render(
+                    AICockpitArtifactCommandEnvelope(
+                        status: "ok",
+                        kind: "\(kind.rawValue)List",
+                        message: "\(kind.rawValue.capitalized) records listed",
+                        workItems: records.map(\.workItem)
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "inspect" {
+            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
+                let id = AirframeID(parsed.positionals[2])
+                try validateID(id, for: kind)
+                guard let record = try backend.workRecord(id: id) else {
+                    throw AirframeBackendError.missingWorkItem(id)
+                }
+                guard record.workItem.kind == kind else {
+                    throw AirframeBackendError.unsupportedWorkItemKind(record.workItem.kind)
+                }
+                let links = try? artifactLinks(for: id, parsed: parsed)
+                return try render(
+                    AICockpitArtifactCommandEnvelope(
+                        status: "ok",
+                        kind: "\(kind.rawValue)Inspection",
+                        message: "\(kind.rawValue.capitalized) inspected",
+                        workItem: record.workItem,
+                        links: links
+                    ),
+                    as: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 3,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "link" {
+            do {
+                let id = AirframeID(parsed.positionals[2])
+                try linkCanonicalArtifact(kind: kind, id: id, parsed: parsed)
+                let links = try artifactLinks(for: id, parsed: parsed)
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitArtifactCommandEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)Links",
+                            message: "\(kind.rawValue.capitalized) links updated",
+                            workItem: links.workItem,
+                            links: links
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 65,
+                    code: "artifactLinkFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 2,
+           let kind = workItemKind(commandName: parsed.positionals[0]),
+           parsed.positionals[1] == "gaps" {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let state = try repository.loadState()
+                let records = repository.workRecords(from: state)
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitArtifactCommandEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)Gaps",
+                            message: "\(kind.rawValue.capitalized) relationship gaps reported",
+                            gaps: artifactGapMessages(kind: kind, records: records, state: state)
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 65,
+                    code: "artifactGapsFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
         if parsed.positionals == ["task", "next"] {
             return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
                 let nextTask = try backend.dashboardSummary().nextTask
@@ -1615,6 +1867,10 @@ public enum AICockpitCommand {
           aicockpit acceptance-criteria create --id AC-ID --owner EP-ID --text text [--verified true|false] [--evidence EV-ID] [--config path] [--output markdown|json]
           aicockpit acceptance-criteria update AC-ID [--owner EP-ID] [--text text] [--verified true|false] [--evidence EV-ID] [--config path] [--output markdown|json]
           aicockpit acceptance-criteria link AC-ID --owner EP-ID [--config path] [--output markdown|json]
+          aicockpit plans list [--config path] [--output markdown|json]
+          aicockpit plans inspect PLAN-ID [--config path] [--output markdown|json]
+          aicockpit plans submit --id PLAN-ID --title title --summary text [--epic EP-ID] [--sprint SP-ID] [--task T-ID] [--scope text] [--file-change text] [--command text] [--external-effect text] [--verification text] [--note text] [--config path] [--output markdown|json]
+          aicockpit plans approve|defer|reject PLAN-ID [--note text] [--config path] [--output markdown|json]
           aicockpit tests list [--config path] [--output markdown|json]
           aicockpit tests inspect TEST-ID [--config path] [--output markdown|json]
           aicockpit tests create --id TEST-ID --title title --objective text [--kind unit|integration|ui|acceptance|regression|dataValidation|manual] [--status draft|ready|active|retired] [--requirement REQ-ID] [--acceptance-criterion AC-ID] [--work-item ID] [--evidence EV-ID] [--step text] [--expected text] [--automation-command command] [--artifact path] [--note text] [--config path] [--output markdown|json]
@@ -1635,6 +1891,10 @@ public enum AICockpitCommand {
           aicockpit epic create --id EP-XXXX --title title [--status proposed|draft|backlog] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit task|issue|sprint|epic update ID [--title title] [--status value] [--observed text] [--expected text] [--repro text] [--component name] [--note text] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit task|issue|sprint|epic status ID --to value [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          aicockpit task|issue|sprint|epic list [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit task|issue|sprint|epic inspect ID [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit task|issue|sprint|epic link ID [--epic EP-ID] [--sprint SP-ID] [--task T-ID] [--issue I-ID] [--requirement REQ-ID] [--acceptance-criterion AC-ID] [--test TEST-ID] [--config path] [--output markdown|json]
+          aicockpit task|issue|sprint|epic gaps [--config path] [--output markdown|json]
           aicockpit epic coverage EP-ID [--config path] [--output markdown|json]
           aicockpit epic ready EP-ID [--config path] [--output markdown|json]
           aicockpit task next [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
@@ -1956,6 +2216,20 @@ public enum AICockpitCommand {
         }
     }
 
+    private static func render(
+        _ envelope: AICockpitArtifactCommandEnvelope,
+        as outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(envelope), as: UTF8.self)
+        case .markdown:
+            return envelope.markdown
+        }
+    }
+
     private static func renderRequirementImportPreview(
         _ preview: AirframeRequirementImportPreview,
         format: AICockpitRequirementInterchangeFormat,
@@ -2139,6 +2413,20 @@ public enum AICockpitCommand {
         }
     }
 
+    private static func render(
+        _ envelope: AICockpitPlanCommandEnvelope,
+        as outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(envelope), as: UTF8.self)
+        case .markdown:
+            return envelope.markdown
+        }
+    }
+
     private static func canonicalTestRepository(parsed: AICockpitArguments) throws -> AirframeCanonicalStoreRepository {
         let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
         let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
@@ -2192,6 +2480,30 @@ public enum AICockpitCommand {
                 existing?.evidenceIDs ?? []
             ),
             metadata: existing?.metadata ?? AirframeCanonicalRecordMetadata()
+        )
+    }
+
+    private static func buildPlanRecord(
+        parsed: AICockpitArguments,
+        projectContext: AirframeProjectContext
+    ) throws -> AirframeCanonicalImplementationPlanRecord {
+        let id = AirframeID(try parsed.requiredValue(for: "--id"))
+        let title = try parsed.requiredValue(for: "--title")
+        let summary = try parsed.requiredValue(for: "--summary")
+        return AirframeCanonicalImplementationPlanRecord(
+            id: id,
+            title: title,
+            summary: summary,
+            proposedByActorID: AirframeID("ACTOR-LLM"),
+            targetEpicID: parsed.value(for: "--epic").map(AirframeID.init) ?? projectContext.project.activeEpicID,
+            targetSprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? projectContext.project.activeSprintID,
+            targetTaskIDs: parsed.repeatedValues(for: "--task").map(AirframeID.init),
+            scope: parsed.repeatedValues(for: "--scope"),
+            fileChanges: parsed.repeatedValues(for: "--file-change"),
+            commands: parsed.repeatedValues(for: "--command"),
+            externalEffects: parsed.repeatedValues(for: "--external-effect"),
+            verificationCriteria: parsed.repeatedValues(for: "--verification"),
+            notes: parsed.repeatedValues(for: "--note")
         )
     }
 
@@ -2308,6 +2620,225 @@ public enum AICockpitCommand {
             metadata: issue.metadata
         )
         try repository.store.save(enriched)
+    }
+
+    private static func artifactLinks(
+        for id: AirframeID,
+        parsed: AICockpitArguments
+    ) throws -> AICockpitArtifactLinks {
+        let repository = try canonicalTestRepository(parsed: parsed)
+        let state = try repository.loadState()
+        guard let record = repository.workRecords(from: state).first(where: { $0.workItem.id == id }) else {
+            throw AirframeBackendError.missingWorkItem(id)
+        }
+        let testIDs = state.tests
+            .filter { $0.workItemIDs.contains(id) }
+            .map(\.id)
+            .sorted { $0.rawValue < $1.rawValue }
+        let requirementIDs: [AirframeID]
+        if let task = state.tasks.first(where: { $0.workItem.id == id }) {
+            requirementIDs = task.requirementIDs.sorted { $0.rawValue < $1.rawValue }
+        } else {
+            requirementIDs = state.requirements
+                .filter { requirement in
+                    requirement.traceLinks.contains {
+                        $0.targetKind == record.workItem.kind.rawValue && $0.targetID == id.rawValue
+                    }
+                }
+                .map(\.id)
+                .sorted { $0.rawValue < $1.rawValue }
+        }
+        return AICockpitArtifactLinks(
+            workItem: record.workItem,
+            epicID: record.epicID,
+            sprintID: record.sprintID,
+            requirementIDs: requirementIDs,
+            acceptanceCriterionIDs: acceptanceCriterionIDs(for: id, state: state),
+            testIDs: testIDs
+        )
+    }
+
+    private static func linkCanonicalArtifact(
+        kind: AirframeWorkItemKind,
+        id: AirframeID,
+        parsed: AICockpitArguments
+    ) throws {
+        try assertLLMAllowed(
+            parsed: parsed,
+            operationID: "OP-LINK-\(kind.rawValue.uppercased())",
+            category: .workflowTransition
+        )
+        try validateID(id, for: kind)
+        let repository = try canonicalTestRepository(parsed: parsed)
+        switch kind {
+        case .task:
+            guard let task = try repository.store.load(AirframeCanonicalTaskRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            try repository.store.save(
+                AirframeCanonicalTaskRecord(
+                    workItem: task.workItem,
+                    component: task.component,
+                    priority: task.priority,
+                    rationale: task.rationale,
+                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? task.epicID,
+                    sprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? task.sprintID,
+                    dateRequested: task.dateRequested,
+                    dateImplemented: task.dateImplemented,
+                    dateVerified: task.dateVerified,
+                    currentBehavior: task.currentBehavior,
+                    desiredBehavior: task.desiredBehavior,
+                    requirementIDs: mergedIDs(task.requirementIDs, parsed.repeatedValues(for: "--requirement").map(AirframeID.init)),
+                    acceptanceCriteria: task.acceptanceCriteria,
+                    designApproach: task.designApproach,
+                    componentsAffected: task.componentsAffected,
+                    implementationDetails: task.implementationDetails,
+                    evidenceIDs: task.evidenceIDs,
+                    testSteps: task.testSteps,
+                    notes: task.notes,
+                    metadata: task.metadata
+                )
+            )
+        case .issue:
+            guard let issue = try repository.store.load(AirframeCanonicalIssueRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            try repository.store.save(
+                AirframeCanonicalIssueRecord(
+                    workItem: issue.workItem,
+                    severity: issue.severity,
+                    observedBehavior: issue.observedBehavior,
+                    expectedBehavior: issue.expectedBehavior,
+                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? issue.epicID,
+                    sprintID: parsed.value(for: "--sprint").map(AirframeID.init) ?? issue.sprintID,
+                    dateReported: issue.dateReported,
+                    dateResolved: issue.dateResolved,
+                    dateVerified: issue.dateVerified,
+                    reproductionSteps: issue.reproductionSteps,
+                    affectedComponents: issue.affectedComponents,
+                    evidenceIDs: issue.evidenceIDs,
+                    notes: issue.notes,
+                    metadata: issue.metadata
+                )
+            )
+        case .sprint:
+            guard let sprint = try repository.store.load(AirframeCanonicalSprintRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            try repository.store.save(
+                AirframeCanonicalSprintRecord(
+                    workItem: sprint.workItem,
+                    epicID: parsed.value(for: "--epic").map(AirframeID.init) ?? sprint.epicID,
+                    goal: sprint.goal,
+                    startDate: sprint.startDate,
+                    endDate: sprint.endDate,
+                    capacity: sprint.capacity,
+                    taskIDs: mergedIDs(sprint.taskIDs, parsed.repeatedValues(for: "--task").map(AirframeID.init)),
+                    issueIDs: mergedIDs(sprint.issueIDs, parsed.repeatedValues(for: "--issue").map(AirframeID.init)),
+                    notes: sprint.notes,
+                    metadata: sprint.metadata
+                )
+            )
+        case .epic:
+            guard let epic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            try repository.store.save(
+                AirframeCanonicalEpicRecord(
+                    workItem: epic.workItem,
+                    owner: epic.owner,
+                    goal: epic.goal,
+                    rationale: epic.rationale,
+                    startDate: epic.startDate,
+                    targetCloseDate: epic.targetCloseDate,
+                    closeDate: epic.closeDate,
+                    scope: epic.scope,
+                    outOfScope: epic.outOfScope,
+                    acceptanceCriterionIDs: mergedIDs(epic.acceptanceCriterionIDs, parsed.repeatedValues(for: "--acceptance-criterion").map(AirframeID.init)),
+                    sprintIDs: mergedIDs(epic.sprintIDs, parsed.repeatedValues(for: "--sprint").map(AirframeID.init)),
+                    taskIDs: mergedIDs(epic.taskIDs, parsed.repeatedValues(for: "--task").map(AirframeID.init)),
+                    issueIDs: mergedIDs(epic.issueIDs, parsed.repeatedValues(for: "--issue").map(AirframeID.init)),
+                    planningDocumentPaths: epic.planningDocumentPaths,
+                    notes: epic.notes,
+                    metadata: epic.metadata
+                )
+            )
+        }
+        for testID in parsed.repeatedValues(for: "--test").map(AirframeID.init) {
+            guard let test = try repository.store.load(AirframeCanonicalTestRecord.self, id: testID) else {
+                throw AICockpitCommandError.invalidArguments("missing test \(testID.rawValue)")
+            }
+            try repository.store.save(
+                AirframeCanonicalTestRecord(
+                    id: test.id,
+                    title: test.title,
+                    objective: test.objective,
+                    kind: test.kind,
+                    status: test.status,
+                    requirementIDs: test.requirementIDs,
+                    acceptanceCriterionIDs: test.acceptanceCriterionIDs,
+                    workItemIDs: mergedIDs(test.workItemIDs, [id]),
+                    evidenceIDs: test.evidenceIDs,
+                    steps: test.steps,
+                    expectedResults: test.expectedResults,
+                    automationCommand: test.automationCommand,
+                    artifactReferences: test.artifactReferences,
+                    notes: test.notes,
+                    metadata: test.metadata
+                )
+            )
+        }
+    }
+
+    private static func artifactGapMessages(
+        kind: AirframeWorkItemKind,
+        records: [AirframeLocalWorkRecord],
+        state: AirframeCanonicalStoreState
+    ) -> [String] {
+        records
+            .filter { $0.workItem.kind == kind }
+            .flatMap { record -> [String] in
+                var gaps: [String] = []
+                let id = record.workItem.id
+                if record.epicID == nil && (kind == .task || kind == .issue || kind == .sprint) {
+                    gaps.append("\(id.rawValue) has no epic link.")
+                }
+                if record.sprintID == nil && (kind == .task || kind == .issue) {
+                    gaps.append("\(id.rawValue) has no sprint link.")
+                }
+                if state.tests.allSatisfy({ !$0.workItemIDs.contains(id) }) {
+                    gaps.append("\(id.rawValue) has no linked tests.")
+                }
+                if kind == .task,
+                   let task = state.tasks.first(where: { $0.workItem.id == id }),
+                   task.requirementIDs.isEmpty {
+                    gaps.append("\(id.rawValue) has no requirement links.")
+                }
+                if kind == .epic,
+                   let epic = state.epics.first(where: { $0.workItem.id == id }),
+                   epic.acceptanceCriterionIDs.isEmpty {
+                    gaps.append("\(id.rawValue) has no acceptance-criterion links.")
+                }
+                return gaps
+            }
+            .sorted()
+    }
+
+    private static func acceptanceCriterionIDs(
+        for id: AirframeID,
+        state: AirframeCanonicalStoreState
+    ) -> [AirframeID] {
+        let explicit = state.epics.first(where: { $0.workItem.id == id })?.acceptanceCriterionIDs ?? []
+        let owned = state.acceptanceCriteria.filter { $0.ownerID == id }.map(\.id)
+        return mergedIDs(explicit, owned)
+    }
+
+    private static func mergedIDs(_ existing: [AirframeID], _ additions: [AirframeID]) -> [AirframeID] {
+        (existing + additions).reduce(into: [AirframeID]()) { result, id in
+            if !result.contains(id) {
+                result.append(id)
+            }
+        }.sorted { $0.rawValue < $1.rawValue }
     }
 
     private static func epicCoverage(
@@ -2881,6 +3412,12 @@ private extension Optional {
     }
 }
 
+private extension String {
+    func ifEmpty(_ fallback: String) -> String {
+        isEmpty ? fallback : self
+    }
+}
+
 private struct AICockpitCommandEnvelope: Codable, Equatable {
     let status: String
     let kind: String
@@ -3030,6 +3567,67 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     }
 }
 
+private struct AICockpitArtifactLinks: Codable, Equatable {
+    let workItem: AirframeWorkItem
+    let epicID: AirframeID?
+    let sprintID: AirframeID?
+    let requirementIDs: [AirframeID]
+    let acceptanceCriterionIDs: [AirframeID]
+    let testIDs: [AirframeID]
+}
+
+private struct AICockpitArtifactCommandEnvelope: Codable, Equatable {
+    let status: String
+    let kind: String
+    let message: String
+    var workItem: AirframeWorkItem? = nil
+    var workItems: [AirframeWorkItem] = []
+    var links: AICockpitArtifactLinks? = nil
+    var gaps: [String] = []
+
+    var markdown: String {
+        var lines = [
+            "# Airframe Artifact Command",
+            "",
+            "- status: \(status)",
+            "- kind: \(kind)",
+            "- message: \(message)"
+        ]
+        if let workItem {
+            lines.append(contentsOf: [
+                "",
+                "## Work Item",
+                "- id: \(workItem.id.rawValue)",
+                "- kind: \(workItem.kind.rawValue)",
+                "- title: \(workItem.title)",
+                "- status: \(workItem.status.description)"
+            ])
+        }
+        if !workItems.isEmpty {
+            lines.append(contentsOf: ["", "## Work Items"])
+            lines.append(contentsOf: workItems.map {
+                "- \($0.id.rawValue): \($0.title) (\($0.status.description))"
+            })
+        }
+        if let links {
+            lines.append(contentsOf: [
+                "",
+                "## Links",
+                "- epic: \(links.epicID?.rawValue ?? "None")",
+                "- sprint: \(links.sprintID?.rawValue ?? "None")",
+                "- requirements: \(links.requirementIDs.map(\.rawValue).joined(separator: ", ").ifEmpty("None"))",
+                "- acceptanceCriteria: \(links.acceptanceCriterionIDs.map(\.rawValue).joined(separator: ", ").ifEmpty("None"))",
+                "- tests: \(links.testIDs.map(\.rawValue).joined(separator: ", ").ifEmpty("None"))"
+            ])
+        }
+        if !gaps.isEmpty {
+            lines.append(contentsOf: ["", "## Gaps"])
+            lines.append(contentsOf: gaps.map { "- \($0)" })
+        }
+        return lines.joined(separator: "\n")
+    }
+}
+
 private struct AICockpitAcceptanceCriterionSummary: Codable, Equatable {
     let id: AirframeID
     let ownerID: AirframeID
@@ -3059,6 +3657,95 @@ private struct AICockpitEpicCoverage: Codable, Equatable {
     let acceptanceCriteria: [AICockpitEpicCriterionCoverage]
     let blockerMessages: [String]
     let isReady: Bool
+}
+
+private struct AICockpitPlanSummary: Codable, Equatable {
+    let id: AirframeID
+    let title: String
+    let decisionState: AirframeCanonicalPlanDecisionState
+    let targetEpicID: AirframeID?
+    let targetSprintID: AirframeID?
+    let targetTaskIDs: [AirframeID]
+
+    init(_ record: AirframeCanonicalImplementationPlanRecord) {
+        self.id = record.id
+        self.title = record.title
+        self.decisionState = record.decisionState
+        self.targetEpicID = record.targetEpicID
+        self.targetSprintID = record.targetSprintID
+        self.targetTaskIDs = record.targetTaskIDs
+    }
+}
+
+private struct AICockpitPlanCommandEnvelope: Codable, Equatable {
+    let status: String
+    let kind: String
+    let message: String
+    let backendCapabilities: AirframeBackendCapabilities?
+    let plan: AirframeCanonicalImplementationPlanRecord?
+    let plans: [AICockpitPlanSummary]
+
+    var markdown: String {
+        func list(_ values: [String]) -> [String] {
+            values.isEmpty ? ["- None"] : values.map { "- \($0)" }
+        }
+
+        var lines = [
+            "# Airframe Command",
+            "",
+            "- status: \(status)",
+            "- kind: \(kind)",
+            "- message: \(message)"
+        ]
+
+        if let backendCapabilities {
+            lines.append("- backend: \(backendCapabilities.backendKind)")
+        }
+
+        if !plans.isEmpty {
+            lines.append("")
+            lines.append("## Plans")
+            lines.append("")
+            lines.append("| Plan | State | Epic | Sprint | Tasks | Title |")
+            lines.append("| ---- | ----- | ---- | ------ | ----- | ----- |")
+            for plan in plans {
+                lines.append("| \(plan.id.rawValue) | \(plan.decisionState.description) | \(plan.targetEpicID?.rawValue ?? "None") | \(plan.targetSprintID?.rawValue ?? "None") | \(plan.targetTaskIDs.map(\.rawValue).joined(separator: ", ").ifEmpty("None")) | \(plan.title) |")
+            }
+        }
+
+        if let plan {
+            lines.append("")
+            lines.append("## Plan")
+            lines.append("")
+            lines.append("- ID: \(plan.id.rawValue)")
+            lines.append("- Title: \(plan.title)")
+            lines.append("- State: \(plan.decisionState.description)")
+            lines.append("- Epic: \(plan.targetEpicID?.rawValue ?? "None")")
+            lines.append("- Sprint: \(plan.targetSprintID?.rawValue ?? "None")")
+            lines.append("- Tasks: \(plan.targetTaskIDs.map(\.rawValue).joined(separator: ", ").ifEmpty("None"))")
+            lines.append("- Proposed By: \(plan.proposedByActorID.rawValue)")
+            lines.append("")
+            lines.append("### Summary")
+            lines.append(plan.summary)
+            lines.append("")
+            lines.append("### Scope")
+            lines.append(contentsOf: list(plan.scope))
+            lines.append("")
+            lines.append("### File Changes")
+            lines.append(contentsOf: list(plan.fileChanges))
+            lines.append("")
+            lines.append("### Commands")
+            lines.append(contentsOf: list(plan.commands))
+            lines.append("")
+            lines.append("### External Effects")
+            lines.append(contentsOf: list(plan.externalEffects))
+            lines.append("")
+            lines.append("### Verification")
+            lines.append(contentsOf: list(plan.verificationCriteria))
+        }
+
+        return lines.joined(separator: "\n")
+    }
 }
 
 private struct AICockpitAcceptanceCriteriaCommandEnvelope: Codable, Equatable {

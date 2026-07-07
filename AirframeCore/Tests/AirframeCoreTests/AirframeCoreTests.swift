@@ -262,6 +262,109 @@ import Foundation
     )
 }
 
+@Test func canonicalPlanRecordsPersistAndHumanDecisionAudits() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCorePlanReview-\(UUID().uuidString)")
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    let plan = AirframeCanonicalImplementationPlanRecord(
+        id: AirframeID("PLAN-023-001"),
+        title: "Plan review workflow",
+        summary: "Add canonical plan review and approval.",
+        proposedByActorID: AirframeID("ACTOR-LLM"),
+        targetEpicID: AirframeID("EP-023"),
+        targetSprintID: AirframeID("SP-036"),
+        targetTaskIDs: [AirframeID("T-0154")],
+        scope: ["Core model"],
+        fileChanges: ["AirframeCore/Sources/AirframeCore/PlanReview.swift"],
+        commands: ["swift test --package-path AirframeCore"],
+        externalEffects: ["None"],
+        verificationCriteria: ["Plan decisions are audited."]
+    )
+    try repository.store.save(plan)
+
+    let actor = AirframeActor(
+        id: AirframeID("ACTOR-HUMAN"),
+        displayName: "Human Reviewer",
+        authorityClass: .humanReviewer,
+        credentialSource: .localSession
+    )
+    let credential = AirframeCredentialContext(
+        credentialID: AirframeID("CRED-HUMAN"),
+        actorID: actor.id,
+        credentialSource: .localSession,
+        executionProjectID: AirframeID("PRJ-AIRFRAME"),
+        allowedProjectIDs: [AirframeID("PRJ-AIRFRAME")]
+    )
+    let context = try AirframeCertifiedContext(
+        actor: actor,
+        credential: credential,
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+    let result = try AirframePlanReviewService().decide(
+        planID: plan.id,
+        outcome: .approved,
+        note: "Approved for implementation.",
+        context: context,
+        targetProjectID: AirframeID("PRJ-AIRFRAME"),
+        repository: repository,
+        decisionID: AirframeID("PD-023-001"),
+        auditID: AirframeID("AUD-023-001"),
+        decidedAt: Date(timeIntervalSince1970: 0)
+    )
+
+    let loadedPlan = try #require(try repository.store.load(AirframeCanonicalImplementationPlanRecord.self, id: plan.id))
+    let loadedDecision = try #require(try repository.store.load(AirframeCanonicalPlanDecisionRecord.self, id: AirframeID("PD-023-001")))
+    let loadedAudit = try #require(try repository.store.load(AirframeCanonicalAuditEventRecord.self, id: AirframeID("AUD-023-001")))
+
+    #expect(result.plan.decisionState == .approved)
+    #expect(loadedPlan.decisionState == .approved)
+    #expect(loadedPlan.auditEventIDs == [AirframeID("AUD-023-001")])
+    #expect(loadedDecision.outcome == .approved)
+    #expect(loadedAudit.event.action == "OP-HUMAN-APPROVE-PLAN")
+}
+
+@Test func canonicalPlanDecisionDeniesLLMAgent() throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appending(path: "AirframeCorePlanReviewDenied-\(UUID().uuidString)")
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalImplementationPlanRecord(
+            id: AirframeID("PLAN-023-002"),
+            title: "Plan review workflow",
+            summary: "Add canonical plan review and approval.",
+            proposedByActorID: AirframeID("ACTOR-LLM")
+        )
+    )
+    let actor = AirframeActor(
+        id: AirframeID("ACTOR-LLM"),
+        displayName: "AICockpit Agent",
+        authorityClass: .llmAgent,
+        credentialSource: .cliEnvironment
+    )
+    let credential = AirframeCredentialContext(
+        credentialID: AirframeID("CRED-LLM"),
+        actorID: actor.id,
+        credentialSource: .cliEnvironment,
+        executionProjectID: AirframeID("PRJ-AIRFRAME"),
+        allowedProjectIDs: [AirframeID("PRJ-AIRFRAME")]
+    )
+    let context = try AirframeCertifiedContext(
+        actor: actor,
+        credential: credential,
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(throws: AirframeBackendError.authorityDenied(.authorityClassNotPermitted)) {
+        try AirframePlanReviewService().decide(
+            planID: AirframeID("PLAN-023-002"),
+            outcome: .approved,
+            context: context,
+            targetProjectID: AirframeID("PRJ-AIRFRAME"),
+            repository: repository
+        )
+    }
+}
+
 @Test func canonicalRequirementRecordsRoundTripWithRevisionLinkage() throws {
     let requirement = AirframeCanonicalRequirementRecord(
         id: AirframeID("REQ-0001"),
@@ -1675,6 +1778,12 @@ import Foundation
     #expect(catalog.transitions(for: .epic).contains {
         $0.fromStatus == .active && $0.toStatus == .backlog
     })
+    #expect(catalog.transitions(for: .issue).contains {
+        $0.fromStatus == .implementedNotVerified && $0.toStatus == .active
+    })
+    #expect(catalog.transitions(for: .issue).contains {
+        $0.fromStatus == .implementedNotVerified && $0.toStatus == .backlog
+    })
 }
 
 @Test func canonicalWorkflowPolicyCatalogProtectsHumanOnlyTransitions() throws {
@@ -2502,6 +2611,40 @@ import Foundation
 
     #expect(decision == .allowed)
     #expect(decision.isAllowed)
+}
+
+@Test func workflowEvaluatorAllowsIssueRollbackTransitions() throws {
+    let context = try certifiedContext(authorityClass: .llmAgent)
+    let evaluator = AirframeWorkflowTransitionEvaluator()
+    let toActive = AirframeWorkflowTransition(
+        workItemID: AirframeID("I-0029"),
+        kind: .issue,
+        fromStatus: .implementedNotVerified,
+        toStatus: .active,
+        operation: AirframeOperation(id: AirframeID("OP-RETURN-ISSUE-TO-ACTIVE"), category: .workflowTransition)
+    )
+    let toBacklog = AirframeWorkflowTransition(
+        workItemID: AirframeID("I-0029"),
+        kind: .issue,
+        fromStatus: .implementedNotVerified,
+        toStatus: .backlog,
+        operation: AirframeOperation(id: AirframeID("OP-RETURN-ISSUE-TO-BACKLOG"), category: .workflowTransition)
+    )
+
+    #expect(
+        evaluator.evaluate(
+            context: context,
+            transition: toActive,
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        ) == .allowed
+    )
+    #expect(
+        evaluator.evaluate(
+            context: context,
+            transition: toBacklog,
+            targetProjectID: AirframeID("PRJ-AIRFRAME")
+        ) == .allowed
+    )
 }
 
 @Test func workflowEvaluatorDeniesInvalidTransitionBeforeAuthority() throws {

@@ -6,6 +6,8 @@
     "Markdown Projection"
   ],
   "dateReported" : "2026-07-07",
+  "dateResolved" : "2026-07-07",
+  "dateVerified" : "2026-07-07",
   "epicID" : {
     "rawValue" : "EP-024"
   },
@@ -19,7 +21,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-07-07T13:55:00Z"
+    "updatedAt" : "2026-07-07T20:32:54Z"
   },
   "notes" : [
     "This issue absorbs the broader artifact-management scope that was split out of I-0027.",
@@ -29,7 +31,8 @@
     "Acceptance Criteria: AICockpit can link Tasks, Sprints, and Epics to one another and to acceptance criteria, requirements, and tests.",
     "Acceptance Criteria: AICockpit can report coverage and missing-link gaps for the artifact graph.",
     "Acceptance Criteria: Markdown export renders the work-product relationships consistently from canonical state.",
-    "Acceptance Criteria: Tests cover the new management commands and the traceability graph behavior."
+    "Acceptance Criteria: Tests cover the new management commands and the traceability graph behavior.",
+    "Implemented on 2026-07-07. Evidence: `swift test --package-path AICockpit` and `swift test --package-path AirframeCore` passed; added `artifactManagementCommandsListInspectLinkAndReportGaps` coverage."
   ],
   "observedBehavior" : "AICockpit supports some work-item creation and status transitions, but it does not yet provide a complete management surface for Tasks, Sprints, and Epics with rich link management to acceptance criteria, requirements, and tests.",
   "reproductionSteps" : [
@@ -44,7 +47,7 @@
       "rawValue" : "I-0028"
     },
     "kind" : "issue",
-    "status" : "backlog",
+    "status" : "implementedVerified",
     "title" : "Add AICockpit management for Tasks, Sprints, and Epics"
   }
 }

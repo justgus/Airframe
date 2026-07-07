@@ -13,6 +13,8 @@ public struct AirframeCanonicalStoreState: Sendable {
     public let tests: [AirframeCanonicalTestRecord]
     public let testSuites: [AirframeCanonicalTestSuiteRecord]
     public let testRuns: [AirframeCanonicalTestRunRecord]
+    public let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
+    public let planDecisions: [AirframeCanonicalPlanDecisionRecord]
     public let evidence: [AirframeCanonicalEvidenceSummaryRecord]
 
     public init(
@@ -28,6 +30,8 @@ public struct AirframeCanonicalStoreState: Sendable {
         tests: [AirframeCanonicalTestRecord] = [],
         testSuites: [AirframeCanonicalTestSuiteRecord] = [],
         testRuns: [AirframeCanonicalTestRunRecord] = [],
+        implementationPlans: [AirframeCanonicalImplementationPlanRecord] = [],
+        planDecisions: [AirframeCanonicalPlanDecisionRecord] = [],
         evidence: [AirframeCanonicalEvidenceSummaryRecord] = []
     ) {
         self.workspaces = workspaces
@@ -42,6 +46,8 @@ public struct AirframeCanonicalStoreState: Sendable {
         self.tests = tests
         self.testSuites = testSuites
         self.testRuns = testRuns
+        self.implementationPlans = implementationPlans
+        self.planDecisions = planDecisions
         self.evidence = evidence
     }
 }
@@ -71,6 +77,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             tests: store.list(AirframeCanonicalTestRecord.self),
             testSuites: store.list(AirframeCanonicalTestSuiteRecord.self),
             testRuns: store.list(AirframeCanonicalTestRunRecord.self),
+            implementationPlans: store.list(AirframeCanonicalImplementationPlanRecord.self),
+            planDecisions: store.list(AirframeCanonicalPlanDecisionRecord.self),
             evidence: store.list(AirframeCanonicalEvidenceSummaryRecord.self)
         )
     }

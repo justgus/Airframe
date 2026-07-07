@@ -49,6 +49,8 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
             humanVerificationTransition(kind: .issue),
             issueTransition(.implementedVerified, .closed, "OP-CLOSE-ISSUE"),
             issueTransition(.active, .backlog, "OP-RETURN-ISSUE-TO-BACKLOG"),
+            issueTransition(.implementedNotVerified, .active, "OP-RETURN-ISSUE-TO-ACTIVE"),
+            issueTransition(.implementedNotVerified, .backlog, "OP-RETURN-ISSUE-TO-BACKLOG"),
 
             sprintTransition(.backlog, .planning, "OP-PLAN-SPRINT"),
             sprintTransition(.planning, .active, "OP-ACTIVATE-SPRINT"),

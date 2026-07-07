@@ -14,12 +14,61 @@ import Foundation
     #expect(help.contains("aicockpit requirements import --format csv|json --file path --dry-run"))
     #expect(help.contains("aicockpit requirements export --format csv|json"))
     #expect(help.contains("aicockpit tests list"))
+    #expect(help.contains("aicockpit plans submit"))
     #expect(help.contains("aicockpit tests inspect TEST-ID"))
     #expect(help.contains("aicockpit tests validate"))
     #expect(help.contains("aicockpit task propose"))
     #expect(help.contains("aicockpit work ready"))
     #expect(help.contains("aicockpit github comment"))
     #expect(help.contains("--backend canonical|local-fixture|github-fixture|github-issues"))
+}
+
+@Test func plansSubmitListInspectAndDenyHumanDecisions() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let submit = AICockpitCommand.response(arguments: [
+        "plans", "submit",
+        "--config", configPath,
+        "--id", "PLAN-023-001",
+        "--title", "Implement plan review",
+        "--summary", "Add plan records, commands, and UI.",
+        "--task", "T-0154",
+        "--scope", "AirframeCore model",
+        "--file-change", "AirframeCore/Sources/AirframeCore/PlanReview.swift",
+        "--command", "swift test --package-path AirframeCore",
+        "--external-effect", "None",
+        "--verification", "Plan approval is human-only.",
+        "--output", "json"
+    ])
+    let list = AICockpitCommand.response(arguments: [
+        "plans", "list",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let inspect = AICockpitCommand.response(arguments: [
+        "plans", "inspect", "PLAN-023-001",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let approve = AICockpitCommand.response(arguments: [
+        "plans", "approve", "PLAN-023-001",
+        "--config", configPath,
+        "--output", "json"
+    ])
+
+    #expect(submit.exitCode == 0)
+    #expect(submit.standardOutput.contains("\"kind\" : \"canonicalPlanSubmission\""))
+    #expect(submit.standardOutput.contains("\"decisionState\" : \"pending\""))
+    #expect(submit.standardOutput.contains("\"targetEpicID\""))
+    #expect(submit.standardOutput.contains("EP-9700"))
+    #expect(list.exitCode == 0)
+    #expect(list.standardOutput.contains("\"kind\" : \"canonicalPlanList\""))
+    #expect(list.standardOutput.contains("PLAN-023-001"))
+    #expect(inspect.exitCode == 0)
+    #expect(inspect.standardOutput.contains("\"kind\" : \"canonicalPlanInspection\""))
+    #expect(inspect.standardOutput.contains("PlanReview.swift"))
+    #expect(approve.exitCode == 77)
+    #expect(approve.standardOutput.contains("category: planDecision"))
+    #expect(approve.standardOutput.contains("reason: authorityClassNotPermitted"))
 }
 
 @Test func configDiagnoseReturnsStableMarkdownContract() {
@@ -1037,6 +1086,121 @@ import Foundation
     #expect(requirementProjection.contains("REQ-9700"))
 }
 
+@Test func artifactManagementCommandsListInspectLinkAndReportGaps() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            epicIDs: [AirframeID("EP-9728")],
+            sprintIDs: [AirframeID("SP-9728")],
+            taskIDs: [AirframeID("T-9728")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-9728"),
+                kind: .epic,
+                title: "Artifact management",
+                status: .active
+            ),
+            owner: "Airframe",
+            goal: "Manage artifact links from AICockpit.",
+            rationale: "Agents should not edit canonical JSON directly."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("SP-9728"),
+                kind: .sprint,
+                title: "Artifact management sprint",
+                status: .active
+            ),
+            epicID: AirframeID("EP-9728"),
+            goal: "Exercise management commands."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-9728"),
+                kind: .task,
+                title: "Linkable artifact task",
+                status: .active
+            ),
+            component: "AICockpit",
+            priority: .medium,
+            rationale: "AICockpit should link tasks to traceability records."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9728"),
+            title: "Artifact links",
+            statement: "AICockpit shall manage work-product traceability links.",
+            status: .active
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTestRecord(
+            id: AirframeID("TEST-9728"),
+            title: "Artifact command test",
+            objective: "Verify artifact link commands.",
+            kind: .regression,
+            status: .ready
+        )
+    )
+
+    let gapsBefore = AICockpitCommand.response(arguments: [
+        "task", "gaps",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let link = AICockpitCommand.response(arguments: [
+        "task", "link", "T-9728",
+        "--config", configPath,
+        "--epic", "EP-9728",
+        "--sprint", "SP-9728",
+        "--requirement", "REQ-9728",
+        "--test", "TEST-9728",
+        "--output", "json"
+    ])
+    let inspect = AICockpitCommand.response(arguments: [
+        "task", "inspect", "T-9728",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let list = AICockpitCommand.response(arguments: [
+        "task", "list",
+        "--config", configPath,
+        "--output", "json"
+    ])
+    let savedTask = try repository.store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-9728"))
+    let savedTest = try repository.store.load(AirframeCanonicalTestRecord.self, id: AirframeID("TEST-9728"))
+
+    #expect(gapsBefore.exitCode == 0)
+    #expect(gapsBefore.standardOutput.contains("T-9728 has no requirement links."))
+    #expect(gapsBefore.standardOutput.contains("T-9728 has no linked tests."))
+    #expect(link.exitCode == 0)
+    #expect(link.standardOutput.contains("\"kind\" : \"taskLinks\""))
+    #expect(inspect.exitCode == 0)
+    #expect(inspect.standardOutput.contains("\"requirementIDs\" : ["))
+    #expect(inspect.standardOutput.contains("\"REQ-9728\""))
+    #expect(inspect.standardOutput.contains("\"TEST-9728\""))
+    #expect(list.exitCode == 0)
+    #expect(list.standardOutput.contains("\"kind\" : \"taskList\""))
+    #expect(list.standardOutput.contains("\"T-9728\""))
+    #expect(savedTask?.epicID == AirframeID("EP-9728"))
+    #expect(savedTask?.sprintID == AirframeID("SP-9728"))
+    #expect(savedTask?.requirementIDs == [AirframeID("REQ-9728")])
+    #expect(savedTest?.workItemIDs == [AirframeID("T-9728")])
+}
+
 @Test func githubConfiguredCanonicalSprintAndEpicWorkflowCommandsStayLocalOffline() throws {
     let configPath = try temporaryGitHubConfigurationWithCanonicalStatePath()
     let rootURL = URL(filePath: configPath).deletingLastPathComponent()
@@ -1618,6 +1782,47 @@ import Foundation
     #expect(result.exitCode == 78)
     #expect(result.standardOutput.contains("Invalid workflow transition"))
     #expect(packet.standardOutput.contains("\"status\" : \"backlog\""))
+}
+
+@Test func issueStatusAllowsResolvedRollbackTransitions() {
+    let store = temporaryStorePath()
+    _ = AICockpitCommand.response(arguments: [
+        "issue", "create",
+        "--store", store,
+        "--id", "I-9029",
+        "--title", "Rollback issue",
+        "--status", "active"
+    ])
+    let resolved = AICockpitCommand.response(arguments: [
+        "issue", "status", "I-9029",
+        "--store", store,
+        "--to", "resolved",
+        "--output", "json"
+    ])
+    let active = AICockpitCommand.response(arguments: [
+        "issue", "status", "I-9029",
+        "--store", store,
+        "--to", "active",
+        "--output", "json"
+    ])
+    _ = AICockpitCommand.response(arguments: [
+        "issue", "status", "I-9029",
+        "--store", store,
+        "--to", "resolved"
+    ])
+    let backlog = AICockpitCommand.response(arguments: [
+        "issue", "status", "I-9029",
+        "--store", store,
+        "--to", "backlog",
+        "--output", "json"
+    ])
+
+    #expect(resolved.exitCode == 0)
+    #expect(resolved.standardOutput.contains("\"status\" : \"implementedNotVerified\""))
+    #expect(active.exitCode == 0)
+    #expect(active.standardOutput.contains("\"status\" : \"active\""))
+    #expect(backlog.exitCode == 0)
+    #expect(backlog.standardOutput.contains("\"status\" : \"backlog\""))
 }
 
 @Test func githubIssuesBackendRequiresApprovalForLegacyProposeMutation() {

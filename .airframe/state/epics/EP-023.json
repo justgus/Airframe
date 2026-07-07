@@ -13,6 +13,7 @@
       "rawValue" : "EP-023-AC-04"
     }
   ],
+  "closeDate" : "2026-07-07",
   "goal" : "Let AgileCockpit present proposed implementation plans for human review, approval, deferral, or rejection before work begins.",
   "issueIDs" : [
     {
@@ -29,7 +30,7 @@
       "patch" : 0
     },
     "source" : "docs\/Epics\/Epic-backlog.md",
-    "updatedAt" : "2026-07-07T01:58:40Z"
+    "updatedAt" : "2026-07-07T21:11:24Z"
   },
   "notes" : [
     "Idea captured from I-0020 planning discussion on 2026-06-26.",
@@ -82,7 +83,7 @@
       "rawValue" : "EP-023"
     },
     "kind" : "epic",
-    "status" : "backlog",
+    "status" : "closed",
     "title" : "AgileCockpit Plan Review and Approval"
   }
 }

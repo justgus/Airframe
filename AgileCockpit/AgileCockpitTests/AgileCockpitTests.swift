@@ -98,6 +98,7 @@ import Foundation
         "Dashboard",
         "Verification",
         "Sprint & Epic",
+        "Plan Review",
         "Requirements",
         "Tests",
         "Metrics & Audit"
@@ -178,6 +179,108 @@ import Foundation
     #expect(model.epicAcceptanceCriteriaSummary?.verifiedCount == 1)
     #expect(model.auditRows.last?.action == "OP-HUMAN-VERIFY-EPIC-CRITERION")
     #expect(model.statusMessage == "EP-018-AC-01 verified.")
+    #expect(model.verificationQueueState == .loaded)
+    #expect(model.selectedEpicCriterionID == AirframeID("EP-018-AC-01"))
+}
+
+@MainActor
+@Test func agileCockpitReviewsCanonicalImplementationPlan() throws {
+    let configURL = try temporaryLiveConfigurationURL(
+        activeSprintID: "SP-036",
+        activeEpicID: "EP-023",
+        backendKind: "local-fixture"
+    )
+    let rootURL = configURL.deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe",
+            activeEpicID: AirframeID("EP-023"),
+            activeSprintID: AirframeID("SP-036"),
+            epicIDs: [AirframeID("EP-023")],
+            sprintIDs: [AirframeID("SP-036")],
+            taskIDs: [AirframeID("T-0154")]
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-023"),
+                kind: .epic,
+                title: "AgileCockpit Plan Review and Approval",
+                status: .active
+            ),
+            owner: "Agile Cockpit",
+            goal: "Review plans before implementation.",
+            rationale: "Plan decisions are human-owned."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalSprintRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("SP-036"),
+                kind: .sprint,
+                title: "Plan Review Foundations",
+                status: .active
+            ),
+            epicID: AirframeID("EP-023"),
+            goal: "Implement plan review."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-0154"),
+                kind: .task,
+                title: "Define canonical plan review record and decision model",
+                status: .active
+            ),
+            component: "AirframeCore",
+            priority: .high,
+            rationale: "Plan review needs canonical state.",
+            epicID: AirframeID("EP-023"),
+            sprintID: AirframeID("SP-036")
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalImplementationPlanRecord(
+            id: AirframeID("PLAN-023-001"),
+            title: "SP-036 implementation plan",
+            summary: "Add canonical plan review.",
+            proposedByActorID: AirframeID("ACTOR-LLM"),
+            targetEpicID: AirframeID("EP-023"),
+            targetSprintID: AirframeID("SP-036"),
+            targetTaskIDs: [AirframeID("T-0154")],
+            scope: ["AirframeCore model"],
+            fileChanges: ["AirframeCore/Sources/AirframeCore/PlanReview.swift"],
+            commands: ["swift test --package-path AirframeCore"],
+            externalEffects: ["None"],
+            verificationCriteria: ["Plan decisions are human-only."]
+        )
+    )
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    #expect(model.selectedSection != .planReview)
+    #expect(model.implementationPlans.map(\.id) == [AirframeID("PLAN-023-001")])
+    #expect(model.selectedPlanRecord?.decisionState == .pending)
+    #expect(model.planReviewStatusText == "1 plan pending human decision.")
+
+    model.planDecisionCommentText = "Approved for implementation."
+    model.approveSelectedPlan()
+
+    let state = try repository.loadState()
+    #expect(state.implementationPlans.first?.decisionState == .approved)
+    #expect(state.planDecisions.first?.outcome == .approved)
+    #expect(state.planDecisions.first?.decidedByActorID == AirframeID("ACTOR-HUMAN-REVIEWER"))
+    #expect(model.selectedPlanRecord?.decisionState == .approved)
+    #expect(model.auditRows.last?.action == "OP-HUMAN-APPROVE-PLAN")
+    #expect(model.statusMessage == "PLAN-023-001 approved.")
 }
 
 @MainActor

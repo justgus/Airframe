@@ -65,6 +65,16 @@ extension AirframeCanonicalTestRunRecord: AirframeCanonicalFileRecord {
     public var canonicalRecordID: AirframeID { id }
 }
 
+extension AirframeCanonicalImplementationPlanRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "implementation-plans"
+    public var canonicalRecordID: AirframeID { id }
+}
+
+extension AirframeCanonicalPlanDecisionRecord: AirframeCanonicalFileRecord {
+    public static let canonicalDirectoryName = "plan-decisions"
+    public var canonicalRecordID: AirframeID { id }
+}
+
 extension AirframeCanonicalEvidenceSummaryRecord: AirframeCanonicalFileRecord {
     public static let canonicalDirectoryName = "evidence"
     public var canonicalRecordID: AirframeID { id }

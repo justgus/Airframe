@@ -4,9 +4,9 @@ Currently: **165 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 6 |
+| Backlog | 0 |
 | Active | 0 |
-| Implemented - Not Verified | 0 |
+| Implemented - Not Verified | 6 |
 | Implemented - Verified | 159 |
 | Closed | 0 |
 
@@ -165,12 +165,12 @@ Currently: **165 total Tasks**
 | T-0151 | #164 | Harden AgileCockpit offline application flows | Implemented - Verified |
 | T-0152 | #165 | Prove Sprint and Epic workflows operate offline | Implemented - Verified |
 | T-0153 | #166 | Add offline regression verification suite | Implemented - Verified |
-| T-0154 | TBD | Define canonical plan review record and decision model | Backlog |
-| T-0155 | TBD | Add AirframeCore authority and audit support for plan decisions | Backlog |
-| T-0156 | TBD | Add AICockpit plan submission and read commands | Backlog |
-| T-0157 | TBD | Add AgileCockpit plan review UI | Backlog |
-| T-0158 | TBD | Wire AgileCockpit human plan decision actions | Backlog |
-| T-0159 | TBD | Add plan review regression coverage and workflow documentation | Backlog |
+| T-0154 | TBD | Define canonical plan review record and decision model | Implemented - Not Verified |
+| T-0155 | TBD | Add AirframeCore authority and audit support for plan decisions | Implemented - Not Verified |
+| T-0156 | TBD | Add AICockpit plan submission and read commands | Implemented - Not Verified |
+| T-0157 | TBD | Add AgileCockpit plan review UI | Implemented - Not Verified |
+| T-0158 | TBD | Wire AgileCockpit human plan decision actions | Implemented - Not Verified |
+| T-0159 | TBD | Add plan review regression coverage and workflow documentation | Implemented - Not Verified |
 | T-0160 | #170 | Define canonical test records and requirement trace model | Implemented - Verified |
 | T-0161 | #174 | Seed canonical test definitions for the Airframe dataset | Implemented - Verified |
 | T-0162 | #169 | Add AICockpit test definition and management commands | Implemented - Verified |

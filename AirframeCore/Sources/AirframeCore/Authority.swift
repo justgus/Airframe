@@ -6,6 +6,7 @@ public enum AirframeOperationCategory: String, Codable, Equatable, Sendable {
     case evidence
     case workflowTransition
     case humanAcceptance
+    case planDecision
     case sprintControl
     case epicControl
     case policyConfiguration
@@ -98,12 +99,12 @@ public struct AirframeAuthorityEvaluator: Sendable {
             switch category {
             case .read, .proposal, .evidence, .workflowTransition, .sprintControl, .epicControl:
                 true
-            case .humanAcceptance, .policyConfiguration, .destructive:
+            case .humanAcceptance, .planDecision, .policyConfiguration, .destructive:
                 false
             }
         case .humanReviewer:
             switch category {
-            case .read, .evidence, .humanAcceptance:
+            case .read, .evidence, .humanAcceptance, .planDecision:
                 true
             case .proposal, .workflowTransition, .sprintControl, .epicControl, .policyConfiguration, .destructive:
                 false
@@ -112,14 +113,14 @@ public struct AirframeAuthorityEvaluator: Sendable {
             switch category {
             case .read, .proposal, .evidence, .workflowTransition:
                 true
-            case .humanAcceptance, .sprintControl, .epicControl, .policyConfiguration, .destructive:
+            case .humanAcceptance, .planDecision, .sprintControl, .epicControl, .policyConfiguration, .destructive:
                 false
             }
         case .automation:
             switch category {
             case .read, .proposal, .evidence, .workflowTransition:
                 true
-            case .humanAcceptance, .sprintControl, .epicControl, .policyConfiguration, .destructive:
+            case .humanAcceptance, .planDecision, .sprintControl, .epicControl, .policyConfiguration, .destructive:
                 false
             }
         case .readOnlyObserver:

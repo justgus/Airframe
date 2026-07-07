@@ -5,15 +5,15 @@
   "id" : {
     "rawValue" : "EP-024-AC-05"
   },
-  "isVerified" : false,
+  "isVerified" : true,
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
     },
-    "source" : ".airframe/state/epics/EP-024.json",
-    "updatedAt" : "2026-07-07T13:00:00Z"
+    "source" : ".airframe\/state\/epics\/EP-024.json",
+    "updatedAt" : "2026-07-07T20:44:21Z"
   },
   "ownerID" : {
     "rawValue" : "EP-024"

@@ -2,16 +2,10 @@
 
 Epics listed here are proposed and queued for future planning.
 
-Currently: **1 backlog Epic**
+Currently: **0 backlog Epics**
 
 ---
 
-## EP-023: AgileCockpit Plan Review and Approval
-
-**Status:** Backlog
-**Owner:** Human / Airframe Planning
-
-**Goal:**
-Let AgileCockpit present proposed implementation plans for human review, approval, deferral, or rejection before work begins.
+No Epics are currently in Backlog.
 
 *Last Updated: 2026-07-07*
