@@ -36,16 +36,17 @@ See: [Issue-active.md](Issue-active.md)
 
 ## Backlogged Issues
 
-Currently: **0 backlogged Issues**
+Currently: **1 backlogged Issues**
 
 | Issue | GitHub Issue | Title | Severity | Status |
 | ----- | ------------ | ----- | -------- | ------ |
+| I-0027 | #177 | Agile Cockpit: support branch-based workspace mutations | Medium | Open |
 
 See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **13 verified Issues** | Next available: **I-0027**
+Currently: **0 verified Issues** | Next available: **I-0028**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
@@ -68,12 +69,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 26
-- **Backlogged:** 0
+- **Total Issues:** 1
+- **Backlogged:** 1
 - **Active/In Progress:** 0
 - **Resolved - Not Verified:** 13
 - **Verified:** 13
 - **Closed:** 0
-- **Next available:** I-0027
+- **Next available:** I-0028
 
-*Last Updated: 2026-07-06 (I-0025 and I-0026 verified)*
+*Last Updated: 2026-08-22 (GitHub issue sync)*
