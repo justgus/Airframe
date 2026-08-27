@@ -2,6 +2,15 @@
 
 Sprints are fixed execution windows that group Tasks and Issues into a focused body of work. Sprints support the Agile Cockpit requirement for sprint control, sprint health, burndown, velocity, and human-controlled closure.
 
+## Authority and interfaces
+
+- AirframeCore workflow policy and canonical records under `.airframe/state/` define current Sprint state.
+- Use AICockpit for agent discovery and authorized Sprint transitions. Use AgileCockpit for human-only Sprint closure.
+- `docs/generated/Sprints/` is deterministic output from canonical state and must never be hand-edited.
+- Files under `docs/Sprints/` are historical archives, compatibility views, or redirects. They are not workflow mutation surfaces or independent current-state authorities.
+
+For documentation consistency work, follow [Audit Guidelines](../Audits/Audit-Guidelines.md), including its canonical authority order and Findings, Rulings, and Remediation phase gates.
+
 ## Lifecycle
 
 ```text
@@ -28,10 +37,13 @@ Only a human may close a Sprint.
 docs/Sprints/
 ├── Sprint-GUIDELINES.md
 ├── Sprint-Documentation.md
+├── Sprint-backlog.md
 ├── Sprint-active.md
 └── Closed/
     └── Sprint-SP-XXX.md
 ```
+
+Historical archives remain supported. In a retained compatibility projection, `Sprint-backlog.md` represents Backlog and Planning; `Sprint-active.md` represents Active and Review. These files must be deterministically generated or be unambiguous redirects, never hand-maintained authorities.
 
 ## Sprint Template
 
@@ -79,8 +91,8 @@ docs/Sprints/
 
 ## Update Checklist
 
-- Update `Sprint-Documentation.md` whenever a Sprint is created, activated, reviewed, closed, or has assignment changes.
-- Update assigned Task and Issue records when Sprint assignment changes.
-- Keep backlogged and planning Sprints in `Sprint-active.md` until the Sprint is closed.
-- Keep at most one active Sprint in `Sprint-active.md`.
-- Archive closed Sprints under `Closed/`.
+- Perform Sprint creation, planning, activation, review, and assignment changes through the authorized canonical interface.
+- Preserve the human-only boundary for Sprint closure.
+- Regenerate deterministic Sprint projections after canonical changes; do not hand-edit them.
+- Project Backlog and Planning into `Sprint-backlog.md`, and Active and Review into `Sprint-active.md`, only when those Legacy compatibility views remain supported.
+- Preserve historical Closed archives; do not edit them as the source of current state.

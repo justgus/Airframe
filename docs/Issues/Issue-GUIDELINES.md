@@ -2,6 +2,16 @@
 
 Issues track bugs, regressions, and unintended behavior in Agile Airframe. Planned improvements belong in Tasks.
 
+## Authority and interfaces
+
+- AirframeCore workflow policy and canonical records under `.airframe/state/` define current Issue state.
+- Use AICockpit for agent discovery, evidence, and authorized transitions. Use AgileCockpit for human-only verification and closure.
+- `docs/generated/Issues/` is deterministic output from canonical state and must never be hand-edited.
+- Files under `docs/Issues/` are historical archives, compatibility views, or redirects. They are not workflow mutation surfaces or independent current-state authorities.
+- GitHub is an optional synchronization backend, not the canonical record.
+
+For documentation consistency work, follow [Audit Guidelines](../Audits/Audit-Guidelines.md), including its canonical authority order and Findings, Rulings, and Remediation phase gates.
+
 ## Lifecycle
 
 ```text
@@ -24,18 +34,19 @@ Backlog -> In Progress -> Resolved - Not Verified -> Resolved - Verified
 
 ## GitHub Issue Mapping
 
-Every Airframe Issue must have exactly one GitHub Issue number. Every GitHub Issue used for Issue tracking must identify exactly one Airframe Issue ID.
+GitHub mapping is optional. Canonical Issue records must distinguish these mapping conditions with explicit system-supported states: backend not configured, intentionally local, pending synchronization, mapped, and mapping error. Until those states are implemented, a missing GitHub Issue is not by itself invalid under a local-only profile.
 
 Rules:
 
-- A new local Issue must create its GitHub Issue at the same time the local Issue record is created.
+- Create a GitHub Issue only when the workspace backend and requested workflow require one.
 - A new GitHub Issue created without an Airframe ID is imported as a backlogged Airframe Issue by the nightly sync.
-- The GitHub Issue title must begin with `[I-XXXX]`.
-- The Issue record must include `**GitHub Issue:** #NNN`.
+- A mapped GitHub Issue title must begin with `[I-XXXX]`.
+- A mapped Issue record must carry the backend mapping canonically; Markdown may project `**GitHub Issue:** #NNN`.
 - The GitHub Issue body must include `Airframe Type: Issue` and `Airframe ID: I-XXXX`.
 - A GitHub Issue may not represent more than one Airframe Issue.
-- Moving an Issue to or from backlog must update both the local docs and the GitHub Issue status labels.
-- Resolving, verifying, or closing an Issue must update both the local Issue record and the linked GitHub Issue.
+- Canonical transitions must regenerate projections and synchronize an existing GitHub mapping when the backend is configured and reachable.
+- Backend list and summary operations must paginate to completeness. Any incomplete result must disclose that it is partial, its applied limit and retrieved count, continuation state when available, and the reason it is incomplete.
+- Synchronizing a previously human-Verified canonical state does not grant an agent authority to perform a new verification.
 
 See `docs/procedures/GitHub-Issue-Sync-Procedure.md` for the required synchronization procedure.
 
@@ -58,6 +69,8 @@ docs/Issues/
 └── Closed/
     └── Issue-closed-XXXX-YYYY.md
 ```
+
+Historical archives remain supported. Mutable working files and indexes must be retired as current-state authorities; a retained Legacy path must be either a deterministic canonical projection or an unambiguous redirect to `docs/generated/Issues/` or AgileCockpit.
 
 ## Issue Template
 
@@ -111,7 +124,8 @@ docs/Issues/
 
 ## Update Checklist
 
-- Update `Issue-Documentation.md` when an Issue is created, assigned, resolved, verified, or closed.
-- Keep active unresolved Issues in `Issue-active.md`.
-- Keep backlogged Issues in `Issue-backlog.md`.
-- Move verified and closed records into the appropriate archive folders.
+- Perform Issue creation, assignment, resolution, verification, and closure through the authorized canonical interface.
+- Attach evidence to canonical records and preserve the human-only boundary for verification and closure.
+- Regenerate deterministic Issue projections after canonical changes; do not hand-edit them.
+- Synchronize mapped GitHub Issues when configured and reachable, reporting partial or failed synchronization explicitly.
+- Preserve historical archives. Do not move or edit Legacy working files as the source of a status transition.

@@ -2,6 +2,15 @@
 
 Epics are strategic bodies of work that span one or more Sprints and represent a meaningful Agile Airframe milestone or capability.
 
+## Authority and interfaces
+
+- AirframeCore workflow policy and canonical records under `.airframe/state/` define current Epic state.
+- Use AICockpit for agent discovery and authorized Epic transitions. Use AgileCockpit for human-only Epic closure.
+- `docs/generated/Epics/` is deterministic output from canonical state and must never be hand-edited.
+- Files under `docs/Epics/` are historical archives, compatibility views, or redirects. They are not workflow mutation surfaces or independent current-state authorities.
+
+For documentation consistency work, follow [Audit Guidelines](../Audits/Audit-Guidelines.md), including its canonical authority order and Findings, Rulings, and Remediation phase gates.
+
 ## Epic vs. Task vs. Sprint
 
 | Concept | Scope | Duration | Tracked By |
@@ -26,6 +35,8 @@ Proposed -> Draft -> Backlog -> Active -> Complete -> Closed
 - **Complete**: Work appears complete and is pending human closeout.
 - **Closed**: Human-approved closeout is complete.
 
+Historical Closed Epics whose criterion-level verification predates canonical evidence may use only the explicitly defined migration disposition approved under Audit ruling R-03. That disposition is distinct from Verified and Unverified, must preserve provenance, and must never be used to bypass acceptance requirements for a newly closed Epic.
+
 ## Authorization
 
 AI Cockpit / agents may propose Epics, draft Epic details, update progress tables, and mark an Epic Complete pending human review.
@@ -43,6 +54,8 @@ docs/Epics/
 └── Closed/
     └── Epic-EP-XXX.md
 ```
+
+Historical archives remain supported. Mutable working files and indexes must be retired as current-state authorities; a retained Legacy path must be either a deterministic canonical projection or an unambiguous redirect to `docs/generated/Epics/` or AgileCockpit.
 
 ## Epic Template
 
@@ -92,7 +105,7 @@ docs/Epics/
 
 ## Update Checklist
 
-- Update `Epic-Documentation.md` when an Epic is proposed, activated, completed, closed, or has related Sprint/Task/Issue changes.
-- Keep Proposed and Backlog Epics in `Epic-backlog.md`.
-- Keep Draft, Active, and Complete Epics in `Epic-active.md`.
-- Archive closed Epics under `Closed/`.
+- Perform Epic creation, lifecycle transitions, relationship changes, and acceptance updates through the authorized canonical interface.
+- Preserve the human-only boundary for Epic closure.
+- Regenerate deterministic Epic projections after canonical changes; do not hand-edit them.
+- Preserve historical Closed archives. Do not move or edit Legacy working files as the source of a lifecycle transition.
