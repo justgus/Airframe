@@ -1,0 +1,22 @@
+{
+  "disposition" : "verified",
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-025-AC-02"
+  },
+  "isVerified" : true,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T16:40:13Z"
+  },
+  "ownerID" : {
+    "rawValue" : "EP-025"
+  },
+  "text" : "Historical Closed Epic acceptance is represented by a provenance-preserving disposition that is distinct from human verification and unavailable to current work."
+}

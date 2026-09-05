@@ -1,0 +1,36 @@
+{
+  "artifactReferences" : [
+    "AirframeCore/Sources/AirframeCore/DomainModels.swift",
+    "AirframeCore/Sources/AirframeCore/CanonicalRecords.swift",
+    "AirframeCore/Sources/AirframeCore/CanonicalStoreBackend.swift",
+    "AirframeCore/Sources/AirframeCore/HistoricalCloseAcceptanceMigration.swift",
+    "AirframeCore/Tests/AirframeCoreTests/AirframeCoreTests.swift",
+    "AICockpit/Sources/AICockpitKit/AICockpitCommand.swift",
+    "AgileCockpit/AgileCockpit/ContentView.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AirframeCore && swift test --package-path AICockpit; xcodebuild -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -sdk macosx build",
+  "environment" : "Local macOS development workspace; direct canonical evidence fallback approved by the user until AgileCockpit supports native canonical evidence attachment.",
+  "id" : {
+    "rawValue" : "EV-0166-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Implemented a provenance-preserving Historical Close acceptance disposition distinct from human verification; preserved legacy JSON compatibility; restricted migration eligibility to Closed EP-001 through EP-008; prevented current and future Epic close gates from accepting the historical disposition; added AgileCockpit presentation; verified the live migration preview contains exactly 42 eligible criteria. AirframeCore passed 100 tests, AICockpit passed 54 tests, and the AgileCockpit macOS build succeeded.",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0166"
+    }
+  ]
+}

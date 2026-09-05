@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-05"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "make check",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "No stale projection remains after successful mutation.",
+    "Issue terminology and all relationship statuses are correct."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-005"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify canonical mutations durably refresh all projections with correct artifact vocabulary and relationship statuses.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run mutation-to-refresh integration tests.",
+    "Regenerate the complete projection set.",
+    "Compare primary and relationship statuses to canonical state."
+  ],
+  "title" : "Complete projection freshness and terminology validation",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0175"
+    },
+    {
+      "rawValue" : "T-0176"
+    },
+    {
+      "rawValue" : "T-0177"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-06"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "make check",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Historical archives and user narrative are preserved.",
+    "All current-state paths are deterministic or unambiguous redirects."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-006"
+  },
+  "kind" : "dataValidation",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify retained Legacy paths cannot act as mutable current-state authorities or drift from canonical state.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Inventory current and historical Legacy paths.",
+    "Validate redirects or deterministic projections.",
+    "Search procedures and links for mutation-authority drift."
+  ],
+  "title" : "Legacy artifact retirement consistency",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0178"
+    },
+    {
+      "rawValue" : "T-0179"
+    },
+    {
+      "rawValue" : "T-0180"
+    }
+  ]
+}

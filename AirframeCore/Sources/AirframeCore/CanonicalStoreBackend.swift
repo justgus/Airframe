@@ -208,6 +208,7 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
     }
 
     public func epicCriteriaSummary(epicID: AirframeID) throws -> AirframeEpicAcceptanceCriteriaSummary {
+        let epic = try store.load(AirframeCanonicalEpicRecord.self, id: epicID)
         let criteria = try store.list(AirframeCanonicalAcceptanceCriterionRecord.self)
             .filter { $0.ownerID == epicID }
             .sorted { $0.id.rawValue < $1.id.rawValue }
@@ -215,10 +216,14 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
                 AirframeEpicAcceptanceCriterion(
                     id: $0.id,
                     text: $0.text,
-                    isVerified: $0.isVerified
+                    disposition: $0.disposition
                 )
             }
-        return AirframeEpicAcceptanceCriteriaSummary(epicID: epicID, criteria: criteria)
+        return AirframeEpicAcceptanceCriteriaSummary(
+            epicID: epicID,
+            criteria: criteria,
+            allowsHistoricalCloseDisposition: epic?.workItem.status == .closed
+        )
     }
 
     public func verifyEpicCriterion(id: AirframeID) throws {
@@ -230,7 +235,7 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
                 id: criterion.id,
                 ownerID: criterion.ownerID,
                 text: criterion.text,
-                isVerified: true,
+                disposition: .verified,
                 evidenceIDs: criterion.evidenceIDs,
                 metadata: AirframeCanonicalRecordMetadata(
                     schemaVersion: criterion.metadata.schemaVersion,
@@ -434,6 +439,13 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             throw AirframeBackendError.missingWorkItem(projectID)
         }
         try store.save(project.settingActiveEpicID(epicID))
+    }
+
+    public func deduplicateProjectMembership(projectID: AirframeID) throws {
+        guard let project = try store.load(AirframeCanonicalProjectRecord.self, id: projectID) else {
+            throw AirframeBackendError.missingWorkItem(projectID)
+        }
+        try store.save(project.deduplicatingMembership())
     }
 
     public func restoreEpicToActive(epicID: AirframeID) throws {
@@ -956,6 +968,27 @@ private extension AirframeCanonicalEpicRecord {
 }
 
 private extension AirframeCanonicalProjectRecord {
+    func deduplicatingMembership() -> AirframeCanonicalProjectRecord {
+        AirframeCanonicalProjectRecord(
+            id: id,
+            name: name,
+            repository: repository,
+            activeEpicID: activeEpicID,
+            activeSprintID: activeSprintID,
+            epicIDs: stableUnique(epicIDs),
+            sprintIDs: stableUnique(sprintIDs),
+            taskIDs: stableUnique(taskIDs),
+            issueIDs: stableUnique(issueIDs),
+            backendMappingIDs: stableUnique(backendMappingIDs),
+            metadata: metadata.updatingTimestamp()
+        )
+    }
+
+    private func stableUnique(_ ids: [AirframeID]) -> [AirframeID] {
+        var seen = Set<AirframeID>()
+        return ids.filter { seen.insert($0).inserted }
+    }
+
     func settingActiveSprintID(_ sprintID: AirframeID) -> AirframeCanonicalProjectRecord {
         AirframeCanonicalProjectRecord(
             id: id,

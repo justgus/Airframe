@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Imported requirement statements stop at the authoritative source-section boundary.",
+    "Headings, separators, lists, and document-tail cases are handled deterministically.",
+    "Regression fixtures reproduce and prevent the audited contamination."
+  ],
+  "component" : "AirframeCore requirement importer and AICockpit import path for R-12.",
+  "componentsAffected" : [
+    "AirframeCore requirement importer and AICockpit import path for R-12."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Do not repair canonical data until the parser fix is verified."
+  ],
+  "priority" : "high",
+  "rationale" : "Do not repair canonical data until the parser fix is verified.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-040"
+  },
+  "testSteps" : [
+    "Focused importer boundary regression suite."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0172"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Correct requirement importer section boundaries"
+  }
+}

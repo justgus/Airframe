@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "The original relationship-status omission is documented with root cause and systemic impact.",
+    "All generated Epic, Sprint, Task, and Issue projections are regenerated from canonical state.",
+    "Every projected primary and relationship status mechanically matches canonical state."
+  ],
+  "component" : "Required R-07 investigation plus R-05 through R-07 full regeneration and validation.",
+  "componentsAffected" : [
+    "Required R-07 investigation plus R-05 through R-07 full regeneration and validation."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Preserve user-owned Legacy edits and do not hand-edit generated files."
+  ],
+  "priority" : "high",
+  "rationale" : "Preserve user-owned Legacy edits and do not hand-edit generated files.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-041"
+  },
+  "testSteps" : [
+    "Investigation record, complete regeneration log, and projection consistency report."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0177"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Investigate projection omission and regenerate the complete set"
+  }
+}

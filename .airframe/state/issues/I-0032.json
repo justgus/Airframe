@@ -1,0 +1,38 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit startup and AirframeCore traceability"
+  ],
+  "dateResolved" : "2026-09-05",
+  "dateVerified" : "2026-09-05",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Startup visibly indicates loading until canonical data and traceability are ready, reports completion or a retryable error, and avoids redundant criterion matching.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-05T15:58:51Z"
+  },
+  "notes" : [
+    "Implementation evidence (2026-09-05): ContentView.swift:3734 displays dedicated startup loading with spinner and elapsed time; :3815 publishes Workspace ready only after completion; failures show Retry and all launches validate cache freshness. RequirementTraceability.swift:202 precomputes criterion matches once per immutable index, retaining owner and text-match semantics. Regression coverage: AgileCockpitTests.swift:2490 validates canonical loading and stale-cache invalidation; :2525 validates failure\/retry; AirframeCoreTests.swift:4161 covers owner, inferred and explicit test links. Corrected reciprocal membership in Sprint-close test fixture at AgileCockpitTests.swift:1519. Validation: both focused Core tests passed; all 48 AgileCockpit tests passed with AIRFRAME_SKIP_LIVE_DEMO_INSTALL=1, log \/private\/tmp\/airframe-i0032-retest.log. Read-only JustTone benchmark produced 233 trace rows with tests from 233 requirements and 233 tests in 3.106 seconds (index plus test coverage, not end-to-end launch); benchmark \/private\/tmp\/airframe-i0032-benchmark.swift. Changed source diff checks passed. User rebuilt app through Xcode; no further installation performed in final validation. No active Sprint; no GitHub changes. Human visual acceptance remains pending."
+  ],
+  "observedBehavior" : "JustTone has 233 requirements, 233 linked tests and a pending plan, but cold startup displays empty sections while traceability runs. Refresh can replace the loading message before completion.",
+  "reproductionSteps" : [
+    "Launch JustTone without UI caches; inspect Plan Review, Requirements and Tests. Process samples show testState repeatedly matching criteria against all requirements."
+  ],
+  "severity" : "medium",
+  "workItem" : {
+    "id" : {
+      "rawValue" : "I-0032"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Workspace appears empty during slow startup traceability rebuild"
+  }
+}

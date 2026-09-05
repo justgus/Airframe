@@ -7,9 +7,9 @@
 
 ## Progress
 
-| Rulings applied | 4 of 25 |
+| Rulings applied | 10 of 25 |
 | --- | --- |
-| Session status | Authorized documentation remediation applied and mechanically checked. Full Audit remediation remains In Progress pending separately authorized product, canonical-data, projection, and backend work. |
+| Session status | Documentation remediation and SP-038 canonical-integrity remediation are applied and mechanically checked. Full Audit remediation remains In Progress pending later Sprints. |
 
 ## Ordering constraints observed
 
@@ -24,20 +24,44 @@
 
 | Gap | Components | Rulings | Required capability or change | Documentation-remediation disposition |
 | --- | --- | --- | --- | --- |
-| AF-GAP-01 | AirframeCore, AICockpit | R-01, R-02 | Supported canonical relationship repair for duplicate project membership and missing reciprocal Epic-Issue links. | Record now; canonical repair deferred. |
-| AF-GAP-02 | AirframeCore, AICockpit, AgileCockpit | R-03, R-G3, R-Q1, R-16 | A provenance-preserving historical-close acceptance disposition, migration operation, validation, reporting, and human review UI. | Policy documented; implementation and migration deferred. |
+| AF-GAP-01 | AirframeCore, AICockpit | R-01, R-02 | Supported canonical relationship repair for duplicate project membership and missing reciprocal Epic-Issue links. | Implemented by SP-038; pending human verification. |
+| AF-GAP-02 | AirframeCore, AICockpit, AgileCockpit | R-03, R-G3, R-Q1, R-16 | A provenance-preserving historical-close acceptance disposition, migration operation, validation, reporting, and human review UI. | Implemented and migrated by SP-038; pending human verification. |
 | AF-GAP-03 | AirframeCore configuration, AICockpit, AgileCockpit | R-04 | Remove duplicated active Epic/Sprint configuration pointers and resolve active context exclusively from canonical project state. | System/config migration deferred. |
 | AF-GAP-04 | AirframeCore Markdown projector, AICockpit | R-05, R-06, R-07 | Durable projection refresh after canonical mutation, artifact-specific Issue terminology, populated relationship statuses, complete regeneration, and regression coverage. | Generated files remain untouched; implementation deferred. |
 | AF-GAP-05 | AICockpit GitHub backend | R-10, R-G4 | Complete pagination plus explicit completeness, limit, retrieved-count, continuation, and failure metadata for every list/summary contract. | Backend implementation deferred. |
 | AF-GAP-06 | AirframeCore backend policy, AICockpit, AgileCockpit | R-11 | Canonical/backend status reconciliation that can synchronize an already human-Verified state without granting agents verification authority. | GitHub synchronization deferred; live access unavailable. |
 | AF-GAP-07 | AirframeCore requirement importer, AICockpit | R-12 | Correct source-section boundary parsing, controlled re-import/repair, source comparison, and projection regeneration. | Canonical/importer work deferred. |
-| AF-GAP-08 | AirframeCore diagnostics, AICockpit | R-01, R-02, R-03, R-16 | Stable invariant diagnostics for uniqueness, reciprocal relationships, and lifecycle/acceptance consistency, including migration-aware valid cases. | Product implementation deferred. |
+| AF-GAP-08 | AirframeCore diagnostics, AICockpit | R-01, R-02, R-03, R-16 | Stable invariant diagnostics for uniqueness, reciprocal relationships, and lifecycle/acceptance consistency, including migration-aware valid cases. | Implemented by SP-038; pending human verification. |
 | AF-GAP-09 | AirframeCore schema, AICockpit, AgileCockpit | R-14, R-G5, R-Q2 | Explicit optional backend-mapping states: backend not configured, intentionally local, pending, mapped, and error. | Guidelines updated; schema, UI, and classification of 26 records deferred. |
 | AF-GAP-10 | AirframeCore projector, AICockpit, AgileCockpit | R-08, R-09, R-13, R-15, R-G2, R-Q3 | Deterministic current-state indexes or durable redirects for retained Legacy paths, with historical archives clearly distinguished. | Guidelines updated; replacement of user-edited Legacy files deferred. |
 | AF-GAP-11 | AICockpit, AgileCockpit workspace management | R-17 | Declare which `.airframe` outputs are canonical, durable cache, or disposable runtime state; provide stable locations/names so repositories can ignore only transient output. | No untracked `.airframe` output exists in the current tree; targeted ignore patterns deferred until classification exists. |
 | AF-GAP-12 | AICockpit work tracking | R-07 | Create and link a tracked investigation for the original relationship-status omission and systemic projector implications. | Work-item creation deferred under the documentation-only boundary. |
 
 ## Applied
+
+### R-01, R-02 — Canonical membership and reciprocal Issue relationships
+
+**Files changed:** canonical PRJ-AIRFRAME, EP-017, and I-0001 through I-0004 records; AirframeCore repair and diagnostic support
+**What was done:** Used supported AICockpit repair operations to remove duplicate Task/Issue project membership and restore the four missing EP-017 reverse Issue links.
+**Deviations:** None. Generated Markdown was not hand-edited.
+**Verification:** Post-repair canonical diagnostics contain zero findings; EV-0167-001 records the repair inventory.
+**Status:** Applied - Not Verified
+
+### R-03, R-G3, R-Q1 — Historical-close acceptance provenance
+
+**Files changed:** AirframeCore acceptance models and migration service, AICockpit migration interface, AgileCockpit presentation, and 42 canonical acceptance records owned by EP-001 through EP-008
+**What was done:** Added a historical-close disposition distinct from human verification, constrained it to the approved closed Epics, migrated exactly 42 eligible records, and prevented its use for current or future Epic close eligibility.
+**Deviations:** None. The migration was applied through AICockpit; direct canonical fallback was used only for evidence records.
+**Verification:** A repeated migration changed zero records; Core, CLI, and app verification are recorded by EV-0166-001 and EV-0168-001.
+**Status:** Applied - Not Verified
+
+### R-16 — Systematic canonical invariant diagnostics
+
+**Files changed:** `AirframeCore/Sources/AirframeCore/CanonicalDiagnostics.swift`, AICockpit help/reporting, and regression tests
+**What was done:** Added stable diagnostics and supported repairs for duplicate membership, reciprocal Task/Issue relationships, and lifecycle/acceptance consistency.
+**Deviations:** None.
+**Verification:** AirframeCore and AICockpit tests pass; the live canonical diagnostic report is clean.
+**Status:** Applied - Not Verified
 
 ### R-13 — Artifact Guidelines use canonical-first procedures
 
@@ -73,9 +97,9 @@
 
 ## Not applied / deferred
 
-- R-01 through R-07: canonical, configuration, and projector work requires product/data implementation beyond documentation remediation.
+- R-04 through R-07: configuration and projector work remains assigned to later remediation Sprints.
 - R-08 and R-09: policy can be documented now, but replacing current Legacy files is deferred because deterministic projection/redirect support is an Airframe gap and `docs/Issues/Issue-Documentation.md` plus `docs/Issues/Issue-backlog.md` contain pre-existing user edits.
-- R-10 through R-12 and R-16: backend, canonical/importer, and diagnostic implementation is deferred.
+- R-10 through R-12: backend and canonical/importer implementation is deferred.
 - R-11: GitHub synchronization is deferred; `api.github.com` was unreachable at remediation start.
 - R-14 data classification: mapping policy can be documented now; canonical schema/UI work and classification of the 26 records are deferred.
 - R-17 `.airframe` patterns: no untracked `.airframe` files were present at remediation start. Tracked canonical/configuration files and tracked Cockpit caches must not be hidden by a blanket ignore.

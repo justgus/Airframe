@@ -1,0 +1,8 @@
+# Airframe workspace attributes. Travels with the .airframe/ template.
+#
+# Defence in depth for the UI caches: even if one is force-added to the index,
+# `-diff` stops git from emitting its contents into diffs, patches, and log -p.
+# These files are single-line JSON, so an ordinary textual diff of one costs
+# the full size of both the old and the new copy.
+agilecockpit-launch-cache.json  -diff -merge linguist-generated
+agilecockpit-traceability-cache.json -diff -merge linguist-generated

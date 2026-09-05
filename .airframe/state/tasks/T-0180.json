@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Repository links point to supported canonical views, redirects, or clearly historical archives.",
+    "Issue and Task retirement follows one consistent policy.",
+    "No workflow procedure instructs mutation through a Legacy projection."
+  ],
+  "component" : "Cross-artifact implementation of R-G2 and R-Q3 after R-08 and R-09.",
+  "componentsAffected" : [
+    "Cross-artifact implementation of R-G2 and R-Q3 after R-08 and R-09."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Generated Markdown must only be changed through its projector."
+  ],
+  "priority" : "high",
+  "rationale" : "Generated Markdown must only be changed through its projector.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-042"
+  },
+  "testSteps" : [
+    "Repository-wide link and mutation-authority searches."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0180"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Reconcile Legacy links, archives, and compatibility policy"
+  }
+}

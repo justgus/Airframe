@@ -1,0 +1,46 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "goal" : "Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T16:07:44Z"
+  },
+  "notes" : [
+    "Complete before SP-043 final integrated remediation verification.",
+    "Retire the approved direct evidence-record fallback after native support is verified."
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0185"
+    },
+    {
+      "rawValue" : "T-0186"
+    },
+    {
+      "rawValue" : "T-0187"
+    },
+    {
+      "rawValue" : "T-0188"
+    },
+    {
+      "rawValue" : "T-0189"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-044"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "Canonical Evidence Management and Review"
+  }
+}

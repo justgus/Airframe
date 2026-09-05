@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "All 25 affected canonical requirement statements are repaired or controlledly re-imported.",
+    "Every repaired statement is mechanically compared with its authoritative source section.",
+    "Legitimate normative text is preserved and unrelated requirements remain unchanged."
+  ],
+  "component" : "Controlled canonical-data migration for the R-12 affected set.",
+  "componentsAffected" : [
+    "Controlled canonical-data migration for the R-12 affected set."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Record an auditable before\/after comparison for every affected requirement."
+  ],
+  "priority" : "high",
+  "rationale" : "Record an auditable before\/after comparison for every affected requirement.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-040"
+  },
+  "testSteps" : [
+    "25-record comparison report and canonical diff review."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0173"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Repair and source-compare affected requirements"
+  }
+}

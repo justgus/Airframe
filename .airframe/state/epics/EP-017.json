@@ -5,7 +5,18 @@
   "closeDate" : "2026-06-14",
   "goal" : "",
   "issueIDs" : [
-
+    {
+      "rawValue" : "I-0001"
+    },
+    {
+      "rawValue" : "I-0002"
+    },
+    {
+      "rawValue" : "I-0003"
+    },
+    {
+      "rawValue" : "I-0004"
+    }
   ],
   "metadata" : {
     "schemaVersion" : {
@@ -13,7 +24,8 @@
       "minor" : 0,
       "patch" : 0
     },
-    "source" : "docs\/Epics\/Closed\/Epic-EP-017.md"
+    "source" : "docs\/Epics\/Closed\/Epic-EP-017.md",
+    "updatedAt" : "2026-08-29T15:37:47Z"
   },
   "notes" : [
 

@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-04"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "make check",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Every affected statement ends at the correct boundary and matches source.",
+    "No unrelated requirement changes and projections are current."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-004"
+  },
+  "kind" : "dataValidation",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify the importer fix and all 25 canonical requirement repairs against authoritative source sections.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run boundary parser regressions.",
+    "Generate the 25-record source comparison.",
+    "Regenerate requirement projections and compare to canonical state."
+  ],
+  "title" : "Requirement source-boundary reconciliation",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0172"
+    },
+    {
+      "rawValue" : "T-0173"
+    },
+    {
+      "rawValue" : "T-0174"
+    }
+  ]
+}

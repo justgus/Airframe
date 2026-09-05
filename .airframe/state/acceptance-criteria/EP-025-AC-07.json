@@ -1,0 +1,20 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-025-AC-07"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-025"
+  },
+  "text" : "GitHub-backed enumeration is complete or explicitly partial, and authorized canonical-to-backend status reconciliation is diagnosable and tested."
+}

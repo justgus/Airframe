@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Canonical evidence records can be created, loaded, listed, and attached to supported work items.",
+    "Attachment updates reciprocal Evidence-to-Work-Item relationships atomically and idempotently.",
+    "Existing evidence records remain backward compatible."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T16:07:41Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-044"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0185"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Implement canonical evidence repository operations"
+  }
+}

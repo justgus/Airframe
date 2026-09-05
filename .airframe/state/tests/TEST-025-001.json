@@ -1,0 +1,51 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-01"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Duplicates and asymmetric relationships are detected before repair and absent afterward.",
+    "Stable diagnostic identifiers and idempotent repairs are demonstrated."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-001"
+  },
+  "kind" : "dataValidation",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify deduplication, reciprocal-link repair, and invariant diagnostics satisfy EP-025-AC-01.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run focused canonical diagnostic and repair tests.",
+    "Run repair twice against fixtures to confirm idempotence.",
+    "Confirm all membership and reciprocal-link invariants pass."
+  ],
+  "title" : "Canonical integrity and reciprocal relationship validation",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0167"
+    },
+    {
+      "rawValue" : "T-0168"
+    }
+  ]
+}

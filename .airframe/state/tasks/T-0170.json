@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Canonical mapping state distinguishes backend not configured, intentionally local, pending, mapped, and error.",
+    "Validation accepts legitimate local-only operation and diagnoses incomplete or failed synchronization.",
+    "The 26 audited unmapped records can be classified without creating GitHub artifacts."
+  ],
+  "component" : "AirframeCore schema, policy, persistence, and diagnostics for R-14, R-G5, and R-Q2.",
+  "componentsAffected" : [
+    "AirframeCore schema, policy, persistence, and diagnostics for R-14, R-G5, and R-Q2."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Do not require a GitHub mapping and do not create remote Issues merely to satisfy classification."
+  ],
+  "priority" : "high",
+  "rationale" : "Do not require a GitHub mapping and do not create remote Issues merely to satisfy classification.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-039"
+  },
+  "testSteps" : [
+    "Schema compatibility, classification, and validation tests."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0170"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Define optional backend-mapping state model"
+  }
+}

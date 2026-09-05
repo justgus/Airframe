@@ -1,0 +1,49 @@
+{
+  "acceptanceCriteria" : [
+    "Mutating operations detect current branch and working-tree state before writing.",
+    "Protected\/default branches require explicit routing to a selected or newly created review branch.",
+    "Pre-existing tracked and untracked changes are preserved.",
+    "Confirmation and completion UI identify the destination branch.",
+    "Tests cover clean and dirty worktrees, protected branches, and branch-creation failure."
+  ],
+  "component" : "Resolve I-0031 and GitHub #177 across workspace configuration, mutation coordination, and AgileCockpit UI.",
+  "componentsAffected" : [
+    "Resolve I-0031 and GitHub #177 across workspace configuration, mutation coordination, and AgileCockpit UI."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:58Z"
+  },
+  "notes" : [
+    "Never silently mutate a configured protected branch."
+  ],
+  "priority" : "high",
+  "rationale" : "Never silently mutate a configured protected branch.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "testSteps" : [
+    "Unit, integration, and UI tests plus a branch-safety manual scenario."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0183"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Implement branch-aware AgileCockpit mutations"
+  }
+}

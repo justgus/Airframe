@@ -1,0 +1,40 @@
+{
+  "endDate" : "2026-08-29",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "goal" : "",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T16:42:35Z"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0166"
+    },
+    {
+      "rawValue" : "T-0167"
+    },
+    {
+      "rawValue" : "T-0168"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-038"
+    },
+    "kind" : "sprint",
+    "status" : "closed",
+    "title" : "Canonical Integrity and Historical Acceptance"
+  }
+}

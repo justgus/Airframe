@@ -1,0 +1,20 @@
+{
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-025-AC-03"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-025"
+  },
+  "text" : "Active context and optional backend mappings have one canonical source with explicit valid local, pending, mapped, and error states."
+}

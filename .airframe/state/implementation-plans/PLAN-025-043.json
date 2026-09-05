@@ -1,0 +1,74 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "GitHub transport tests with more than 100 fixtures",
+    "Reconciliation dry run before any live mutation",
+    "Branch-safety unit\/integration\/UI tests",
+    "Full package\/application regression and repository consistency checks"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Potential live synchronization of 29 established GitHub labels only after dry-run review and connectivity; branch creation only through explicit user-facing choice; no automatic remote title correction for #177."
+  ],
+  "fileChanges" : [
+    "AirframeCore backend contracts, reconciliation policy, and workspace configuration",
+    "AICockpit GitHub transport and reporting",
+    "AgileCockpit mutation coordination and branch UI",
+    "Audit remediation log and runtime-state classification"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-043"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Remote reconciliation is delayed until local implementation passes; human-only Audit closure remains out of scope."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "T-0181 pagination and partial-result disclosure",
+    "T-0182 authorized status reconciliation",
+    "T-0183 protected-branch mutation workflow",
+    "T-0184 integrated remediation validation and evidence"
+  ],
+  "summary" : "Implement R-10, R-11, R-G4, and I-0031\/GitHub #177, then perform integrated Audit remediation verification without human-only closure.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0181"
+    },
+    {
+      "rawValue" : "T-0182"
+    },
+    {
+      "rawValue" : "T-0183"
+    },
+    {
+      "rawValue" : "T-0184"
+    }
+  ],
+  "title" : "GitHub Integration, Reconciliation, and Safe Mutation Plan",
+  "verificationCriteria" : [
+    "Complete and partial backend results are unmistakable",
+    "Only prior human verification can produce Verified labels",
+    "Protected branches are never silently mutated",
+    "All rulings and I-0031 have evidence and the Audit reaches Complete - Not Closed"
+  ]
+}

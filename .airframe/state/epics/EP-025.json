@@ -1,0 +1,170 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-01"
+    },
+    {
+      "rawValue" : "EP-025-AC-02"
+    },
+    {
+      "rawValue" : "EP-025-AC-03"
+    },
+    {
+      "rawValue" : "EP-025-AC-04"
+    },
+    {
+      "rawValue" : "EP-025-AC-05"
+    },
+    {
+      "rawValue" : "EP-025-AC-06"
+    },
+    {
+      "rawValue" : "EP-025-AC-07"
+    },
+    {
+      "rawValue" : "EP-025-AC-08"
+    },
+    {
+      "rawValue" : "EP-025-AC-09"
+    },
+    {
+      "rawValue" : "EP-025-AC-10"
+    }
+  ],
+  "goal" : "",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0031"
+    },
+    {
+      "rawValue" : "I-0032"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-05T15:50:35Z"
+  },
+  "notes" : [
+
+  ],
+  "outOfScope" : [
+
+  ],
+  "owner" : "",
+  "planningDocumentPaths" : [
+
+  ],
+  "rationale" : "",
+  "scope" : [
+
+  ],
+  "sprintIDs" : [
+    {
+      "rawValue" : "SP-038"
+    },
+    {
+      "rawValue" : "SP-039"
+    },
+    {
+      "rawValue" : "SP-040"
+    },
+    {
+      "rawValue" : "SP-041"
+    },
+    {
+      "rawValue" : "SP-042"
+    },
+    {
+      "rawValue" : "SP-044"
+    },
+    {
+      "rawValue" : "SP-043"
+    }
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0166"
+    },
+    {
+      "rawValue" : "T-0167"
+    },
+    {
+      "rawValue" : "T-0168"
+    },
+    {
+      "rawValue" : "T-0169"
+    },
+    {
+      "rawValue" : "T-0170"
+    },
+    {
+      "rawValue" : "T-0171"
+    },
+    {
+      "rawValue" : "T-0172"
+    },
+    {
+      "rawValue" : "T-0173"
+    },
+    {
+      "rawValue" : "T-0174"
+    },
+    {
+      "rawValue" : "T-0175"
+    },
+    {
+      "rawValue" : "T-0176"
+    },
+    {
+      "rawValue" : "T-0177"
+    },
+    {
+      "rawValue" : "T-0178"
+    },
+    {
+      "rawValue" : "T-0179"
+    },
+    {
+      "rawValue" : "T-0180"
+    },
+    {
+      "rawValue" : "T-0181"
+    },
+    {
+      "rawValue" : "T-0182"
+    },
+    {
+      "rawValue" : "T-0183"
+    },
+    {
+      "rawValue" : "T-0184"
+    },
+    {
+      "rawValue" : "T-0185"
+    },
+    {
+      "rawValue" : "T-0186"
+    },
+    {
+      "rawValue" : "T-0187"
+    },
+    {
+      "rawValue" : "T-0188"
+    },
+    {
+      "rawValue" : "T-0189"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "EP-025"
+    },
+    "kind" : "epic",
+    "status" : "active",
+    "title" : "Audit Finding Remediation"
+  }
+}

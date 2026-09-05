@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Diagnostics report missing evidence records, missing work items, and asymmetric evidence relationships with stable reason identifiers.",
+    "Supported repair or migration reconciles EV-0166-001, EV-0167-001, and EV-0168-001 without changing their provenance.",
+    "Repair and migration operations are idempotent and preserve unrelated evidence."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T16:07:43Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-044"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0188"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Diagnose and migrate evidence relationship integrity"
+  }
+}

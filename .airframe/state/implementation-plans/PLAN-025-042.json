@@ -1,0 +1,68 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "Repository-wide link inventory",
+    "Mutation-authority terminology searches",
+    "Deterministic-output and redirect checks"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Replacement or redirection of Legacy current-state files; preserve pre-existing user edits through explicit migration."
+  ],
+  "fileChanges" : [
+    "Legacy Task and Issue working\/index paths",
+    "Deterministic projector or redirect support",
+    "Repository documentation links and procedures",
+    "Historical Task and Issue archives only for clear classification, not content rewriting"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-042"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Depends on SP-041 projector behavior and requires an explicit preservation diff for user-owned text."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "T-0178 Issue Legacy retirement",
+    "T-0179 Task Legacy retirement",
+    "T-0180 repository-wide links and compatibility policy"
+  ],
+  "summary" : "Implement R-08, R-09, R-G2, and R-Q3 by retiring mutable current-state Legacy queues\/indexes while preserving archives, narrative, and useful stable paths.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-042"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0178"
+    },
+    {
+      "rawValue" : "T-0179"
+    },
+    {
+      "rawValue" : "T-0180"
+    }
+  ],
+  "title" : "Legacy Artifact Retirement Plan",
+  "verificationCriteria" : [
+    "No procedure treats Legacy projections as mutation authority",
+    "Historical archives remain intact",
+    "Retained current paths cannot drift from canonical state"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Task working queues and index no longer claim current-state authority.",
+    "Retained paths are deterministic canonical projections or unambiguous redirects.",
+    "Historical Task archives remain preserved and clearly identified."
+  ],
+  "component" : "R-09 Legacy Task retirement.",
+  "componentsAffected" : [
+    "R-09 Legacy Task retirement."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Do not alter historical verification provenance."
+  ],
+  "priority" : "high",
+  "rationale" : "Do not alter historical verification provenance.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-042"
+  },
+  "testSteps" : [
+    "Link inventory, preservation diff, and deterministic-output tests."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0179"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Retire mutable Legacy Task current-state files"
+  }
+}

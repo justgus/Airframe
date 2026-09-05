@@ -1,0 +1,51 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-02"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Only eligible historical criteria receive the disposition.",
+    "The disposition is never rendered or authorized as Verified."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-002"
+  },
+  "kind" : "regression",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify the historical-close disposition preserves provenance without becoming human verification.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Exercise eligible historical migration fixtures.",
+    "Exercise current and future Epic close fixtures.",
+    "Inspect projected and UI terminology."
+  ],
+  "title" : "Historical-close provenance and policy validation",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0166"
+    },
+    {
+      "rawValue" : "T-0168"
+    }
+  ]
+}

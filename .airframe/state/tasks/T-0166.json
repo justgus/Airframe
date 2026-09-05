@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "A canonical disposition distinct from Verified and Unverified preserves historical close provenance.",
+    "Only an explicit migration path can apply the disposition to eligible historical criteria.",
+    "Current and future Epic closure cannot use the historical disposition as a verification shortcut."
+  ],
+  "component" : "AirframeCore acceptance schema, workflow policy, migration contract, and AgileCockpit presentation for R-03, R-G3, and R-Q1.",
+  "componentsAffected" : [
+    "AirframeCore acceptance schema, workflow policy, migration contract, and AgileCockpit presentation for R-03, R-G3, and R-Q1."
+  ],
+  "dateVerified" : "2026-08-28",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-0166-001"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T21:43:54Z"
+  },
+  "notes" : [
+    "Do not represent migrated criteria as human-Verified."
+  ],
+  "priority" : "high",
+  "rationale" : "Do not represent migrated criteria as human-Verified.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-038"
+  },
+  "testSteps" : [
+    "Schema and workflow regression tests; migration preview for the 42 EP-001 through EP-008 criteria."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0166"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Define historical-close acceptance disposition"
+  }
+}

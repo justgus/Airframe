@@ -1,0 +1,50 @@
+{
+  "acceptanceCriteria" : [
+    "PRJ-AIRFRAME contains each Task and Issue membership exactly once.",
+    "EP-017 reciprocally links I-0001 through I-0004.",
+    "The repair is idempotent and preserves unrelated canonical relationships."
+  ],
+  "component" : "Canonical repair operations and data migration for R-01 and R-02.",
+  "componentsAffected" : [
+    "Canonical repair operations and data migration for R-01 and R-02."
+  ],
+  "dateVerified" : "2026-08-29",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-0167-001"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T15:59:43Z"
+  },
+  "notes" : [
+    "Use supported repair operations; do not hand-edit generated Markdown."
+  ],
+  "priority" : "high",
+  "rationale" : "Use supported repair operations; do not hand-edit generated Markdown.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-038"
+  },
+  "testSteps" : [
+    "Before\/after inventory and relationship validation output."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0167"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Repair canonical membership and reciprocal relationships"
+  }
+}

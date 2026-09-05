@@ -1924,7 +1924,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                     id: criterion.id,
                     ownerID: criterion.ownerID,
                     text: criterion.text,
-                    isVerified: true,
+                    disposition: .verified,
                     evidenceIDs: criterion.evidenceIDs,
                     metadata: criterion.metadata
                 )
@@ -3730,16 +3730,21 @@ struct AgileCockpitRootView: View {
 
     private func launchLoadingView(message: String, progress: Double) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            ProgressView(value: progress, total: 1.0)
-            Text("Rebuilding...")
+            ProgressView()
+            Text("Loading workspace—please wait.")
                 .font(.headline)
             Text(message)
                 .foregroundStyle(.secondary)
-            Text("\(Int(progress * 100))%")
+            TimelineView(.periodic(from: launcher.loadingStartedAt, by: 1)) { context in
+                Text("Elapsed: \(Int(max(0, context.date.timeIntervalSince(launcher.loadingStartedAt)))) seconds")
+                    .foregroundStyle(.secondary)
+            }
+            Text("Your records will appear when loading finishes.")
                 .foregroundStyle(.secondary)
         }
         .frame(minWidth: 920, minHeight: 640, alignment: .leading)
         .padding(24)
+        .accessibilityIdentifier("agile-cockpit-launch-loading")
     }
 
     private func launchFailedView(message: String) -> some View {
@@ -3771,7 +3776,8 @@ final class AgileCockpitLaunchController: ObservableObject {
 
     private let environment: [String: String]
     private let currentDirectoryURL: URL
-    private var refreshOnStartup: Bool
+    private var refreshOnStartup = true
+    private(set) var loadingStartedAt = Date()
     private var loadTask: Task<Void, Never>?
 
     init(
@@ -3780,32 +3786,7 @@ final class AgileCockpitLaunchController: ObservableObject {
     ) {
         self.environment = environment
         self.currentDirectoryURL = currentDirectoryURL
-        if let cachedLaunchData = try? AgileCockpitDashboardModel.cachedLaunchDataForImmediateDisplay(
-            environment: environment,
-            currentDirectoryURL: currentDirectoryURL
-        ) {
-            let model = AgileCockpitDashboardModel(launchData: cachedLaunchData)
-            model.statusMessage = "Loaded cached workspace state."
-            self.phase = .loaded(model)
-            self.refreshOnStartup = false
-        } else if let context = try? AirframeRuntimeConfigurationResolver(
-            environment: environment,
-            currentDirectoryURL: currentDirectoryURL
-        ).loadContext() {
-            let model = AgileCockpitDashboardModel.unavailable(
-                context: context,
-                error: AirframeConfigurationError.invalidConfiguration("Refreshing workspace state.")
-            )
-            model.statusMessage = "Refreshing workspace state."
-            self.phase = .loaded(model)
-            self.refreshOnStartup = true
-        } else {
-            let model = (try? AgileCockpitDashboardModel.sample())
-                ?? AgileCockpitDashboardModel.fallback(message: "Refreshing workspace state.")
-            model.statusMessage = "Refreshing workspace state."
-            self.phase = .loaded(model)
-            self.refreshOnStartup = true
-        }
+        // All launches validate the cache in prepareLaunchData before publishing a model.
     }
 
     deinit {
@@ -3823,23 +3804,21 @@ final class AgileCockpitLaunchController: ObservableObject {
                     currentDirectoryURL: currentDirectoryURL,
                     progress: { progress, message in
                         Task { @MainActor in
-                            if case .loaded(let model) = self.phase {
-                                model.statusMessage = message
+                            if case .loading = self.phase {
+                                self.phase = .loading(message: message, progress: progress)
                             }
                         }
                     }
                 )
                 await MainActor.run {
-                    self.phase = .loaded(AgileCockpitDashboardModel(launchData: launchData))
+                    let model = AgileCockpitDashboardModel(launchData: launchData)
+                    model.statusMessage = "Workspace ready."
+                    self.phase = .loaded(model)
                     self.loadTask = nil
                 }
             } catch {
                 await MainActor.run {
-                    if case .loaded(let model) = self.phase {
-                        model.statusMessage = "Background refresh failed: \(error)"
-                    } else {
-                        self.phase = .failed(message: "Launch failed: \(error)")
-                    }
+                    self.phase = .failed(message: "Launch failed: \(error)")
                     self.loadTask = nil
                 }
             }
@@ -3849,6 +3828,7 @@ final class AgileCockpitLaunchController: ObservableObject {
     func retry() {
         guard loadTask == nil else { return }
         refreshOnStartup = true
+        loadingStartedAt = Date()
         phase = .loading(message: "Rebuilding workspace state.", progress: 0.0)
         beginLoading()
     }
@@ -4731,10 +4711,10 @@ struct ContentView: View {
                                 model.selectEpicAcceptanceCriterion(criterion)
                             } label: {
                                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                    Text(criterion.isVerified ? "Verified" : "Unverified")
+                                    Text(criterion.disposition.displayName)
                                         .font(.caption)
                                         .foregroundStyle(criterion.isVerified ? .green : .secondary)
-                                        .frame(width: 72, alignment: .leading)
+                                        .frame(width: 104, alignment: .leading)
                                     Text(criterion.text)
                                         .fixedSize(horizontal: false, vertical: true)
                                     Spacer(minLength: 0)
@@ -4750,7 +4730,7 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
                             .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("\(criterion.id.rawValue) \(criterion.isVerified ? "verified" : "unverified") \(criterion.text)")
+                            .accessibilityLabel("\(criterion.id.rawValue) \(criterion.disposition.displayName) \(criterion.text)")
                             .accessibilityIdentifier("agile-cockpit-epic-criterion-\(criterion.id.rawValue)")
                         }
                     }
@@ -4781,12 +4761,14 @@ struct ContentView: View {
                     .font(.body)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("agile-cockpit-selected-epic-criterion-text")
-                LabeledContent("Status", value: criterion.isVerified ? "Verified" : "Unverified")
+                LabeledContent("Status", value: criterion.disposition.displayName)
                     .accessibilityIdentifier("agile-cockpit-selected-epic-criterion-status")
                 Text("Evidence")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Text("Verification is recorded in the Epic acceptance criteria checklist and audit log.")
+                Text(criterion.disposition == .grandfatheredHistoricalClose
+                    ? "Historical close preserves the original Epic closure without claiming criterion-level human verification."
+                    : "Verification is recorded in the Epic acceptance criteria checklist and audit log.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -4794,7 +4776,7 @@ struct ContentView: View {
                 Button("Mark Verified") {
                     model.verifySelectedEpicAcceptanceCriterion()
                 }
-                .disabled(criterion.isVerified)
+                .disabled(criterion.disposition != .unverified)
                 .keyboardShortcut(.defaultAction)
                 .accessibilityIdentifier("agile-cockpit-verify-epic-criterion")
             }

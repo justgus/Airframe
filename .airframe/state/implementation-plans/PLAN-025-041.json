@@ -1,0 +1,68 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "Projector golden tests",
+    "Mutation-to-projection integration tests",
+    "Full projection regeneration and canonical comparison"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Large deterministic replacement of generated Markdown after code fixes; preserve Legacy user edits."
+  ],
+  "fileChanges" : [
+    "AirframeCore Markdown projector and refresh contract",
+    "AICockpit and AgileCockpit mutation integration",
+    "Projector golden and integration tests",
+    "Complete generated Epic, Sprint, Task, and Issue projections"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-041"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Run after canonical migrations that would otherwise force repeated regeneration."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "T-0175 mutation-to-refresh reliability",
+    "T-0176 Issue terminology and relationship statuses",
+    "T-0177 root-cause investigation and full regeneration"
+  ],
+  "summary" : "Implement R-05, R-06, and R-07 by making refresh durable, fixing human-facing status rendering, investigating the omission, and regenerating the entire projection set.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-041"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0175"
+    },
+    {
+      "rawValue" : "T-0176"
+    },
+    {
+      "rawValue" : "T-0177"
+    }
+  ],
+  "title" : "Projection Reliability and Terminology Plan",
+  "verificationCriteria" : [
+    "Issue and Task terminology remain distinct",
+    "Every relationship status is populated from canonical state",
+    "All generated primary statuses match canonical records"
+  ]
+}

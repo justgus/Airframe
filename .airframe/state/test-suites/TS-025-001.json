@@ -1,0 +1,85 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-01"
+    },
+    {
+      "rawValue" : "EP-025-AC-02"
+    },
+    {
+      "rawValue" : "EP-025-AC-03"
+    },
+    {
+      "rawValue" : "EP-025-AC-04"
+    },
+    {
+      "rawValue" : "EP-025-AC-05"
+    },
+    {
+      "rawValue" : "EP-025-AC-06"
+    },
+    {
+      "rawValue" : "EP-025-AC-07"
+    },
+    {
+      "rawValue" : "EP-025-AC-08"
+    },
+    {
+      "rawValue" : "EP-025-AC-09"
+    },
+    {
+      "rawValue" : "EP-025-AC-10"
+    }
+  ],
+  "id" : {
+    "rawValue" : "TS-025-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planning-only suite; evidence is attached as owning Tasks are implemented."
+  ],
+  "objective" : "Group the canonical test definitions required to demonstrate every EP-025 acceptance criterion before human closeout.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "testIDs" : [
+    {
+      "rawValue" : "TEST-025-001"
+    },
+    {
+      "rawValue" : "TEST-025-002"
+    },
+    {
+      "rawValue" : "TEST-025-003"
+    },
+    {
+      "rawValue" : "TEST-025-004"
+    },
+    {
+      "rawValue" : "TEST-025-005"
+    },
+    {
+      "rawValue" : "TEST-025-006"
+    },
+    {
+      "rawValue" : "TEST-025-007"
+    },
+    {
+      "rawValue" : "TEST-025-008"
+    },
+    {
+      "rawValue" : "TEST-025-009"
+    },
+    {
+      "rawValue" : "TEST-025-010"
+    }
+  ],
+  "title" : "EP-025 audit remediation acceptance coverage"
+}

@@ -2409,6 +2409,102 @@ import Foundation
     #expect(sprintEligibility.blockingWorkItems.map(\.id) == [AirframeID("T-0102")])
 }
 
+@Test func canonicalAcceptanceCriterionDecodesLegacyVerificationState() throws {
+    let data = Data("""
+    {
+      "metadata": { "schemaVersion": { "major": 1, "minor": 0, "patch": 0 } },
+      "id": { "rawValue": "EP-001-AC-01" },
+      "ownerID": { "rawValue": "EP-001" },
+      "text": "Legacy criterion",
+      "isVerified": true,
+      "evidenceIDs": []
+    }
+    """.utf8)
+
+    let criterion = try JSONDecoder().decode(AirframeCanonicalAcceptanceCriterionRecord.self, from: data)
+    #expect(criterion.disposition == .verified)
+    #expect(criterion.isVerified)
+
+    let summaryData = Data("""
+    {
+      "epicID": { "rawValue": "EP-001" },
+      "criteria": [
+        {
+          "id": { "rawValue": "EP-001-AC-01" },
+          "text": "Legacy criterion",
+          "isVerified": true
+        }
+      ]
+    }
+    """.utf8)
+    let summary = try JSONDecoder().decode(AirframeEpicAcceptanceCriteriaSummary.self, from: summaryData)
+    #expect(summary.criteria.first?.disposition == .verified)
+    #expect(!summary.allowsHistoricalCloseDisposition)
+}
+
+@Test func historicalCloseDispositionDoesNotAuthorizeCurrentEpicClose() {
+    let criterion = AirframeEpicAcceptanceCriterion(
+        id: AirframeID("EP-025-AC-01"),
+        text: "Current criterion",
+        disposition: .grandfatheredHistoricalClose
+    )
+    let currentSummary = AirframeEpicAcceptanceCriteriaSummary(
+        epicID: AirframeID("EP-025"),
+        criteria: [criterion]
+    )
+    let historicalSummary = AirframeEpicAcceptanceCriteriaSummary(
+        epicID: AirframeID("EP-001"),
+        criteria: [criterion],
+        allowsHistoricalCloseDisposition: true
+    )
+
+    #expect(!AirframeEpicCloseEligibility(criteriaSummary: currentSummary).eligibility.isEligible)
+    #expect(AirframeEpicCloseEligibility(criteriaSummary: historicalSummary).eligibility.isEligible)
+    #expect(!criterion.isVerified)
+}
+
+@Test func historicalCloseMigrationPreviewFindsOnlyThe42ApprovedCriteria() throws {
+    let historicalEpics = (1...8).map {
+        canonicalEpic(id: String(format: "EP-%03d", $0), status: .closed)
+    }
+    let criteria = (1...42).map { index in
+        AirframeCanonicalAcceptanceCriterionRecord(
+            id: AirframeID(String(format: "HIST-AC-%02d", index)),
+            ownerID: AirframeID(String(format: "EP-%03d", ((index - 1) % 8) + 1)),
+            text: "Historical criterion \(index)"
+        )
+    }
+    let ineligibleCriterion = AirframeCanonicalAcceptanceCriterionRecord(
+        id: AirframeID("EP-009-AC-01"),
+        ownerID: AirframeID("EP-009"),
+        text: "Not approved for migration"
+    )
+    let migration = AirframeHistoricalCloseAcceptanceMigration()
+    let preview = migration.preview(
+        epics: historicalEpics + [canonicalEpic(id: "EP-009", status: .closed)],
+        criteria: criteria + [ineligibleCriterion]
+    )
+
+    #expect(preview.eligibleEpicIDs.count == 8)
+    #expect(preview.criterionCount == 42)
+
+    let migrated = try migration.migrate(
+        epics: historicalEpics,
+        criteria: criteria,
+        explicitlyApprovedEpicIDs: AirframeHistoricalCloseAcceptanceMigration.approvedHistoricalEpicIDs
+    )
+    #expect(migrated.allSatisfy { $0.disposition == .grandfatheredHistoricalClose })
+    #expect(migrated.allSatisfy { !$0.isVerified })
+
+    #expect(throws: AirframeHistoricalCloseAcceptanceMigrationError.ineligibleEpicIDs([AirframeID("EP-009")])) {
+        try migration.migrate(
+            epics: historicalEpics + [canonicalEpic(id: "EP-009", status: .closed)],
+            criteria: criteria + [ineligibleCriterion],
+            explicitlyApprovedEpicIDs: [AirframeID("EP-009")]
+        )
+    }
+}
+
 @Test func planningModelsAllowCloseWhenPrerequisitesAreVerified() {
     let criteriaSummary = AirframeEpicAcceptanceCriteriaSummary(
         epicID: AirframeID("EP-018"),
@@ -3891,6 +3987,51 @@ private func canonicalTaskRecord(
     )
 }
 
+@Test func canonicalStateValidatorDetectsMembershipIssueLinksAndAcceptanceLifecycleDrift() {
+    let project = AirframeCanonicalProjectRecord(
+        id: AirframeID("PRJ-AIRFRAME"),
+        name: "Agile Airframe",
+        repository: "justgus/Airframe",
+        epicIDs: [AirframeID("EP-017")],
+        taskIDs: [AirframeID("T-0001"), AirframeID("T-0001")],
+        issueIDs: [AirframeID("I-0001"), AirframeID("I-0001")]
+    )
+    let epic = canonicalEpic(id: "EP-017", status: .active)
+    let issue = canonicalIssue(
+        id: AirframeID("I-0001"),
+        epicID: AirframeID("EP-017"),
+        sprintID: AirframeID("SP-038")
+    )
+    let criterion = AirframeCanonicalAcceptanceCriterionRecord(
+        id: AirframeID("EP-017-AC-01"),
+        ownerID: AirframeID("EP-017"),
+        text: "Current work cannot use historical-close disposition.",
+        disposition: .grandfatheredHistoricalClose
+    )
+
+    let diagnostics = AirframeCanonicalStateValidator().diagnostics(
+        for: AirframeCanonicalStateSnapshot(
+            project: project,
+            epics: [epic],
+            issues: [issue],
+            acceptanceCriteria: [criterion]
+        )
+    )
+    let reasonCodes = Set(diagnostics.diagnostics.map(\.reasonCode))
+
+    #expect(reasonCodes.contains(.duplicateProjectMembership))
+    #expect(reasonCodes.contains(.epicIssueRelationshipDrift))
+    #expect(reasonCodes.contains(.acceptanceLifecycleInconsistent))
+    #expect(diagnostics.diagnostics.contains {
+        $0.reasonCode == .duplicateProjectMembership &&
+        $0.repairOptions.map(\.action).contains(.deduplicateProjectMembership)
+    })
+    #expect(diagnostics.diagnostics.contains {
+        $0.reasonCode == .epicIssueRelationshipDrift &&
+        $0.repairOptions.map(\.action).contains(.reconcileEpicIssueLinks)
+    })
+}
+
 private func canonicalEpic(
     id: String,
     status: AirframeWorkStatus,
@@ -4016,3 +4157,18 @@ private let liveConfigurationData = Data(
     }
     """.utf8
 )
+
+@Test func criterionMatchIndexPreservesOwnerTextAndExplicitTestLinks() {
+    let owned = AirframeCanonicalRequirementRecord(id: AirframeID("REQ-OWNED"), title: "Opaque", statement: "Separate", status: .draft)
+    let matched = AirframeCanonicalRequirementRecord(id: AirframeID("REQ-MATCHED"), title: "Copper silver bronze", statement: "Copper silver bronze", status: .draft)
+    let unrelated = AirframeCanonicalRequirementRecord(id: AirframeID("REQ-OTHER"), title: "Unrelated", statement: "Different", status: .draft)
+    let criterion = AirframeCanonicalAcceptanceCriterionRecord(id: AirframeID("AC-MATCH"), ownerID: owned.id, text: "Copper silver bronze", isVerified: false)
+    let test = AirframeCanonicalTestRecord(id: AirframeID("TEST-MATCH"), title: "Check", objective: "Check", kind: .unit, status: .ready, requirementIDs: [unrelated.id], acceptanceCriterionIDs: [criterion.id, AirframeID("MISSING")])
+    let index = AirframeRequirementTraceabilityIndex(requirements: [owned, matched, unrelated], acceptanceCriteria: [criterion], tests: [test])
+    #expect(Set(index.requirementIDs(for: criterion.id)) == Set([owned.id, matched.id]))
+    #expect(Set(index.requirementIDs(for: test.id)) == Set([owned.id, matched.id, unrelated.id]))
+    for requirement in [owned, matched, unrelated] {
+        #expect(index.traceSummary(for: requirement.id).testIDs.contains(test.id))
+    }
+    #expect(index.requirementIDs(for: AirframeID("MISSING")).isEmpty)
+}

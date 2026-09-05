@@ -1,0 +1,51 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-07"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore && swift test --package-path AICockpit",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Completeness metadata is accurate in every list and summary.",
+    "Only prior canonical human verification permits a Verified backend label."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-007"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify complete or explicitly partial enumeration and authority-safe canonical-to-GitHub reconciliation.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run transport fixtures exceeding 100 work items.",
+    "Exercise interrupted and limited pagination.",
+    "Run reconciliation dry-run fixtures for Verified and non-Verified records."
+  ],
+  "title" : "GitHub pagination and reconciliation contract",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0181"
+    },
+    {
+      "rawValue" : "T-0182"
+    }
+  ]
+}

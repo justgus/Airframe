@@ -14,15 +14,11 @@ import Foundation
         currentDirectoryURL: URL(fileURLWithPath: FileManager.default.temporaryDirectory.path)
     )
 
-    switch controller.phase {
-    case .loading(let message, let progress):
-        #expect(!message.isEmpty)
-        #expect(progress >= 0.0)
-    case .loaded(let model):
-        #expect(!model.statusMessage.isEmpty)
-    default:
-        Issue.record("Launch controller should start in a displayable phase.")
+    guard case .loading(let message, _) = controller.phase else {
+        Issue.record("Startup must not publish an empty dashboard before loading completes.")
+        return
     }
+    #expect(!message.isEmpty)
 }
 
 @MainActor
@@ -1520,6 +1516,12 @@ import Foundation
         epicCriteria: ["[x] Criterion is verified."]
     )
     try importMarkdownFixturesIntoCanonicalState(rootURL: rootURL, configURL: configURL)
+    // This valid close fixture must include reciprocal parent membership.
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.reconcileEpicTaskLinks(epicID: AirframeID("EP-018"), taskID: AirframeID("T-0107"))
+    try repository.reconcileEpicIssueLinks(epicID: AirframeID("EP-018"), issueID: AirframeID("I-0007"))
+    try repository.reconcileSprintTaskLinks(sprintID: AirframeID("SP-022"), taskID: AirframeID("T-0107"))
+    try repository.reconcileSprintIssueLinks(sprintID: AirframeID("SP-022"), issueID: AirframeID("I-0007"))
     let model = try AgileCockpitDashboardModel.configured(
         configurationURL: configURL,
         environment: [:]
@@ -2473,5 +2475,78 @@ private final class RecordingGitHubIssueTransport: @unchecked Sendable, Airframe
             labels: labels,
             body: issue.body
         )
+    }
+}
+
+@MainActor
+private func waitForStartup(_ controller: AgileCockpitLaunchController) async throws {
+    let deadline = ContinuousClock.now.advanced(by: .seconds(20))
+    while case .loading = controller.phase, ContinuousClock.now < deadline {
+        try await Task.sleep(for: .milliseconds(20))
+    }
+}
+
+@MainActor
+@Test func startupLoadsCanonicalDataAndInvalidatesStaleCache() async throws {
+    let config = try temporaryCanonicalTestsConfigurationURL()
+    let root = config.deletingLastPathComponent()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let environment = ["AIRFRAME_CONFIG_PATH": config.path]
+    let first = AgileCockpitLaunchController(environment: environment, currentDirectoryURL: root)
+    first.beginLoading()
+    try await waitForStartup(first)
+    guard case .loaded(let model) = first.phase else {
+        Issue.record("Canonical startup did not complete.")
+        return
+    }
+    #expect(!model.testRows.isEmpty)
+    #expect(model.statusMessage == "Workspace ready.")
+
+    let repository = AirframeCanonicalStoreRepository(rootURL: root)
+    try repository.store.save(AirframeCanonicalRequirementRecord(
+        id: AirframeID("REQ-STARTUP-NEW"), title: "New canonical requirement",
+        statement: "A changed canonical store must invalidate a prior launch cache.", status: .draft
+    ))
+    let second = AgileCockpitLaunchController(environment: environment, currentDirectoryURL: root)
+    guard case .loading = second.phase else {
+        Issue.record("A cached launch must validate freshness before displaying records.")
+        return
+    }
+    second.beginLoading()
+    try await waitForStartup(second)
+    guard case .loaded(let refreshed) = second.phase else {
+        Issue.record("Cached startup did not complete.")
+        return
+    }
+    #expect(refreshed.requirementTraceRows.contains { $0.requirementID == "REQ-STARTUP-NEW" })
+}
+
+@MainActor
+@Test func startupFailureExposesRetryAndRecovers() async throws {
+    let config = try temporaryCanonicalTestsConfigurationURL()
+    let root = config.deletingLastPathComponent()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let original = try Data(contentsOf: config)
+    try Data("invalid configuration".utf8).write(to: config)
+    let controller = AgileCockpitLaunchController(
+        environment: ["AIRFRAME_CONFIG_PATH": config.path], currentDirectoryURL: root
+    )
+    controller.beginLoading()
+    try await waitForStartup(controller)
+    guard case .failed(let message) = controller.phase else {
+        Issue.record("Invalid configuration must show failure, not an empty dashboard.")
+        return
+    }
+    #expect(message.contains("Launch failed"))
+    try original.write(to: config)
+    controller.retry()
+    guard case .loading = controller.phase else {
+        Issue.record("Retry must restore the loading screen.")
+        return
+    }
+    try await waitForStartup(controller)
+    guard case .loaded = controller.phase else {
+        Issue.record("Retry failed to load the repaired configuration.")
+        return
     }
 }

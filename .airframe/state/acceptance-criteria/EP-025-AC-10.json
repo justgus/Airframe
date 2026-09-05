@@ -1,0 +1,21 @@
+{
+  "disposition" : "unverified",
+  "evidenceIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "EP-025-AC-10"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-025"
+  },
+  "text" : "Canonical evidence is created and attached through supported AICockpit operations, reviewable in AgileCockpit with reciprocal work-item navigation, and protected by relationship-integrity diagnostics."
+}

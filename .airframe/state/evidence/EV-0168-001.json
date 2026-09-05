@@ -1,0 +1,26 @@
+{
+  "artifactReferences" : [
+    "AirframeCore/Sources/AirframeCore/CanonicalDiagnostics.swift",
+    "AirframeCore/Sources/AirframeCore/CanonicalStoreBackend.swift",
+    "AirframeCore/Sources/AirframeCore/HistoricalCloseAcceptanceMigration.swift",
+    "AirframeCore/Tests/AirframeCoreTests/AirframeCoreTests.swift",
+    "AICockpit/Sources/AICockpitKit/AICockpitCommand.swift",
+    "AICockpit/Tests/AICockpitKitTests/AICockpitKitTests.swift",
+    "docs/Audits/Audit-Remediation-20260827.md"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AirframeCore; swift test --package-path AICockpit; aicockpit state diagnostics --backend canonical; xcodebuild -project AgileCockpit/AgileCockpit.xcodeproj -scheme AgileCockpit -sdk macosx build",
+  "environment" : "Local macOS canonical Airframe workspace; direct canonical evidence fallback approved by the user until AgileCockpit supports native canonical evidence attachment.",
+  "id" : { "rawValue" : "EV-0168-001" },
+  "metadata" : { "schemaVersion" : { "major" : 1, "minor" : 0, "patch" : 0 } },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Implemented stable canonical diagnostics for duplicate project membership, reciprocal Epic/Sprint Task and Issue links, and historical acceptance lifecycle consistency. Added CLI historical migration approval and idempotence coverage plus invariant regression fixtures. AirframeCore passed 101 tests, AICockpit passed 55 tests, live canonical diagnostics passed with zero findings, and the AgileCockpit macOS build succeeded.",
+  "workItemIDs" : [
+    { "rawValue" : "T-0168" }
+  ]
+}

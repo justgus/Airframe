@@ -287,32 +287,80 @@ public struct AirframeLocalWorkRecord: Codable, Equatable, Sendable {
     }
 }
 
+public enum AirframeAcceptanceDisposition: String, Codable, Equatable, Sendable {
+    case unverified
+    case verified
+    case grandfatheredHistoricalClose
+
+    public var displayName: String {
+        switch self {
+        case .unverified: "Unverified"
+        case .verified: "Verified"
+        case .grandfatheredHistoricalClose: "Historical Close"
+        }
+    }
+}
+
 public struct AirframeEpicAcceptanceCriterion: Codable, Equatable, Identifiable, Sendable {
     public let id: AirframeID
     public let text: String
-    public let isVerified: Bool
+    public let disposition: AirframeAcceptanceDisposition
 
     public init(
         id: AirframeID,
         text: String,
-        isVerified: Bool = false
+        disposition: AirframeAcceptanceDisposition = .unverified
     ) {
         self.id = id
         self.text = text
-        self.isVerified = isVerified
+        self.disposition = disposition
+    }
+
+    public init(id: AirframeID, text: String, isVerified: Bool) {
+        self.init(id: id, text: text, disposition: isVerified ? .verified : .unverified)
+    }
+
+    public var isVerified: Bool {
+        disposition == .verified
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, text, disposition, isVerified
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(AirframeID.self, forKey: .id)
+        text = try container.decode(String.self, forKey: .text)
+        if let decodedDisposition = try container.decodeIfPresent(AirframeAcceptanceDisposition.self, forKey: .disposition) {
+            disposition = decodedDisposition
+        } else {
+            disposition = try container.decodeIfPresent(Bool.self, forKey: .isVerified) == true ? .verified : .unverified
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(text, forKey: .text)
+        try container.encode(disposition, forKey: .disposition)
+        try container.encode(isVerified, forKey: .isVerified)
     }
 }
 
 public struct AirframeEpicAcceptanceCriteriaSummary: Codable, Equatable, Sendable {
     public let epicID: AirframeID
     public let criteria: [AirframeEpicAcceptanceCriterion]
+    public let allowsHistoricalCloseDisposition: Bool
 
     public init(
         epicID: AirframeID,
-        criteria: [AirframeEpicAcceptanceCriterion]
+        criteria: [AirframeEpicAcceptanceCriterion],
+        allowsHistoricalCloseDisposition: Bool = false
     ) {
         self.epicID = epicID
         self.criteria = criteria
+        self.allowsHistoricalCloseDisposition = allowsHistoricalCloseDisposition
     }
 
     public var totalCount: Int {
@@ -329,6 +377,27 @@ public struct AirframeEpicAcceptanceCriteriaSummary: Codable, Equatable, Sendabl
 
     public var allCriteriaVerified: Bool {
         hasCriteria && verifiedCount == totalCount
+    }
+
+    public var allCriteriaSatisfiedForClose: Bool {
+        hasCriteria && criteria.allSatisfy { criterion in
+            criterion.disposition == .verified
+                || (allowsHistoricalCloseDisposition && criterion.disposition == .grandfatheredHistoricalClose)
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case epicID, criteria, allowsHistoricalCloseDisposition
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        epicID = try container.decode(AirframeID.self, forKey: .epicID)
+        criteria = try container.decode([AirframeEpicAcceptanceCriterion].self, forKey: .criteria)
+        allowsHistoricalCloseDisposition = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .allowsHistoricalCloseDisposition
+        ) ?? false
     }
 }
 
@@ -393,7 +462,7 @@ public struct AirframeEpicCloseEligibility: Codable, Equatable, Sendable {
             sprint.kind == .sprint && sprint.status != .closed
         }.sorted { $0.id.rawValue < $1.id.rawValue }
 
-        if criteriaSummary.allCriteriaVerified, blockingSprints.isEmpty {
+        if criteriaSummary.allCriteriaSatisfiedForClose, blockingSprints.isEmpty {
             self.eligibility = .eligible
         } else if criteriaSummary.criteria.isEmpty {
             let sprintReasons = blockingSprints.map {
@@ -404,9 +473,17 @@ public struct AirframeEpicCloseEligibility: Codable, Equatable, Sendable {
                 blockingReasons: ["No acceptance criteria are recorded."] + sprintReasons
             )
         } else {
-            let unverified = criteriaSummary.criteria.filter { !$0.isVerified }
+            let unverified = criteriaSummary.criteria.filter { criterion in
+                criterion.disposition != .verified
+                    && !(criteriaSummary.allowsHistoricalCloseDisposition
+                        && criterion.disposition == .grandfatheredHistoricalClose)
+            }
             let criteriaReasons = unverified.map {
-                "\($0.id.rawValue) is not verified."
+                if $0.disposition == .grandfatheredHistoricalClose {
+                    "\($0.id.rawValue) has a historical-close disposition that is not valid for this Epic."
+                } else {
+                    "\($0.id.rawValue) is not verified."
+                }
             }
             let sprintReasons = blockingSprints.map {
                 "\($0.id.rawValue) is \($0.status.description)."

@@ -1,0 +1,40 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit workspace mutation workflow"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "Mutations detect protected branches and dirty worktrees, route changes through an explicit review branch, preserve existing changes, and report the destination branch.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:33:13Z"
+  },
+  "notes" : [
+    "Imported from GitHub #177. The remote artifact incorrectly identifies itself as I-0027; canonical I-0027 is a different human-Verified Issue. Audit remediation assigns this work the collision-free canonical ID I-0031."
+  ],
+  "observedBehavior" : "AgileCockpit applies workflow mutations to the checked-out branch and can write directly to a protected default branch.",
+  "reproductionSteps" : [
+    "Open a workspace on main, perform a mutating operation such as Sprint close, and observe canonical and projected changes written directly to main."
+  ],
+  "severity" : "medium",
+  "sprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "workItem" : {
+    "githubIssue" : 177,
+    "id" : {
+      "rawValue" : "I-0031"
+    },
+    "kind" : "issue",
+    "status" : "backlog",
+    "title" : "AgileCockpit should support branch-based workspace mutations"
+  }
+}

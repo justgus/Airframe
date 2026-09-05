@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "Every GitHub-backed list and summary traverses all available pages by default.",
+    "Incomplete results expose partial status, applied limit, retrieved count, continuation state, and reason.",
+    "Backend counts are labeled as GitHub coverage rather than complete canonical inventory.",
+    "Regression coverage includes more than 100 work items and interrupted pagination."
+  ],
+  "component" : "GitHub backend and command\/UI contracts for R-10 and R-G4.",
+  "componentsAffected" : [
+    "GitHub backend and command\/UI contracts for R-10 and R-G4."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:58Z"
+  },
+  "notes" : [
+    "Partial results must never be presented as complete."
+  ],
+  "priority" : "high",
+  "rationale" : "Partial results must never be presented as complete.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "testSteps" : [
+    "Pagination transport tests and CLI\/UI contract snapshots."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0181"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Implement complete GitHub pagination and disclosure"
+  }
+}

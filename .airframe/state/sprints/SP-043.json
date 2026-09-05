@@ -1,0 +1,44 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "goal" : "",
+  "issueIDs" : [
+    {
+      "rawValue" : "I-0031"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:58Z"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0181"
+    },
+    {
+      "rawValue" : "T-0182"
+    },
+    {
+      "rawValue" : "T-0183"
+    },
+    {
+      "rawValue" : "T-0184"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-043"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "GitHub Integration, Reconciliation, and Safe Workspace Mutations"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "auditEventIDs" : [
+    {
+      "rawValue" : "AUD-AGILE-PLAN-1"
+    }
+  ],
+  "commands" : [
+    "Focused AirframeCore and AICockpit tests",
+    "Migration preview before apply",
+    "Canonical diagnostics and relationship inventory after apply"
+  ],
+  "decisionState" : "approved",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Canonical schema\/data migration affecting PRJ-AIRFRAME, EP-017, and 42 historical acceptance criteria; no GitHub mutation."
+  ],
+  "fileChanges" : [
+    "AirframeCore canonical records, workflow policy, store\/repair services, and diagnostics",
+    "AICockpit migration and diagnostic commands",
+    "AgileCockpit historical-disposition presentation",
+    ".airframe\/state project, Epic, Issue, and acceptance-criterion records after verified migration"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-038"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Must complete before later Sprints depend on trustworthy diagnostics and canonical relationships."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "T-0166 historical-close disposition",
+    "T-0167 relationship and membership repair",
+    "T-0168 systematic invariant diagnostics"
+  ],
+  "summary" : "Implement R-01, R-02, R-03, R-16, R-G3, and R-Q1 in dependency order: schema and policy, supported repair, canonical migration, then invariant validation.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-038"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0166"
+    },
+    {
+      "rawValue" : "T-0167"
+    },
+    {
+      "rawValue" : "T-0168"
+    }
+  ],
+  "title" : "Canonical Integrity and Historical Acceptance Plan",
+  "verificationCriteria" : [
+    "Stable diagnostics reject duplicates and asymmetric links",
+    "Historical disposition preserves provenance and cannot impersonate verification",
+    "All repairs are idempotent and evidence-backed"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-09"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "make check",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Every in-scope ruling has evidence and no mechanical blocker remains.",
+    "The Audit is Complete - Not Closed and awaits human closure."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-009"
+  },
+  "kind" : "acceptance",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify every approved ruling and I-0031 has evidence and all mechanical checks pass before human closeout.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Review the ruling-to-Task-to-evidence matrix.",
+    "Run all affected test suites and canonical diagnostics.",
+    "Validate regenerated state, repository hygiene, and remediation status."
+  ],
+  "title" : "Audit remediation close-readiness validation",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0184"
+    }
+  ]
+}

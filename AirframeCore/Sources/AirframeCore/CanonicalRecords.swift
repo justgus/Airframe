@@ -445,14 +445,14 @@ public struct AirframeCanonicalAcceptanceCriterionRecord: Codable, Equatable, Se
     public let id: AirframeID
     public let ownerID: AirframeID
     public let text: String
-    public let isVerified: Bool
+    public let disposition: AirframeAcceptanceDisposition
     public let evidenceIDs: [AirframeID]
 
     public init(
         id: AirframeID,
         ownerID: AirframeID,
         text: String,
-        isVerified: Bool = false,
+        disposition: AirframeAcceptanceDisposition = .unverified,
         evidenceIDs: [AirframeID] = [],
         metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
     ) {
@@ -460,8 +460,59 @@ public struct AirframeCanonicalAcceptanceCriterionRecord: Codable, Equatable, Se
         self.id = id
         self.ownerID = ownerID
         self.text = text
-        self.isVerified = isVerified
+        self.disposition = disposition
         self.evidenceIDs = evidenceIDs
+    }
+
+    public init(
+        id: AirframeID,
+        ownerID: AirframeID,
+        text: String,
+        isVerified: Bool,
+        evidenceIDs: [AirframeID] = [],
+        metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
+    ) {
+        self.init(
+            id: id,
+            ownerID: ownerID,
+            text: text,
+            disposition: isVerified ? .verified : .unverified,
+            evidenceIDs: evidenceIDs,
+            metadata: metadata
+        )
+    }
+
+    public var isVerified: Bool {
+        disposition == .verified
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case metadata, id, ownerID, text, disposition, isVerified, evidenceIDs
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        metadata = try container.decode(AirframeCanonicalRecordMetadata.self, forKey: .metadata)
+        id = try container.decode(AirframeID.self, forKey: .id)
+        ownerID = try container.decode(AirframeID.self, forKey: .ownerID)
+        text = try container.decode(String.self, forKey: .text)
+        evidenceIDs = try container.decodeIfPresent([AirframeID].self, forKey: .evidenceIDs) ?? []
+        if let decodedDisposition = try container.decodeIfPresent(AirframeAcceptanceDisposition.self, forKey: .disposition) {
+            disposition = decodedDisposition
+        } else {
+            disposition = try container.decodeIfPresent(Bool.self, forKey: .isVerified) == true ? .verified : .unverified
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(metadata, forKey: .metadata)
+        try container.encode(id, forKey: .id)
+        try container.encode(ownerID, forKey: .ownerID)
+        try container.encode(text, forKey: .text)
+        try container.encode(disposition, forKey: .disposition)
+        try container.encode(isVerified, forKey: .isVerified)
+        try container.encode(evidenceIDs, forKey: .evidenceIDs)
     }
 }
 

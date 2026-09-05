@@ -1,0 +1,48 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-08"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "make check",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Protected-branch mutation requires explicit review-branch routing.",
+    "Tracked and untracked pre-existing changes are preserved."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-008"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify AgileCockpit never silently writes mutations to a configured protected branch and preserves dirty worktrees.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Exercise clean and dirty worktrees on protected and review branches.",
+    "Exercise review-branch creation and failure.",
+    "Verify confirmation and completion destination messaging."
+  ],
+  "title" : "Protected-branch workspace mutation safety",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0183"
+    }
+  ]
+}

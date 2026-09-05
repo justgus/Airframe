@@ -1,0 +1,27 @@
+{
+  "artifactReferences" : [
+    ".airframe/state/projects/PRJ-AIRFRAME.json",
+    ".airframe/state/epics/EP-017.json",
+    ".airframe/state/issues/I-0001.json",
+    ".airframe/state/issues/I-0002.json",
+    ".airframe/state/issues/I-0003.json",
+    ".airframe/state/issues/I-0004.json",
+    "AirframeCore/Sources/AirframeCore/CanonicalStoreBackend.swift",
+    "AirframeCore/Sources/AirframeCore/CanonicalDiagnostics.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "aicockpit state repair --action deduplicateProjectMembership --id PRJ-AIRFRAME; aicockpit state repair --action reconcileEpicIssueLinks --id EP-017; aicockpit state diagnostics --backend canonical",
+  "environment" : "Local canonical Airframe workspace; direct canonical evidence fallback approved by the user until AgileCockpit supports native canonical evidence attachment.",
+  "id" : { "rawValue" : "EV-0167-001" },
+  "metadata" : { "schemaVersion" : { "major" : 1, "minor" : 0, "patch" : 0 } },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "AICockpit diagnostics identified duplicate Task and Issue membership in PRJ-AIRFRAME and four missing EP-017 reverse Issue links. Supported repair operations deduplicated membership and linked I-0001 through I-0004 reciprocally. The post-repair canonical diagnostic report contains zero findings; unrelated membership and relationships were preserved.",
+  "workItemIDs" : [
+    { "rawValue" : "T-0167" }
+  ]
+}

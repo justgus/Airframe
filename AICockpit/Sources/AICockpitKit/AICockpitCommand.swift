@@ -494,6 +494,54 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals == ["acceptance-criteria", "migrate-historical-close"] {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let state = try repository.loadState()
+                let migration = AirframeHistoricalCloseAcceptanceMigration()
+                let preview = migration.preview(epics: state.epics, criteria: state.acceptanceCriteria)
+                let shouldApply = parsed.value(for: "--apply") == "true"
+                var changedCriterionIDs: [AirframeID] = []
+                if shouldApply {
+                    guard parsed.value(for: "--approve") == "true" else {
+                        throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+                    }
+                    let migrated = try migration.migrate(
+                        epics: state.epics,
+                        criteria: state.acceptanceCriteria,
+                        explicitlyApprovedEpicIDs: Set(preview.eligibleEpicIDs)
+                    )
+                    let existingByID = Dictionary(uniqueKeysWithValues: state.acceptanceCriteria.map { ($0.id, $0) })
+                    for criterion in migrated where criterion != existingByID[criterion.id] {
+                        try repository.store.save(criterion)
+                        changedCriterionIDs.append(criterion.id)
+                    }
+                }
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitHistoricalCloseMigrationEnvelope(
+                            status: "ok",
+                            kind: shouldApply ? "historicalCloseAcceptanceMigration" : "historicalCloseAcceptanceMigrationPreview",
+                            message: shouldApply ? "Historical-close acceptance migration applied" : "Historical-close acceptance migration previewed",
+                            eligibleEpicIDs: preview.eligibleEpicIDs,
+                            eligibleCriterionIDs: preview.eligibleCriterionIDs,
+                            changedCriterionIDs: changedCriterionIDs,
+                            approvedBy: shouldApply ? (parsed.value(for: "--approved-by") ?? "human") : nil
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "historicalCloseAcceptanceMigrationFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
         if parsed.positionals == ["plans", "list"] {
             do {
                 let repository = try canonicalTestRepository(parsed: parsed)
@@ -781,7 +829,7 @@ public enum AICockpitCommand {
                     id: existing.id,
                     ownerID: ownerID,
                     text: existing.text,
-                    isVerified: existing.isVerified,
+                    disposition: existing.disposition,
                     evidenceIDs: existing.evidenceIDs,
                     metadata: existing.metadata
                 )
@@ -1867,6 +1915,7 @@ public enum AICockpitCommand {
           aicockpit acceptance-criteria create --id AC-ID --owner EP-ID --text text [--verified true|false] [--evidence EV-ID] [--config path] [--output markdown|json]
           aicockpit acceptance-criteria update AC-ID [--owner EP-ID] [--text text] [--verified true|false] [--evidence EV-ID] [--config path] [--output markdown|json]
           aicockpit acceptance-criteria link AC-ID --owner EP-ID [--config path] [--output markdown|json]
+          aicockpit acceptance-criteria migrate-historical-close [--apply --approve --approved-by name] [--config path] [--output markdown|json]
           aicockpit plans list [--config path] [--output markdown|json]
           aicockpit plans inspect PLAN-ID [--config path] [--output markdown|json]
           aicockpit plans submit --id PLAN-ID --title title --summary text [--epic EP-ID] [--sprint SP-ID] [--task T-ID] [--scope text] [--file-change text] [--command text] [--external-effect text] [--verification text] [--note text] [--config path] [--output markdown|json]
@@ -1880,7 +1929,7 @@ public enum AICockpitCommand {
           aicockpit test-suites inspect TS-ID [--config path] [--output markdown|json]
           aicockpit test-suites create --id TS-ID --title title --objective text [--status draft|ready|active|retired] [--test TEST-ID] [--requirement REQ-ID] [--acceptance-criterion AC-ID] [--note text] [--config path] [--output markdown|json]
           aicockpit test-suites update TS-ID [--title title] [--objective text] [--status draft|ready|active|retired] [--test TEST-ID] [--requirement REQ-ID] [--acceptance-criterion AC-ID] [--note text] [--config path] [--output markdown|json]
-          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|setActiveEpicID|setActiveSprintID|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileSprintTaskLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
+          aicockpit state repair --action applyBackendStatusLabels|applyBackendRelationshipLabels|clearActiveEpicID|clearActiveSprintID|restoreEpicToActive|restoreSprintToActive|setActiveEpicID|setActiveSprintID|deduplicateProjectMembership|reconcileEpicSprintLinks|reconcileEpicTaskLinks|reconcileEpicIssueLinks|reconcileSprintTaskLinks|reconcileSprintIssueLinks [--id ID] --approve --approved-by name [--config path] [--backend canonical|github-issues|local-fixture|github-fixture] [--output markdown|json]
           aicockpit authority demo-denied [--config path]
           aicockpit project summary [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
@@ -2400,6 +2449,20 @@ public enum AICockpitCommand {
     }
 
     private static func render(
+        _ envelope: AICockpitHistoricalCloseMigrationEnvelope,
+        as outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(envelope), as: UTF8.self)
+        case .markdown:
+            return envelope.markdown
+        }
+    }
+
+    private static func render(
         _ envelope: AICockpitTestSuiteCommandEnvelope,
         as outputFormat: AICockpitOutputFormat
     ) throws -> String {
@@ -2469,12 +2532,17 @@ public enum AICockpitCommand {
         guard let text, !text.isEmpty else {
             throw AICockpitCommandError.invalidArguments("missing required option --text")
         }
-        let isVerified = parsed.value(for: "--verified").flatMap(Bool.init) ?? existing?.isVerified ?? false
+        let disposition: AirframeAcceptanceDisposition
+        if let isVerified = parsed.value(for: "--verified").flatMap(Bool.init) {
+            disposition = isVerified ? .verified : .unverified
+        } else {
+            disposition = existing?.disposition ?? .unverified
+        }
         return AirframeCanonicalAcceptanceCriterionRecord(
             id: id,
             ownerID: ownerID,
             text: text,
-            isVerified: isVerified,
+            disposition: disposition,
             evidenceIDs: replacementOrExisting(
                 parsed.repeatedValues(for: "--evidence").map(AirframeID.init),
                 existing?.evidenceIDs ?? []
@@ -3819,6 +3887,33 @@ private struct AICockpitAcceptanceCriteriaCommandEnvelope: Codable, Equatable {
             }
         }
 
+        return lines.joined(separator: "\n")
+    }
+}
+
+private struct AICockpitHistoricalCloseMigrationEnvelope: Codable, Equatable {
+    let status: String
+    let kind: String
+    let message: String
+    let eligibleEpicIDs: [AirframeID]
+    let eligibleCriterionIDs: [AirframeID]
+    let changedCriterionIDs: [AirframeID]
+    let approvedBy: String?
+
+    var markdown: String {
+        var lines = [
+            "# Airframe Command",
+            "",
+            "- status: \(status)",
+            "- kind: \(kind)",
+            "- message: \(message)",
+            "- eligible epics: \(eligibleEpicIDs.map(\.rawValue).joined(separator: ", "))",
+            "- eligible criteria: \(eligibleCriterionIDs.count)",
+            "- changed criteria: \(changedCriterionIDs.count)"
+        ]
+        if let approvedBy {
+            lines.append("- approved by: \(approvedBy)")
+        }
         return lines.joined(separator: "\n")
     }
 }

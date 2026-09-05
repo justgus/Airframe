@@ -1,0 +1,68 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "Focused importer boundary tests",
+    "Repair preview and 25-record source comparison",
+    "Projection regeneration and requirement\/traceability regression suites"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Controlled canonical requirement mutation followed by generated-document replacement; no GitHub mutation."
+  ],
+  "fileChanges" : [
+    "AirframeCore requirement import and interchange code",
+    "AICockpit controlled import\/repair workflow",
+    ".airframe\/state\/requirements for the audited affected set",
+    "Generated requirement and traceability documentation"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-040"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Parser correctness is a hard gate before canonical-data mutation."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "T-0172 parser boundary correction",
+    "T-0173 controlled data repair and source comparison",
+    "T-0174 projection regeneration and end-to-end validation"
+  ],
+  "summary" : "Implement R-12 by correcting the importer first, then repairing the 25 affected canonical records, comparing each to source, and regenerating derived requirement views.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-040"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0172"
+    },
+    {
+      "rawValue" : "T-0173"
+    },
+    {
+      "rawValue" : "T-0174"
+    }
+  ],
+  "title" : "Requirement Importer and Canonical Data Repair Plan",
+  "verificationCriteria" : [
+    "Every affected statement matches its authoritative section",
+    "Unrelated records are unchanged",
+    "Generated views exactly reflect repaired canonical state"
+  ]
+}

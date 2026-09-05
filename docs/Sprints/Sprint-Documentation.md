@@ -8,7 +8,7 @@ Currently: **None**
 
 ## All Sprints
 
-Currently: **37 Sprints** | Next available: **SP-038**
+Currently: **44 Sprints** | Next available: **SP-045**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -49,15 +49,22 @@ Currently: **37 Sprints** | Next available: **SP-038**
 | SP-035 | Offline-Only Operation Planning Sprint | EP-019 | T-0148, T-0149, T-0150, T-0151, T-0152, T-0153 | None | Closed |
 | SP-036 | AgileCockpit Plan Review Foundations | EP-023 | T-0154, T-0155, T-0156, T-0157, T-0158, T-0159 | I-0023, I-0024 | Closed |
 | SP-037 | Canonical Test Definition and Management Sprint | EP-024 | T-0160, T-0161, T-0162, T-0163, T-0164, T-0165 | I-0025, I-0026 | Closed |
+| SP-038 | Canonical Integrity and Historical Acceptance | EP-025 | T-0166, T-0167, T-0168 | None | Closed |
+| SP-039 | Configuration and Backend Mapping Model | EP-025 | T-0169, T-0170, T-0171 | None | Planning |
+| SP-040 | Requirement Importer and Canonical Data Repair | EP-025 | T-0172, T-0173, T-0174 | None | Planning |
+| SP-041 | Projection Reliability and Terminology | EP-025 | T-0175, T-0176, T-0177 | None | Planning |
+| SP-042 | Legacy Artifact Retirement | EP-025 | T-0178, T-0179, T-0180 | None | Planning |
+| SP-043 | GitHub Integration, Reconciliation, and Safe Workspace Mutations | EP-025 | T-0181, T-0182, T-0183, T-0184 | I-0031 | Planning |
+| SP-044 | Canonical Evidence Management and Review | EP-025 | T-0185, T-0186, T-0187, T-0188, T-0189 | None | Planning |
 
 ## Statistics
 
-- **Total Sprints:** 37
+- **Total Sprints:** 44
 - **Backlog:** 0
-- **Planning:** 0
+- **Planning:** 6
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 37
-- **Next available:** SP-038
+- **Closed:** 38
+- **Next available:** SP-045
 
-*Last Updated: 2026-07-07*
+*Last Updated: 2026-08-29*

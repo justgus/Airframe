@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Workspace configuration no longer stores active Epic or Sprint pointers.",
+    "All consumers resolve active context from canonical project state.",
+    "Existing workspace configuration migrates without losing unrelated settings."
+  ],
+  "component" : "Configuration models, loaders, AICockpit, AgileCockpit, documentation, and tests for R-04.",
+  "componentsAffected" : [
+    "Configuration models, loaders, AICockpit, AgileCockpit, documentation, and tests for R-04."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Canonical project state remains the sole mutable active-context source."
+  ],
+  "priority" : "high",
+  "rationale" : "Canonical project state remains the sole mutable active-context source.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-039"
+  },
+  "testSteps" : [
+    "Configuration migration and active-context regression tests."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0169"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Remove duplicated active-context configuration pointers"
+  }
+}

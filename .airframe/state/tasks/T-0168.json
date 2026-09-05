@@ -1,0 +1,51 @@
+{
+  "acceptanceCriteria" : [
+    "Diagnostics report duplicate memberships with stable reason identifiers.",
+    "Diagnostics validate both directions of supported Epic, Sprint, Task, and Issue relationships.",
+    "Lifecycle and acceptance consistency recognizes only migration-valid historical dispositions.",
+    "Regression fixtures cover every valid and invalid invariant case."
+  ],
+  "component" : "AirframeCore diagnostics and AICockpit reporting for R-16.",
+  "componentsAffected" : [
+    "AirframeCore diagnostics and AICockpit reporting for R-16."
+  ],
+  "dateVerified" : "2026-08-29",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-0168-001"
+    }
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-29T15:59:48Z"
+  },
+  "notes" : [
+    "A clean result must mean all supported invariants were evaluated."
+  ],
+  "priority" : "high",
+  "rationale" : "A clean result must mean all supported invariants were evaluated.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-038"
+  },
+  "testSteps" : [
+    "Focused AirframeCore and AICockpit diagnostic test results."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0168"
+    },
+    "kind" : "task",
+    "status" : "implementedVerified",
+    "title" : "Implement systematic canonical invariant diagnostics"
+  }
+}

@@ -1032,6 +1032,66 @@ import Foundation
     #expect(epicProjection.contains("EP-9702-AC-01: Epic coverage is managed through AICockpit."))
 }
 
+@Test func historicalCloseAcceptanceMigrationRequiresApprovalAndIsIdempotent() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe"
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEpicRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("EP-001"),
+                kind: .epic,
+                title: "Historical Epic",
+                status: .closed
+            ),
+            owner: "Airframe",
+            goal: "Preserve historical close semantics.",
+            rationale: "Legacy closure predates acceptance evidence."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalAcceptanceCriterionRecord(
+            id: AirframeID("EP-001-AC-01"),
+            ownerID: AirframeID("EP-001"),
+            text: "Historical acceptance criterion."
+        )
+    )
+
+    let denied = AICockpitCommand.response(arguments: [
+        "acceptance-criteria", "migrate-historical-close",
+        "--apply", "--config", configPath, "--output", "json"
+    ])
+    let applied = AICockpitCommand.response(arguments: [
+        "acceptance-criteria", "migrate-historical-close",
+        "--apply", "--approve", "--approved-by", "tester",
+        "--config", configPath, "--output", "json"
+    ])
+    let repeated = AICockpitCommand.response(arguments: [
+        "acceptance-criteria", "migrate-historical-close",
+        "--apply", "--approve", "--approved-by", "tester",
+        "--config", configPath, "--output", "json"
+    ])
+    let saved = try repository.store.load(
+        AirframeCanonicalAcceptanceCriterionRecord.self,
+        id: AirframeID("EP-001-AC-01")
+    )
+
+    #expect(denied.exitCode == 78)
+    #expect(applied.exitCode == 0)
+    #expect(applied.standardOutput.contains("EP-001-AC-01"))
+    #expect(repeated.exitCode == 0)
+    #expect(repeated.standardOutput.contains("\"changedCriterionIDs\" : [\n\n  ]"))
+    #expect(saved?.disposition == .grandfatheredHistoricalClose)
+    #expect(saved?.isVerified == false)
+}
+
 @Test func stateExportMarkdownProjectsRequirementReportsAndReturns() throws {
     let configPath = try temporaryCanonicalRequirementsConfigurationPath()
     let rootURL = URL(filePath: configPath).deletingLastPathComponent()

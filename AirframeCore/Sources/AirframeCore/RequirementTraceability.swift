@@ -153,6 +153,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     private let revisionsByRequirementID: [AirframeID: [AirframeCanonicalRequirementRevisionRecord]]
     private let evidenceByID: [AirframeID: AirframeCanonicalEvidenceSummaryRecord]
     private let acceptanceCriteriaByID: [AirframeID: AirframeCanonicalAcceptanceCriterionRecord]
+    private let requirementIDsByCriterionID: [AirframeID: [AirframeID]]
     private let testsByID: [AirframeID: AirframeCanonicalTestRecord]
     private let inferredMatchesByRequirementID: [AirframeID: AirframeInferredRequirementTraceMatches]
 
@@ -197,6 +198,13 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         self.evidenceByID = Dictionary(uniqueKeysWithValues: sortedEvidence.map { ($0.id, $0) })
         self.acceptanceCriteriaByID = Dictionary(uniqueKeysWithValues: sortedAcceptanceCriteria.map { ($0.id, $0) })
         self.testsByID = Dictionary(uniqueKeysWithValues: sortedTests.map { ($0.id, $0) })
+        // Match each criterion once per immutable index, not once per test and requirement.
+        self.requirementIDsByCriterionID = Dictionary(uniqueKeysWithValues: sortedAcceptanceCriteria.map { criterion in
+            (criterion.id, sortedRequirements.compactMap { requirement in
+                requirement.id == criterion.ownerID || Self.requirementsMatch(requirement: requirement, criterion: criterion)
+                    ? requirement.id : nil
+            })
+        })
         self.inferredMatchesByRequirementID = Dictionary(
             uniqueKeysWithValues: sortedRequirements.map { requirement in
                 (
@@ -608,17 +616,11 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
     }
 
     private func requirements(matching criterion: AirframeCanonicalAcceptanceCriterionRecord) -> [AirframeID] {
-        return requirements.compactMap { requirement in
-            if requirement.id == criterion.ownerID || Self.requirementsMatch(requirement: requirement, criterion: criterion) {
-                return requirement.id
-            }
-            return nil
-        }
+        requirementIDsByCriterionID[criterion.id, default: []]
     }
 
     private func requirements(matchingCriterionID criterionID: AirframeID) -> [AirframeID] {
-        guard let criterion = acceptanceCriteriaByID[criterionID] else { return [] }
-        return requirements(matching: criterion)
+        requirementIDsByCriterionID[criterionID, default: []]
     }
 
     private static func requirementsMatch(

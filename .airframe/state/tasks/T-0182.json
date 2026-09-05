@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Diagnostics identify canonical\/backend status disagreement without granting verification authority.",
+    "Already human-Verified canonical records can synchronize established GitHub status labels.",
+    "The 29 audited stale labels are reconciled only after local behavior passes and live access is available."
+  ],
+  "component" : "AirframeCore backend policy, AICockpit, AgileCockpit, and controlled live synchronization for R-11.",
+  "componentsAffected" : [
+    "AirframeCore backend policy, AICockpit, AgileCockpit, and controlled live synchronization for R-11."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:58Z"
+  },
+  "notes" : [
+    "Only prior canonical human verification authorizes a Verified backend label."
+  ],
+  "priority" : "high",
+  "rationale" : "Only prior canonical human verification authorizes a Verified backend label.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "testSteps" : [
+    "Reconciliation tests, dry-run report, and remote-change log for all synchronized artifacts."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0182"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Implement canonical-to-GitHub reconciliation"
+  }
+}

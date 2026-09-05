@@ -1,0 +1,60 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-10"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "swift test --package-path AirframeCore && swift test --package-path AICockpit",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "Evidence is reviewable without direct canonical file access.",
+    "Diagnostics pass and repeated migration is idempotent."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-010"
+  },
+  "kind" : "acceptance",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for SP-044 before SP-043 final integrated verification."
+  ],
+  "objective" : "Verify EP-025-AC-10 through supported evidence creation, attachment, review, navigation, and diagnostics.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Create and attach canonical evidence through AICockpit.",
+    "Review the evidence and navigate reciprocal links in AgileCockpit.",
+    "Run relationship diagnostics and migration twice."
+  ],
+  "title" : "Native canonical evidence management and review",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0185"
+    },
+    {
+      "rawValue" : "T-0186"
+    },
+    {
+      "rawValue" : "T-0187"
+    },
+    {
+      "rawValue" : "T-0188"
+    },
+    {
+      "rawValue" : "T-0189"
+    }
+  ]
+}

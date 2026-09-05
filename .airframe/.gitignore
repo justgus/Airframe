@@ -1,0 +1,11 @@
+# Airframe workspace ignores. Travels with the .airframe/ template.
+#
+# AgileCockpit UI caches. Derived from canonical state in .airframe/state/,
+# rebuilt on launch, and removable via ac-launch-cockpit.sh --clear-cache.
+# They are large single-line JSON: tracking them makes `git diff` emit both
+# full copies of a multi-megabyte file for any change, which is why they are
+# ignored rather than committed.
+agilecockpit-launch-cache.json
+agilecockpit-traceability-cache.json
+
+.DS_Store

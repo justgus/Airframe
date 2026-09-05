@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Successful canonical mutations trigger or clearly schedule complete projection refresh.",
+    "Human verification refresh is covered by regression tests.",
+    "Refresh failure is surfaced and cannot be mistaken for success."
+  ],
+  "component" : "AirframeCore projector refresh contract and AICockpit\/AgileCockpit mutation integration for R-05.",
+  "componentsAffected" : [
+    "AirframeCore projector refresh contract and AICockpit\/AgileCockpit mutation integration for R-05."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Canonical mutation success and projection freshness must have an explicit consistency contract."
+  ],
+  "priority" : "high",
+  "rationale" : "Canonical mutation success and projection freshness must have an explicit consistency contract.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-041"
+  },
+  "testSteps" : [
+    "Mutation-to-projection integration tests including the six stale Task cases."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0175"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Make canonical projection refresh durable"
+  }
+}

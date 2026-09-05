@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "EP-025-AC-03"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "automationCommand" : "make check",
+  "evidenceIDs" : [
+
+  ],
+  "expectedResults" : [
+    "No consumer depends on removed configuration pointers.",
+    "Valid local states pass while pending and error states remain diagnosable."
+  ],
+  "id" : {
+    "rawValue" : "TEST-025-003"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Planned for EP-025 audit remediation; execution evidence will be attached during the owning Task."
+  ],
+  "objective" : "Verify active context has one canonical source and every optional mapping state is distinct and valid.",
+  "requirementIDs" : [
+
+  ],
+  "status" : "ready",
+  "steps" : [
+    "Run configuration migration tests.",
+    "Exercise all mapping-state fixtures through Core and AICockpit.",
+    "Verify AgileCockpit presentation models."
+  ],
+  "title" : "Canonical active-context and mapping-state validation",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0169"
+    },
+    {
+      "rawValue" : "T-0170"
+    },
+    {
+      "rawValue" : "T-0171"
+    }
+  ]
+}

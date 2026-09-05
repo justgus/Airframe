@@ -1,0 +1,48 @@
+{
+  "acceptanceCriteria" : [
+    "All 21 unresolved rulings and I-0031 have linked implementation evidence.",
+    "Canonical diagnostics and all affected package\/application test suites pass.",
+    "Required projections are regenerated and repository consistency checks pass.",
+    "The remediation log reaches Complete - Not Closed without performing human-only Audit closure."
+  ],
+  "component" : "Cross-Sprint integration, evidence collation, runtime-state classification, and final remediation record.",
+  "componentsAffected" : [
+    "Cross-Sprint integration, evidence collation, runtime-state classification, and final remediation record."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:58Z"
+  },
+  "notes" : [
+    "Do not close the Audit cycle; closure remains human-only."
+  ],
+  "priority" : "high",
+  "rationale" : "Do not close the Audit cycle; closure remains human-only.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "testSteps" : [
+    "Final ruling matrix, test summary, git diff check, generated-state validation, and remediation log."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0184"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Complete integrated audit remediation verification"
+  }
+}

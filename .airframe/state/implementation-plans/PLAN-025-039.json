@@ -1,0 +1,68 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "Configuration compatibility tests",
+    "Mapping-state validation tests",
+    "AICockpit contract tests and AgileCockpit UI\/model tests"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Local configuration and canonical mapping migration; no creation of GitHub Issues and no remote status changes."
+  ],
+  "fileChanges" : [
+    "AirframeCore configuration, canonical records, persistence, policy, and diagnostics",
+    "AICockpit status\/inspection output",
+    "AgileCockpit workspace and mapping UI",
+    ".airframe workspace configuration and mapping records through controlled migration"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-039"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Build after SP-038 diagnostics foundations where practical."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "T-0169 active-context configuration migration",
+    "T-0170 canonical mapping-state model",
+    "T-0171 CLI and UI presentation"
+  ],
+  "summary" : "Implement R-04, R-14, R-G5, and R-Q2 by removing duplicated active pointers and introducing explicit optional backend mapping states across Core and both Cockpits.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-039"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0169"
+    },
+    {
+      "rawValue" : "T-0170"
+    },
+    {
+      "rawValue" : "T-0171"
+    }
+  ],
+  "title" : "Configuration and Backend Mapping Model Plan",
+  "verificationCriteria" : [
+    "Canonical project state is the sole active-context source",
+    "All five mapping conditions are distinguishable",
+    "The 26 unmapped records classify without forced remote artifacts"
+  ]
+}

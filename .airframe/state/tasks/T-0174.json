@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "All requirement and traceability projections affected by repaired statements are regenerated.",
+    "Generated content matches canonical repaired records.",
+    "Requirement, traceability, and data-validation regression suites pass."
+  ],
+  "component" : "Projection regeneration and end-to-end R-12 verification.",
+  "componentsAffected" : [
+    "Projection regeneration and end-to-end R-12 verification."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-08-28T20:38:57Z"
+  },
+  "notes" : [
+    "Never hand-edit generated requirement projections."
+  ],
+  "priority" : "high",
+  "rationale" : "Never hand-edit generated requirement projections.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-040"
+  },
+  "testSteps" : [
+    "Regeneration command output, projection comparison, and regression results."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0174"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Regenerate and validate requirement projections"
+  }
+}
