@@ -1,0 +1,43 @@
+{
+  "acceptanceCriterionIDs": [],
+  "goal": "Elevate Requirements, Tests, and Acceptance Criteria evidence to first-class Agile work products with their own workflow states, authority boundaries, and Cockpit surfaces.",
+  "issueIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "notes": [
+    "Open design question, blocking acceptance criteria: requirements already carry verified and validated states. If those denote human acceptance in the same sense as Task verification, they must be Human-only in the authority table. This decision shapes most of the Epic's scope and is the user's to make.",
+    "This Epic subsumes the dashboard-tile request for Requirements, Plans, and Tests. Once these are work items, tiles follow from the existing AirframeDashboardStatusSummary builder rather than needing a parallel tile type.",
+    "Related defect found 2026-09-05: narrative fields are frequently empty in canonical records (Task rationale empty in 147/191, Epic goal in 10/25, Sprint goal in 6/45), so detail views render blank sections. Worth deciding whether these are required fields under the new model."
+  ],
+  "outOfScope": [
+    "Changing human-only verification boundaries for existing Task, Issue, Sprint, and Epic kinds.",
+    "Cache payload de-duplication, which is tracked separately as T-0191.",
+    "AICockpit read-primitive work, which is tracked separately as T-0190."
+  ],
+  "owner": "justgus",
+  "planningDocumentPaths": [],
+  "rationale": "Requirements, Tests, and AC evidence already behave as work products: they are canonical records with lifecycle states, they trace to Epics and Tasks, and they gate release. They are not AirframeWorkItemKind, so they receive second-class treatment in the dashboard, the workflow tables, and the authority model. The gap also costs tokens: an agent reasoning about requirement or test state must reconstruct it from traceability matrices and generated documents because no first-class workflow surface exists.",
+  "scope": [
+    "Extend AirframeWorkItemKind, or introduce an equivalent abstraction, to cover requirements, tests, and evidence.",
+    "Define workflow states and Agent/Human authority for each new kind, and record them in the AGENTS.md authority table.",
+    "Surface the new kinds in AgileCockpit dashboard tiles and drill-down, reusing the existing tile builder.",
+    "Extend AICockpit list/inspect/status commands to the new kinds.",
+    "Migrate canonical state and the cache payload to carry the new kinds without duplicating existing records.",
+    "Tie AC objective evidence to acceptance criteria so verification is inspectable from one surface."
+  ],
+  "sprintIDs": [],
+  "taskIDs": [],
+  "workItem": {
+    "id": {
+      "rawValue": "EP-026"
+    },
+    "kind": "epic",
+    "status": "draft",
+    "title": "First-Class Requirements, Tests, and Evidence Work Products"
+  }
+}

@@ -1,48 +1,44 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Every GitHub-backed list and summary traverses all available pages by default.",
     "Incomplete results expose partial status, applied limit, retrieved count, continuation state, and reason.",
     "Backend counts are labeled as GitHub coverage rather than complete canonical inventory.",
     "Regression coverage includes more than 100 work items and interrupted pagination."
   ],
-  "component" : "GitHub backend and command\/UI contracts for R-10 and R-G4.",
-  "componentsAffected" : [
-    "GitHub backend and command\/UI contracts for R-10 and R-G4."
+  "component": "GitHub backend and command/UI contracts for R-10 and R-G4.",
+  "componentsAffected": [
+    "GitHub backend and command/UI contracts for R-10 and R-G4."
   ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:58Z"
+    "updatedAt": "2026-08-28T20:38:58Z"
   },
-  "notes" : [
+  "notes": [
     "Partial results must never be presented as complete."
   ],
-  "priority" : "high",
-  "rationale" : "Partial results must never be presented as complete.",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-043"
+  "priority": "high",
+  "rationale": "GitHub-backed lists and summaries return only the first page, so partial results are presented as complete inventories. This task traverses all pages by default, exposes partial status with applied limit, retrieved count, continuation state, and reason, and labels backend counts as GitHub coverage rather than canonical inventory.\n\nConstraint: Partial results must never be presented as complete.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-043"
   },
-  "testSteps" : [
-    "Pagination transport tests and CLI\/UI contract snapshots."
+  "testSteps": [
+    "Pagination transport tests and CLI/UI contract snapshots."
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0181"
+  "workItem": {
+    "id": {
+      "rawValue": "T-0181"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Implement complete GitHub pagination and disclosure"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Implement complete GitHub pagination and disclosure"
   }
 }

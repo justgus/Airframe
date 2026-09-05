@@ -1,39 +1,35 @@
 {
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "goal" : "",
-  "issueIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "goal": "Make canonical projection refresh durable and complete, and render artifact terminology and relationship statuses consistently, so generated documents are a trustworthy view of canonical state.",
+  "issueIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
-
-  ],
-  "taskIDs" : [
+  "notes": [],
+  "taskIDs": [
     {
-      "rawValue" : "T-0175"
+      "rawValue": "T-0175"
     },
     {
-      "rawValue" : "T-0176"
+      "rawValue": "T-0176"
     },
     {
-      "rawValue" : "T-0177"
+      "rawValue": "T-0177"
     }
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "SP-041"
+  "workItem": {
+    "id": {
+      "rawValue": "SP-041"
     },
-    "kind" : "sprint",
-    "status" : "planning",
-    "title" : "Projection Reliability and Terminology"
+    "kind": "sprint",
+    "status": "planning",
+    "title": "Projection Reliability and Terminology"
   }
 }

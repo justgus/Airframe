@@ -1,0 +1,37 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "goal" : "Reduce agent token consumption by adding granular read primitives to AICockpit, so that answering a question about one record does not require loading the corpus.",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-05T17:21:07Z"
+  },
+  "notes" : [
+    "Scope driven by measured read amplification: task list ~10,200 tokens for 189 records; requirements have no single-record read at all.",
+    "task|issue|sprint|epic inspect already exists and costs ~186 tokens; this Sprint closes the equivalent gap for requirements and adds filtering to list."
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0190"
+    },
+    {
+      "rawValue" : "T-0191"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-045"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "Performance Improvement and Resource Reduction"
+  }
+}

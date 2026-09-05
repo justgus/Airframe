@@ -1,47 +1,43 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Task working queues and index no longer claim current-state authority.",
     "Retained paths are deterministic canonical projections or unambiguous redirects.",
     "Historical Task archives remain preserved and clearly identified."
   ],
-  "component" : "R-09 Legacy Task retirement.",
-  "componentsAffected" : [
+  "component": "R-09 Legacy Task retirement.",
+  "componentsAffected": [
     "R-09 Legacy Task retirement."
   ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
+  "notes": [
     "Do not alter historical verification provenance."
   ],
-  "priority" : "high",
-  "rationale" : "Do not alter historical verification provenance.",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-042"
+  "priority": "high",
+  "rationale": "Legacy Task working queues and index files carry the same duplicate current-state authority problem as the Issue files. This task retires that claim, leaving deterministic projections or unambiguous redirects.\n\nConstraint: Do not alter historical verification provenance.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-042"
   },
-  "testSteps" : [
+  "testSteps": [
     "Link inventory, preservation diff, and deterministic-output tests."
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0179"
+  "workItem": {
+    "id": {
+      "rawValue": "T-0179"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Retire mutable Legacy Task current-state files"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Retire mutable Legacy Task current-state files"
   }
 }

@@ -220,6 +220,100 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals.count == 3,
+           parsed.positionals[0] == "requirements",
+           parsed.positionals[1] == "inspect" {
+            do {
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
+                let state = try AirframeCanonicalStoreRepository(rootURL: rootURL).loadState()
+                let requirementID = AirframeID(parsed.positionals[2])
+                guard let requirement = state.requirements.first(where: { $0.id == requirementID }) else {
+                    throw AirframeBackendError.missingWorkItem(requirementID)
+                }
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitRequirementCommandEnvelope(
+                            status: "ok",
+                            kind: "canonicalRequirementInspection",
+                            message: "Canonical requirement loaded",
+                            requirement: requirement,
+                            requirements: [],
+                            identifiers: []
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalRequirementCommandFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
+        if parsed.positionals.count == 2,
+           parsed.positionals[0] == "requirements",
+           parsed.positionals[1] == "list" {
+            do {
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
+                let state = try AirframeCanonicalStoreRepository(rootURL: rootURL).loadState()
+
+                var requirements = state.requirements.sorted { $0.id.rawValue < $1.id.rawValue }
+
+                if let rawStatus = parsed.value(for: "--status") {
+                    guard let status = AirframeRequirementLifecycleStatus(rawValue: rawStatus) else {
+                        return errorResult(
+                            exitCode: 64,
+                            code: "invalidRequirementStatus",
+                            message: "invalid --status '\(rawStatus)'. Expected one of: \(requirementStatusNames)",
+                            outputFormat: outputFormat
+                        )
+                    }
+                    requirements = requirements.filter { $0.status == status }
+                }
+
+                if let rawLimit = parsed.value(for: "--limit") {
+                    guard let limit = Int(rawLimit), limit > 0 else {
+                        return errorResult(
+                            exitCode: 64,
+                            code: "invalidLimit",
+                            message: "invalid --limit '\(rawLimit)'. Expected a positive integer.",
+                            outputFormat: outputFormat
+                        )
+                    }
+                    requirements = Array(requirements.prefix(limit))
+                }
+
+                let idsOnly = parsed.value(for: "--ids-only") != nil
+                return AICockpitCommandResult(
+                    exitCode: 0,
+                    standardOutput: try render(
+                        AICockpitRequirementCommandEnvelope(
+                            status: "ok",
+                            kind: "canonicalRequirementList",
+                            message: "Canonical requirements listed",
+                            requirement: nil,
+                            requirements: idsOnly ? [] : requirements.map(AICockpitRequirementSummary.init(record:)),
+                            identifiers: idsOnly ? requirements.map(\.id) : []
+                        ),
+                        as: outputFormat
+                    )
+                )
+            } catch {
+                return errorResult(
+                    exitCode: 78,
+                    code: "canonicalRequirementCommandFailed",
+                    message: "\(error)",
+                    outputFormat: outputFormat
+                )
+            }
+        }
+
         if parsed.positionals.count == 2,
            parsed.positionals[0] == "requirements",
            parsed.positionals[1] == "export" {
@@ -414,7 +508,11 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals == ["project", "summary"] {
-            return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
+            return executeBackendCommand(
+                outputFormat: outputFormat,
+                parsed: parsed,
+                controlledMutationsEnabled: true
+            ) { backend, _ in
                 let summary = try backend.dashboardSummary()
                 return try render(
                     AICockpitCommandEnvelope(
@@ -1569,16 +1667,69 @@ public enum AICockpitCommand {
         if parsed.positionals.count == 2,
            let kind = workItemKind(commandName: parsed.positionals[0]),
            parsed.positionals[1] == "list" {
+            if let rawStatus = parsed.value(for: "--status"),
+               AirframeWorkStatus(rawValue: rawStatus) == nil {
+                return errorResult(
+                    exitCode: 64,
+                    code: "invalidWorkStatus",
+                    message: "invalid --status '\(rawStatus)'. Expected one of: \(workStatusNames)",
+                    outputFormat: outputFormat
+                )
+            }
+            if let rawLimit = parsed.value(for: "--limit"), Int(rawLimit).map({ $0 <= 0 }) ?? true {
+                return errorResult(
+                    exitCode: 64,
+                    code: "invalidLimit",
+                    message: "invalid --limit '\(rawLimit)'. Expected a positive integer.",
+                    outputFormat: outputFormat
+                )
+            }
+            if let rawFields = parsed.value(for: "--fields"),
+               let invalid = invalidWorkItemFieldNames(rawFields).first {
+                return errorResult(
+                    exitCode: 64,
+                    code: "invalidFields",
+                    message: "invalid --fields entry '\(invalid)'. Expected a comma-separated subset of: \(workItemFieldNames)",
+                    outputFormat: outputFormat
+                )
+            }
+
             return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
-                let records = try backend.listWorkRecords()
+                var records = try backend.listWorkRecords()
                     .filter { $0.workItem.kind == kind }
                     .sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+
+                if let rawID = parsed.value(for: "--id") {
+                    let wanted = AirframeID(rawID)
+                    records = records.filter { $0.workItem.id == wanted }
+                }
+                if let status = parsed.value(for: "--status").flatMap(AirframeWorkStatus.init(rawValue:)) {
+                    records = records.filter { $0.workItem.status == status }
+                }
+                if let limit = parsed.value(for: "--limit").flatMap(Int.init) {
+                    records = Array(records.prefix(limit))
+                }
+
+                let workItems = records.map(\.workItem)
+                if let rawFields = parsed.value(for: "--fields") {
+                    return try render(
+                        AICockpitWorkItemProjectionEnvelope(
+                            status: "ok",
+                            kind: "\(kind.rawValue)List",
+                            message: "\(kind.rawValue.capitalized) records listed",
+                            fields: parsedFieldNames(rawFields),
+                            workItems: workItems
+                        ),
+                        as: outputFormat
+                    )
+                }
+
                 return try render(
                     AICockpitArtifactCommandEnvelope(
                         status: "ok",
                         kind: "\(kind.rawValue)List",
                         message: "\(kind.rawValue.capitalized) records listed",
-                        workItems: records.map(\.workItem)
+                        workItems: workItems
                     ),
                     as: outputFormat
                 )
@@ -1910,6 +2061,8 @@ public enum AICockpitCommand {
           aicockpit requirements import --format csv|json --file path --dry-run [--config path] [--output markdown|json]
           aicockpit requirements import --format csv|json --file path --apply [--config path] [--output markdown|json]
           aicockpit requirements export --format csv|json [--config path]
+          aicockpit requirements inspect REQ-ID [--config path] [--output markdown|json]
+          aicockpit requirements list [--ids-only] [--status value] [--limit n] [--config path] [--output markdown|json]
           aicockpit acceptance-criteria list [--config path] [--output markdown|json]
           aicockpit acceptance-criteria inspect AC-ID [--config path] [--output markdown|json]
           aicockpit acceptance-criteria create --id AC-ID --owner EP-ID --text text [--verified true|false] [--evidence EV-ID] [--config path] [--output markdown|json]
@@ -1934,13 +2087,15 @@ public enum AICockpitCommand {
           aicockpit project summary [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task propose --id T-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit issue propose --id I-XXXX --title title [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
+          The github-issues backend is read-only for work-item creation and updates;
+          use it for status label transitions, comments, and evidence references.
           aicockpit task create --id T-XXXX --title title [--status backlog|active] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit issue create --id I-XXXX --title title [--status backlog|active] [--observed text] [--expected text] [--repro text] [--component name] [--note text] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit sprint create --id SP-XXXX --title title [--status backlog|planning] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit epic create --id EP-XXXX --title title [--status proposed|draft|backlog] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
           aicockpit task|issue|sprint|epic update ID [--title title] [--status value] [--observed text] [--expected text] [--repro text] [--component name] [--note text] [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
-          aicockpit task|issue|sprint|epic status ID --to value [--config path] [--backend canonical|local-fixture|github-fixture] [--store path]
-          aicockpit task|issue|sprint|epic list [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit task|issue|sprint|epic status ID --to value [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path]
+          aicockpit task|issue|sprint|epic list [--id ID] [--status value] [--fields id,title,status,kind] [--limit n] [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task|issue|sprint|epic inspect ID [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task|issue|sprint|epic link ID [--epic EP-ID] [--sprint SP-ID] [--task T-ID] [--issue I-ID] [--requirement REQ-ID] [--acceptance-criterion AC-ID] [--test TEST-ID] [--config path] [--output markdown|json]
           aicockpit task|issue|sprint|epic gaps [--config path] [--output markdown|json]
@@ -2135,6 +2290,29 @@ public enum AICockpitCommand {
         )
     }
 
+    private static var workStatusNames: String {
+        "proposed, draft, backlog, planning, active, review, implementedNotVerified, implementedVerified, complete, closed"
+    }
+
+    private static var workItemFieldNames: String {
+        "id, title, status, kind"
+    }
+
+    private static func parsedFieldNames(_ raw: String) -> [String] {
+        raw.split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
+    private static func invalidWorkItemFieldNames(_ raw: String) -> [String] {
+        let allowed: Set<String> = ["id", "title", "status", "kind"]
+        return parsedFieldNames(raw).filter { !allowed.contains($0) }
+    }
+
+    private static var requirementStatusNames: String {
+        "proposed, draft, active, implemented, verified, validated, deferred, waived, superseded, removed"
+    }
+
     private static func executeBackendCommand(
         outputFormat: AICockpitOutputFormat,
         parsed: AICockpitArguments,
@@ -2253,6 +2431,34 @@ public enum AICockpitCommand {
 
     private static func render(
         _ envelope: AICockpitCommandEnvelope,
+        as outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(envelope), as: UTF8.self)
+        case .markdown:
+            return envelope.markdown
+        }
+    }
+
+    private static func render(
+        _ envelope: AICockpitWorkItemProjectionEnvelope,
+        as outputFormat: AICockpitOutputFormat
+    ) throws -> String {
+        switch outputFormat {
+        case .json:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            return String(decoding: try encoder.encode(envelope), as: UTF8.self)
+        case .markdown:
+            return envelope.markdown
+        }
+    }
+
+    private static func render(
+        _ envelope: AICockpitRequirementCommandEnvelope,
         as outputFormat: AICockpitOutputFormat
     ) throws -> String {
         switch outputFormat {
@@ -4011,6 +4217,171 @@ private struct AICockpitTestSummary: Codable, Equatable {
         self.requirementIDs = record.requirementIDs
         self.acceptanceCriterionIDs = record.acceptanceCriterionIDs
         self.workItemIDs = record.workItemIDs
+    }
+}
+
+private struct AICockpitWorkItemProjectionEnvelope: Codable, Equatable {
+    let status: String
+    let kind: String
+    let message: String
+    let fields: [String]
+    let workItems: [AirframeWorkItem]
+
+    private func value(_ field: String, of item: AirframeWorkItem) -> String {
+        switch field {
+        case "id": item.id.rawValue
+        case "title": item.title
+        case "status": item.status.rawValue
+        case "kind": item.kind.rawValue
+        default: ""
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: AICockpitDynamicCodingKey.self)
+        try container.encode(status, forKey: AICockpitDynamicCodingKey("status"))
+        try container.encode(kind, forKey: AICockpitDynamicCodingKey("kind"))
+        try container.encode(message, forKey: AICockpitDynamicCodingKey("message"))
+        var items = container.nestedUnkeyedContainer(forKey: AICockpitDynamicCodingKey("workItems"))
+        for item in workItems {
+            var projected = items.nestedContainer(keyedBy: AICockpitDynamicCodingKey.self)
+            for field in fields {
+                try projected.encode(value(field, of: item), forKey: AICockpitDynamicCodingKey(field))
+            }
+        }
+    }
+
+    init(status: String, kind: String, message: String, fields: [String], workItems: [AirframeWorkItem]) {
+        self.status = status
+        self.kind = kind
+        self.message = message
+        self.fields = fields
+        self.workItems = workItems
+    }
+
+    init(from decoder: Decoder) throws {
+        throw AICockpitCommandError.invalidArguments("projection envelope is encode-only")
+    }
+
+    var markdown: String {
+        func cell(_ text: String) -> String {
+            text.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "|", with: "\\|")
+        }
+        var lines = [
+            "# Airframe Command",
+            "",
+            "- status: \(status)",
+            "- kind: \(kind)",
+            "- message: \(message)"
+        ]
+        guard !workItems.isEmpty else {
+            lines.append("")
+            lines.append("No records matched.")
+            return lines.joined(separator: "\n")
+        }
+        lines.append("")
+        lines.append("| " + fields.joined(separator: " | ") + " |")
+        lines.append("| " + fields.map { _ in "---" }.joined(separator: " | ") + " |")
+        for item in workItems {
+            lines.append("| " + fields.map { cell(value($0, of: item)) }.joined(separator: " | ") + " |")
+        }
+        return lines.joined(separator: "\n")
+    }
+}
+
+private struct AICockpitDynamicCodingKey: CodingKey {
+    let stringValue: String
+    let intValue: Int? = nil
+
+    init(_ stringValue: String) { self.stringValue = stringValue }
+    init?(stringValue: String) { self.stringValue = stringValue }
+    init?(intValue: Int) { nil }
+}
+
+private struct AICockpitRequirementSummary: Codable, Equatable {
+    let id: AirframeID
+    let title: String
+    let status: AirframeRequirementLifecycleStatus
+    let priority: AirframeWorkPriority
+    let verificationMethod: AirframeRequirementVerificationMethod
+
+    init(record: AirframeCanonicalRequirementRecord) {
+        self.id = record.id
+        self.title = record.title
+        self.status = record.status
+        self.priority = record.priority
+        self.verificationMethod = record.verificationMethod
+    }
+}
+
+private struct AICockpitRequirementCommandEnvelope: Codable, Equatable {
+    let status: String
+    let kind: String
+    let message: String
+    let requirement: AirframeCanonicalRequirementRecord?
+    let requirements: [AICockpitRequirementSummary]
+    let identifiers: [AirframeID]
+
+    var markdown: String {
+        func cell(_ text: String) -> String {
+            text.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "|", with: "\\|")
+        }
+
+        var lines = [
+            "# Airframe Command",
+            "",
+            "- status: \(status)",
+            "- kind: \(kind)",
+            "- message: \(message)"
+        ]
+
+        if let requirement {
+            lines.append(contentsOf: [
+                "",
+                "## Requirement",
+                "- id: \(requirement.id.rawValue)",
+                "- title: \(requirement.title)",
+                "- status: \(requirement.status.rawValue)",
+                "- priority: \(requirement.priority.rawValue)",
+                "- verificationMethod: \(requirement.verificationMethod.rawValue)",
+                "- validationRequired: \(requirement.validationRequired)",
+                "",
+                "### Statement",
+                requirement.statement
+            ])
+            if !requirement.rationale.isEmpty {
+                lines.append(contentsOf: ["", "### Rationale", requirement.rationale])
+            }
+        }
+
+        if !identifiers.isEmpty {
+            lines.append("")
+            lines.append("## Requirement IDs")
+            lines.append("")
+            for identifier in identifiers {
+                lines.append("- \(identifier.rawValue)")
+            }
+        }
+
+        if !requirements.isEmpty {
+            lines.append("")
+            lines.append("## Requirements")
+            lines.append("")
+            lines.append("| Requirement | Title | Status | Priority | Verification |")
+            lines.append("| ----------- | ----- | ------ | -------- | ------------ |")
+            for requirement in requirements {
+                lines.append(
+                    "| \(cell(requirement.id.rawValue)) | \(cell(requirement.title)) | \(cell(requirement.status.rawValue)) | \(cell(requirement.priority.rawValue)) | \(cell(requirement.verificationMethod.rawValue)) |"
+                )
+            }
+        }
+
+        if requirement == nil && identifiers.isEmpty && requirements.isEmpty {
+            lines.append("")
+            lines.append("No requirements matched.")
+        }
+
+        return lines.joined(separator: "\n")
     }
 }
 

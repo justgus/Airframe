@@ -1,0 +1,53 @@
+{
+  "acceptanceCriteria" : [
+    "requirements inspect REQ-ID returns one requirement in markdown or JSON.",
+    "requirements list --ids-only returns IDs without full record bodies.",
+    "task|issue|sprint|epic list accept --status, --id, --fields, and --limit in both output modes.",
+    "task list --status active --output json costs under 500 tokens on this repository.",
+    "--backend github-issues supports create, update, status, and comment mutations, or reports capability False with an explicit refusal naming the human-only boundary.",
+    "Capability flags reported by project summary match actual behavior for every backend.",
+    "Existing callers are unaffected: omitting the new flags preserves current output.",
+    ".airframe\/scripts\/ helpers continue to work unchanged."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+    "AICockpit",
+    "AirframeCore"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-05T17:43:18Z"
+  },
+  "notes" : [
+    "GitHub issue #178. Sprint assignment deferred: no Sprint is currently Active (workspace config names closed SP-023\/EP-018)."
+  ],
+  "priority" : "high",
+  "rationale" : "Read amplification is the dominant token cost in planning and documentation work. AICockpit offers no single-record or filtered read, and the github-issues backend supports no mutations, routing agents to raw gh outside the AICockpit authority model.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-045"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0190"
+    },
+    "kind" : "task",
+    "status" : "active",
+    "title" : "Add granular read primitives and close the github-issues mutation gap in AICockpit"
+  }
+}

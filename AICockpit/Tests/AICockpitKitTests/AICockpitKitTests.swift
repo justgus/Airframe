@@ -468,6 +468,22 @@ import Foundation
     #expect(savedIssue?.sprintID == AirframeID("SP-9500"))
 }
 
+@Test func githubIssuesCapabilityReportMatchesControlledMutationSupport() throws {
+    // project summary previously constructed the backend read-only, so it reported
+    // status mutations and comments as unsupported even though the mutation commands
+    // enable them. An agent reading capabilities to choose between AICockpit and raw
+    // gh got a false negative.
+    #expect(AirframeBackendCapabilities.githubIssuesControlledMutations.supportsGitHubStatusMutations)
+    #expect(AirframeBackendCapabilities.githubIssuesControlledMutations.supportsGitHubIssueComments)
+
+    // Work-item creation and updates genuinely throw readOnlyBackend on this backend,
+    // so those flags must stay false in both presets.
+    #expect(!AirframeBackendCapabilities.githubIssuesControlledMutations.supportsCreateWorkItem)
+    #expect(!AirframeBackendCapabilities.githubIssuesControlledMutations.supportsUpdateWorkItem)
+    #expect(!AirframeBackendCapabilities.githubIssuesReadOnly.supportsCreateWorkItem)
+    #expect(!AirframeBackendCapabilities.githubIssuesReadOnly.supportsUpdateWorkItem)
+}
+
 @Test func githubConfiguredWorkspaceRunsCanonicalWorkItemCommandsOffline() throws {
     let configPath = try temporaryGitHubConfigurationWithCanonicalStatePath()
     let rootURL = URL(filePath: configPath).deletingLastPathComponent()
@@ -2016,6 +2032,150 @@ private func temporaryLiveConfigurationPath() throws -> String {
         """.utf8
     ).write(to: configURL)
     return configURL.path
+}
+
+@Test func requirementsInspectAndListReturnGranularCanonicalRecords() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9800"),
+            title: "Granular read",
+            statement: "AICockpit shall return a single requirement without loading the corpus.",
+            status: .active,
+            rationale: "Read amplification dominates documentation token cost."
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID("REQ-9801"),
+            title: "Draft requirement",
+            statement: "A draft requirement should be filterable by status.",
+            status: .draft
+        )
+    )
+
+    let inspect = AICockpitCommand.response(arguments: [
+        "requirements", "inspect", "REQ-9800",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(inspect.exitCode == 0)
+    #expect(inspect.standardOutput.contains("\"kind\" : \"canonicalRequirementInspection\""))
+    #expect(inspect.standardOutput.contains("REQ-9800"))
+    #expect(!inspect.standardOutput.contains("REQ-9801"))
+
+    let missing = AICockpitCommand.response(arguments: [
+        "requirements", "inspect", "REQ-0000",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(missing.exitCode != 0)
+
+    let list = AICockpitCommand.response(arguments: [
+        "requirements", "list",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(list.exitCode == 0)
+    #expect(list.standardOutput.contains("\"kind\" : \"canonicalRequirementList\""))
+    #expect(list.standardOutput.contains("REQ-9800"))
+    #expect(list.standardOutput.contains("REQ-9801"))
+
+    let filtered = AICockpitCommand.response(arguments: [
+        "requirements", "list", "--status", "active",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(filtered.exitCode == 0)
+    #expect(filtered.standardOutput.contains("REQ-9800"))
+    #expect(!filtered.standardOutput.contains("REQ-9801"))
+
+    let idsOnly = AICockpitCommand.response(arguments: [
+        "requirements", "list", "--ids-only",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(idsOnly.exitCode == 0)
+    #expect(idsOnly.standardOutput.contains("REQ-9800"))
+    #expect(!idsOnly.standardOutput.contains("Granular read"))
+
+    let limited = AICockpitCommand.response(arguments: [
+        "requirements", "list", "--limit", "1",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(limited.exitCode == 0)
+    #expect(limited.standardOutput.contains("REQ-9800"))
+    #expect(!limited.standardOutput.contains("REQ-9801"))
+
+    let badStatus = AICockpitCommand.response(arguments: [
+        "requirements", "list", "--status", "bogus",
+        "--config", configPath, "--output", "json"
+    ])
+    #expect(badStatus.exitCode == 64)
+}
+
+@Test func workItemListSupportsStatusIdFieldAndLimitFilters() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    for (identifier, status) in [("T-9800", AirframeWorkStatus.backlog), ("T-9801", .active)] {
+        try repository.store.save(
+            AirframeCanonicalTaskRecord(
+                workItem: AirframeWorkItem(
+                    id: AirframeID(identifier),
+                    kind: .task,
+                    title: "Task \(identifier)",
+                    status: status
+                ),
+                component: "",
+                priority: .medium,
+                rationale: ""
+            )
+        )
+    }
+
+    let unfiltered = AICockpitCommand.response(arguments: [
+        "task", "list", "--config", configPath, "--backend", "canonical", "--output", "json"
+    ])
+    #expect(unfiltered.exitCode == 0)
+    #expect(unfiltered.standardOutput.contains("T-9800"))
+    #expect(unfiltered.standardOutput.contains("T-9801"))
+
+    let byStatus = AICockpitCommand.response(arguments: [
+        "task", "list", "--status", "active",
+        "--config", configPath, "--backend", "canonical", "--output", "json"
+    ])
+    #expect(byStatus.exitCode == 0)
+    #expect(byStatus.standardOutput.contains("T-9801"))
+    #expect(!byStatus.standardOutput.contains("T-9800"))
+
+    let byID = AICockpitCommand.response(arguments: [
+        "task", "list", "--id", "T-9800",
+        "--config", configPath, "--backend", "canonical", "--output", "json"
+    ])
+    #expect(byID.exitCode == 0)
+    #expect(byID.standardOutput.contains("T-9800"))
+    #expect(!byID.standardOutput.contains("T-9801"))
+
+    let projected = AICockpitCommand.response(arguments: [
+        "task", "list", "--fields", "id,status",
+        "--config", configPath, "--backend", "canonical", "--output", "json"
+    ])
+    #expect(projected.exitCode == 0)
+    #expect(projected.standardOutput.contains("T-9800"))
+    #expect(!projected.standardOutput.contains("Task T-9800"))
+
+    let limited = AICockpitCommand.response(arguments: [
+        "task", "list", "--limit", "1",
+        "--config", configPath, "--backend", "canonical", "--output", "json"
+    ])
+    #expect(limited.exitCode == 0)
+    #expect(limited.standardOutput.contains("T-9800"))
+    #expect(!limited.standardOutput.contains("T-9801"))
+
+    for bad in [["--status", "bogus"], ["--fields", "nope"], ["--limit", "0"]] {
+        let rejected = AICockpitCommand.response(arguments: [
+            "task", "list"
+        ] + bad + ["--config", configPath, "--backend", "canonical", "--output", "json"])
+        #expect(rejected.exitCode == 64)
+    }
 }
 
 private func temporaryCanonicalTestConfigurationPath() throws -> String {

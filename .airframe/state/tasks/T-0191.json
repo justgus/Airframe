@@ -1,0 +1,52 @@
+{
+  "acceptanceCriteria" : [
+    "launchFingerprint and traceabilityFingerprint emit a fixed-length digest instead of a concatenated per-file metadata listing.",
+    "Cache invalidation behavior is unchanged: an edit under .airframe\/state still invalidates, and an unchanged tree still hits the cache.",
+    "canonicalSnapshot is removed or reduced to fields not already carried by canonicalState.",
+    "records and dashboardRecords no longer both appear in the payload.",
+    "agilecockpit-launch-cache.json for this repository drops below 800 KB, from 2,072,407 bytes.",
+    "AgileCockpit launches, renders the dashboard, and passes ac-launch-cockpit.sh --clear-cache followed by a cold rebuild."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+    "AgileCockpit"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-05T17:21:07Z"
+  },
+  "notes" : [
+    "Section 4 of the token-reduction work. Listed out of scope on GitHub issue #178, which covers AICockpit read primitives only.",
+    "Measured duplication: fingerprint 276,846 b; canonicalState 513,448 b vs canonicalSnapshot 498,272 b with 9 byte-identical keys; records and dashboardRecords 183,108 b each and byte-identical.",
+    "Writer is AgileCockpit\/AgileCockpit\/ContentView.swift; fingerprint builder near line 2640, cache write near line 2632."
+  ],
+  "priority" : "medium",
+  "rationale" : "The launch cache is the largest tracked artifact in the repository. Its fingerprint is a full path|kind|size|mtime line per file under .airframe\/state, and its payload carries three sets of duplicated records. The fingerprint is only ever compared for equality, so a digest preserves behavior.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-045"
+  },
+  "testSteps" : [
+
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0191"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "De-duplicate AgileCockpit cache payloads and digest the launch fingerprint"
+  }
+}

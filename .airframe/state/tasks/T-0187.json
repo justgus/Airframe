@@ -1,47 +1,37 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Task and Issue views resolve evidence IDs into reviewable evidence summaries.",
     "Evidence detail displays result, summary, command, environment, artifact references, and linked work items.",
     "Reviewers can navigate bidirectionally between work items and evidence records."
   ],
-  "component" : "",
-  "componentsAffected" : [
-
-  ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "component": "",
+  "componentsAffected": [],
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-29T16:07:42Z"
+    "updatedAt": "2026-08-29T16:07:42Z"
   },
-  "notes" : [
-
-  ],
-  "priority" : "medium",
-  "rationale" : "",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-044"
+  "notes": [],
+  "priority": "medium",
+  "rationale": "Task and Issue views show evidence IDs but cannot resolve them, so a reviewer cannot judge whether evidence supports a verification decision. This task renders reviewable evidence detail and bidirectional navigation between work items and evidence records.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-044"
   },
-  "testSteps" : [
-
-  ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0187"
+  "testSteps": [],
+  "workItem": {
+    "id": {
+      "rawValue": "T-0187"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Add AgileCockpit evidence review interface"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Add AgileCockpit evidence review interface"
   }
 }

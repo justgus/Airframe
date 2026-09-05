@@ -733,7 +733,13 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
     }
 
     public func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
-        []
+        let matching: [AirframeCanonicalEvidenceSummaryRecord] = try repository.loadState().evidence
+            .filter { $0.workItemIDs.contains(workItemID) }
+            .sorted { $0.id.rawValue < $1.id.rawValue }
+        return matching.map { record -> AirframeEvidence in
+            let artifact: String = record.artifactReferences.first ?? record.command ?? "canonical-evidence"
+            return AirframeEvidence(id: record.id, summary: record.summary, artifact: artifact)
+        }
     }
 
     public func taskPacket(for workItemID: AirframeID) throws -> AirframeTaskPacket {
@@ -741,7 +747,14 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
         guard let record = records.first(where: { $0.workItem.id == workItemID }) else {
             throw AirframeBackendError.missingWorkItem(workItemID)
         }
-        return AirframeCanonicalTaskPacketAssembler().taskPacket(for: record, records: records)
+        // Evidence lives in the canonical store; without it the packet reports
+        // "Evidence: None recorded." for work that does have linked evidence,
+        // which makes human verification impossible to judge.
+        return AirframeCanonicalTaskPacketAssembler().taskPacket(
+            for: record,
+            records: records,
+            evidence: try evidence(for: workItemID)
+        )
     }
 
     public func applyHumanVerification(

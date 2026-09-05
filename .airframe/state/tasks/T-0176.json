@@ -1,47 +1,43 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Issue projections render Resolved terminology distinct from Task Implemented terminology.",
     "Epic and Sprint relationship Status cells are populated from canonical state.",
     "Projector tests cover every artifact-specific status and missing-related-record behavior."
   ],
-  "component" : "Markdown projector behavior for R-06 and R-07.",
-  "componentsAffected" : [
+  "component": "Markdown projector behavior for R-06 and R-07.",
+  "componentsAffected": [
     "Markdown projector behavior for R-06 and R-07."
   ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
+  "notes": [
     "Shared canonical enum names must not leak into incorrect human-facing vocabulary."
   ],
-  "priority" : "high",
-  "rationale" : "Shared canonical enum names must not leak into incorrect human-facing vocabulary.",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-041"
+  "priority": "high",
+  "rationale": "Generated projections leak shared canonical enum names into human-facing text, so Issues display Task terminology and Epic and Sprint relationship Status cells render empty. This task renders artifact-specific vocabulary and populates relationship statuses from canonical state.\n\nConstraint: Shared canonical enum names must not leak into incorrect human-facing vocabulary.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-041"
   },
-  "testSteps" : [
+  "testSteps": [
     "Golden projector tests for Tasks, Issues, Sprints, and Epics."
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0176"
+  "workItem": {
+    "id": {
+      "rawValue": "T-0176"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Render artifact terminology and relationship statuses"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Render artifact terminology and relationship statuses"
   }
 }

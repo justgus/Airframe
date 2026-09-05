@@ -1077,6 +1077,83 @@ import Foundation
     #expect(csvPreview == preview)
 }
 
+@Test func canonicalBackendResolvesEvidenceIntoTaskPackets() throws {
+    // The canonical backend previously stubbed evidence(for:) to [] and built task
+    // packets without evidence, so verification review showed "Evidence: None
+    // recorded." for work that did have linked evidence.
+    let rootURL = URL(filePath: NSTemporaryDirectory())
+        .appending(path: "airframe-evidence-packet-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: rootURL) }
+
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(
+                id: AirframeID("T-9900"),
+                kind: .task,
+                title: "Task with evidence",
+                status: .implementedNotVerified
+            ),
+            component: "",
+            priority: .medium,
+            rationale: ""
+        )
+    )
+    try repository.store.save(
+        AirframeCanonicalEvidenceSummaryRecord(
+            id: AirframeID("EV-9900-001"),
+            workItemIDs: [AirframeID("T-9900")],
+            summary: "Verification run passed.",
+            result: .passed,
+            command: "swift test",
+            artifactReferences: ["AirframeCore/Sources/AirframeCore/CanonicalStoreBackend.swift"]
+        )
+    )
+
+    let backend = AirframeCanonicalStoreBackend(rootURL: rootURL)
+    let evidence = try backend.evidence(for: AirframeID("T-9900"))
+    #expect(evidence.map(\.id.rawValue) == ["EV-9900-001"])
+
+    let packet = try backend.taskPacket(for: AirframeID("T-9900"))
+    #expect(packet.existingEvidence.map(\.id.rawValue) == ["EV-9900-001"])
+    #expect(packet.existingEvidence.first?.summary == "Verification run passed.")
+}
+
+@Test func requirementGapDiagnosticsSkipNotYetStartedRequirements() throws {
+    // proposed and draft requirements have not been started, so missing implementation
+    // work and missing verification evidence are not defects. active and later statuses
+    // are unchanged.
+    func record(_ id: String, _ status: AirframeRequirementLifecycleStatus) -> AirframeCanonicalRequirementRecord {
+        AirframeCanonicalRequirementRecord(
+            id: AirframeID(id),
+            title: "Untraced requirement",
+            statement: "A requirement with no work, test, or evidence trace.",
+            status: status,
+            releaseScope: ["SP-1"]
+        )
+    }
+
+    let index = AirframeRequirementTraceabilityIndex(
+        requirements: [
+            record("REQ-P", .proposed),
+            record("REQ-D", .draft),
+            record("REQ-A", .active),
+            record("REQ-I", .implemented)
+        ]
+    )
+    let gaps = index.gapDiagnostics()
+
+    for suppressed in ["REQ-P", "REQ-D"] {
+        #expect(!gaps.contains { $0.requirementID == AirframeID(suppressed) && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
+        #expect(!gaps.contains { $0.requirementID == AirframeID(suppressed) && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
+    }
+    for reported in ["REQ-A", "REQ-I"] {
+        #expect(gaps.contains { $0.requirementID == AirframeID(reported) && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
+        #expect(gaps.contains { $0.requirementID == AirframeID(reported) && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
+    }
+}
+
 @Test func requirementTraceabilityIndexAndGateEvaluationCoverWorkItemsEvidenceAndReports() throws {
     let requirement = AirframeCanonicalRequirementRecord(
         id: AirframeID("REQ-9001"),
@@ -1215,11 +1292,13 @@ import Foundation
     #expect(requirementsForTest.map { $0.id } == [requirement.id])
     #expect(requirementsForEvidence.map { $0.id } == [requirement.id])
     #expect(!gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingImplementationTrace })
-    #expect(gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
+    // Draft and proposed requirements are not yet started, so they no longer report
+    // missing implementation or verification gaps.
+    #expect(!gaps.contains { $0.requirementID == draftRequirement.id && $0.kind == AirframeRequirementGapKind.missingVerificationEvidence })
     #expect(coverage.totalRequirementCount == 3)
     #expect(coverage.assignedRequirementCount >= 1)
     #expect(!gate.canClose)
-    #expect(gate.blockedRequirementIDs.contains(draftRequirement.id))
+    #expect(!gate.blockedRequirementIDs.contains(draftRequirement.id))
     #expect(documentation["Requirements/Requirements-Specification.md"]?.contains("Verification Method") == true)
     #expect(documentation["Requirements/Requirements-Specification.md"]?.contains("TEST-9001") == true)
     #expect(documentation["Requirements/Requirements-Traceability-Matrix.md"]?.contains("REQ-9001") == true)

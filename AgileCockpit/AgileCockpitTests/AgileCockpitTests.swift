@@ -97,6 +97,7 @@ import Foundation
         "Plan Review",
         "Requirements",
         "Tests",
+        "Warnings",
         "Metrics & Audit"
     ])
     #expect(model.testRows.map(\.id) == ["TEST-018-001"])

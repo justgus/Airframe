@@ -1,47 +1,37 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "EV-0166-001, EV-0167-001, and EV-0168-001 are inspectable through AgileCockpit.",
     "End-to-end creation, attachment, inspection, navigation, and diagnostics pass through supported interfaces.",
     "Documentation removes the direct-record fallback and identifies AICockpit as the native evidence interface."
   ],
-  "component" : "",
-  "componentsAffected" : [
-
-  ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "component": "",
+  "componentsAffected": [],
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-29T16:07:44Z"
+    "updatedAt": "2026-08-29T16:07:44Z"
   },
-  "notes" : [
-
-  ],
-  "priority" : "medium",
-  "rationale" : "",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-044"
+  "notes": [],
+  "priority": "medium",
+  "rationale": "The approved direct evidence-record fallback stays in force until the native workflow is demonstrated end to end. This task verifies creation, attachment, inspection, navigation, and diagnostics through supported interfaces, then retires the fallback from the documentation.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-044"
   },
-  "testSteps" : [
-
-  ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0189"
+  "testSteps": [],
+  "workItem": {
+    "id": {
+      "rawValue": "T-0189"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Verify native evidence workflow and retire fallback"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Verify native evidence workflow and retire fallback"
   }
 }

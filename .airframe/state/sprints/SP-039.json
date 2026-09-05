@@ -1,39 +1,35 @@
 {
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "goal" : "",
-  "issueIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "goal": "Remove duplicated active-context pointers and define an explicit backend-mapping model, so the active Epic and Sprint have one authoritative source and Cockpit interfaces render mapping state directly.",
+  "issueIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
-
-  ],
-  "taskIDs" : [
+  "notes": [],
+  "taskIDs": [
     {
-      "rawValue" : "T-0169"
+      "rawValue": "T-0169"
     },
     {
-      "rawValue" : "T-0170"
+      "rawValue": "T-0170"
     },
     {
-      "rawValue" : "T-0171"
+      "rawValue": "T-0171"
     }
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "SP-039"
+  "workItem": {
+    "id": {
+      "rawValue": "SP-039"
     },
-    "kind" : "sprint",
-    "status" : "planning",
-    "title" : "Configuration and Backend Mapping Model"
+    "kind": "sprint",
+    "status": "planning",
+    "title": "Configuration and Backend Mapping Model"
   }
 }

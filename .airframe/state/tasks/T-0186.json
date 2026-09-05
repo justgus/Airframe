@@ -1,47 +1,37 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "AICockpit supports canonical evidence create, attach, list, and inspect operations.",
     "Commands return stable JSON and Markdown contracts with artifact references, commands, environment, result, and linked work items.",
     "Capability reporting advertises canonical evidence support accurately."
   ],
-  "component" : "",
-  "componentsAffected" : [
-
-  ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "component": "",
+  "componentsAffected": [],
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-29T16:07:42Z"
+    "updatedAt": "2026-08-29T16:07:42Z"
   },
-  "notes" : [
-
-  ],
-  "priority" : "medium",
-  "rationale" : "",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-044"
+  "notes": [],
+  "priority": "medium",
+  "rationale": "Without native AICockpit evidence commands, agents attach evidence by editing records directly, outside the authority model. This task exposes create, attach, list, and inspect through AICockpit with stable JSON and Markdown contracts and accurate capability reporting.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-044"
   },
-  "testSteps" : [
-
-  ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0186"
+  "testSteps": [],
+  "workItem": {
+    "id": {
+      "rawValue": "T-0186"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Add native AICockpit evidence commands"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Add native AICockpit evidence commands"
   }
 }

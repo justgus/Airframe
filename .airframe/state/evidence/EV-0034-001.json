@@ -1,0 +1,29 @@
+{
+  "artifactReferences": [
+    "AirframeCore/Sources/AirframeCore/RequirementTraceability.swift",
+    "AirframeCore/Tests/AirframeCoreTests/AirframeCoreTests.swift",
+    "AgileCockpit/AgileCockpit/ContentView.swift",
+    "AgileCockpit/AgileCockpitTests/AgileCockpitTests.swift"
+  ],
+  "ciReferences": [],
+  "command": "swift test --package-path AirframeCore && swift test --package-path AICockpit; xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination 'platform=macOS' test -only-testing:AgileCockpitTests",
+  "environment": "Local macOS development workspace; direct canonical evidence fallback used because AICockpit evidence attach does not support the canonical backend (SP-044 T-0185 through T-0189 address this).",
+  "id": {
+    "rawValue": "EV-0034-001"
+  },
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "requirementIDs": [],
+  "result": "passed",
+  "summary": "Added a lifecycle guard in gapDiagnostics so proposed and draft requirements no longer emit missingImplementationTrace or missingVerificationEvidence; missingReleaseScope is unchanged. Added test requirementGapDiagnosticsSkipNotYetStartedRequirements asserting proposed and draft are suppressed while active and implemented are still reported, and updated two assertions in requirementTraceabilityIndexAndGateEvaluationCoverWorkItemsEvidenceAndReports that encoded the previous behavior. Also moved warning surfaces out of the Requirements and Tests tabs into a dedicated Warnings section and replaced the Release Gate blocking-reason list with a count. Measured in JustTone: requirementGapRows 261 to 0, blockingReasons 494 to 233, total 755 to 233. The remaining 233 are openBlockingReasons, a separate release-gate check left deliberately in place. AirframeCore passed 103 tests, AICockpit passed 58 tests, and the AgileCockpit unit tests passed.",
+  "workItemIDs": [
+    {
+      "rawValue": "I-0034"
+    }
+  ]
+}

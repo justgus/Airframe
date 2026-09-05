@@ -1,47 +1,43 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "AICockpit reports explicit mapping states and active context from canonical state.",
     "AgileCockpit distinguishes valid local operation from pending and failed synchronization.",
     "Migration and error states are understandable without inspecting JSON."
   ],
-  "component" : "AICockpit and AgileCockpit presentation and management for the R-04 and R-14 models.",
-  "componentsAffected" : [
+  "component": "AICockpit and AgileCockpit presentation and management for the R-04 and R-14 models.",
+  "componentsAffected": [
     "AICockpit and AgileCockpit presentation and management for the R-04 and R-14 models."
   ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
+  "notes": [
     "Human-only workflow authority remains unchanged."
   ],
-  "priority" : "high",
-  "rationale" : "Human-only workflow authority remains unchanged.",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-039"
+  "priority": "high",
+  "rationale": "Mapping state and active context exist in canonical state but are not surfaced, so operators must read JSON to tell valid local-only operation from a failed synchronization. This task reports both through AICockpit and AgileCockpit, including migration and error states.\n\nConstraint: Human-only workflow authority remains unchanged.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-039"
   },
-  "testSteps" : [
-    "CLI contract tests and AgileCockpit model\/UI tests."
+  "testSteps": [
+    "CLI contract tests and AgileCockpit model/UI tests."
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0171"
+  "workItem": {
+    "id": {
+      "rawValue": "T-0171"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Expose mapping and active-context state in Cockpit interfaces"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Expose mapping and active-context state in Cockpit interfaces"
   }
 }

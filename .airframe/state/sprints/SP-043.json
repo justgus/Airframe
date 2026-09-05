@@ -1,44 +1,42 @@
 {
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "goal" : "",
-  "issueIDs" : [
+  "goal": "Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end.",
+  "issueIDs": [
     {
-      "rawValue" : "I-0031"
+      "rawValue": "I-0031"
     }
   ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:58Z"
+    "updatedAt": "2026-08-28T20:38:58Z"
   },
-  "notes" : [
-
-  ],
-  "taskIDs" : [
+  "notes": [],
+  "taskIDs": [
     {
-      "rawValue" : "T-0181"
+      "rawValue": "T-0181"
     },
     {
-      "rawValue" : "T-0182"
+      "rawValue": "T-0182"
     },
     {
-      "rawValue" : "T-0183"
+      "rawValue": "T-0183"
     },
     {
-      "rawValue" : "T-0184"
+      "rawValue": "T-0184"
     }
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "SP-043"
+  "workItem": {
+    "id": {
+      "rawValue": "SP-043"
     },
-    "kind" : "sprint",
-    "status" : "planning",
-    "title" : "GitHub Integration, Reconciliation, and Safe Workspace Mutations"
+    "kind": "sprint",
+    "status": "planning",
+    "title": "GitHub Integration, Reconciliation, and Safe Workspace Mutations"
   }
 }

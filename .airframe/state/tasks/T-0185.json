@@ -1,47 +1,37 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Canonical evidence records can be created, loaded, listed, and attached to supported work items.",
     "Attachment updates reciprocal Evidence-to-Work-Item relationships atomically and idempotently.",
     "Existing evidence records remain backward compatible."
   ],
-  "component" : "",
-  "componentsAffected" : [
-
-  ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "component": "",
+  "componentsAffected": [],
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-29T16:07:41Z"
+    "updatedAt": "2026-08-29T16:07:41Z"
   },
-  "notes" : [
-
-  ],
-  "priority" : "medium",
-  "rationale" : "",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-044"
+  "notes": [],
+  "priority": "medium",
+  "rationale": "Canonical evidence has no repository-level create, load, list, or attach support, so evidence records cannot be managed through supported interfaces. This task provides those operations with atomic, idempotent reciprocal linking and backward compatibility for existing records.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-044"
   },
-  "testSteps" : [
-
-  ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0185"
+  "testSteps": [],
+  "workItem": {
+    "id": {
+      "rawValue": "T-0185"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Implement canonical evidence repository operations"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Implement canonical evidence repository operations"
   }
 }

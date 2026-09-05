@@ -1,0 +1,46 @@
+{
+  "affectedComponents" : [
+    "AirframeCore",
+    "AgileCockpit"
+  ],
+  "dateResolved" : "2026-09-05",
+  "dateVerified" : "2026-09-05",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-0034-001"
+    }
+  ],
+  "expectedBehavior" : "Gap diagnostics account for lifecycle status. A requirement in a not-yet-started state such as proposed or draft should not be reported as missing implementation work or verification evidence, since neither is expected yet. The display layer already makes this distinction: statusSummary at RequirementTraceability.swift:759 renders draft and proposed requirements as 'Not yet assigned', so the diagnostic layer is inconsistent with it.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-05T21:03:21Z"
+  },
+  "notes" : [
+    "Measured in JustTone 2026-09-05: 233 requirements, all draft, validationRequired true, no trace links. Produces 233 missingVerificationEvidence, 28 missingImplementationTrace, and 494 releaseGate blockingReasons.",
+    "blockingReasons derives from the same gaps (RequirementTraceability.swift:365 filters gaps by isBlocking), so one fix at the generator reduces both surfaces.",
+    "Affects new projects most: a requirements-definition phase with no code yet is exactly when the diagnostics are loudest and least useful. This is the JustTone-as-template case.",
+    "Interim UI mitigation already shipped: warnings moved to a dedicated Warnings tab and the Release Gate now shows a count rather than every blocking reason. That relocates the noise; this Issue removes it at the source.",
+    "Design question for the fix: which statuses should suppress which gaps. A draft requirement plausibly warrants neither gap, while an active one warrants both. Whether implemented or verified requirements should still be checked needs a decision.",
+    "Resolved 2026-09-05. Added a lifecycle guard in gapDiagnostics (AirframeCore\/Sources\/AirframeCore\/RequirementTraceability.swift:786): proposed and draft requirements no longer emit missingImplementationTrace or missingVerificationEvidence. missingReleaseScope is unchanged. Measured in JustTone: requirementGapRows 261 -> 0, blockingReasons 494 -> 233, total 755 -> 233 (69% reduction). The remaining 233 come from openBlockingReasons (RequirementTraceability.swift:373), a separate release-gate check reporting that a requirement is not in a closing status; that check is correct and was deliberately left in place. Verified by AirframeCore 103 tests, AICockpit 58 tests, and AgileCockpit unit tests, including a new test requirementGapDiagnosticsSkipNotYetStartedRequirements asserting proposed\/draft are suppressed and active\/implemented are still reported."
+  ],
+  "observedBehavior" : "gapDiagnostics(for:releaseScope:) in AirframeCore\/Sources\/AirframeCore\/RequirementTraceability.swift makes no reference to requirement.status. Every requirement is evaluated for missingImplementationTrace and missingVerificationEvidence regardless of whether it is proposed, draft, or active. In JustTone, a project with 233 requirements and no code yet, this produces 261 requirementGapRows and 494 releaseGate blockingReasons for work that has not been started. The status change from active to draft did not reduce the count.",
+  "reproductionSteps" : [
+    "Create a project with requirements in draft status and no linked work items, tests, or evidence. Open the Requirements tab in AgileCockpit, or call gapDiagnostics through AirframeCore. Every draft requirement emits missingImplementationTrace and, when validationRequired is true, missingVerificationEvidence."
+  ],
+  "severity" : "medium",
+  "workItem" : {
+    "id" : {
+      "rawValue" : "I-0034"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Requirement gap diagnostics ignore lifecycle status and flag unstarted requirements"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "affectedComponents": [
+    "AgileCockpit"
+  ],
+  "epicID": {
+    "rawValue": "EP-025"
+  },
+  "evidenceIDs": [],
+  "expectedBehavior": "Empty narrative fields render an explicit placeholder such as 'None recorded.', matching how Issue detail already handles empty observedBehavior, expectedBehavior, and reproductionSteps sections.",
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    },
+    "updatedAt": "2026-09-05T19:44:26Z"
+  },
+  "notes": [
+    "Measured 2026-09-05: narrative fields are empty across much of canonical state - Task rationale empty in 147/191, Epic goal and rationale in 10/25 each, Sprint goal in 6/45. The data gap is real; this Issue covers only the rendering of it.",
+    "Issue detail already renders 'None recorded.' for empty sections, so the fix is to make Sprint, Epic, and Task detail consistent with that existing convention.",
+    "No Sprint assigned: no Sprint is currently Active. The workspace config names SP-023 and EP-018 as active, but both are Closed.",
+    "Whether these narrative fields should become required is a separate question, recorded against EP-026."
+  ],
+  "observedBehavior": "Sprint and Epic detail views print a field header with no value when the underlying narrative field is empty. SP-039 renders '**Goal:** ' with nothing after it and EP-025 renders '**Goal:**' followed by whitespace, which reads as a missing feature rather than missing content. Task detail omits the rationale line entirely when empty.",
+  "reproductionSteps": [
+    "Open AgileCockpit. From the Dashboard status tiles select Sprints > Planning > SP-039, or Epics > Active > EP-025, or Tasks > Active > T-0190. Observe the Goal or rationale section in the detail pane."
+  ],
+  "severity": "low",
+  "workItem": {
+    "id": {
+      "rawValue": "I-0033"
+    },
+    "kind": "issue",
+    "status": "backlog",
+    "title": "Empty narrative fields render as blank sections in Sprint and Epic detail views"
+  }
+}

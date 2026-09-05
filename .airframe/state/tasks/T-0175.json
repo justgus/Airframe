@@ -1,47 +1,43 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Successful canonical mutations trigger or clearly schedule complete projection refresh.",
     "Human verification refresh is covered by regression tests.",
     "Refresh failure is surfaced and cannot be mistaken for success."
   ],
-  "component" : "AirframeCore projector refresh contract and AICockpit\/AgileCockpit mutation integration for R-05.",
-  "componentsAffected" : [
-    "AirframeCore projector refresh contract and AICockpit\/AgileCockpit mutation integration for R-05."
+  "component": "AirframeCore projector refresh contract and AICockpit/AgileCockpit mutation integration for R-05.",
+  "componentsAffected": [
+    "AirframeCore projector refresh contract and AICockpit/AgileCockpit mutation integration for R-05."
   ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
+  "notes": [
     "Canonical mutation success and projection freshness must have an explicit consistency contract."
   ],
-  "priority" : "high",
-  "rationale" : "Canonical mutation success and projection freshness must have an explicit consistency contract.",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-041"
+  "priority": "high",
+  "rationale": "A canonical mutation can succeed while its projections silently go stale, leaving generated documents wrong with no signal. This task gives mutation success and projection freshness an explicit consistency contract, and makes refresh failure visible rather than mistakable for success.\n\nConstraint: Canonical mutation success and projection freshness must have an explicit consistency contract.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-041"
   },
-  "testSteps" : [
+  "testSteps": [
     "Mutation-to-projection integration tests including the six stale Task cases."
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0175"
+  "workItem": {
+    "id": {
+      "rawValue": "T-0175"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Make canonical projection refresh durable"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Make canonical projection refresh durable"
   }
 }

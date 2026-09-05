@@ -784,7 +784,15 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
         let summary = traceSummary(for: requirement.id)
         var gaps: [AirframeRequirementTraceGap] = []
 
-        if !summary.hasWorkItemTrace {
+        // A requirement that has not been started yet is not missing implementation
+        // work or verification evidence; neither is expected at proposed or draft.
+        // statusSummary already renders these as "Not yet assigned", so reporting
+        // them as gaps contradicts the status the same index publishes.
+        // Release-scope assignment is still checked: it is non-blocking and applies
+        // regardless of how far along a requirement is.
+        let isStarted = requirement.status != .proposed && requirement.status != .draft
+
+        if isStarted, !summary.hasWorkItemTrace {
             gaps.append(
                 AirframeRequirementTraceGap(
                     requirementID: requirement.id,
@@ -794,7 +802,7 @@ public struct AirframeRequirementTraceabilityIndex: Sendable {
             )
         }
 
-        if requirement.validationRequired && !summary.hasEvidenceTrace {
+        if isStarted, requirement.validationRequired, !summary.hasEvidenceTrace {
             gaps.append(
                 AirframeRequirementTraceGap(
                     requirementID: requirement.id,

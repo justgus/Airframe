@@ -13,6 +13,7 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
     case planReview = "Plan Review"
     case requirements = "Requirements"
     case tests = "Tests"
+    case warnings = "Warnings"
     case metrics = "Metrics & Audit"
 
     var id: String { rawValue }
@@ -31,6 +32,8 @@ enum AgileCockpitSection: String, CaseIterable, Identifiable {
             "requirements"
         case .tests:
             "tests"
+        case .warnings:
+            "warnings"
         case .metrics:
             "metrics"
         }
@@ -381,6 +384,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published private(set) var testGapRows: [AgileCockpitTestGapRow]
     @Published private(set) var implementationPlans: [AirframeCanonicalImplementationPlanRecord]
     @Published var selectedTestID: AirframeID?
+    @Published var selectedRequirementID: AirframeID?
     @Published private(set) var verificationQueueState: AgileCockpitVerificationQueueState
     @Published private(set) var verificationDetailState: AgileCockpitVerificationDetailState
     @Published private(set) var verificationActionState: AgileCockpitVerificationActionState
@@ -1238,6 +1242,14 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return canonicalSnapshot.tests.first { $0.id == selectedTestID } ?? canonicalSnapshot.tests.first
     }
 
+    var selectedRequirementRecord: AirframeCanonicalRequirementRecord? {
+        guard let selectedRequirementID else {
+            return canonicalSnapshot.requirements.first
+        }
+        return canonicalSnapshot.requirements.first { $0.id == selectedRequirementID }
+            ?? canonicalSnapshot.requirements.first
+    }
+
     var selectedPlanRecord: AirframeCanonicalImplementationPlanRecord? {
         guard let selectedPlanID else {
             return implementationPlans.first
@@ -1285,10 +1297,12 @@ final class AgileCockpitDashboardModel: ObservableObject {
         guard let detailText = dashboardDetailTextByID[selectedStatusWorkItemID] else {
             return nil
         }
+        let described = canonicalDescriptionDetailText(for: selectedStatusWorkItemID)
+            .map { "\($0)\n\n---\n\(detailText)" } ?? detailText
         guard let canonicalDetailText = canonicalRelationshipDetailText(for: selectedStatusWorkItemID) else {
-            return detailText
+            return described
         }
-        return "\(detailText)\n\n---\n\(canonicalDetailText)"
+        return "\(described)\n\n---\n\(canonicalDetailText)"
     }
 
     func showStatusItems(tile: AirframeDashboardStatusTile, row: AirframeDashboardStatusRow) {
@@ -1321,6 +1335,10 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     func selectTest(_ test: AirframeCanonicalTestRecord) {
         selectedTestID = test.id
+    }
+
+    func selectRequirement(_ requirement: AirframeCanonicalRequirementRecord) {
+        selectedRequirementID = requirement.id
     }
 
     func selectPlan(_ plan: AirframeCanonicalImplementationPlanRecord) {
@@ -3304,6 +3322,34 @@ final class AgileCockpitDashboardModel: ObservableObject {
         return lines.joined(separator: "\n")
     }
 
+    /// Narrative description from canonical state. AirframeLocalWorkRecord carries no
+    /// rationale or goal field, so the dashboard detail text cannot show one; look it up
+    /// from the canonical record instead.
+    private func canonicalDescriptionDetailText(for id: AirframeID) -> String? {
+        func section(_ label: String, _ body: String) -> String? {
+            let trimmed = body.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : "\(label):\n\(trimmed)"
+        }
+        if let epic = canonicalSnapshot.epics.first(where: { $0.workItem.id == id }) {
+            let parts = [section("Goal", epic.goal), section("Rationale", epic.rationale)].compactMap { $0 }
+            return parts.isEmpty ? nil : parts.joined(separator: "\n\n")
+        }
+        if let sprint = canonicalSnapshot.sprints.first(where: { $0.workItem.id == id }) {
+            return section("Goal", sprint.goal)
+        }
+        if let task = canonicalSnapshot.tasks.first(where: { $0.workItem.id == id }) {
+            return section("Rationale", task.rationale)
+        }
+        if let issue = canonicalSnapshot.issues.first(where: { $0.workItem.id == id }) {
+            let parts = [
+                section("Observed Behavior", issue.observedBehavior ?? ""),
+                section("Expected Behavior", issue.expectedBehavior ?? "")
+            ].compactMap { $0 }
+            return parts.isEmpty ? nil : parts.joined(separator: "\n\n")
+        }
+        return nil
+    }
+
     private func canonicalRelationshipDetailText(for id: AirframeID) -> String? {
         if let epic = canonicalSnapshot.epics.first(where: { $0.workItem.id == id }) {
             return [
@@ -3936,6 +3982,8 @@ struct ContentView: View {
             requirementsView
         case .tests:
             testsView
+        case .warnings:
+            warningsView
         case .metrics:
             metricsView
         }
@@ -4117,6 +4165,7 @@ struct ContentView: View {
                 .font(.headline)
                 .accessibilityIdentifier("agile-cockpit-requirements-title")
             requirementGateSection
+            requirementListAndDetailSection
             requirementTraceabilitySection
         }
         .accessibilityIdentifier("agile-cockpit-requirements")
@@ -4227,7 +4276,6 @@ struct ContentView: View {
             testSummarySection
             testListAndDetailSection
             testRequirementCoverageSection
-            testGapSection
         }
         .accessibilityIdentifier("agile-cockpit-tests")
     }
@@ -4398,17 +4446,143 @@ struct ContentView: View {
                 gateMetric("Validated", "\(model.requirementGateSummary.validatedCount)")
                 gateMetric("Blocked", "\(model.requirementGateSummary.blockedCount)")
             }
+            // Blocking reasons are one line per requirement and can number in the
+            // hundreds, which previously buried the requirement list below them.
+            // Summarise here; the Warnings section carries the full list.
             if model.requirementGateSummary.blockingReasons.isEmpty {
                 Text("No blocking traceability gaps were found.")
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(model.requirementGateSummary.blockingReasons, id: \.self) { reason in
-                    Text(reason)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                Text("\(model.requirementGateSummary.blockingReasons.count) blocking traceability gaps. See the Warnings tab.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-requirement-gate-blocking-summary")
             }
         }
         .accessibilityIdentifier("agile-cockpit-requirement-gate")
+    }
+
+    private var requirementListAndDetailSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Requirement Definitions")
+                .font(.headline)
+            if model.canonicalSnapshot.requirements.isEmpty {
+                Text("No canonical requirements are recorded.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-requirement-definitions-empty")
+            } else {
+                HStack(alignment: .top, spacing: 16) {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(model.canonicalSnapshot.requirements, id: \.id.rawValue) { requirement in
+                                Button {
+                                    model.selectRequirement(requirement)
+                                } label: {
+                                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                        Text(requirement.id.rawValue)
+                                            .fontWeight(model.selectedRequirementRecord?.id == requirement.id ? .semibold : .regular)
+                                            .frame(width: 96, alignment: .leading)
+                                        Text(requirement.title)
+                                            .lineLimit(1)
+                                        Spacer(minLength: 0)
+                                        Text(requirement.status.rawValue)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, 6)
+                                    .background(
+                                        model.selectedRequirementRecord?.id == requirement.id
+                                            ? Color.accentColor.opacity(0.12)
+                                            : Color.clear
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel("\(requirement.id.rawValue) \(requirement.title) \(requirement.status.rawValue)")
+                                .accessibilityIdentifier("agile-cockpit-requirement-\(requirement.id.rawValue)")
+                            }
+                        }
+                    }
+                    .frame(maxWidth: 420, maxHeight: 440, alignment: .leading)
+
+                    Divider()
+
+                    requirementDetailView
+                }
+            }
+        }
+        .accessibilityIdentifier("agile-cockpit-requirement-definitions")
+    }
+
+    @ViewBuilder
+    private var requirementDetailView: some View {
+        if let requirement = model.selectedRequirementRecord {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(requirement.id.rawValue)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("agile-cockpit-selected-requirement-id")
+                    Text(requirement.title)
+                        .font(.title3)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("agile-cockpit-selected-requirement-title")
+                    Text(requirement.statement)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("agile-cockpit-selected-requirement-statement")
+
+                    LabeledContent("Status", value: requirement.status.description)
+                    LabeledContent("Priority", value: requirement.priority.rawValue)
+                    LabeledContent("Verification", value: requirement.verificationMethod.rawValue)
+                    LabeledContent("Validation Required", value: requirement.validationRequired ? "Yes" : "No")
+                    LabeledContent("Source", value: requirement.sourceURI ?? requirement.sourceKind.rawValue)
+
+                    if !requirement.rationale.isEmpty {
+                        Text("Rationale")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(requirement.rationale)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("agile-cockpit-selected-requirement-rationale")
+                    }
+
+                    if !requirement.releaseScope.isEmpty {
+                        LabeledContent("Release Scope", value: requirement.releaseScope.joined(separator: ", "))
+                    }
+                    if !requirement.parentIDs.isEmpty {
+                        LabeledContent("Parents", value: requirement.parentIDs.map(\.rawValue).joined(separator: ", "))
+                    }
+                    if !requirement.derivedFromIDs.isEmpty {
+                        LabeledContent("Derived From", value: requirement.derivedFromIDs.map(\.rawValue).joined(separator: ", "))
+                    }
+                    if !requirement.supersedesIDs.isEmpty {
+                        LabeledContent("Supersedes", value: requirement.supersedesIDs.map(\.rawValue).joined(separator: ", "))
+                    }
+
+                    Text("Trace Links")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if requirement.traceLinks.isEmpty {
+                        Text("None recorded.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(requirement.traceLinks, id: \.id.rawValue) { link in
+                            Text("\(link.targetKind): \(link.targetID)\(link.title.map { " - \($0)" } ?? "")")
+                                .font(.caption)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(maxHeight: 440)
+            .accessibilityIdentifier("agile-cockpit-requirement-detail")
+        } else {
+            Text("Select a requirement to view details.")
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("agile-cockpit-requirement-detail-empty")
+        }
     }
 
     private var requirementTraceabilitySection: some View {
@@ -4437,7 +4611,7 @@ struct ContentView: View {
                             Text(row.acceptanceCriteria.isEmpty ? "No acceptance criteria" : row.acceptanceCriteria)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        if !row.acceptanceCriteria.isEmpty {
+                        if !row.statement.isEmpty {
                             Text(row.statement)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -4447,31 +4621,126 @@ struct ContentView: View {
                     .padding(.vertical, 4)
                 }
             }
-            Text("Gaps")
-                .font(.headline)
-            if model.requirementGapRows.isEmpty {
-                Text("No gaps recorded.")
+        }
+        .accessibilityIdentifier("agile-cockpit-requirement-traceability")
+    }
+
+    // Warnings live in their own section so the Requirements and Tests tabs stay
+    // usable: a project in requirements-definition stage can produce hundreds of
+    // gap rows, which previously pushed the actual records off the screen.
+    private var warningsView: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text("Warnings")
+                    .font(.headline)
+                    .accessibilityIdentifier("agile-cockpit-warnings-title")
+                Text("\(model.requirementGapRows.count + model.testGapRows.count + model.requirementGateSummary.blockingReasons.count) total")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-warnings-count")
+            }
+
+            if model.requirementGapRows.isEmpty
+                && model.testGapRows.isEmpty
+                && model.requirementGateSummary.blockingReasons.isEmpty {
+                Text("No warnings recorded.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-warnings-empty")
             } else {
-                ForEach(model.requirementGapRows) { row in
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(row.requirementID)
-                                .font(.caption)
-                                .frame(width: 82, alignment: .leading)
-                            Text(row.kind)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .frame(width: 180, alignment: .leading)
-                        }
-                        Text(row.message)
-                            .fixedSize(horizontal: false, vertical: true)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        warningGroup(
+                            "Requirement Gaps",
+                            rows: model.requirementGapRows.map { ($0.requirementID, $0.kind, $0.message) },
+                            identifier: "requirement"
+                        )
+                        warningGroup(
+                            "Test Link Gaps",
+                            rows: model.testGapRows.map { ($0.requirementID, $0.kind, $0.message) },
+                            identifier: "test"
+                        )
+                        warningGroup(
+                            "Release Gate Blockers",
+                            rows: model.requirementGateSummary.blockingReasons.map { ("", "blockingReason", $0) },
+                            identifier: "gate"
+                        )
                     }
-                    .padding(.vertical, 4)
                 }
             }
         }
-        .accessibilityIdentifier("agile-cockpit-requirement-traceability")
+        .accessibilityIdentifier("agile-cockpit-warnings")
+    }
+
+    @ViewBuilder
+    private func warningGroup(
+        _ title: String,
+        rows: [(String, String, String)],
+        identifier: String
+    ) -> some View {
+        if !rows.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("\(title) (\(rows.count))")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .accessibilityIdentifier("agile-cockpit-warnings-\(identifier)-header")
+
+                // Grouped by kind so a repeated diagnostic collapses into one
+                // heading with a count rather than hundreds of identical lines.
+                ForEach(Self.groupedByKind(rows), id: \.kind) { group in
+                    DisclosureGroup {
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(group.entries, id: \.id) { entry in
+                                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                    Text(entry.id)
+                                        .font(.caption)
+                                        .frame(width: 96, alignment: .leading)
+                                    Text(entry.message)
+                                        .font(.caption)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Spacer(minLength: 0)
+                                }
+                            }
+                        }
+                        .padding(.leading, 8)
+                        .padding(.top, 4)
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text(group.kind)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                            Text("\(group.entries.count)")
+                                .font(.caption2)
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityIdentifier("agile-cockpit-warnings-\(identifier)-\(group.kind)")
+                }
+            }
+        }
+    }
+
+    private struct WarningGroup {
+        let kind: String
+        let entries: [WarningEntry]
+    }
+
+    private struct WarningEntry {
+        let id: String
+        let message: String
+    }
+
+    private static func groupedByKind(_ rows: [(String, String, String)]) -> [WarningGroup] {
+        var order: [String] = []
+        var byKind: [String: [WarningEntry]] = [:]
+        for (identifier, kind, message) in rows {
+            if byKind[kind] == nil {
+                order.append(kind)
+                byKind[kind] = []
+            }
+            byKind[kind]?.append(WarningEntry(id: identifier, message: message))
+        }
+        return order.map { WarningGroup(kind: $0, entries: byKind[$0] ?? []) }
     }
 
     private var testSummarySection: some View {
@@ -4648,36 +4917,6 @@ struct ContentView: View {
             }
         }
         .accessibilityIdentifier("agile-cockpit-test-requirement-coverage")
-    }
-
-    private var testGapSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Test Link Gaps")
-                .font(.headline)
-            if model.testGapRows.isEmpty {
-                Text("No test link gaps recorded.")
-                    .foregroundStyle(.secondary)
-                    .accessibilityIdentifier("agile-cockpit-tests-gaps-empty")
-            } else {
-                ForEach(model.testGapRows) { row in
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(row.requirementID)
-                                .font(.caption)
-                                .frame(width: 82, alignment: .leading)
-                            Text(row.kind)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .frame(width: 180, alignment: .leading)
-                        }
-                        Text(row.message)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.vertical, 4)
-                }
-            }
-        }
-        .accessibilityIdentifier("agile-cockpit-test-gaps")
     }
 
     private func gateMetric(_ title: String, _ value: String) -> some View {

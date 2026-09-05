@@ -1,39 +1,35 @@
 {
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "goal" : "",
-  "issueIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "goal": "Correct the requirement importer's section-boundary handling, repair the requirements it mis-parsed, and regenerate the requirement projections so canonical requirement data matches its documented source.",
+  "issueIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
-
-  ],
-  "taskIDs" : [
+  "notes": [],
+  "taskIDs": [
     {
-      "rawValue" : "T-0172"
+      "rawValue": "T-0172"
     },
     {
-      "rawValue" : "T-0173"
+      "rawValue": "T-0173"
     },
     {
-      "rawValue" : "T-0174"
+      "rawValue": "T-0174"
     }
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "SP-040"
+  "workItem": {
+    "id": {
+      "rawValue": "SP-040"
     },
-    "kind" : "sprint",
-    "status" : "planning",
-    "title" : "Requirement Importer and Canonical Data Repair"
+    "kind": "sprint",
+    "status": "planning",
+    "title": "Requirement Importer and Canonical Data Repair"
   }
 }

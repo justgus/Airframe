@@ -1,47 +1,43 @@
 {
-  "acceptanceCriteria" : [
+  "acceptanceCriteria": [
     "Repository links point to supported canonical views, redirects, or clearly historical archives.",
     "Issue and Task retirement follows one consistent policy.",
     "No workflow procedure instructs mutation through a Legacy projection."
   ],
-  "component" : "Cross-artifact implementation of R-G2 and R-Q3 after R-08 and R-09.",
-  "componentsAffected" : [
+  "component": "Cross-artifact implementation of R-G2 and R-Q3 after R-08 and R-09.",
+  "componentsAffected": [
     "Cross-artifact implementation of R-G2 and R-Q3 after R-08 and R-09."
   ],
-  "epicID" : {
-    "rawValue" : "EP-025"
+  "epicID": {
+    "rawValue": "EP-025"
   },
-  "evidenceIDs" : [
-
-  ],
-  "metadata" : {
-    "schemaVersion" : {
-      "major" : 1,
-      "minor" : 0,
-      "patch" : 0
+  "evidenceIDs": [],
+  "metadata": {
+    "schemaVersion": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
     },
-    "updatedAt" : "2026-08-28T20:38:57Z"
+    "updatedAt": "2026-08-28T20:38:57Z"
   },
-  "notes" : [
+  "notes": [
     "Generated Markdown must only be changed through its projector."
   ],
-  "priority" : "high",
-  "rationale" : "Generated Markdown must only be changed through its projector.",
-  "requirementIDs" : [
-
-  ],
-  "sprintID" : {
-    "rawValue" : "SP-042"
+  "priority": "high",
+  "rationale": "After Issue and Task retirement, repository links and workflow procedures still point into Legacy projections, and the two retirements followed different conventions. This task reconciles links, archives, and compatibility policy so one consistent rule applies and no procedure instructs mutation through a Legacy projection.\n\nConstraint: Generated Markdown must only be changed through its projector.",
+  "requirementIDs": [],
+  "sprintID": {
+    "rawValue": "SP-042"
   },
-  "testSteps" : [
+  "testSteps": [
     "Repository-wide link and mutation-authority searches."
   ],
-  "workItem" : {
-    "id" : {
-      "rawValue" : "T-0180"
+  "workItem": {
+    "id": {
+      "rawValue": "T-0180"
     },
-    "kind" : "task",
-    "status" : "backlog",
-    "title" : "Reconcile Legacy links, archives, and compatibility policy"
+    "kind": "task",
+    "status": "backlog",
+    "title": "Reconcile Legacy links, archives, and compatibility policy"
   }
 }

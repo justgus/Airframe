@@ -31,13 +31,19 @@
       "rawValue" : "EP-025-AC-10"
     }
   ],
-  "goal" : "",
+  "goal" : "Remediate the findings of the 2026-08-27 Audit across configuration, requirement data, projections, legacy artifacts, GitHub integration, and canonical evidence, so that canonical state, its generated projections, and the GitHub backend agree and stay that way.",
   "issueIDs" : [
     {
       "rawValue" : "I-0031"
     },
     {
       "rawValue" : "I-0032"
+    },
+    {
+      "rawValue" : "I-0033"
+    },
+    {
+      "rawValue" : "I-0034"
     }
   ],
   "metadata" : {
@@ -46,7 +52,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-05T15:50:35Z"
+    "updatedAt" : "2026-09-05T20:37:48Z"
   },
   "notes" : [
 
@@ -58,7 +64,7 @@
   "planningDocumentPaths" : [
 
   ],
-  "rationale" : "",
+  "rationale" : "The 20260827 Audit recorded drift between canonical state and its Generated, Legacy, and Backend surfaces. The approved rulings group that drift into themed Sprints so each class of defect is fixed and verified independently rather than in one undifferentiated pass.",
   "scope" : [
 
   ],
@@ -83,6 +89,9 @@
     },
     {
       "rawValue" : "SP-043"
+    },
+    {
+      "rawValue" : "SP-045"
     }
   ],
   "taskIDs" : [
@@ -157,6 +166,12 @@
     },
     {
       "rawValue" : "T-0189"
+    },
+    {
+      "rawValue" : "T-0190"
+    },
+    {
+      "rawValue" : "T-0191"
     }
   ],
   "workItem" : {
