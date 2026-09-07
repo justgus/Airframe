@@ -4,7 +4,7 @@ This is the main index for Agile Airframe Epics.
 
 ## All Epics
 
-Currently: **25 Epics** | Next available: **EP-026**
+Currently: **26 Epics** | Next available: **EP-027**
 
 | Epic | Title | Status | Start Date | Close Date |
 | ---- | ----- | ------ | ---------- | ---------- |
@@ -33,13 +33,14 @@ Currently: **25 Epics** | Next available: **EP-026**
 | EP-023 | AgileCockpit Plan Review and Approval | Closed | TBD | 2026-07-07 |
 | EP-024 | Canonical Test Definition and Management | Closed | TBD | 2026-07-07 |
 | EP-025 | Audit Finding Remediation | Active | TBD | TBD |
+| EP-026 | First-Class Requirements, Tests, and Evidence Work Products | Draft | TBD | TBD |
 
 ## Statistics
 
-- **Total Epics:** 25
+- **Total Epics:** 26
 - **Backlog:** 0
 - **Active:** 1
 - **Closed:** 24
-- **Next available:** EP-026
+- **Next available:** EP-027
 
-*Last Updated: 2026-08-29*
+*Last Updated: 2026-09-07*

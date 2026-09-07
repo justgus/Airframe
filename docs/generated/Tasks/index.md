@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **165 total Tasks**
+Currently: **198 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 0 |
-| Active | 0 |
-| Implemented - Not Verified | 6 |
-| Implemented - Verified | 159 |
+| Backlog | 25 |
+| Active | 3 |
+| Implemented - Not Verified | 0 |
+| Implemented - Verified | 170 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -165,15 +165,48 @@ Currently: **165 total Tasks**
 | T-0151 | #164 | Harden AgileCockpit offline application flows | Implemented - Verified |
 | T-0152 | #165 | Prove Sprint and Epic workflows operate offline | Implemented - Verified |
 | T-0153 | #166 | Add offline regression verification suite | Implemented - Verified |
-| T-0154 | TBD | Define canonical plan review record and decision model | Implemented - Not Verified |
-| T-0155 | TBD | Add AirframeCore authority and audit support for plan decisions | Implemented - Not Verified |
-| T-0156 | TBD | Add AICockpit plan submission and read commands | Implemented - Not Verified |
-| T-0157 | TBD | Add AgileCockpit plan review UI | Implemented - Not Verified |
-| T-0158 | TBD | Wire AgileCockpit human plan decision actions | Implemented - Not Verified |
-| T-0159 | TBD | Add plan review regression coverage and workflow documentation | Implemented - Not Verified |
+| T-0154 | TBD | Define canonical plan review record and decision model | Implemented - Verified |
+| T-0155 | TBD | Add AirframeCore authority and audit support for plan decisions | Implemented - Verified |
+| T-0156 | TBD | Add AICockpit plan submission and read commands | Implemented - Verified |
+| T-0157 | TBD | Add AgileCockpit plan review UI | Implemented - Verified |
+| T-0158 | TBD | Wire AgileCockpit human plan decision actions | Implemented - Verified |
+| T-0159 | TBD | Add plan review regression coverage and workflow documentation | Implemented - Verified |
 | T-0160 | #170 | Define canonical test records and requirement trace model | Implemented - Verified |
 | T-0161 | #174 | Seed canonical test definitions for the Airframe dataset | Implemented - Verified |
 | T-0162 | #169 | Add AICockpit test definition and management commands | Implemented - Verified |
 | T-0163 | #171 | Add AgileCockpit Tests tab | Implemented - Verified |
 | T-0164 | #173 | Define EP-023 acceptance criteria for requirements without AC coverage | Implemented - Verified |
 | T-0165 | #172 | Verify test management workflow and documentation | Implemented - Verified |
+| T-0166 | TBD | Define historical-close acceptance disposition | Implemented - Verified |
+| T-0167 | TBD | Repair canonical membership and reciprocal relationships | Implemented - Verified |
+| T-0168 | TBD | Implement systematic canonical invariant diagnostics | Implemented - Verified |
+| T-0169 | TBD | Remove duplicated active-context configuration pointers | Active |
+| T-0170 | TBD | Define optional backend-mapping state model | Active |
+| T-0171 | TBD | Expose mapping and active-context state in Cockpit interfaces | Active |
+| T-0172 | TBD | Correct requirement importer section boundaries | Backlog |
+| T-0173 | TBD | Repair and source-compare affected requirements | Backlog |
+| T-0174 | TBD | Regenerate and validate requirement projections | Backlog |
+| T-0175 | TBD | Make canonical projection refresh durable | Backlog |
+| T-0176 | TBD | Render artifact terminology and relationship statuses | Backlog |
+| T-0177 | TBD | Investigate projection omission and regenerate the complete set | Backlog |
+| T-0178 | TBD | Retire mutable Legacy Issue current-state files | Backlog |
+| T-0179 | TBD | Retire mutable Legacy Task current-state files | Backlog |
+| T-0180 | TBD | Reconcile Legacy links, archives, and compatibility policy | Backlog |
+| T-0181 | TBD | Implement complete GitHub pagination and disclosure | Backlog |
+| T-0182 | TBD | Implement canonical-to-GitHub reconciliation | Backlog |
+| T-0183 | TBD | Implement branch-aware AgileCockpit mutations | Backlog |
+| T-0184 | TBD | Complete integrated audit remediation verification | Backlog |
+| T-0185 | TBD | Implement canonical evidence repository operations | Backlog |
+| T-0186 | TBD | Add native AICockpit evidence commands | Backlog |
+| T-0187 | TBD | Add AgileCockpit evidence review interface | Backlog |
+| T-0188 | TBD | Diagnose and migrate evidence relationship integrity | Backlog |
+| T-0189 | TBD | Verify native evidence workflow and retire fallback | Backlog |
+| T-0190 | TBD | Add granular read primitives and close the github-issues mutation gap in AICockpit | Implemented - Verified |
+| T-0192 | TBD | Add command-specific help and complete Task option documentation | Backlog |
+| T-0193 | TBD | Add compact output and selective detail projections | Backlog |
+| T-0194 | TBD | Reconcile Task Sprint and Epic relationships on mutation | Backlog |
+| T-0195 | TBD | Publish versioned machine-readable command schema | Backlog |
+| T-0196 | TBD | Add targeted validation and concise mutation receipts | Backlog |
+| T-0197 | TBD | Materialize approved planning structures atomically | Backlog |
+| T-0198 | TBD | Document agent token-economy operating guidance | Backlog |
+| T-0199 | #188 | De-duplicate AgileCockpit cache payloads and digest the launch fingerprint | Implemented - Verified |

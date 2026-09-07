@@ -1,0 +1,76 @@
+{
+  "auditEventIDs" : [
+    {
+      "rawValue" : "AUD-AGILE-PLAN-7"
+    }
+  ],
+  "commands" : [
+    "Run focused AICockpit and AirframeCore tests.",
+    "Run targeted canonical state diagnostics."
+  ],
+  "decisionState" : "approved",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "Synchronize GitHub issue labels and evidence only through agent-authorized workflow operations."
+  ],
+  "fileChanges" : [
+    "AICockpit command code and focused tests; AirframeCore relationship and planning code where required; agent-facing guidance."
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-046"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Canonical Task set corrected after resolving the T-0191 and SP-044 identifier collisions.",
+    "T-0190 remains assigned to SP-045 and is outside this plan.",
+    "approved"
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "Implement bounded reads, accurate command help, compact projections, relationship reconciliation, command discovery, targeted validation, approved planning materialization, and agent guidance."
+  ],
+  "summary" : "Reduce token churn in agent-driven Airframe work while preserving AICockpit-first workflow, canonical relationship integrity, and human approval boundaries.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0192"
+    },
+    {
+      "rawValue" : "T-0193"
+    },
+    {
+      "rawValue" : "T-0194"
+    },
+    {
+      "rawValue" : "T-0195"
+    },
+    {
+      "rawValue" : "T-0196"
+    },
+    {
+      "rawValue" : "T-0197"
+    },
+    {
+      "rawValue" : "T-0198"
+    }
+  ],
+  "title" : "AICockpit Token Efficiency and Guided Workflow Plan",
+  "verificationCriteria" : [
+    "Read and mutation paths are bounded; links remain reciprocal; materialization requires explicit approval; guidance preserves human-only verification."
+  ]
+}

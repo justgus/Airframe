@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+    "Plan submission remains non-mutating and approved materialization validates references and avoids partial structures."
+  ],
+  "component" : "Canonical planning model and AICockpit plan commands",
+  "componentsAffected" : [
+    "Canonical planning model and AICockpit plan commands"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:28Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "testSteps" : [
+    "Success, rejection, and relationship-integrity tests pass."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0197"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Materialize approved planning structures atomically"
+  }
+}

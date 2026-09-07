@@ -1,0 +1,86 @@
+{
+  "auditEventIDs" : [
+    {
+      "rawValue" : "AUD-AGILE-PLAN-1"
+    }
+  ],
+  "commands" : [
+    "Run focused Swift package tests for AICockpit and AirframeCore.",
+    "Run targeted canonical state diagnostics after coherent implementation batches."
+  ],
+  "decisionState" : "approved",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "GitHub issue labels and evidence may be synchronized only through agent-authorized Airframe workflow operations."
+  ],
+  "fileChanges" : [
+    "AICockpit\/Sources\/AICockpitKit\/AICockpitCommand.swift and focused command tests.",
+    "AirframeCore canonical repository and backend code where relationship or planning semantics require it.",
+    "Agent-facing Airframe guidance where required."
+  ],
+  "id" : {
+    "rawValue" : "PLAN-025-044"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "SP-044 remains Planning until this plan receives user approval.",
+    "approved"
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "Implement bounded read primitives and GitHub-backend mutation support under T-0190.",
+    "Add command-specific help, compact output projections, relationship reconciliation, command schema, targeted validation, and planning materialization.",
+    "Document token-economy operating guidance that retains human approval boundaries."
+  ],
+  "summary" : "Reduce token churn in agent-driven Airframe work while preserving AICockpit-first workflow, canonical relationship integrity, and human approval boundaries.",
+  "targetEpicID" : {
+    "rawValue" : "EP-025"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-044"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0190"
+    },
+    {
+      "rawValue" : "T-0191"
+    },
+    {
+      "rawValue" : "T-0192"
+    },
+    {
+      "rawValue" : "T-0193"
+    },
+    {
+      "rawValue" : "T-0194"
+    },
+    {
+      "rawValue" : "T-0195"
+    },
+    {
+      "rawValue" : "T-0196"
+    },
+    {
+      "rawValue" : "T-0197"
+    }
+  ],
+  "title" : "AICockpit Token Efficiency and Guided Workflow Plan",
+  "verificationCriteria" : [
+    "Command-specific help is bounded and accurately documents supported syntax.",
+    "Normal mutation and read paths provide compact, selected projections.",
+    "Task, Sprint, and Epic links remain reciprocal after supported mutations.",
+    "Planning materialization requires explicit approval and avoids partial structures.",
+    "Workflow guidance preserves AICockpit-first handling and human-only verification."
+  ]
+}

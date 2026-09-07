@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+    "A bounded schema describes valid agent-facing commands and options and detects parser drift."
+  ],
+  "component" : "AICockpit discovery schema and tests",
+  "componentsAffected" : [
+    "AICockpit discovery schema and tests"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:27Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "testSteps" : [
+    "Schema coverage and parser-consistency tests pass."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0195"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Publish versioned machine-readable command schema"
+  }
+}

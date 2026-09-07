@@ -1,6 +1,8 @@
 {
   "auditEventIDs" : [
-
+    {
+      "rawValue" : "AUD-AGILE-PLAN-6"
+    }
   ],
   "commands" : [
     "GitHub transport tests with more than 100 fixtures",
@@ -8,7 +10,7 @@
     "Branch-safety unit\/integration\/UI tests",
     "Full package\/application regression and repository consistency checks"
   ],
-  "decisionState" : "pending",
+  "decisionState" : "approved",
   "evidenceIDs" : [
 
   ],
@@ -32,7 +34,8 @@
     }
   },
   "notes" : [
-    "Remote reconciliation is delayed until local implementation passes; human-only Audit closure remains out of scope."
+    "Remote reconciliation is delayed until local implementation passes; human-only Audit closure remains out of scope.",
+    "approved"
   ],
   "proposedByActorID" : {
     "rawValue" : "ACTOR-LLM"

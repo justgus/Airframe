@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+    "Guidance requires bounded discovery, reused command knowledge, selected projections, and targeted validation while retaining human approval boundaries."
+  ],
+  "component" : "Agent-facing Airframe workflow guidance",
+  "componentsAffected" : [
+    "Agent-facing Airframe workflow guidance"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:28Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "testSteps" : [
+    "Guidance is reviewed against AGENTS.md and command examples."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0198"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Document agent token-economy operating guidance"
+  }
+}

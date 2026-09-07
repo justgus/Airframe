@@ -1,0 +1,37 @@
+{
+  "afterRecordID" : {
+    "rawValue" : "PLAN-025-042"
+  },
+  "beforeRecordID" : {
+    "rawValue" : "PLAN-025-042"
+  },
+  "event" : {
+    "action" : "OP-HUMAN-APPROVE-PLAN",
+    "actorID" : {
+      "rawValue" : "ACTOR-HUMAN-REVIEWER"
+    },
+    "decision" : {
+      "allowed" : {
+        "reason" : "allowed"
+      }
+    },
+    "id" : {
+      "rawValue" : "AUD-AGILE-PLAN-5"
+    },
+    "reason" : "allowed",
+    "targetProjectID" : {
+      "rawValue" : "PRJ-AIRFRAME"
+    },
+    "timestamp" : "2026-09-06T21:55:49Z",
+    "workItemID" : {
+      "rawValue" : "PLAN-025-042"
+    }
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  }
+}

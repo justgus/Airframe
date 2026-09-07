@@ -258,6 +258,23 @@ final class AgileCockpitDashboardModel: ObservableObject {
             canonicalRepository: AirframeCanonicalStoreRepository?,
             canonicalState: AirframeCanonicalStoreState?
         ) {
+            let loadedCanonicalState = canonicalState ?? payload.canonicalState.map(AgileCockpitDashboardModel.cachedState(from:))
+            let cachedSnapshot = AgileCockpitDashboardModel.cachedSnapshot(
+                state: payload.canonicalState,
+                fallback: payload.fallbackSnapshot,
+                project: payload.project
+            )
+            let traceability = AgileCockpitDashboardModel.traceabilityState(
+                canonicalState: loadedCanonicalState,
+                canonicalSnapshot: cachedSnapshot,
+                canonicalDiagnostics: payload.canonicalDiagnostics,
+                artifactRootURL: payload.artifactRootPath.map { URL(fileURLWithPath: $0) }
+            )
+            let dashboardData = AgileCockpitDashboardModel.dashboardData(
+                backendRecords: AgileCockpitDashboardModel.localRecords(from: cachedSnapshot),
+                artifactRootURL: payload.artifactRootPath.map { URL(fileURLWithPath: $0) },
+                preferBackendRecords: true
+            )
             self.init(
                 coreInfo: .current,
                 context: AirframeProjectContext(
@@ -270,23 +287,21 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 reviewerContext: reviewerContext,
                 artifactRootURL: payload.artifactRootPath.map { URL(fileURLWithPath: $0) },
                 canonicalRepository: canonicalRepository,
-                canonicalState: canonicalState ?? payload.canonicalState.map(AgileCockpitDashboardModel.cachedState(from:)),
-                records: payload.records,
-                dashboardRecords: payload.dashboardRecords,
-                dashboardDetailTextByID: Dictionary(
-                    uniqueKeysWithValues: payload.dashboardDetailTextByID.map { (AirframeID($0.key), $0.value) }
-                ),
-                canonicalSnapshot: AgileCockpitDashboardModel.cachedSnapshot(from: payload.canonicalSnapshot),
+                canonicalState: loadedCanonicalState,
+                records: dashboardData.records,
+                dashboardRecords: dashboardData.records,
+                dashboardDetailTextByID: dashboardData.detailTextByID,
+                canonicalSnapshot: cachedSnapshot,
                 canonicalDiagnostics: payload.canonicalDiagnostics,
                 summary: payload.summary,
                 auditRows: payload.auditRows,
-                requirementCoverageSummary: payload.requirementCoverageSummary,
-                requirementGateSummary: payload.requirementGateSummary,
-                requirementTraceRows: payload.requirementTraceRows,
-                requirementGapRows: payload.requirementGapRows,
-                testCoverageRows: payload.testCoverageRows,
-                testGapRows: payload.testGapRows,
-                implementationPlans: (canonicalState ?? payload.canonicalState.map(AgileCockpitDashboardModel.cachedState(from:)))?.implementationPlans ?? [],
+                requirementCoverageSummary: traceability.requirementCoverageSummary,
+                requirementGateSummary: traceability.requirementGateSummary,
+                requirementTraceRows: traceability.requirementTraceRows,
+                requirementGapRows: traceability.requirementGapRows,
+                testCoverageRows: traceability.testCoverageRows,
+                testGapRows: traceability.testGapRows,
+                implementationPlans: loadedCanonicalState?.implementationPlans ?? [],
                 observedURLs: payload.observedURLs
             )
         }
@@ -334,21 +349,12 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let configurationDiagnostics: AirframeConfigurationDiagnostics
         let artifactRootPath: String?
         let observedURLs: [URL]
-        let records: [AirframeLocalWorkRecord]
-        let dashboardRecords: [AirframeLocalWorkRecord]
-        let dashboardDetailTextByID: [String: String]
         let canonicalState: CachedCanonicalState?
-        let canonicalSnapshot: CachedCanonicalSnapshot
+        /// Only used by the sample workspace, which has no canonical state to reuse.
+        let fallbackSnapshot: CachedCanonicalSnapshot?
         let canonicalDiagnostics: AirframeCanonicalDiagnostics
         let summary: AirframeDashboardSummary
         let auditRows: [AgileCockpitAuditRow]
-        let requirementCoverageSummary: AirframeRequirementCoverageSummary
-        let requirementGateSummary: AirframeRequirementReleaseGateSummary
-        let requirementTraceRows: [AgileCockpitRequirementTraceRow]
-        let requirementGapRows: [AgileCockpitRequirementGapRow]
-        let testCoverageRows: [AgileCockpitTestCoverageRow]
-        let testGapRows: [AgileCockpitTestGapRow]
-        let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
     }
 
     nonisolated fileprivate struct TraceabilityCacheEntry: Codable, Sendable {
@@ -553,6 +559,24 @@ final class AgileCockpitDashboardModel: ObservableObject {
         canonicalRepository: AirframeCanonicalStoreRepository?,
         canonicalState: AirframeCanonicalStoreState?
     ) {
+        let loadedCanonicalState = canonicalState ?? payload.canonicalState.map(Self.cachedState(from:))
+        let cachedCanonicalSnapshot = Self.cachedSnapshot(
+            state: payload.canonicalState,
+            fallback: payload.fallbackSnapshot,
+            project: payload.project
+        )
+        let cachedArtifactRootURL = payload.artifactRootPath.map { URL(fileURLWithPath: $0) }
+        let traceability = Self.traceabilityState(
+            canonicalState: loadedCanonicalState,
+            canonicalSnapshot: cachedCanonicalSnapshot,
+            canonicalDiagnostics: payload.canonicalDiagnostics,
+            artifactRootURL: cachedArtifactRootURL
+        )
+        let cachedDashboardData = Self.dashboardData(
+            backendRecords: Self.localRecords(from: cachedCanonicalSnapshot),
+            artifactRootURL: cachedArtifactRootURL,
+            preferBackendRecords: true
+        )
         self.coreInfo = .current
         self.context = AirframeProjectContext(
             configuration: payload.configuration,
@@ -562,34 +586,31 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.backend = backend
         self.repairBackend = repairBackend
         self.reviewerContext = reviewerContext
-        self.artifactRootURL = payload.artifactRootPath.map { URL(fileURLWithPath: $0) }
+        self.artifactRootURL = cachedArtifactRootURL
         self.canonicalRepository = canonicalRepository
-        let loadedCanonicalState = canonicalState ?? payload.canonicalState.map(Self.cachedState(from:))
         self.canonicalState = loadedCanonicalState
         self.auditStore = AirframeAuditEventStore()
         self.selectedSection = .dashboard
-        self.records = payload.records
-        self.dashboardRecords = payload.dashboardRecords
-        self.dashboardDetailTextByID = Dictionary(
-            uniqueKeysWithValues: payload.dashboardDetailTextByID.map { (AirframeID($0.key), $0.value) }
-        )
-        self.canonicalSnapshot = Self.cachedSnapshot(from: payload.canonicalSnapshot)
+        self.records = cachedDashboardData.records
+        self.dashboardRecords = cachedDashboardData.records
+        self.dashboardDetailTextByID = cachedDashboardData.detailTextByID
+        self.canonicalSnapshot = cachedCanonicalSnapshot
         self.canonicalDiagnostics = payload.canonicalDiagnostics
         self.summary = payload.summary
         self.auditRows = payload.auditRows
-        self.requirementCoverageSummary = payload.requirementCoverageSummary
-        self.requirementGateSummary = payload.requirementGateSummary
-        self.requirementTraceRows = payload.requirementTraceRows
-        self.requirementGapRows = payload.requirementGapRows
-        self.testCoverageRows = payload.testCoverageRows
-        self.testGapRows = payload.testGapRows
-        let initialImplementationPlans = loadedCanonicalState?.implementationPlans.sorted { $0.id.rawValue < $1.id.rawValue } ?? payload.implementationPlans
+        self.requirementCoverageSummary = traceability.requirementCoverageSummary
+        self.requirementGateSummary = traceability.requirementGateSummary
+        self.requirementTraceRows = traceability.requirementTraceRows
+        self.requirementGapRows = traceability.requirementGapRows
+        self.testCoverageRows = traceability.testCoverageRows
+        self.testGapRows = traceability.testGapRows
+        let initialImplementationPlans = loadedCanonicalState?.implementationPlans.sorted { $0.id.rawValue < $1.id.rawValue } ?? []
         self.implementationPlans = initialImplementationPlans
-        self.selectedTestID = payload.canonicalSnapshot.tests.first?.id
+        self.selectedTestID = cachedCanonicalSnapshot.tests.first?.id
         self.verificationQueueState = .loaded
         self.verificationDetailState = .empty
         self.verificationActionState = .idle
-        self.selectedWorkItemID = payload.records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
+        self.selectedWorkItemID = cachedDashboardData.records.first { $0.workItem.status == .implementedNotVerified }?.workItem.id
         self.selectedStatusSelection = nil
         self.selectedStatusWorkItemID = nil
         self.selectedPlanningTab = .sprintWork
@@ -739,7 +760,6 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 observedURLs: [],
                 canonicalState: nil,
                 canonicalSnapshot: canonicalSnapshot,
-                records: [],
                 dashboardData: (records: [], detailTextByID: [:]),
                 canonicalDiagnostics: diagnostics,
                 summary: Self.canonicalSummary(records: []),
@@ -873,7 +893,6 @@ final class AgileCockpitDashboardModel: ObservableObject {
             observedURLs: [configurationURL, resolvedStoreURL, artifactRootURL.appending(path: ".airframe/state")],
             canonicalState: canonicalState,
             canonicalSnapshot: canonicalSnapshot,
-            records: loadedRecords,
             dashboardData: dashboardData,
             canonicalDiagnostics: diagnostics,
             summary: Self.canonicalSummary(records: dashboardData.records),
@@ -1929,7 +1948,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         _ snapshot: AirframeCanonicalStateSnapshot,
         verifyingCriterionID criterionID: AirframeID
     ) -> AirframeCanonicalStateSnapshot {
-        AirframeCanonicalStateSnapshot(
+        return AirframeCanonicalStateSnapshot(
             project: snapshot.project,
             epics: snapshot.epics,
             sprints: snapshot.sprints,
@@ -2590,7 +2609,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let metadataEntries = watchedDirectories.flatMap { directory in
             fingerprintEntries(for: directory)
         }
-        return metadataEntries.sorted().joined(separator: "\n")
+        return digest(metadataEntries.sorted().joined(separator: "\n"))
     }
 
     nonisolated private static func traceabilityState(
@@ -2669,8 +2688,21 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let metadataEntries = watchedURLs.flatMap { watchURL in
             Self.watchURLs(for: watchURL).flatMap { fingerprintEntries(for: $0) }
         }
-        return [AirframeCoreInfo.current.summary, metadataEntries.sorted().joined(separator: "\n")]
-            .joined(separator: "\n---\n")
+        return digest(
+            [AirframeCoreInfo.current.summary, metadataEntries.sorted().joined(separator: "\n")]
+                .joined(separator: "\n---\n")
+        )
+    }
+
+    /// A stable, fixed-length cache key. The source metadata is still used in
+    /// full for invalidation, but is not persisted in every cache entry.
+    nonisolated private static func digest(_ value: String) -> String {
+        var hash: UInt64 = 1_469_598_103_934_665_603
+        for byte in value.utf8 {
+            hash ^= UInt64(byte)
+            hash &*= 1_099_511_628_211
+        }
+        return String(format: "%016llx", hash)
     }
 
     nonisolated private static func fingerprintEntries(for url: URL) -> [String] {
@@ -2727,9 +2759,36 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     nonisolated private static func cachedSnapshot(
-        from snapshot: LaunchCachePayload.CachedCanonicalSnapshot
+        state: LaunchCachePayload.CachedCanonicalState?,
+        fallback: LaunchCachePayload.CachedCanonicalSnapshot?,
+        project: AirframeProject
     ) -> AirframeCanonicalStateSnapshot {
-        AirframeCanonicalStateSnapshot(
+        if let state {
+            let projectRecord = state.projects.first { $0.id == project.id }
+                ?? AirframeCanonicalProjectRecord(
+                    id: project.id,
+                    name: project.name,
+                    repository: project.repository,
+                    activeEpicID: project.activeEpicID,
+                    activeSprintID: project.activeSprintID
+                )
+            return AirframeCanonicalStateSnapshot(
+                project: projectRecord,
+                epics: state.epics,
+                sprints: state.sprints,
+                tasks: state.tasks,
+                issues: state.issues,
+                requirements: state.requirements,
+                acceptanceCriteria: state.acceptanceCriteria,
+                tests: state.tests,
+                testSuites: state.testSuites,
+                testRuns: state.testRuns
+            )
+        }
+        guard let snapshot = fallback else {
+            return AirframeCanonicalStateSnapshotBuilder().snapshot(project: project, records: [])
+        }
+        return AirframeCanonicalStateSnapshot(
             project: snapshot.project,
             epics: snapshot.epics,
             sprints: snapshot.sprints,
@@ -2750,17 +2809,16 @@ final class AgileCockpitDashboardModel: ObservableObject {
         observedURLs: [URL],
         canonicalState: AirframeCanonicalStoreState?,
         canonicalSnapshot: AirframeCanonicalStateSnapshot,
-        records: [AirframeLocalWorkRecord],
-        dashboardData: (records: [AirframeLocalWorkRecord], detailTextByID: [AirframeID: String]),
+        dashboardData _: (records: [AirframeLocalWorkRecord], detailTextByID: [AirframeID: String]),
         canonicalDiagnostics: AirframeCanonicalDiagnostics,
         summary: AirframeDashboardSummary,
         auditRows: [AgileCockpitAuditRow],
-        requirementCoverageSummary: AirframeRequirementCoverageSummary,
-        requirementGateSummary: AirframeRequirementReleaseGateSummary,
-        requirementTraceRows: [AgileCockpitRequirementTraceRow],
-        requirementGapRows: [AgileCockpitRequirementGapRow],
-        testCoverageRows: [AgileCockpitTestCoverageRow],
-        testGapRows: [AgileCockpitTestGapRow]
+        requirementCoverageSummary _: AirframeRequirementCoverageSummary,
+        requirementGateSummary _: AirframeRequirementReleaseGateSummary,
+        requirementTraceRows _: [AgileCockpitRequirementTraceRow],
+        requirementGapRows _: [AgileCockpitRequirementGapRow],
+        testCoverageRows _: [AgileCockpitTestCoverageRow],
+        testGapRows _: [AgileCockpitTestGapRow]
     ) -> LaunchCachePayload {
         LaunchCachePayload(
             configuration: context.configuration,
@@ -2768,11 +2826,6 @@ final class AgileCockpitDashboardModel: ObservableObject {
             configurationDiagnostics: configurationDiagnostics,
             artifactRootPath: artifactRootURL?.path,
             observedURLs: observedURLs,
-            records: records,
-            dashboardRecords: dashboardData.records,
-            dashboardDetailTextByID: Dictionary(
-                uniqueKeysWithValues: dashboardData.detailTextByID.map { ($0.key.rawValue, $0.value) }
-            ),
             canonicalState: canonicalState.map {
                 LaunchCachePayload.CachedCanonicalState(
                     workspaces: $0.workspaces,
@@ -2792,7 +2845,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                     evidence: $0.evidence
                 )
             },
-            canonicalSnapshot: LaunchCachePayload.CachedCanonicalSnapshot(
+            fallbackSnapshot: canonicalState == nil ? LaunchCachePayload.CachedCanonicalSnapshot(
                 project: canonicalSnapshot.project,
                 epics: canonicalSnapshot.epics,
                 sprints: canonicalSnapshot.sprints,
@@ -2803,21 +2856,14 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 tests: canonicalSnapshot.tests,
                 testSuites: canonicalSnapshot.testSuites,
                 testRuns: canonicalSnapshot.testRuns
-            ),
+            ) : nil,
             canonicalDiagnostics: canonicalDiagnostics,
             summary: summary,
-            auditRows: auditRows,
-            requirementCoverageSummary: requirementCoverageSummary,
-            requirementGateSummary: requirementGateSummary,
-            requirementTraceRows: requirementTraceRows,
-            requirementGapRows: requirementGapRows,
-            testCoverageRows: testCoverageRows,
-            testGapRows: testGapRows,
-            implementationPlans: canonicalState?.implementationPlans ?? []
+            auditRows: auditRows
         )
     }
 
-    private static func localRecords(from snapshot: AirframeCanonicalStateSnapshot) -> [AirframeLocalWorkRecord] {
+    nonisolated private static func localRecords(from snapshot: AirframeCanonicalStateSnapshot) -> [AirframeLocalWorkRecord] {
         let epics = snapshot.epics.map { epic in
             AirframeLocalWorkRecord(
                 workItem: epic.workItem,

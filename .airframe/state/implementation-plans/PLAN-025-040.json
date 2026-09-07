@@ -1,13 +1,15 @@
 {
   "auditEventIDs" : [
-
+    {
+      "rawValue" : "AUD-AGILE-PLAN-3"
+    }
   ],
   "commands" : [
     "Focused importer boundary tests",
     "Repair preview and 25-record source comparison",
     "Projection regeneration and requirement\/traceability regression suites"
   ],
-  "decisionState" : "pending",
+  "decisionState" : "approved",
   "evidenceIDs" : [
 
   ],
@@ -31,7 +33,8 @@
     }
   },
   "notes" : [
-    "Parser correctness is a hard gate before canonical-data mutation."
+    "Parser correctness is a hard gate before canonical-data mutation.",
+    "approved"
   ],
   "proposedByActorID" : {
     "rawValue" : "ACTOR-LLM"

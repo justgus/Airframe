@@ -1,13 +1,15 @@
 {
   "auditEventIDs" : [
-
+    {
+      "rawValue" : "AUD-AGILE-PLAN-4"
+    }
   ],
   "commands" : [
     "Projector golden tests",
     "Mutation-to-projection integration tests",
     "Full projection regeneration and canonical comparison"
   ],
-  "decisionState" : "pending",
+  "decisionState" : "approved",
   "evidenceIDs" : [
 
   ],
@@ -31,7 +33,8 @@
     }
   },
   "notes" : [
-    "Run after canonical migrations that would otherwise force repeated regeneration."
+    "Run after canonical migrations that would otherwise force repeated regeneration.",
+    "approved"
   ],
   "proposedByActorID" : {
     "rawValue" : "ACTOR-LLM"

@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+    "Command-specific help is bounded and Task help lists every supported creation and update option."
+  ],
+  "component" : "AICockpit command help and parser documentation",
+  "componentsAffected" : [
+    "AICockpit command help and parser documentation"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:27Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "testSteps" : [
+    "Focused help tests pass."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0192"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add command-specific help and complete Task option documentation"
+  }
+}

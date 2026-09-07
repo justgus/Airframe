@@ -1,4 +1,6 @@
 {
+  "capacity" : "2 tasks",
+  "endDate" : "2026-09-21",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -12,18 +14,21 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-05T17:21:07Z"
+    "updatedAt" : "2026-09-07T19:34:33Z"
   },
   "notes" : [
     "Scope driven by measured read amplification: task list ~10,200 tokens for 189 records; requirements have no single-record read at all.",
-    "task|issue|sprint|epic inspect already exists and costs ~186 tokens; this Sprint closes the equivalent gap for requirements and adds filtering to list."
+    "task|issue|sprint|epic inspect already exists and costs ~186 tokens; this Sprint closes the equivalent gap for requirements and adds filtering to list.",
+    "T-0190 provides granular reads and GitHub-backend mutation support; T-0199 de-duplicates the AgileCockpit cache payload and launch fingerprint.",
+    "Verification: focused AICockpit and AirframeCore tests, token-cost evidence, and targeted canonical diagnostics before status changes."
   ],
+  "startDate" : "2026-09-07",
   "taskIDs" : [
     {
       "rawValue" : "T-0190"
     },
     {
-      "rawValue" : "T-0191"
+      "rawValue" : "T-0199"
     }
   ],
   "workItem" : {
@@ -31,7 +36,7 @@
       "rawValue" : "SP-045"
     },
     "kind" : "sprint",
-    "status" : "planning",
+    "status" : "closed",
     "title" : "Performance Improvement and Resource Reduction"
   }
 }

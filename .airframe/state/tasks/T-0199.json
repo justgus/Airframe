@@ -11,6 +11,7 @@
   "componentsAffected" : [
     "AgileCockpit"
   ],
+  "dateVerified" : "2026-09-07",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -23,7 +24,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-05T17:21:07Z"
+    "updatedAt" : "2026-09-07T19:31:08Z"
   },
   "notes" : [
     "Section 4 of the token-reduction work. Listed out of scope on GitHub issue #178, which covers AICockpit read primitives only.",
@@ -42,11 +43,12 @@
 
   ],
   "workItem" : {
+    "githubIssue" : 188,
     "id" : {
-      "rawValue" : "T-0191"
+      "rawValue" : "T-0199"
     },
     "kind" : "task",
-    "status" : "backlog",
+    "status" : "implementedVerified",
     "title" : "De-duplicate AgileCockpit cache payloads and digest the launch fingerprint"
   }
 }

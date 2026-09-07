@@ -1,0 +1,58 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "goal" : "Reduce AICockpit token churn while preserving canonical-first artifact management, relationship integrity, and human approval boundaries.",
+  "startDate" : "2026-09-06",
+  "endDate" : "2026-09-20",
+  "capacity" : "7 backlog tasks",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:28Z"
+  },
+  "notes" : [
+    "Scope: bounded agent discovery, command-specific help, compact projections, reciprocal relationship updates, machine-readable command discovery, targeted validation, approved planning materialization, and token-economy guidance.",
+    "Out of scope: T-0190 remains assigned to SP-045 and is not part of this Sprint.",
+    "Planning record: PLAN-025-046 is pending a human-only decision in AgileCockpit.",
+    "Verification: focused AICockpit and AirframeCore tests plus targeted canonical diagnostics after coherent implementation batches.",
+    "External effects: synchronize GitHub only after canonical records are established and through authorized workflow operations."
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0192"
+    },
+    {
+      "rawValue" : "T-0193"
+    },
+    {
+      "rawValue" : "T-0194"
+    },
+    {
+      "rawValue" : "T-0195"
+    },
+    {
+      "rawValue" : "T-0196"
+    },
+    {
+      "rawValue" : "T-0197"
+    },
+    {
+      "rawValue" : "T-0198"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-046"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "Reduce AICockpit token churn"
+  }
+}

@@ -16,7 +16,7 @@
   ],
   "outOfScope": [
     "Changing human-only verification boundaries for existing Task, Issue, Sprint, and Epic kinds.",
-    "Cache payload de-duplication, which is tracked separately as T-0191.",
+    "Cache payload de-duplication, which is tracked separately as T-0199.",
     "AICockpit read-primitive work, which is tracked separately as T-0190."
   ],
   "owner": "justgus",

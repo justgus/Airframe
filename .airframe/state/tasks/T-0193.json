@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+    "Compact mutations omit echoed input and capabilities; inspect and packets expose only requested detail."
+  ],
+  "component" : "AICockpit output envelopes and projection controls",
+  "componentsAffected" : [
+    "AICockpit output envelopes and projection controls"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:27Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "testSteps" : [
+    "Focused output and payload-size tests pass."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0193"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add compact output and selective detail projections"
+  }
+}

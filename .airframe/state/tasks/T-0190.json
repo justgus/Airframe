@@ -14,6 +14,7 @@
     "AICockpit",
     "AirframeCore"
   ],
+  "dateVerified" : "2026-09-07",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -26,7 +27,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-05T17:43:18Z"
+    "updatedAt" : "2026-09-07T19:31:00Z"
   },
   "notes" : [
     "GitHub issue #178. Sprint assignment deferred: no Sprint is currently Active (workspace config names closed SP-023\/EP-018)."
@@ -47,7 +48,7 @@
       "rawValue" : "T-0190"
     },
     "kind" : "task",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Add granular read primitives and close the github-issues mutation gap in AICockpit"
   }
 }

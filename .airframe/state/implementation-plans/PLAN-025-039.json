@@ -1,13 +1,15 @@
 {
   "auditEventIDs" : [
-
+    {
+      "rawValue" : "AUD-AGILE-PLAN-2"
+    }
   ],
   "commands" : [
     "Configuration compatibility tests",
     "Mapping-state validation tests",
     "AICockpit contract tests and AgileCockpit UI\/model tests"
   ],
-  "decisionState" : "pending",
+  "decisionState" : "approved",
   "evidenceIDs" : [
 
   ],
@@ -31,7 +33,8 @@
     }
   },
   "notes" : [
-    "Build after SP-038 diagnostics foundations where practical."
+    "Build after SP-038 diagnostics foundations where practical.",
+    "approved"
   ],
   "proposedByActorID" : {
     "rawValue" : "ACTOR-LLM"

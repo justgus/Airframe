@@ -1,0 +1,45 @@
+{
+  "acceptanceCriteria" : [
+    "Validation can be scoped to changed IDs and mutation receipts identify sufficient resulting state."
+  ],
+  "component" : "AICockpit validation and mutation response paths",
+  "componentsAffected" : [
+    "AICockpit validation and mutation response paths"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-06T21:51:28Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-046"
+  },
+  "testSteps" : [
+    "Focused validation and receipt tests pass."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0196"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add targeted validation and concise mutation receipts"
+  }
+}

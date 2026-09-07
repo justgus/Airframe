@@ -8,7 +8,7 @@ Currently: **None**
 
 ## All Sprints
 
-Currently: **44 Sprints** | Next available: **SP-045**
+Currently: **46 Sprints** | Next available: **SP-047**
 
 | Sprint | Title | Epic | Tasks | Issues | Status |
 | ------ | ----- | ---- | ----- | ------ | ------ |
@@ -56,15 +56,17 @@ Currently: **44 Sprints** | Next available: **SP-045**
 | SP-042 | Legacy Artifact Retirement | EP-025 | T-0178, T-0179, T-0180 | None | Planning |
 | SP-043 | GitHub Integration, Reconciliation, and Safe Workspace Mutations | EP-025 | T-0181, T-0182, T-0183, T-0184 | I-0031 | Planning |
 | SP-044 | Canonical Evidence Management and Review | EP-025 | T-0185, T-0186, T-0187, T-0188, T-0189 | None | Planning |
+| SP-045 | Performance Improvement and Resource Reduction | EP-025 | T-0190, T-0199 | None | Closed |
+| SP-046 | Reduce AICockpit token churn | EP-025 | T-0192, T-0193, T-0194, T-0195, T-0196, T-0197, T-0198 | None | Planning |
 
 ## Statistics
 
-- **Total Sprints:** 44
+- **Total Sprints:** 46
 - **Backlog:** 0
-- **Planning:** 6
+- **Planning:** 7
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 38
-- **Next available:** SP-045
+- **Closed:** 39
+- **Next available:** SP-047
 
-*Last Updated: 2026-08-29*
+*Last Updated: 2026-09-07*

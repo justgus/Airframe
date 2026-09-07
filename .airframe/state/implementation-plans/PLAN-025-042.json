@@ -1,13 +1,15 @@
 {
   "auditEventIDs" : [
-
+    {
+      "rawValue" : "AUD-AGILE-PLAN-5"
+    }
   ],
   "commands" : [
     "Repository-wide link inventory",
     "Mutation-authority terminology searches",
     "Deterministic-output and redirect checks"
   ],
-  "decisionState" : "pending",
+  "decisionState" : "approved",
   "evidenceIDs" : [
 
   ],
@@ -31,7 +33,8 @@
     }
   },
   "notes" : [
-    "Depends on SP-041 projector behavior and requires an explicit preservation diff for user-owned text."
+    "Depends on SP-041 projector behavior and requires an explicit preservation diff for user-owned text.",
+    "approved"
   ],
   "proposedByActorID" : {
     "rawValue" : "ACTOR-LLM"
