@@ -74,4 +74,89 @@ TBD.
 
 ---
 
-*Last Updated: 2026-08-27 (I-0031 renumbered from bot-assigned I-0027 and completed to template)*
+*Last Updated: 2026-09-07 (GitHub issue sync)*
+
+## I-0032: [SP-046] Reduce AICockpit token churn
+
+**Status:** Open
+**GitHub Issue:** #180
+**Platform:** Not applicable
+**Component:** TBD
+**Severity:** Medium
+**Epic:** None
+**Sprint:** Not Assigned
+**Date Identified:** 2026-09-07
+**Fix Date:** TBD
+**Verification Date:** TBD
+
+**Description:**
+Imported from GitHub Issue #180.
+
+> ## Airframe
+> - id: SP-046
+> - kind: sprint
+> - status: Active
+> - epic: EP-025
+> 
+> ## Goal
+> 
+> Reduce AICockpit token churn while preserving canonical-first artifact management, relationship integrity, and human approval boundaries.
+> 
+> ## Schedule and capacity
+> 
+> - Start date: 2026-09-06
+> - End date: 2026-09-20
+> - Capacity: 7 backlog tasks
+> 
+> ## Assigned Tasks
+> 
+> - T-0192 — Command-specific help and complete Task option documentation
+> - T-0193 — Compact output and selective detail projections
+> - T-0194 — Task/Sprint/Epic relationship reconciliation
+> - T-0195 — Versioned machine-readable command schema
+> - T-0196 — Targeted validation and concise mutation receipts
+> - T-0197 — Approved planning-structure materialization
+> - T-0198 — Agent token-economy operating guidance
+> 
+> ## Verification
+> 
+> - Run focused AICockpit and AirframeCore tests.
+> - Run targeted canonical state diagnostics after coherent implementation batches.
+> 
+> ## Notes
+> 
+> - T-0190 remains assigned to SP-045 and is out of scope.
+> - PLAN-025-046 is pending a human-only decision in AgileCockpit.
+> - GitHub synchronization follows canonical record creation.
+
+**Expected Behavior:**
+TBD.
+
+**Actual Behavior:**
+TBD.
+
+**Steps to Reproduce:**
+1. TBD.
+
+**Impact:**
+- TBD.
+
+**Root Cause Analysis:**
+TBD.
+
+**Resolution:**
+TBD.
+
+**Files Affected:**
+- TBD.
+
+**Evidence:**
+- GitHub Issue #180
+
+**Verification:**
+1. TBD.
+
+**Related Items:**
+- None.
+
+---

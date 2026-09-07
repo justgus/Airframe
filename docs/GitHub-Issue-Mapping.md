@@ -191,7 +191,8 @@ This document records the required one-to-one mapping between GitHub Issues and 
 | I-0025 | #175 | EP-024 | Active Sprint cannot be returned directly to Backlog |
 | I-0026 | #176 | EP-024 | AgileCockpit cannot view or modify non-current Review Sprint |
 | I-0031 | #177 | None | Agile Cockpit applies workflow mutations to the checked-out branch without branch guarding |
+| I-0032 | #180 | [SP-046] Reduce AICockpit token churn |
 
 Next local Issue ID: `I-0032`.
 
-*Last Updated: 2026-08-27 (I-0031 renumbered from bot-assigned I-0027; next ID corrected against canonical state)*
+*Last Updated: 2026-09-07 (GitHub issue sync)*
