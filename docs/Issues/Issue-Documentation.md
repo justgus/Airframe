@@ -40,13 +40,14 @@ Currently: **1 backlogged Issue**
 
 | Issue | GitHub Issue | Title | Severity | Status |
 | ----- | ------------ | ----- | -------- | ------ |
+| I-0032 | #180 | [SP-046] Reduce AICockpit token churn | Medium | Open |
 | I-0031 | #177 | Agile Cockpit applies workflow mutations to the checked-out branch without branch guarding | Medium | Backlog |
 
 See: [Issue-backlog.md](Issue-backlog.md)
 
 ## Verified Issues
 
-Currently: **30 verified Issues** | Next available: **I-0032**
+Currently: **0 verified Issues** | Next available: **I-0033**
 
 | Batch | Issues | File | Status |
 | ----- | ------ | ---- | ------ |
@@ -69,12 +70,12 @@ Currently: **0 closed Issues**
 
 ## Statistics
 
-- **Total Issues:** 31
-- **Backlogged:** 1
+- **Total Issues:** 2
+- **Backlogged:** 2
 - **Active/In Progress:** 0
 - **Resolved - Not Verified:** 0
 - **Verified:** 30
 - **Closed:** 0
-- **Next available:** I-0032
+- **Next available:** I-0033
 
-*Last Updated: 2026-08-27 (statistics reconciled against canonical state; I-0031 renumbered from bot-assigned I-0027)*
+*Last Updated: 2026-09-07 (GitHub issue sync)*
