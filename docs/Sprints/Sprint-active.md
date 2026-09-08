@@ -4,27 +4,6 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-042: Legacy Artifact Retirement
-
-**Status:** Planning
-**Epic:** EP-025
-**Goal:** Retire the mutable Legacy Issue and Task current-state files and reconcile the remaining Legacy links, archives, and compatibility policy, so canonical state is the single source for current work status.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0178 | Retire mutable Legacy Issue current-state files | High | Backlog |
-| T-0179 | Retire mutable Legacy Task current-state files | High | Backlog |
-| T-0180 | Reconcile Legacy links, archives, and compatibility policy | High | Backlog |
-
-### Assigned Issues
-
-None.
-
 ## SP-043: GitHub Integration, Reconciliation, and Safe Workspace Mutations
 
 **Status:** Planning

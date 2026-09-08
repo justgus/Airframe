@@ -1,5 +1,7 @@
 # Issue Backlog
 
+> **Historical narrative — not a current-state authority.** Current Issue state is in `.airframe/state/` and is viewed through AgileCockpit or the deterministic projections in [`../generated/Issues/`](../generated/Issues/). Do not add, move, or update Issues in this file.
+
 Issues listed here are open and not assigned to a Sprint.
 
 ---

@@ -4,10 +4,10 @@ Currently: **198 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 19 |
+| Backlog | 16 |
 | Active | 0 |
 | Implemented - Not Verified | 3 |
-| Implemented - Verified | 176 |
+| Implemented - Verified | 179 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -186,12 +186,12 @@ Currently: **198 total Tasks**
 | T-0172 | TBD | Correct requirement importer section boundaries | Implemented - Verified |
 | T-0173 | TBD | Repair and source-compare affected requirements | Implemented - Verified |
 | T-0174 | TBD | Regenerate and validate requirement projections | Implemented - Verified |
-| T-0175 | TBD | Make canonical projection refresh durable | Implemented - Not Verified |
-| T-0176 | TBD | Render artifact terminology and relationship statuses | Implemented - Not Verified |
-| T-0177 | TBD | Investigate projection omission and regenerate the complete set | Implemented - Not Verified |
-| T-0178 | TBD | Retire mutable Legacy Issue current-state files | Backlog |
-| T-0179 | TBD | Retire mutable Legacy Task current-state files | Backlog |
-| T-0180 | TBD | Reconcile Legacy links, archives, and compatibility policy | Backlog |
+| T-0175 | TBD | Make canonical projection refresh durable | Implemented - Verified |
+| T-0176 | TBD | Render artifact terminology and relationship statuses | Implemented - Verified |
+| T-0177 | TBD | Investigate projection omission and regenerate the complete set | Implemented - Verified |
+| T-0178 | TBD | Retire mutable Legacy Issue current-state files | Implemented - Not Verified |
+| T-0179 | TBD | Retire mutable Legacy Task current-state files | Implemented - Not Verified |
+| T-0180 | TBD | Reconcile Legacy links, archives, and compatibility policy | Implemented - Not Verified |
 | T-0181 | TBD | Implement complete GitHub pagination and disclosure | Backlog |
 | T-0182 | TBD | Implement canonical-to-GitHub reconciliation | Backlog |
 | T-0183 | TBD | Implement branch-aware AgileCockpit mutations | Backlog |

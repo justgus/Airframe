@@ -1,5 +1,7 @@
 # Issues - Index
 
+> **Legacy compatibility index — not a current-state authority.** Current Issue state is in `.airframe/state/` and is viewed through AgileCockpit or the deterministic projections in [`../generated/Issues/`](../generated/Issues/). The historical narrative below is retained for reference and must not be edited to mutate Issue workflow state.
+
 This is the main index for Agile Airframe Issues. Issues track bugs, regressions, and unintended system behavior.
 
 > Note: For planned improvements, use [Tasks](../Tasks/Task-Documentation.md).
@@ -7,8 +9,8 @@ This is the main index for Agile Airframe Issues. Issues track bugs, regressions
 
 ## Organization
 
-- **Issue-backlog.md**: Open Issues not assigned to a Sprint.
-- **Issue-active.md**: Active unresolved Issues assigned to a Sprint.
+- **Issue-backlog.md**: Retained historical backlog narrative; not a working queue.
+- **Issue-active.md**: Compatibility redirect to canonical Issue projections.
 - **Verified/**: Resolved and human-verified Issues, batched by identifier range.
 - **Closed/**: Issues closed without verification by human direction.
 

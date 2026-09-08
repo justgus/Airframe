@@ -156,14 +156,14 @@ Agent authority to enter a state does not authorize Codex to create work from a 
 
 Paths are relative to `docs/`. Authority for every state is in the table above; these sections locate the records only.
 
-| Artifact | Active | Backlog | Index | Archived | Guidelines |
-| --- | --- | --- | --- | --- | --- |
-| Issue (I) - bugs, defects, unintended behavior | `Issues/Issue-active.md` | `Issues/Issue-backlog.md` | `Issues/Issue-Documentation.md` | `Issues/Verified/Issue-verified-<ID-or-range>.md`, `Issues/Closed/Issue-closed-<ID-or-range>.md` | `Issues/Issue-GUIDELINES.md` |
-| Task (T) - features, improvements, planned changes | `Tasks/Task-active.md` | `Tasks/Task-backlog.md` | `Tasks/Task-Documentation.md` | `Tasks/Verified/Task-verified-<ID-or-range>.md`, `Tasks/Closed/Task-closed-<ID-or-range>.md` when closed Tasks are archived separately | `Tasks/Task-Guidelines.md` |
-| Sprint (SP) - fixed-duration iterations | `Sprints/Sprint-active.md` | `Sprints/Sprint-backlog.md` | `Sprints/Sprint-Documentation.md` | `Sprints/Closed/Sprint-SP-XXX.md` | `Sprints/Sprint-GUIDELINES.md` |
-| Epic (EP) - strategic milestones spanning Sprints | `Epics/Epic-active.md` | `Epics/Epic-backlog.md` | `Epics/Epic-Documentation.md` | `Epics/Closed/Epic-EP-XXX.md` | `Epics/Epic-GUIDELINES.md` |
+| Artifact | Current-state authority | Supported projection / compatibility view | Archived | Guidelines |
+| --- | --- | --- | --- | --- |
+| Issue (I) - bugs, defects, unintended behavior | Canonical records under `.airframe/state/` | `generated/Issues/`; `Issues/Issue-active.md` is a redirect, while `Issue-backlog.md` and `Issue-Documentation.md` retain historical narrative only | `Issues/Verified/Issue-verified-<ID-or-range>.md`, `Issues/Closed/Issue-closed-<ID-or-range>.md` | `Issues/Issue-GUIDELINES.md` |
+| Task (T) - features, improvements, planned changes | Canonical records under `.airframe/state/` | `generated/Tasks/`; `Tasks/Task-Documentation.md`, `Task-backlog.md`, `Task-active.md`, and `Task-unverified.md` are redirects | `Tasks/Verified/Task-verified-<ID-or-range>.md`, `Tasks/Closed/Task-closed-<ID-or-range>.md` when closed Tasks are archived separately | `Tasks/Task-Guidelines.md` |
+| Sprint (SP) - fixed-duration iterations | Canonical records under `.airframe/state/` | `generated/Sprints/` and `Sprints/Sprint-Documentation.md` | `Sprints/Closed/Sprint-SP-XXX.md` | `Sprints/Sprint-GUIDELINES.md` |
+| Epic (EP) - strategic milestones spanning Sprints | Canonical records under `.airframe/state/` | `generated/Epics/` and `Epics/Epic-Documentation.md` | `Epics/Closed/Epic-EP-XXX.md` | `Epics/Epic-GUIDELINES.md` |
 
-Tasks also carry `Tasks/Task-unverified.md` for Implemented - Not Verified work.
+Legacy Issue and Task paths are never workflow mutation surfaces. Use AICockpit or AgileCockpit to mutate canonical records, then regenerate deterministic projections. `Tasks/Task-unverified.md` is a redirect, not an Implemented - Not Verified queue.
 
 ### Audits - documentation consistency
 

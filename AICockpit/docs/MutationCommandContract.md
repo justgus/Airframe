@@ -80,15 +80,9 @@ AICockpit must reject Task or Issue `verified` status. Task verification, Issue 
 
 ## Local Behavior
 
-Local mutation support writes the canonical local artifact files and supporting indexes together:
+Local mutations write canonical records under `.airframe/state/`. The canonical exporter then regenerates the supported projections under `docs/generated/`; retained Legacy Issue and Task paths are redirects or historical narrative only and are never mutation targets.
 
-- Task details: `docs/Tasks/Task-backlog.md`, `docs/Tasks/Task-active.md`, or `docs/Tasks/Task-unverified.md`.
-- Issue details: `docs/Issues/Issue-backlog.md` or `docs/Issues/Issue-active.md`.
-- Sprint details: `docs/Sprints/Sprint-backlog.md` or `docs/Sprints/Sprint-active.md`.
-- Epic details: `docs/Epics/Epic-backlog.md` or `docs/Epics/Epic-active.md`.
-- Indexes: `Task-Documentation.md`, `Issue-Documentation.md`, `Sprint-Documentation.md`, `Epic-Documentation.md`, and `GitHub-Issue-Mapping.md` when mapping changes.
-
-Local mutations must be all-or-nothing at the command level. If any target file cannot be parsed or written, the command must leave the work item in its previous state and return an error.
+Local mutations must be all-or-nothing at the canonical-record level. If a target record cannot be written, the command must leave the work item in its previous state and return an error.
 
 ## GitHub Behavior
 

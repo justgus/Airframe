@@ -2990,13 +2990,6 @@ final class AgileCockpitDashboardModel: ObservableObject {
             (rootURL.appending(path: "docs/Sprints/Sprint-backlog.md"), .sprint),
             (rootURL.appending(path: "docs/Sprints/Sprint-active.md"), .sprint)
         ]
-        let sectionedFiles: [(URL, AirframeWorkItemKind)] = [
-            (rootURL.appending(path: "docs/Tasks/Task-backlog.md"), .task),
-            (rootURL.appending(path: "docs/Tasks/Task-active.md"), .task),
-            (rootURL.appending(path: "docs/Tasks/Task-unverified.md"), .task),
-            (rootURL.appending(path: "docs/Issues/Issue-backlog.md"), .issue),
-            (rootURL.appending(path: "docs/Issues/Issue-active.md"), .issue)
-        ]
         let closedFiles = markdownFiles(in: rootURL.appending(path: "docs/Epics/Closed"))
             .map { ($0, AirframeWorkItemKind.epic) }
             + markdownFiles(in: rootURL.appending(path: "docs/Sprints/Closed"))
@@ -3008,13 +3001,10 @@ final class AgileCockpitDashboardModel: ObservableObject {
         let fullFileRecords = (files + closedFiles + reviewSprintFiles).flatMap { fileURL, kind in
             records(from: fileURL, kind: kind)
         }
-        let sectionArtifactRecords = sectionedFiles.flatMap { fileURL, kind in
-            sectionRecords(from: fileURL, kind: kind)
-        }
         let verifiedTaskRecords = verifiedTaskFiles.flatMap { fileURL in
             tableTaskRecords(from: fileURL)
         }
-        return fullFileRecords + sectionArtifactRecords + verifiedTaskRecords
+        return fullFileRecords + verifiedTaskRecords
     }
 
     nonisolated private static func markdownFiles(in directoryURL: URL) -> [URL] {

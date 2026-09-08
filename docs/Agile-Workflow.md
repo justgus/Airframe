@@ -28,16 +28,16 @@ docs/
 ├── requirements/
 ├── Tasks/
 │   ├── Task-Guidelines.md
-│   ├── Task-Documentation.md
-│   ├── Task-backlog.md
-│   ├── Task-active.md
-│   ├── Task-unverified.md
+│   ├── Task-Documentation.md (Legacy redirect)
+│   ├── Task-backlog.md (Legacy redirect)
+│   ├── Task-active.md (Legacy redirect)
+│   ├── Task-unverified.md (Legacy redirect)
 │   └── Verified/
 ├── Issues/
 │   ├── Issue-GUIDELINES.md
-│   ├── Issue-Documentation.md
-│   ├── Issue-backlog.md
-│   ├── Issue-active.md
+│   ├── Issue-Documentation.md (Legacy narrative)
+│   ├── Issue-backlog.md (Legacy narrative)
+│   ├── Issue-active.md (Legacy redirect)
 │   ├── Verified/
 │   └── Closed/
 ├── Sprints/
@@ -55,14 +55,14 @@ docs/
 
 ## Operating Rules
 
-1. Keep index files lean. Index files contain tables, counts, and links only.
-2. Put detailed work records in active, backlog, unverified, verified, closed, or archive files.
-3. Update the relevant index whenever status, sprint assignment, verification state, or counts change.
+1. Canonical records under `.airframe/state/` are the current-state authority for Tasks and Issues.
+2. Use AICockpit or AgileCockpit to mutate canonical records, then regenerate `docs/generated/` projections.
+3. Legacy Task and Issue queues/indexes are redirects or preserved narrative, never workflow mutation surfaces.
 4. Agents may mark work as implemented or resolved but not human-verified unless the user explicitly directs it.
 5. Sprint and epic closure require human approval.
 6. Every implemented item needs verification evidence and clear test steps before being marked ready for human review.
 7. Every Task and Issue must have a one-to-one GitHub Issue mapping recorded in `docs/GitHub-Issue-Mapping.md`.
-8. Task and Issue creation, backlog moves, and GitHub imports must follow `docs/procedures/GitHub-Issue-Sync-Procedure.md`.
+8. Task and Issue creation, backlog moves, and GitHub imports must follow `docs/procedures/GitHub-Issue-Sync-Procedure.md` through canonical interfaces.
 
 ## Implementation Plan Review
 

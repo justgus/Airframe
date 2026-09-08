@@ -2548,12 +2548,7 @@ public enum AICockpitCommand {
             "docs/Epics/Epic-backlog.md",
             "docs/Epics/Epic-active.md",
             "docs/Sprints/Sprint-backlog.md",
-            "docs/Sprints/Sprint-active.md",
-            "docs/Tasks/Task-backlog.md",
-            "docs/Tasks/Task-active.md",
-            "docs/Tasks/Task-unverified.md",
-            "docs/Issues/Issue-backlog.md",
-            "docs/Issues/Issue-active.md"
+            "docs/Sprints/Sprint-active.md"
         ]
         let directories = [
             "docs/Epics/Closed",

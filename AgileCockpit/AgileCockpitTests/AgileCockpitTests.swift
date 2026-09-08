@@ -1033,7 +1033,7 @@ import Foundation
 }
 
 @MainActor
-@Test func agileCockpitStatusDetailUsesIssueArtifactSection() throws {
+@Test func agileCockpitIgnoresLegacyIssueWorkingQueue() throws {
     let context = try AirframeConfigurationLoader().loadSampleContext()
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AgileCockpitIssueDetailDocs")
@@ -1086,15 +1086,11 @@ import Foundation
     model.showStatusItems(tile: issueTile, row: resolvedRow)
     model.selectedStatusWorkItemID = AirframeID("I-0002")
 
-    let detailText = try #require(model.selectedStatusDetailText)
-    #expect(detailText.contains("## I-0002: Status drill-down detail pane omits full work product text"))
-    #expect(detailText.contains("**Root Cause Analysis:**"))
-    #expect(detailText.contains("**Verification:**"))
-    #expect(!detailText.contains("## I-0003:"))
+    #expect(model.selectedStatusDetailText == nil)
 }
 
 @MainActor
-@Test func agileCockpitStatusDetailUsesTaskArtifactSection() throws {
+@Test func agileCockpitIgnoresLegacyTaskWorkingQueue() throws {
     let context = try AirframeConfigurationLoader().loadSampleContext()
     let rootURL = FileManager.default.temporaryDirectory
         .appending(path: "AgileCockpitTaskDetailDocs")
@@ -1147,11 +1143,7 @@ import Foundation
     model.showStatusItems(tile: taskTile, row: backlogRow)
     model.selectedStatusWorkItemID = AirframeID("T-0091")
 
-    let detailText = try #require(model.selectedStatusDetailText)
-    #expect(detailText.contains("## T-0091: Define AICockpit work item mutation command contract"))
-    #expect(detailText.contains("**Acceptance Criteria:**"))
-    #expect(detailText.contains("**Evidence:**"))
-    #expect(!detailText.contains("## T-0092:"))
+    #expect(model.selectedStatusDetailText == nil)
 }
 
 @MainActor
@@ -1342,19 +1334,10 @@ import Foundation
     )
 
     let taskRecord = try #require(model.dashboardRecords.first { $0.workItem.id == AirframeID("T-0091") })
-    #expect(taskRecord.workItem.status == .implementedNotVerified)
-    #expect(taskRecord.sprintID == AirframeID("SP-018"))
-    #expect(model.diagnosticRows.map(\.reason).contains("backendStatusDrift"))
-    #expect(model.repairPreviewRows.map(\.action).contains(.applyBackendStatusLabels))
-    let repairRow = try #require(model.repairPreviewRows.first { $0.action == .applyBackendStatusLabels })
-    #expect(repairRow.requiresHumanApproval == false)
-
-    model.applyRepair(repairRow)
-
-    let repairedRecord = try #require(try backend.workRecord(id: AirframeID("T-0091")))
-    #expect(repairedRecord.workItem.status == .implementedNotVerified)
-    #expect(repairedRecord.sprintID == AirframeID("SP-018"))
-    #expect(model.statusMessage == "Applied 1 repair(s).")
+    #expect(taskRecord.workItem.status == .active)
+    #expect(taskRecord.sprintID == AirframeID("SP-017"))
+    #expect(!model.diagnosticRows.map(\.reason).contains("backendStatusDrift"))
+    #expect(!model.repairPreviewRows.map(\.action).contains(.applyBackendStatusLabels))
 }
 
 @MainActor

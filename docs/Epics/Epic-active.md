@@ -23,7 +23,7 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | SP-039 | Remove duplicated active-context pointers and define an explicit backend-mapping model, so the active Epic and Sprint have one authoritative source and Cockpit interfaces render mapping state directly. | Closed |
 | SP-040 | Correct the requirement importer's section-boundary handling, repair the requirements it mis-parsed, and regenerate the requirement projections so canonical requirement data matches its documented source. | Closed |
 | SP-041 | Make canonical projection refresh durable and complete, and render artifact terminology and relationship statuses consistently, so generated documents are a trustworthy view of canonical state. | Closed |
-| SP-042 | Retire the mutable Legacy Issue and Task current-state files and reconcile the remaining Legacy links, archives, and compatibility policy, so canonical state is the single source for current work status. | Planning |
+| SP-042 | Retire the mutable Legacy Issue and Task current-state files and reconcile the remaining Legacy links, archives, and compatibility policy, so canonical state is the single source for current work status. | Closed |
 | SP-044 | Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit. | Planning |
 | SP-043 | Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end. | Planning |
 | SP-045 | Reduce agent token consumption by adding granular read primitives to AICockpit, so that answering a question about one record does not require loading the corpus. | Closed |
@@ -45,9 +45,6 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | T-0175 | Make canonical projection refresh durable | Implemented - Verified |
 | T-0176 | Render artifact terminology and relationship statuses | Implemented - Verified |
 | T-0177 | Investigate projection omission and regenerate the complete set | Implemented - Verified |
-| T-0178 | Retire mutable Legacy Issue current-state files | Backlog |
-| T-0179 | Retire mutable Legacy Task current-state files | Backlog |
-| T-0180 | Reconcile Legacy links, archives, and compatibility policy | Backlog |
 | T-0181 | Implement complete GitHub pagination and disclosure | Backlog |
 | T-0182 | Implement canonical-to-GitHub reconciliation | Backlog |
 | T-0183 | Implement branch-aware AgileCockpit mutations | Backlog |
@@ -67,6 +64,9 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | T-0197 | Materialize approved planning structures atomically | Backlog |
 | T-0198 | Document agent token-economy operating guidance | Backlog |
 | T-0199 | De-duplicate AgileCockpit cache payloads and digest the launch fingerprint | Implemented - Verified |
+| T-0178 | Retire mutable Legacy Issue current-state files | Implemented - Verified |
+| T-0179 | Retire mutable Legacy Task current-state files | Implemented - Verified |
+| T-0180 | Reconcile Legacy links, archives, and compatibility policy | Implemented - Verified |
 
 ### Related Issues
 

@@ -54,16 +54,15 @@ Status: Open
 4. Add labels:
    - `airframe-issue`
    - `status-backlog`
-5. Add `**GitHub Issue:** #NNN` to the local Issue record.
-6. Add the mapping to `docs/GitHub-Issue-Mapping.md`.
-7. Update `docs/Issues/Issue-Documentation.md` and `docs/Issues/Issue-backlog.md`.
+5. Record the mapping on the canonical Issue record.
+6. Regenerate the supported projections under `docs/generated/`.
 
 ## Moving Work Between States
 
 When a Task or Issue moves to or from backlog:
 
-1. Move the local record to the correct Airframe state file.
-2. Update the local index table.
+1. Update the canonical record status.
+2. Regenerate the supported projections under `docs/generated/`.
 3. Update the linked GitHub Issue labels:
    - Backlog: `status-backlog`
    - Active/In Progress: `status-active`
@@ -72,7 +71,7 @@ When a Task or Issue moves to or from backlog:
    - Closed: close the GitHub Issue unless the user directs otherwise.
 4. Add or update a short GitHub Issue comment if the transition includes evidence, test results, or user verification notes.
 
-GitHub status changes made manually must be reconciled into the local docs before the affected work is considered current.
+GitHub status changes made manually must be reconciled into canonical state before the affected work is considered current.
 
 ## Nightly GitHub Import
 
@@ -89,16 +88,13 @@ Imported GitHub Issues become backlogged Airframe Issues:
 - GitHub Issue title changed to `[I-XXXX] ...`;
 - GitHub Issue body updated with `Airframe Type: Issue` and `Airframe ID: I-XXXX`;
 - labels `airframe-issue` and `status-backlog` added;
-- `docs/Issues/Issue-backlog.md`, `docs/Issues/Issue-Documentation.md`, and `docs/GitHub-Issue-Mapping.md` updated;
-- the workflow commits the documentation update back to `main`.
+- the canonical Issue record and mapping updated;
+- `docs/generated/` regenerated from canonical state;
+- the workflow commits those canonical and generated updates back to `main`.
 
 ## Manual Verification
 
-To run the import locally:
-
-```sh
-bash scripts/import-github-issues.sh
-```
+The former `scripts/import-github-issues.sh` mutator is retired; it exits without changing files. Use AICockpit's canonical Issue workflow for imports and regenerate projections afterward.
 
 To inspect unmapped GitHub Issues:
 
