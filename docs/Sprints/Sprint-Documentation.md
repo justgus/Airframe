@@ -52,7 +52,7 @@ Currently: **46 Sprints** | Next available: **SP-047**
 | SP-038 | Canonical Integrity and Historical Acceptance | EP-025 | T-0166, T-0167, T-0168 | None | Closed |
 | SP-039 | Configuration and Backend Mapping Model | EP-025 | T-0169, T-0170, T-0171 | None | Closed |
 | SP-040 | Requirement Importer and Canonical Data Repair | EP-025 | T-0172, T-0173, T-0174 | None | Closed |
-| SP-041 | Projection Reliability and Terminology | EP-025 | T-0175, T-0176, T-0177 | None | Planning |
+| SP-041 | Projection Reliability and Terminology | EP-025 | T-0175, T-0176, T-0177 | None | Closed |
 | SP-042 | Legacy Artifact Retirement | EP-025 | T-0178, T-0179, T-0180 | None | Planning |
 | SP-043 | GitHub Integration, Reconciliation, and Safe Workspace Mutations | EP-025 | T-0181, T-0182, T-0183, T-0184 | I-0031 | Planning |
 | SP-044 | Canonical Evidence Management and Review | EP-025 | T-0185, T-0186, T-0187, T-0188, T-0189 | None | Planning |
@@ -63,10 +63,10 @@ Currently: **46 Sprints** | Next available: **SP-047**
 
 - **Total Sprints:** 46
 - **Backlog:** 0
-- **Planning:** 5
+- **Planning:** 4
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 41
+- **Closed:** 42
 - **Next available:** SP-047
 
 *Last Updated: 2026-09-08*

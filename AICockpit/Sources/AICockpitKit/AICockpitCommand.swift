@@ -1349,6 +1349,7 @@ public enum AICockpitCommand {
                 outputFormat: outputFormat,
                 parsed: parsed,
                 controlledMutationsEnabled: true,
+                refreshProjections: true,
                 refreshNotifier: refreshNotifier
             ) { backend, context in
                 let kind: AirframeWorkItemKind = parsed.positionals[0] == "task" ? .task : .issue
@@ -1434,6 +1435,7 @@ public enum AICockpitCommand {
                 outputFormat: outputFormat,
                 parsed: parsed,
                 controlledMutationsEnabled: true,
+                refreshProjections: true,
                 refreshNotifier: refreshNotifier
             ) { backend, context in
                 let operation = AirframeOperation(
@@ -1523,6 +1525,7 @@ public enum AICockpitCommand {
                 outputFormat: outputFormat,
                 parsed: parsed,
                 controlledMutationsEnabled: true,
+                refreshProjections: true,
                 refreshNotifier: refreshNotifier
             ) { backend, context in
                 let operation = AirframeOperation(
@@ -1630,6 +1633,7 @@ public enum AICockpitCommand {
                 outputFormat: outputFormat,
                 parsed: parsed,
                 controlledMutationsEnabled: true,
+                refreshProjections: true,
                 refreshNotifier: refreshNotifier
             ) { backend, context in
                 let workItemID = AirframeID(parsed.positionals[2])
@@ -1880,6 +1884,7 @@ public enum AICockpitCommand {
             return executeBackendCommand(
                 outputFormat: outputFormat,
                 parsed: parsed,
+                refreshProjections: true,
                 refreshNotifier: refreshNotifier
             ) { backend, context in
                 let operation = AirframeOperation(id: AirframeID("OP-ATTACH-EVIDENCE"), category: .evidence)
@@ -2334,6 +2339,7 @@ public enum AICockpitCommand {
         outputFormat: AICockpitOutputFormat,
         parsed: AICockpitArguments,
         controlledMutationsEnabled: Bool = false,
+        refreshProjections: Bool = false,
         refreshNotifier: (any AICockpitRefreshNotifying)? = nil,
         body: (any AirframeBackend, AirframeCertifiedContext) throws -> String
     ) -> AICockpitCommandResult {
@@ -2345,6 +2351,10 @@ public enum AICockpitCommand {
                 controlledMutationsEnabled: controlledMutationsEnabled
             )
             let output = try body(backend, certifiedContext)
+            if refreshProjections, backend is AirframeCanonicalStoreBackend {
+                let rootURL = try parsed.workspaceRootURL(projectContext: context)
+                _ = try exportMarkdownProjections(rootURL: rootURL)
+            }
             refreshNotifier?.postRefresh()
             return AICockpitCommandResult(exitCode: 0, standardOutput: output)
         } catch AICockpitCommandError.denied(let decision, let operation) {
@@ -3250,10 +3260,10 @@ public enum AICockpitCommand {
             let criteria = state.acceptanceCriteria.filter {
                 $0.ownerID == epic.workItem.id || epic.acceptanceCriterionIDs.contains($0.id)
             }
-            try write(projector.projectEpic(epic, acceptanceCriteria: criteria), to: "Epics/\(epic.workItem.id.rawValue).md")
+            try write(projector.projectEpic(epic, acceptanceCriteria: criteria, sprints: state.sprints, tasks: state.tasks, issues: state.issues), to: "Epics/\(epic.workItem.id.rawValue).md")
         }
         for sprint in state.sprints {
-            try write(projector.projectSprint(sprint), to: "Sprints/\(sprint.workItem.id.rawValue).md")
+            try write(projector.projectSprint(sprint, tasks: state.tasks, issues: state.issues), to: "Sprints/\(sprint.workItem.id.rawValue).md")
         }
         for task in state.tasks {
             try write(projector.projectTask(task), to: "Tasks/\(task.workItem.id.rawValue).md")

@@ -4,27 +4,6 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-041: Projection Reliability and Terminology
-
-**Status:** Planning
-**Epic:** EP-025
-**Goal:** Make canonical projection refresh durable and complete, and render artifact terminology and relationship statuses consistently, so generated documents are a trustworthy view of canonical state.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0175 | Make canonical projection refresh durable | High | Backlog |
-| T-0176 | Render artifact terminology and relationship statuses | High | Backlog |
-| T-0177 | Investigate projection omission and regenerate the complete set | High | Backlog |
-
-### Assigned Issues
-
-None.
-
 ## SP-042: Legacy Artifact Retirement
 
 **Status:** Planning

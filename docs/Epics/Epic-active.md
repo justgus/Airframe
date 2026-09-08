@@ -22,7 +22,7 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | SP-038 |  | Closed |
 | SP-039 | Remove duplicated active-context pointers and define an explicit backend-mapping model, so the active Epic and Sprint have one authoritative source and Cockpit interfaces render mapping state directly. | Closed |
 | SP-040 | Correct the requirement importer's section-boundary handling, repair the requirements it mis-parsed, and regenerate the requirement projections so canonical requirement data matches its documented source. | Closed |
-| SP-041 | Make canonical projection refresh durable and complete, and render artifact terminology and relationship statuses consistently, so generated documents are a trustworthy view of canonical state. | Planning |
+| SP-041 | Make canonical projection refresh durable and complete, and render artifact terminology and relationship statuses consistently, so generated documents are a trustworthy view of canonical state. | Closed |
 | SP-042 | Retire the mutable Legacy Issue and Task current-state files and reconcile the remaining Legacy links, archives, and compatibility policy, so canonical state is the single source for current work status. | Planning |
 | SP-044 | Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit. | Planning |
 | SP-043 | Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end. | Planning |
@@ -42,9 +42,9 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | T-0172 | Correct requirement importer section boundaries | Implemented - Verified |
 | T-0173 | Repair and source-compare affected requirements | Implemented - Verified |
 | T-0174 | Regenerate and validate requirement projections | Implemented - Verified |
-| T-0175 | Make canonical projection refresh durable | Backlog |
-| T-0176 | Render artifact terminology and relationship statuses | Backlog |
-| T-0177 | Investigate projection omission and regenerate the complete set | Backlog |
+| T-0175 | Make canonical projection refresh durable | Implemented - Verified |
+| T-0176 | Render artifact terminology and relationship statuses | Implemented - Verified |
+| T-0177 | Investigate projection omission and regenerate the complete set | Implemented - Verified |
 | T-0178 | Retire mutable Legacy Issue current-state files | Backlog |
 | T-0179 | Retire mutable Legacy Task current-state files | Backlog |
 | T-0180 | Reconcile Legacy links, archives, and compatibility policy | Backlog |

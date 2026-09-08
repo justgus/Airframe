@@ -5,12 +5,15 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
 
     public func projectEpic(
         _ record: AirframeCanonicalEpicRecord,
-        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = []
+        acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
+        sprints: [AirframeCanonicalSprintRecord]? = nil,
+        tasks: [AirframeCanonicalTaskRecord]? = nil,
+        issues: [AirframeCanonicalIssueRecord]? = nil
     ) -> String {
         var lines: [String] = [
             "# \(record.workItem.id.rawValue): \(record.workItem.title)",
             "",
-            "**Status:** \(record.workItem.status.description)",
+            "**Status:** \(displayStatus(record.workItem.status, kind: .epic))",
             "**Owner:** \(record.owner)",
             "**Start Date:** \(record.startDate ?? "TBD")",
             "**Target Close Date:** \(record.targetCloseDate ?? "TBD")",
@@ -28,30 +31,34 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
         appendTable(
             title: "Related Sprints",
             headers: ["Sprint", "Status"],
-            rows: record.sprintIDs.map { [$0.rawValue, ""] },
+            rows: record.sprintIDs.map { [$0.rawValue, relatedStatus($0, in: sprints?.map(\.workItem), kind: .sprint)] },
             to: &lines
         )
         appendTable(
             title: "Related Tasks",
             headers: ["Task", "Status"],
-            rows: record.taskIDs.map { [$0.rawValue, ""] },
+            rows: record.taskIDs.map { [$0.rawValue, relatedStatus($0, in: tasks?.map(\.workItem), kind: .task)] },
             to: &lines
         )
         appendTable(
             title: "Related Issues",
             headers: ["Issue", "Status"],
-            rows: record.issueIDs.map { [$0.rawValue, ""] },
+            rows: record.issueIDs.map { [$0.rawValue, relatedStatus($0, in: issues?.map(\.workItem), kind: .issue)] },
             to: &lines
         )
         appendList("Notes", record.notes, to: &lines)
         return finish(lines)
     }
 
-    public func projectSprint(_ record: AirframeCanonicalSprintRecord) -> String {
+    public func projectSprint(
+        _ record: AirframeCanonicalSprintRecord,
+        tasks: [AirframeCanonicalTaskRecord]? = nil,
+        issues: [AirframeCanonicalIssueRecord]? = nil
+    ) -> String {
         var lines: [String] = [
             "# \(record.workItem.id.rawValue): \(record.workItem.title)",
             "",
-            "**Status:** \(record.workItem.status.description)",
+            "**Status:** \(displayStatus(record.workItem.status, kind: .sprint))",
             "**Epic:** \(record.epicID?.rawValue ?? "TBD")",
             "**Goal:** \(record.goal)",
             "**Start Date:** \(record.startDate ?? "TBD")",
@@ -61,13 +68,13 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
         appendTable(
             title: "Assigned Tasks",
             headers: ["Task", "Status"],
-            rows: record.taskIDs.map { [$0.rawValue, ""] },
+            rows: record.taskIDs.map { [$0.rawValue, relatedStatus($0, in: tasks?.map(\.workItem), kind: .task)] },
             to: &lines
         )
         appendTable(
             title: "Assigned Issues",
             headers: ["Issue", "Status"],
-            rows: record.issueIDs.map { [$0.rawValue, ""] },
+            rows: record.issueIDs.map { [$0.rawValue, relatedStatus($0, in: issues?.map(\.workItem), kind: .issue)] },
             emptyText: "None.",
             to: &lines
         )
@@ -79,7 +86,7 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
         var lines: [String] = [
             "## \(record.workItem.id.rawValue): \(record.workItem.title)",
             "",
-            "**Status:** \(record.workItem.status.description)",
+            "**Status:** \(displayStatus(record.workItem.status, kind: .task))",
             "**GitHub Issue:** \(record.workItem.githubIssue.map { "#\($0)" } ?? "TBD")",
             "**Component:** \(record.component.isEmpty ? "TBD" : record.component)",
             "**Priority:** \(record.priority.description)",
@@ -104,7 +111,7 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
         var lines: [String] = [
             "## \(record.workItem.id.rawValue): \(record.workItem.title)",
             "",
-            "**Status:** \(record.workItem.status.description)",
+            "**Status:** \(displayStatus(record.workItem.status, kind: .issue))",
             "**GitHub Issue:** \(record.workItem.githubIssue.map { "#\($0)" } ?? "TBD")",
             "**Severity:** \(record.severity.description)",
             "**Epic:** \(record.epicID?.rawValue ?? "TBD")",
@@ -153,6 +160,21 @@ public struct AirframeMarkdownArtifactProjector: Sendable {
 
     private var taskIndexStatuses: [AirframeWorkStatus] {
         [.backlog, .active, .implementedNotVerified, .implementedVerified, .closed]
+    }
+
+    private func relatedStatus(_ id: AirframeID, in records: [AirframeWorkItem]?, kind: AirframeWorkItemKind) -> String {
+        guard let records else { return "" }
+        guard let record = records.first(where: { $0.id == id }) else { return "Missing" }
+        return displayStatus(record.status, kind: kind)
+    }
+
+    private func displayStatus(_ status: AirframeWorkStatus, kind: AirframeWorkItemKind) -> String {
+        guard kind == .issue else { return status.description }
+        switch status {
+        case .implementedNotVerified: return "Resolved - Not Verified"
+        case .implementedVerified: return "Resolved - Verified"
+        default: return status.description
+        }
     }
 
     private func appendOptionalBlock(_ title: String, _ text: String?, to lines: inout [String]) {
