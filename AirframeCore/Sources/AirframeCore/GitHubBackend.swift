@@ -62,8 +62,49 @@ public struct AirframeGitHubIssueRecord: Codable, Equatable, Sendable {
     }
 }
 
+/// The disclosure accompanying a GitHub enumeration. Consumers must not present
+/// a truncated enumeration as the complete canonical inventory.
+public struct AirframeGitHubIssueListResult: Codable, Equatable, Sendable {
+    public let issues: [AirframeGitHubIssueRecord]
+    public let isComplete: Bool
+    public let appliedLimit: Int?
+    public let retrievedCount: Int
+    public let continuation: String?
+    public let incompleteReason: String?
+
+    public init(
+        issues: [AirframeGitHubIssueRecord],
+        isComplete: Bool,
+        appliedLimit: Int? = nil,
+        retrievedCount: Int? = nil,
+        continuation: String? = nil,
+        incompleteReason: String? = nil
+    ) {
+        self.issues = issues
+        self.isComplete = isComplete
+        self.appliedLimit = appliedLimit
+        self.retrievedCount = retrievedCount ?? issues.count
+        self.continuation = continuation
+        self.incompleteReason = incompleteReason
+    }
+}
+
+/// The mapped Airframe records and the GitHub enumeration that produced them.
+/// `records` is coverage of the GitHub query, never a statement about the
+/// canonical store's inventory.
+public struct AirframeGitHubWorkRecordListResult: Codable, Equatable, Sendable {
+    public let records: [AirframeLocalWorkRecord]
+    public let enumeration: AirframeGitHubIssueListResult
+
+    public init(records: [AirframeLocalWorkRecord], enumeration: AirframeGitHubIssueListResult) {
+        self.records = records
+        self.enumeration = enumeration
+    }
+}
+
 public protocol AirframeGitHubIssueTransport: Sendable {
     func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord]
+    func listIssuesWithDisclosure(configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueListResult
     func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord
     func createIssue(
         title: String,
@@ -93,6 +134,11 @@ public protocol AirframeGitHubIssueTransport: Sendable {
 }
 
 public extension AirframeGitHubIssueTransport {
+    func listIssuesWithDisclosure(configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueListResult {
+        let issues = try listIssues(configuration: configuration)
+        return AirframeGitHubIssueListResult(issues: issues, isComplete: true)
+    }
+
     func createIssue(
         title: String,
         body: String,
@@ -135,14 +181,40 @@ public struct AirframeGitHubCLITransport: AirframeGitHubIssueTransport {
     public init() {}
 
     public func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        try listIssuesWithDisclosure(configuration: configuration).issues
+    }
+
+    public func listIssuesWithDisclosure(configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueListResult {
+        // `gh issue list --limit` silently caps the result. GraphQL pagination
+        // traverses every page and `--slurp` preserves the page boundary for an
+        // explicit completeness decision.
+        let query = """
+        query($owner: String!, $name: String!, $endCursor: String) {
+          repository(owner: $owner, name: $name) {
+            issues(first: 100, after: $endCursor, states: [OPEN, CLOSED]) {
+              nodes { number title state body labels(first: 100) { nodes { name } } }
+              pageInfo { hasNextPage endCursor }
+            }
+          }
+        }
+        """
         let data = try runGitHubCLI(arguments: [
-            "issue", "list",
-            "--repo", configuration.slug,
-            "--state", "all",
-            "--limit", "100",
-            "--json", "number,title,state,labels,body"
+            "api", "graphql", "--paginate", "--slurp",
+            "-f", "query=\(query)",
+            "-F", "owner=\(configuration.owner)",
+            "-F", "name=\(configuration.repository)"
         ])
-        return try decodeIssues(from: data)
+        let pages = try JSONDecoder().decode([GitHubIssuePageDTO].self, from: data)
+        let issues = pages.flatMap(\.data.repository.issues.nodes).map(\.record)
+        let terminalPage = pages.last?.data.repository.issues.pageInfo
+        let isComplete = terminalPage.map { !$0.hasNextPage } ?? true
+        return AirframeGitHubIssueListResult(
+            issues: issues,
+            isComplete: isComplete,
+            retrievedCount: issues.count,
+            continuation: terminalPage?.endCursor,
+            incompleteReason: isComplete ? nil : "GitHub pagination ended before the final page."
+        )
     }
 
     public func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
@@ -333,6 +405,54 @@ private struct GitHubIssueDTO: Decodable {
             labels: labels.map(\.name),
             body: body ?? ""
         )
+    }
+}
+
+private struct GitHubIssuePageDTO: Decodable {
+    let data: DataPayload
+
+    struct DataPayload: Decodable {
+        let repository: Repository
+    }
+
+    struct Repository: Decodable {
+        let issues: Issues
+    }
+
+    struct Issues: Decodable {
+        let nodes: [Node]
+        let pageInfo: PageInfo
+    }
+
+    struct Node: Decodable {
+        let number: Int
+        let title: String
+        let state: String
+        let body: String?
+        let labels: Labels
+
+        var record: AirframeGitHubIssueRecord {
+            AirframeGitHubIssueRecord(
+                number: number,
+                title: title,
+                state: state.lowercased(),
+                labels: labels.nodes.map(\.name),
+                body: body ?? ""
+            )
+        }
+    }
+
+    struct Labels: Decodable {
+        let nodes: [Label]
+    }
+
+    struct Label: Decodable {
+        let name: String
+    }
+
+    struct PageInfo: Decodable {
+        let hasNextPage: Bool
+        let endCursor: String?
     }
 }
 
@@ -687,10 +807,16 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
     }
 
     public func listWorkRecords() throws -> [AirframeLocalWorkRecord] {
-        try transport.listIssues(configuration: configuration)
+        try listWorkRecordsWithDisclosure().records
+    }
+
+    public func listWorkRecordsWithDisclosure() throws -> AirframeGitHubWorkRecordListResult {
+        let enumeration = try transport.listIssuesWithDisclosure(configuration: configuration)
+        let records = enumeration.issues
             .filter(isAirframeWorkIssue)
             .map(mapper.record(from:))
             .sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
+        return AirframeGitHubWorkRecordListResult(records: records, enumeration: enumeration)
     }
 
     public func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {

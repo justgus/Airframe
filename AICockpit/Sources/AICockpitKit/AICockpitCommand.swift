@@ -531,6 +531,7 @@ public enum AICockpitCommand {
                 controlledMutationsEnabled: true
             ) { backend, _ in
                 let summary = try backend.dashboardSummary()
+                let enumeration = try githubEnumeration(for: backend)
                 return try render(
                     AICockpitCommandEnvelope(
                         status: "ok",
@@ -540,6 +541,7 @@ public enum AICockpitCommand {
                         workItem: nil,
                         taskPacket: nil,
                         dashboardSummary: summary,
+                        githubEnumeration: enumeration,
                         evidence: []
                     ),
                     as: outputFormat
@@ -1716,7 +1718,8 @@ public enum AICockpitCommand {
             }
 
             return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
-                var records = try backend.listWorkRecords()
+                let githubResult = try (backend as? AirframeGitHubIssuesBackend)?.listWorkRecordsWithDisclosure()
+                var records = try githubResult?.records ?? backend.listWorkRecords()
                     .filter { $0.workItem.kind == kind }
                     .sorted { $0.workItem.id.rawValue < $1.workItem.id.rawValue }
 
@@ -1739,7 +1742,8 @@ public enum AICockpitCommand {
                             kind: "\(kind.rawValue)List",
                             message: "\(kind.rawValue.capitalized) records listed",
                             fields: parsedFieldNames(rawFields),
-                            workItems: workItems
+                            workItems: workItems,
+                            githubEnumeration: githubResult?.enumeration
                         ),
                         as: outputFormat
                     )
@@ -1750,7 +1754,8 @@ public enum AICockpitCommand {
                         status: "ok",
                         kind: "\(kind.rawValue)List",
                         message: "\(kind.rawValue.capitalized) records listed",
-                        workItems: workItems
+                        workItems: workItems,
+                        githubEnumeration: githubResult?.enumeration
                     ),
                     as: outputFormat
                 )
@@ -2329,6 +2334,12 @@ public enum AICockpitCommand {
     private static func invalidWorkItemFieldNames(_ raw: String) -> [String] {
         let allowed: Set<String> = ["id", "title", "status", "kind"]
         return parsedFieldNames(raw).filter { !allowed.contains($0) }
+    }
+
+    private static func githubEnumeration(
+        for backend: any AirframeBackend
+    ) throws -> AirframeGitHubIssueListResult? {
+        try (backend as? AirframeGitHubIssuesBackend)?.listWorkRecordsWithDisclosure().enumeration
     }
 
     private static var requirementStatusNames: String {
@@ -3716,6 +3727,7 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     let workItem: AirframeWorkItem?
     let taskPacket: AirframeTaskPacket?
     let dashboardSummary: AirframeDashboardSummary?
+    var githubEnumeration: AirframeGitHubIssueListResult? = nil
     var configurationDiagnostics: AirframeConfigurationDiagnostics? = nil
     var canonicalDiagnostics: AirframeCanonicalDiagnostics? = nil
     let evidence: [AirframeEvidence]
@@ -3762,6 +3774,18 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
             ])
         }
 
+        if let githubEnumeration {
+            lines.append(contentsOf: [
+                "",
+                "## GitHub Enumeration Coverage",
+                "- retrievedCount: \(githubEnumeration.retrievedCount)",
+                "- complete: \(githubEnumeration.isComplete ? "yes" : "no")",
+                "- appliedLimit: \(githubEnumeration.appliedLimit.map(String.init) ?? "None")",
+                "- continuation: \(githubEnumeration.continuation ?? "None")",
+                "- incompleteReason: \(githubEnumeration.incompleteReason ?? "None")"
+            ])
+        }
+
         if let configurationDiagnostics {
             lines.append(contentsOf: [
                 "",
@@ -3770,7 +3794,8 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
                 "- workspace: \(configurationDiagnostics.workspaceID.rawValue)",
                 "- defaultProject: \(configurationDiagnostics.defaultProjectID.rawValue)",
                 "- projects: \(configurationDiagnostics.projectCount)",
-                "- backend: \(configurationDiagnostics.backendKind) at \(configurationDiagnostics.backendLocation)"
+                "- backend: \(configurationDiagnostics.backendKind) at \(configurationDiagnostics.backendLocation)",
+                "- networkReadiness: \(configurationDiagnostics.networkReadiness.rawValue)"
             ])
             if configurationDiagnostics.issues.isEmpty {
                 lines.append("- issues: None")
@@ -3874,6 +3899,7 @@ private struct AICockpitArtifactCommandEnvelope: Codable, Equatable {
     var workItems: [AirframeWorkItem] = []
     var links: AICockpitArtifactLinks? = nil
     var gaps: [String] = []
+    var githubEnumeration: AirframeGitHubIssueListResult? = nil
 
     var markdown: String {
         var lines = [
@@ -3898,6 +3924,17 @@ private struct AICockpitArtifactCommandEnvelope: Codable, Equatable {
             lines.append(contentsOf: workItems.map {
                 "- \($0.id.rawValue): \($0.title) (\($0.status.description))"
             })
+        }
+        if let githubEnumeration {
+            lines.append(contentsOf: [
+                "",
+                "## GitHub Enumeration Coverage",
+                "- retrievedCount: \(githubEnumeration.retrievedCount)",
+                "- complete: \(githubEnumeration.isComplete ? "yes" : "no")",
+                "- appliedLimit: \(githubEnumeration.appliedLimit.map(String.init) ?? "None")",
+                "- continuation: \(githubEnumeration.continuation ?? "None")",
+                "- incompleteReason: \(githubEnumeration.incompleteReason ?? "None")"
+            ])
         }
         if let links {
             lines.append(contentsOf: [
@@ -4242,6 +4279,7 @@ private struct AICockpitWorkItemProjectionEnvelope: Codable, Equatable {
     let message: String
     let fields: [String]
     let workItems: [AirframeWorkItem]
+    let githubEnumeration: AirframeGitHubIssueListResult?
 
     private func value(_ field: String, of item: AirframeWorkItem) -> String {
         switch field {
@@ -4258,6 +4296,7 @@ private struct AICockpitWorkItemProjectionEnvelope: Codable, Equatable {
         try container.encode(status, forKey: AICockpitDynamicCodingKey("status"))
         try container.encode(kind, forKey: AICockpitDynamicCodingKey("kind"))
         try container.encode(message, forKey: AICockpitDynamicCodingKey("message"))
+        try container.encodeIfPresent(githubEnumeration, forKey: AICockpitDynamicCodingKey("githubEnumeration"))
         var items = container.nestedUnkeyedContainer(forKey: AICockpitDynamicCodingKey("workItems"))
         for item in workItems {
             var projected = items.nestedContainer(keyedBy: AICockpitDynamicCodingKey.self)
@@ -4267,12 +4306,20 @@ private struct AICockpitWorkItemProjectionEnvelope: Codable, Equatable {
         }
     }
 
-    init(status: String, kind: String, message: String, fields: [String], workItems: [AirframeWorkItem]) {
+    init(
+        status: String,
+        kind: String,
+        message: String,
+        fields: [String],
+        workItems: [AirframeWorkItem],
+        githubEnumeration: AirframeGitHubIssueListResult? = nil
+    ) {
         self.status = status
         self.kind = kind
         self.message = message
         self.fields = fields
         self.workItems = workItems
+        self.githubEnumeration = githubEnumeration
     }
 
     init(from decoder: Decoder) throws {
@@ -4290,6 +4337,10 @@ private struct AICockpitWorkItemProjectionEnvelope: Codable, Equatable {
             "- kind: \(kind)",
             "- message: \(message)"
         ]
+        if let githubEnumeration {
+            lines.append("- githubEnumerationComplete: \(githubEnumeration.isComplete ? "yes" : "no")")
+            lines.append("- githubEnumerationRetrievedCount: \(githubEnumeration.retrievedCount)")
+        }
         guard !workItems.isEmpty else {
             lines.append("")
             lines.append("No records matched.")

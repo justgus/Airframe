@@ -3602,6 +3602,77 @@ import Foundation
     }
 }
 
+@Test func githubIssuesBackendPreservesIncompleteEnumerationDisclosure() throws {
+    let issue = AirframeGitHubIssueRecord(
+        number: 51,
+        title: "[T-0051] Paginated task",
+        labels: ["airframe-task", "status-active"],
+        body: "Airframe Type: Task\nAirframe ID: T-0051"
+    )
+    let transport = PaginatedStubGitHubIssueTransport(
+        result: AirframeGitHubIssueListResult(
+            issues: [issue],
+            isComplete: false,
+            appliedLimit: 100,
+            continuation: "cursor-2",
+            incompleteReason: "GitHub pagination stopped before the terminal page."
+        )
+    )
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport
+    )
+
+    let result = try backend.listWorkRecordsWithDisclosure()
+
+    #expect(result.records.map(\.workItem.id) == [AirframeID("T-0051")])
+    #expect(!result.enumeration.isComplete)
+    #expect(result.enumeration.appliedLimit == 100)
+    #expect(result.enumeration.continuation == "cursor-2")
+}
+
+@Test func workspaceMutationGuardRequiresReviewBranchAndPreservesDirtyTree() {
+    let guardrail = AirframeWorkspaceMutationGuard(protectedBranches: ["main", "master"]) { arguments, _ in
+        switch arguments {
+        case ["branch", "--show-current"]: return "main\n"
+        case ["status", "--porcelain"]: return " M docs/Tasks/Task-active.md\n"
+        default: throw AirframeBackendError.githubAccessFailed("unexpected git command")
+        }
+    }
+
+    let decision = guardrail.evaluate(rootURL: URL(fileURLWithPath: "/workspace"))
+
+    #expect(decision == .requiresReviewBranch(currentBranch: "main", isDirty: true))
+    #expect(decision.message.contains("left untouched"))
+}
+
+@Test func workspaceMutationGuardAllowsNonProtectedReviewBranch() {
+    let guardrail = AirframeWorkspaceMutationGuard(protectedBranches: ["main", "master"]) { arguments, _ in
+        arguments == ["branch", "--show-current"] ? "review/SP-043\n" : ""
+    }
+
+    #expect(guardrail.evaluate(rootURL: URL(fileURLWithPath: "/workspace")) == .allowed(branch: "review/SP-043"))
+}
+
+@Test func workspaceMutationGuardCreatesOperatorNamedBranchOnlyWhenRequested() {
+    let guardrail = AirframeWorkspaceMutationGuard(protectedBranches: ["main", "master"]) { arguments, _ in
+        switch arguments {
+        case ["status", "--porcelain"]: return ""
+        case ["branch", "--list", "review/operator-choice"]: return ""
+        case ["switch", "-c", "review/operator-choice"]: return ""
+        default: throw AirframeBackendError.githubAccessFailed("unexpected git command")
+        }
+    }
+
+    let decision = guardrail.route(
+        rootURL: URL(fileURLWithPath: "/workspace"),
+        to: "review/operator-choice",
+        createIfMissing: true
+    )
+
+    #expect(decision == .allowed(branch: "review/operator-choice"))
+}
+
 @Test func githubIssuesBackendRequiresApprovalBeforeControlledCommentWrites() throws {
     let transport = RecordingGitHubIssueTransport(issues: [controlledMutationIssue()])
     let backend = AirframeGitHubIssuesBackend(
@@ -3884,6 +3955,25 @@ private struct StubGitHubIssueTransport: AirframeGitHubIssueTransport {
     func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
         guard let issue = issues.first(where: { $0.number == number }) else {
             throw AirframeBackendError.githubAccessFailed("missing stub issue #\(number)")
+        }
+        return issue
+    }
+}
+
+private struct PaginatedStubGitHubIssueTransport: AirframeGitHubIssueTransport {
+    let result: AirframeGitHubIssueListResult
+
+    func listIssues(configuration: AirframeGitHubBackendConfiguration) throws -> [AirframeGitHubIssueRecord] {
+        result.issues
+    }
+
+    func listIssuesWithDisclosure(configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueListResult {
+        result
+    }
+
+    func issue(number: Int, configuration: AirframeGitHubBackendConfiguration) throws -> AirframeGitHubIssueRecord {
+        guard let issue = result.issues.first(where: { $0.number == number }) else {
+            throw AirframeBackendError.githubAccessFailed("missing paginated stub issue #\(number)")
         }
         return issue
     }

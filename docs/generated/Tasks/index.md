@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **198 total Tasks**
+Currently: **199 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 16 |
-| Active | 0 |
-| Implemented - Not Verified | 3 |
-| Implemented - Verified | 179 |
+| Backlog | 12 |
+| Active | 5 |
+| Implemented - Not Verified | 0 |
+| Implemented - Verified | 182 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -189,13 +189,13 @@ Currently: **198 total Tasks**
 | T-0175 | TBD | Make canonical projection refresh durable | Implemented - Verified |
 | T-0176 | TBD | Render artifact terminology and relationship statuses | Implemented - Verified |
 | T-0177 | TBD | Investigate projection omission and regenerate the complete set | Implemented - Verified |
-| T-0178 | TBD | Retire mutable Legacy Issue current-state files | Implemented - Not Verified |
-| T-0179 | TBD | Retire mutable Legacy Task current-state files | Implemented - Not Verified |
-| T-0180 | TBD | Reconcile Legacy links, archives, and compatibility policy | Implemented - Not Verified |
-| T-0181 | TBD | Implement complete GitHub pagination and disclosure | Backlog |
-| T-0182 | TBD | Implement canonical-to-GitHub reconciliation | Backlog |
-| T-0183 | TBD | Implement branch-aware AgileCockpit mutations | Backlog |
-| T-0184 | TBD | Complete integrated audit remediation verification | Backlog |
+| T-0178 | TBD | Retire mutable Legacy Issue current-state files | Implemented - Verified |
+| T-0179 | TBD | Retire mutable Legacy Task current-state files | Implemented - Verified |
+| T-0180 | TBD | Reconcile Legacy links, archives, and compatibility policy | Implemented - Verified |
+| T-0181 | TBD | Implement complete GitHub pagination and disclosure | Active |
+| T-0182 | TBD | Implement canonical-to-GitHub reconciliation | Active |
+| T-0183 | TBD | Implement branch-aware AgileCockpit mutations | Active |
+| T-0184 | TBD | Make Audit findings, rulings, evidence, and verification actionable | Active |
 | T-0185 | TBD | Implement canonical evidence repository operations | Backlog |
 | T-0186 | TBD | Add native AICockpit evidence commands | Backlog |
 | T-0187 | TBD | Add AgileCockpit evidence review interface | Backlog |
@@ -210,3 +210,4 @@ Currently: **198 total Tasks**
 | T-0197 | TBD | Materialize approved planning structures atomically | Backlog |
 | T-0198 | TBD | Document agent token-economy operating guidance | Backlog |
 | T-0199 | #188 | De-duplicate AgileCockpit cache payloads and digest the launch fingerprint | Implemented - Verified |
+| T-0200 | TBD | Surface persistent execution-network readiness for GitHub-backed Airframe workspaces | Active |

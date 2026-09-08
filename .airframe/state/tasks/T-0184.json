@@ -1,44 +1,48 @@
 {
-  "acceptanceCriteria": [
-    "All 21 unresolved rulings and I-0031 have linked implementation evidence.",
-    "Canonical diagnostics and all affected package/application test suites pass.",
-    "Required projections are regenerated and repository consistency checks pass.",
-    "The remediation log reaches Complete - Not Closed without performing human-only Audit closure."
+  "acceptanceCriteria" : [
+    "An operator can open an Audit title and read its findings, rulings, remediation artifacts, and current lifecycle state.",
+    "The UI distinguishes agent-recorded completion from human-only verification and closure actions.",
+    "The UI exposes the applicable human verification action when the workflow permits it."
   ],
-  "component": "Cross-Sprint integration, evidence collation, runtime-state classification, and final remediation record.",
-  "componentsAffected": [
-    "Cross-Sprint integration, evidence collation, runtime-state classification, and final remediation record."
+  "component" : "Cross-Sprint integration, evidence collation, runtime-state classification, and final remediation record.",
+  "componentsAffected" : [
+    "Expose canonical Audit findings, rulings, remediation artifacts, and lifecycle state in AgileCockpit Metrics and Audit.",
+    "Provide drill-down views and permitted human verification actions without granting agent closure authority."
   ],
-  "epicID": {
-    "rawValue": "EP-025"
+  "epicID" : {
+    "rawValue" : "EP-025"
   },
-  "evidenceIDs": [],
-  "metadata": {
-    "schemaVersion": {
-      "major": 1,
-      "minor": 0,
-      "patch": 0
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
     },
-    "updatedAt": "2026-08-28T20:38:58Z"
+    "updatedAt" : "2026-09-08T19:55:38Z"
   },
-  "notes": [
-    "Do not close the Audit cycle; closure remains human-only."
+  "notes" : [
+    "Do not invent Audit findings or rulings when canonical state has none."
   ],
-  "priority": "high",
-  "rationale": "The 20260827 Audit remediation spans many Sprints, and its rulings need one integrated verification pass before the cycle can be reported complete. This task confirms all 21 unresolved rulings and I-0031 have linked evidence, that diagnostics and affected test suites pass, and that projections and consistency checks are clean.\n\nConstraint: Do not close the Audit cycle; closure remains human-only.",
-  "requirementIDs": [],
-  "sprintID": {
-    "rawValue": "SP-043"
+  "priority" : "high",
+  "rationale" : "The 20260827 Audit remediation spans many Sprints, and its rulings need one integrated verification pass before the cycle can be reported complete. This task confirms all 21 unresolved rulings and I-0031 have linked evidence, that diagnostics and affected test suites pass, and that projections and consistency checks are clean.\n\nConstraint: Do not close the Audit cycle; closure remains human-only.",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-043"
   },
-  "testSteps": [
-    "Final ruling matrix, test summary, git diff check, generated-state validation, and remediation log."
+  "testSteps" : [
+    "UI and workflow tests covering findings, rulings, evidence, and human-only actions."
   ],
-  "workItem": {
-    "id": {
-      "rawValue": "T-0184"
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0184"
     },
-    "kind": "task",
-    "status": "backlog",
-    "title": "Complete integrated audit remediation verification"
+    "kind" : "task",
+    "status" : "active",
+    "title" : "Make Audit findings, rulings, evidence, and verification actionable"
   }
 }

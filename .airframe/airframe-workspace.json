@@ -24,6 +24,7 @@
   },
   "backend": {
     "kind": "github-issues",
-    "location": "justgus/Airframe"
+    "location": "justgus/Airframe",
+    "requiresNetworkAccess": true
   }
 }

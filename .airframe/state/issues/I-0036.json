@@ -1,0 +1,39 @@
+{
+  "affectedComponents" : [
+    "Execution sandbox, AICockpit GitHub integration"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "AICockpit and diagnostic commands should either reach configured external backends under their approved execution context or clearly disclose the sandbox-specific network restriction before reporting a backend failure.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-08T19:01:03Z"
+  },
+  "notes" : [
+    "Created after SP-043 activation investigation. This is an execution-environment capability gap, not a GitHub outage or repository credential failure."
+  ],
+  "observedBehavior" : "Commands executed inside the workspace sandbox fail DNS resolution for api.github.com (curl error 6), while the same request succeeds when granted escalated execution.",
+  "reproductionSteps" : [
+    "Run curl -sS -I https:\/\/api.github.com inside the workspace sandbox; observe DNS resolution failure. Repeat with escalated execution; observe HTTP 200."
+  ],
+  "severity" : "medium",
+  "sprintID" : {
+    "rawValue" : "SP-043"
+  },
+  "workItem" : {
+    "id" : {
+      "rawValue" : "I-0036"
+    },
+    "kind" : "issue",
+    "status" : "active",
+    "title" : "Sandboxed commands cannot resolve external GitHub API DNS"
+  }
+}

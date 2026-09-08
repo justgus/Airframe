@@ -1001,9 +1001,18 @@ public struct AirframeDashboardStatusSummary: Codable, Equatable, Sendable {
 public struct AirframeBackendReference: Codable, Equatable, Sendable {
     public let kind: String
     public let location: String
+    /// Declares that this workspace needs public network access for its
+    /// configured backend. The host owns the permission; Airframe records and
+    /// reports the requirement rather than attempting to grant it.
+    public let requiresNetworkAccess: Bool?
 
-    public init(kind: String, location: String) {
+    public init(kind: String, location: String, requiresNetworkAccess: Bool? = nil) {
         self.kind = kind
         self.location = location
+        self.requiresNetworkAccess = requiresNetworkAccess
+    }
+
+    public var networkAccessRequired: Bool {
+        requiresNetworkAccess ?? (kind == AirframeBackendKind.githubIssues.rawValue)
     }
 }

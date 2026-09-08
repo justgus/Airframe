@@ -405,6 +405,9 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published var selectedPlanID: AirframeID?
     @Published var planDecisionCommentText: String
     @Published var verificationCommentText: String
+    @Published var reviewBranchName: String
+    @Published var createReviewBranchIfMissing: Bool
+    @Published private(set) var reviewBranchStatus: String?
     @Published var statusMessage: String
 
     private let backend: any AirframeBackend
@@ -458,6 +461,9 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedPlanID = launchData.implementationPlans.first?.id
         self.planDecisionCommentText = ""
         self.verificationCommentText = ""
+        self.reviewBranchName = ""
+        self.createReviewBranchIfMissing = false
+        self.reviewBranchStatus = nil
         self.statusMessage = "Loaded \(launchData.backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
         startRefreshObservation(observedURLs: launchData.observedURLs)
@@ -547,6 +553,9 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedPlanID = initialImplementationPlans.first?.id
         self.planDecisionCommentText = ""
         self.verificationCommentText = ""
+        self.reviewBranchName = ""
+        self.createReviewBranchIfMissing = false
+        self.reviewBranchStatus = nil
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
         startRefreshObservation(observedURLs: observedURLs)
@@ -620,6 +629,9 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.selectedPlanID = initialImplementationPlans.first?.id
         self.planDecisionCommentText = ""
         self.verificationCommentText = ""
+        self.reviewBranchName = ""
+        self.createReviewBranchIfMissing = false
+        self.reviewBranchStatus = nil
         self.statusMessage = "Loaded \(backend.capabilities.backendKind) Airframe workspace."
         loadSelectedVerificationDetail()
         startRefreshObservation(observedURLs: payload.observedURLs)
@@ -1040,7 +1052,9 @@ final class AgileCockpitDashboardModel: ObservableObject {
     }
 
     var configurationStatusText: String {
-        "Configuration \(configurationDiagnostics.status.rawValue) | \(configurationDiagnostics.projectCount) project(s)"
+        let readiness = configurationDiagnostics.networkReadiness
+        let guidance = readiness.guidance.map { " | \($0)" } ?? ""
+        return "Configuration \(configurationDiagnostics.status.rawValue) | \(configurationDiagnostics.projectCount) project(s) | network \(readiness.rawValue)\(guidance)"
     }
 
     var activeSprintText: String {
@@ -1393,6 +1407,34 @@ final class AgileCockpitDashboardModel: ObservableObject {
         selectedReviewSprintID = sprint.workItem.id
     }
 
+    /// Canonical lifecycle actions are writes. Keep them off a protected branch
+    /// so the user can deliberately route the review to its intended branch.
+    private func permitCanonicalMutation() -> Bool {
+        let guardrail = AirframeWorkspaceMutationGuard()
+        let initialDecision = guardrail.evaluate(rootURL: artifactRootURL)
+        let decision: AirframeWorkspaceMutationGuard.Decision
+        if case .requiresReviewBranch(_, let isDirty) = initialDecision,
+           !reviewBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           !isDirty {
+            decision = guardrail.route(
+                rootURL: artifactRootURL,
+                to: reviewBranchName,
+                createIfMissing: createReviewBranchIfMissing
+            )
+        } else {
+            decision = initialDecision
+        }
+        guard decision.isAllowed else {
+            statusMessage = decision.message
+            reviewBranchStatus = decision.message
+            return false
+        }
+        if case .allowed(let branch) = decision {
+            reviewBranchStatus = "Canonical mutation routed to review branch \(branch)."
+        }
+        return true
+    }
+
     private func decideSelectedPlan(_ outcome: AirframeCanonicalPlanDecisionState) {
         guard let plan = selectedPlanRecord else {
             statusMessage = "No implementation plan is selected."
@@ -1402,6 +1444,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "Plan decisions require canonical Airframe state."
             return
         }
+        guard permitCanonicalMutation() else { return }
         let note = planDecisionCommentText.trimmingCharacters(in: .whitespacesAndNewlines)
         do {
             let result = try AirframePlanReviewService().decide(
@@ -1451,6 +1494,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Epic criteria verification requires canonical Airframe state."
                 return
             }
+            guard permitCanonicalMutation() else { return }
             suppressFileRefreshUntil = Date().addingTimeInterval(2)
             try canonicalRepository.verifyEpicCriterion(id: criterion.id)
             auditStore.record(
@@ -1492,6 +1536,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Sprint close requires canonical Airframe state."
                 return
             }
+            guard permitCanonicalMutation() else { return }
             switch activeSprintRecord.workItem.status {
             case .active:
                 try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .review)
@@ -1528,6 +1573,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Returning a Review Sprint to Backlog requires canonical Airframe state."
                 return
             }
+            guard permitCanonicalMutation() else { return }
             try canonicalRepository.transitionWorkItem(id: sprintID, to: .backlog)
             try synchronizeMarkdownProjections()
             recordCloseAudit(action: "OP-RETURN-SPRINT-TO-BACKLOG", workItemID: sprintID)
@@ -1557,6 +1603,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Returning an Active Sprint to Backlog requires canonical Airframe state."
                 return
             }
+            guard permitCanonicalMutation() else { return }
             try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .backlog)
             try canonicalRepository.clearActiveSprintID(projectID: context.project.id)
             try synchronizeMarkdownProjections()
@@ -1586,6 +1633,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Epic close requires canonical Airframe state."
                 return
             }
+            guard permitCanonicalMutation() else { return }
             try canonicalRepository.transitionWorkItem(id: activeEpicID, to: .closed)
             try canonicalRepository.clearActiveEpicID(projectID: context.project.id)
             try synchronizeMarkdownProjections()
@@ -4426,6 +4474,24 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Close Eligibility")
                 .font(.headline)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Review branch routing")
+                    .font(.subheadline)
+                TextField("Review branch name", text: $model.reviewBranchName)
+                    .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier("agile-cockpit-review-branch-name")
+                Toggle("Create branch if it does not exist", isOn: $model.createReviewBranchIfMissing)
+                    .accessibilityIdentifier("agile-cockpit-create-review-branch")
+                Text("Required before a canonical write on a protected branch. Existing worktree changes are never switched or discarded.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if let status = model.reviewBranchStatus {
+                    Text(status)
+                        .font(.caption)
+                        .accessibilityIdentifier("agile-cockpit-review-branch-status")
+                }
+            }
+            .accessibilityIdentifier("agile-cockpit-review-branch-routing")
             if let sprintEligibility = model.sprintCloseEligibility {
                 eligibilityRow(
                     title: "Sprint",

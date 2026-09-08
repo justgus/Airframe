@@ -199,6 +199,24 @@ public enum AirframeConfigurationDiagnosticSeverity: String, Codable, Equatable,
     case error
 }
 
+public enum AirframeNetworkReadiness: String, Codable, Equatable, Sendable {
+    case notRequired
+    case ready
+    case blocked
+    case unavailable
+
+    public var guidance: String? {
+        switch self {
+        case .notRequired, .ready:
+            nil
+        case .blocked:
+            "The configured backend requires public network access. Enable it in the host execution permissions, then retry."
+        case .unavailable:
+            "The configured backend requires public network access, but readiness has not yet been confirmed in this execution context."
+        }
+    }
+}
+
 public struct AirframeConfigurationDiagnosticIssue: Codable, Equatable, Sendable {
     public let severity: AirframeConfigurationDiagnosticSeverity
     public let code: String
@@ -222,6 +240,7 @@ public struct AirframeConfigurationDiagnostics: Codable, Equatable, Sendable {
     public let projectCount: Int
     public let backendKind: String
     public let backendLocation: String
+    public let networkReadiness: AirframeNetworkReadiness
     public let issues: [AirframeConfigurationDiagnosticIssue]
 
     public init(
@@ -231,6 +250,7 @@ public struct AirframeConfigurationDiagnostics: Codable, Equatable, Sendable {
         projectCount: Int,
         backendKind: String,
         backendLocation: String,
+        networkReadiness: AirframeNetworkReadiness = .notRequired,
         issues: [AirframeConfigurationDiagnosticIssue]
     ) {
         self.status = status
@@ -239,6 +259,7 @@ public struct AirframeConfigurationDiagnostics: Codable, Equatable, Sendable {
         self.projectCount = projectCount
         self.backendKind = backendKind
         self.backendLocation = backendLocation
+        self.networkReadiness = networkReadiness
         self.issues = issues
     }
 
@@ -387,6 +408,19 @@ public struct AirframeConfigurationLoader: Sendable {
             issue("invalidGitHubRepository", "GitHub backend location must be an owner/repository slug.")
         }
 
+        let networkReadiness: AirframeNetworkReadiness = configuration.backend.networkAccessRequired
+            ? .unavailable
+            : .notRequired
+        if let guidance = networkReadiness.guidance {
+            issues.append(
+                AirframeConfigurationDiagnosticIssue(
+                    severity: .warning,
+                    code: "networkReadinessUnconfirmed",
+                    message: guidance
+                )
+            )
+        }
+
         return AirframeConfigurationDiagnostics(
             status: issues.contains { $0.severity == .error } ? .error : .ok,
             workspaceID: configuration.workspace.id,
@@ -394,6 +428,7 @@ public struct AirframeConfigurationLoader: Sendable {
             projectCount: configuration.projects.count,
             backendKind: configuration.backend.kind,
             backendLocation: configuration.backend.location,
+            networkReadiness: networkReadiness,
             issues: issues
         )
     }
