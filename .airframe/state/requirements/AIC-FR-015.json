@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AIC-FR-015-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AICockpit_CSCI_Requirements.md",
-  "statement" : "AI Cockpit shall display or return audit identifiers for write operations where available.\n\n---\n\n## 4. Security and Authority Requirements",
+  "statement" : "AI Cockpit shall display or return audit identifiers for write operations where available.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "inspection"
 }

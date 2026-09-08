@@ -20,8 +20,8 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | Sprint | Goal | Status |
 | ------ | ---- | ------ |
 | SP-038 |  | Closed |
-| SP-039 | Remove duplicated active-context pointers and define an explicit backend-mapping model, so the active Epic and Sprint have one authoritative source and Cockpit interfaces render mapping state directly. | Planning |
-| SP-040 | Correct the requirement importer's section-boundary handling, repair the requirements it mis-parsed, and regenerate the requirement projections so canonical requirement data matches its documented source. | Planning |
+| SP-039 | Remove duplicated active-context pointers and define an explicit backend-mapping model, so the active Epic and Sprint have one authoritative source and Cockpit interfaces render mapping state directly. | Closed |
+| SP-040 | Correct the requirement importer's section-boundary handling, repair the requirements it mis-parsed, and regenerate the requirement projections so canonical requirement data matches its documented source. | Closed |
 | SP-041 | Make canonical projection refresh durable and complete, and render artifact terminology and relationship statuses consistently, so generated documents are a trustworthy view of canonical state. | Planning |
 | SP-042 | Retire the mutable Legacy Issue and Task current-state files and reconcile the remaining Legacy links, archives, and compatibility policy, so canonical state is the single source for current work status. | Planning |
 | SP-044 | Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit. | Planning |
@@ -36,12 +36,12 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | T-0166 | Define historical-close acceptance disposition | Implemented - Verified |
 | T-0167 | Repair canonical membership and reciprocal relationships | Implemented - Verified |
 | T-0168 | Implement systematic canonical invariant diagnostics | Implemented - Verified |
-| T-0169 | Remove duplicated active-context configuration pointers | Backlog |
-| T-0170 | Define optional backend-mapping state model | Backlog |
-| T-0171 | Expose mapping and active-context state in Cockpit interfaces | Backlog |
-| T-0172 | Correct requirement importer section boundaries | Backlog |
-| T-0173 | Repair and source-compare affected requirements | Backlog |
-| T-0174 | Regenerate and validate requirement projections | Backlog |
+| T-0169 | Remove duplicated active-context configuration pointers | Implemented - Verified |
+| T-0170 | Define optional backend-mapping state model | Implemented - Verified |
+| T-0171 | Expose mapping and active-context state in Cockpit interfaces | Implemented - Verified |
+| T-0172 | Correct requirement importer section boundaries | Implemented - Verified |
+| T-0173 | Repair and source-compare affected requirements | Implemented - Verified |
+| T-0174 | Regenerate and validate requirement projections | Implemented - Verified |
 | T-0175 | Make canonical projection refresh durable | Backlog |
 | T-0176 | Render artifact terminology and relationship statuses | Backlog |
 | T-0177 | Investigate projection omission and regenerate the complete set | Backlog |
@@ -76,6 +76,7 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | I-0032 | Workspace appears empty during slow startup traceability rebuild | Implemented - Verified |
 | I-0033 | Empty narrative fields render as blank sections in Sprint and Epic detail views | Backlog |
 | I-0034 | Requirement gap diagnostics ignore lifecycle status and flag unstarted requirements | Implemented - Verified |
+| I-0035 | Correct Sprint close-action label for active Sprints | Backlog |
 
 ## EP-026: First-Class Requirements, Tests, and Evidence Work Products
 
@@ -103,4 +104,4 @@ Elevate Requirements, Tests, and Acceptance Criteria evidence to first-class Agi
 | Issue | Title | Status |
 | ----- | ----- | ------ |
 
-*Last Updated: 2026-09-07*
+*Last Updated: 2026-09-08*

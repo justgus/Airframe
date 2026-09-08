@@ -1,0 +1,45 @@
+{
+  "changeRationale" : "Initial import from docs\/requirements\/AICockpit_CSCI_Requirements.md",
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AIC-NFR-005-R1"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AICockpit_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "requirementID" : {
+    "rawValue" : "AIC-NFR-005"
+  },
+  "revisionNumber" : 1,
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AICockpit_CSCI_Requirements.md",
+  "statement" : "AI Cockpit shall keep command parsing and output formatting separate from Airframe Core authority and workflow logic.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Maintainability",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

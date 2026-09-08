@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "RT-FR-011-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
-  "statement" : "AgileCockpit shall show release candidate close criteria, including:\n\n- In-scope requirements count.\n- Implemented requirements count.\n- Verified requirements count.\n- Validated requirements count.\n- Deferred or waived requirements count.\n- Open deviations.\n- Blocking traceability gaps.\n- Blocking Issues.\n- Missing test evidence.\n- Missing human approvals.",
+  "statement" : "AgileCockpit shall show release candidate close criteria, including:",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "inspection"
 }

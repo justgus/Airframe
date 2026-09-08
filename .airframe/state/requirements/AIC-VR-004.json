@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AIC-VR-004-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "review"
 }

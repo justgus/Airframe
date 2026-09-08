@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-IR-004-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "Agile Cockpit shall provide accessible navigation, readable status indicators, keyboard access where applicable, and concise views suitable for low-click interaction.\n\n---\n\n## 7. Non-Functional Requirements",
+  "statement" : "Agile Cockpit shall provide accessible navigation, readable status indicators, keyboard access where applicable, and concise views suitable for low-click interaction.",
   "status" : "draft",
   "supersedesIDs" : [
 

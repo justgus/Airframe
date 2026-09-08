@@ -1,0 +1,45 @@
+{
+  "changeRationale" : "Initial import from docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AC-SR-002-R1"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "requirementID" : {
+    "rawValue" : "AC-SR-002"
+  },
+  "revisionNumber" : 1,
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
+  "statement" : "Agile Cockpit shall not allow a user or client process to self-declare an actor type for the purpose of obtaining authority.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "No Self-Declared Authority",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "demonstration"
+}

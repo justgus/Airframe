@@ -1,0 +1,45 @@
+{
+  "changeRationale" : "Initial import from docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "RT-FR-015-R1"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/RequirementsTraceability_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "requirementID" : {
+    "rawValue" : "RT-FR-015"
+  },
+  "revisionNumber" : 1,
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
+  "statement" : "Airframe shall support optional code-level trace references to requirements.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Code Reference Trace",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "demonstration"
+}

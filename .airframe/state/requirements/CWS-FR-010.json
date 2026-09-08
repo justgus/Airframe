@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-010-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall support linking verification evidence to CI runs or CI artifacts when CI is configured.\n\nCI evidence shall supplement, not replace, AirframeCore requirement verification policy.",
+  "statement" : "Airframe shall support linking verification evidence to CI runs or CI artifacts when CI is configured.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

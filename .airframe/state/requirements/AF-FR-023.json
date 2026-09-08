@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AF-FR-023-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
-  "statement" : "Airframe Core shall define configuration for projects, backend adapters, actor policies, workflow rules, protected paths, verification commands, and cross-project delegations.\n\n---\n\n## 4. Security Requirements",
+  "statement" : "Airframe Core shall define configuration for projects, backend adapters, actor policies, workflow rules, protected paths, verification commands, and cross-project delegations.",
   "status" : "draft",
   "supersedesIDs" : [
 

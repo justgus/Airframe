@@ -1,0 +1,45 @@
+{
+  "changeRationale" : "Initial import from docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AC-IR-003-R1"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "requirementID" : {
+    "rawValue" : "AC-IR-003"
+  },
+  "revisionNumber" : 1,
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
+  "statement" : "Agile Cockpit should support exporting dashboard summaries or reports in Markdown, HTML, JSON, or other formats defined by project needs.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Export Interface",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "demonstration"
+}

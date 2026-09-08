@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-001-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall maintain canonical workflow state in a repo-local structured store.\n\nRationale: workflow state must move with the source code across branches, forks, checkouts, and reverts.",
+  "statement" : "Airframe shall maintain canonical workflow state in a repo-local structured store.",
   "status" : "draft",
   "supersedesIDs" : [
 

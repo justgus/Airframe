@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-013-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall reserve interfaces for importing and exporting requirements from external tools.\n\nVersion 1.0 shall prioritize diffable local formats such as CSV and JSON. DOORS integration shall remain out of scope for Version 1.0 but shall not be precluded by the data model.",
+  "statement" : "Airframe shall reserve interfaces for importing and exporting requirements from external tools.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

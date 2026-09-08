@@ -1,0 +1,45 @@
+{
+  "changeRationale" : "Initial import from docs\/requirements\/AirframeCore_CSCI_Requirements.md",
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "id" : {
+    "rawValue" : "AF-FR-017-R1"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "source" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md"
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "releaseScope" : [
+
+  ],
+  "requirementID" : {
+    "rawValue" : "AF-FR-017"
+  },
+  "revisionNumber" : 1,
+  "sourceKind" : "manual",
+  "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
+  "statement" : "Airframe Core shall compute project metrics including sprint progress, burndown, velocity, blocked work, recently completed work, upcoming work, active work, and verification aging.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Metrics Computation",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "analysis"
+}

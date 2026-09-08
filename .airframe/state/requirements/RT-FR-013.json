@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "RT-FR-013-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
-  "statement" : "Airframe shall support storing summarized test result records that link to requirements.\n\nRaw test logs may be external artifacts or CI artifacts and do not need to be committed to the repository.",
+  "statement" : "Airframe shall support storing summarized test result records that link to requirements.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

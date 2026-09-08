@@ -16,6 +16,9 @@ public enum AirframeCanonicalDiagnosticReasonCode: String, Codable, Equatable, S
     case activeSprintPointerMismatch
     case backendRelationshipDrift
     case backendStatusDrift
+    case backendMappingInvalid
+    case backendMappingPending
+    case backendMappingError
     case closedEpicOwnsOpenWork
     case epicSprintRelationshipDrift
     case multipleActiveSprints
@@ -462,6 +465,7 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
     public let tests: [AirframeCanonicalTestRecord]
     public let testSuites: [AirframeCanonicalTestSuiteRecord]
     public let testRuns: [AirframeCanonicalTestRunRecord]
+    public let backendMappings: [AirframeCanonicalBackendMappingRecord]
 
     public init(
         project: AirframeCanonicalProjectRecord,
@@ -473,7 +477,8 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
         acceptanceCriteria: [AirframeCanonicalAcceptanceCriterionRecord] = [],
         tests: [AirframeCanonicalTestRecord] = [],
         testSuites: [AirframeCanonicalTestSuiteRecord] = [],
-        testRuns: [AirframeCanonicalTestRunRecord] = []
+        testRuns: [AirframeCanonicalTestRunRecord] = [],
+        backendMappings: [AirframeCanonicalBackendMappingRecord] = []
     ) {
         self.project = project
         self.epics = epics
@@ -485,6 +490,7 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
         self.tests = tests
         self.testSuites = testSuites
         self.testRuns = testRuns
+        self.backendMappings = backendMappings
     }
 }
 
@@ -505,6 +511,7 @@ public struct AirframeCanonicalStateValidator: Sendable {
         diagnostics.append(contentsOf: activeEpicDiagnostics(project: snapshot.project, epics: snapshot.epics, epicsByID: epicsByID))
         diagnostics.append(contentsOf: activeSprintDiagnostics(project: snapshot.project, sprints: snapshot.sprints, sprintsByID: sprintsByID))
         diagnostics.append(contentsOf: projectMembershipDiagnostics(project: snapshot.project))
+        diagnostics.append(contentsOf: backendMappingDiagnostics(snapshot: snapshot))
         diagnostics.append(
             contentsOf: closedEpicDiagnostics(
                 epics: snapshot.epics,
@@ -549,6 +556,55 @@ public struct AirframeCanonicalStateValidator: Sendable {
                     : $0.reasonCode.rawValue < $1.reasonCode.rawValue
             }
         )
+    }
+
+    private func backendMappingDiagnostics(
+        snapshot: AirframeCanonicalStateSnapshot
+    ) -> [AirframeCanonicalDiagnostic] {
+        let workItemIDs = Set(
+            snapshot.epics.map(\.workItem.id)
+                + snapshot.sprints.map(\.workItem.id)
+                + snapshot.tasks.map(\.workItem.id)
+                + snapshot.issues.map(\.workItem.id)
+        )
+        return snapshot.backendMappings.compactMap { mapping in
+            guard workItemIDs.contains(mapping.localRecordID) else {
+                return AirframeCanonicalDiagnostic(
+                    severity: .error,
+                    reasonCode: .backendMappingInvalid,
+                    affectedIDs: [mapping.id, mapping.localRecordID],
+                    message: "Backend mapping \(mapping.id.rawValue) refers to missing record \(mapping.localRecordID.rawValue)."
+                )
+            }
+            switch mapping.state {
+            case .backendNotConfigured, .intentionallyLocal:
+                return nil
+            case .pending:
+                return AirframeCanonicalDiagnostic(
+                    severity: .warning,
+                    reasonCode: .backendMappingPending,
+                    affectedIDs: [mapping.id, mapping.localRecordID],
+                    message: "Backend mapping for \(mapping.localRecordID.rawValue) is pending synchronization."
+                )
+            case .error:
+                return AirframeCanonicalDiagnostic(
+                    severity: .warning,
+                    reasonCode: .backendMappingError,
+                    affectedIDs: [mapping.id, mapping.localRecordID],
+                    message: mapping.diagnostic ?? "Backend mapping for \(mapping.localRecordID.rawValue) failed synchronization."
+                )
+            case .mapped:
+                guard !mapping.backendKind.isEmpty, !(mapping.externalID?.isEmpty ?? true) else {
+                    return AirframeCanonicalDiagnostic(
+                        severity: .error,
+                        reasonCode: .backendMappingInvalid,
+                        affectedIDs: [mapping.id, mapping.localRecordID],
+                        message: "Mapped record \(mapping.localRecordID.rawValue) is missing backend identity."
+                    )
+                }
+                return nil
+            }
+        }
     }
 
     private func projectMembershipDiagnostics(

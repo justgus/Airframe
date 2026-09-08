@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AIC-SR-007-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AICockpit_CSCI_Requirements.md",
-  "statement" : "All AI Cockpit write operations shall result in Airframe Core-generated audit events.\n\n---\n\n## 5. Data Requirements",
+  "statement" : "All AI Cockpit write operations shall result in Airframe Core-generated audit events.",
   "status" : "draft",
   "supersedesIDs" : [
 

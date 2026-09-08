@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "RT-FR-008-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
-  "statement" : "Airframe shall support queries in both directions:\n\n- From a requirement to implementing work, tests, evidence, and code references.\n- From work, tests, evidence, and code references back to requirements.",
+  "statement" : "Airframe shall support queries in both directions:",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

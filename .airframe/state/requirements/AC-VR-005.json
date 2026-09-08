@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-VR-005-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "Agile Cockpit shall undergo accessibility checks appropriate to the selected UI platform.\n\n---\n\n## 9. Open Issues\n\n- UI platform selected: native macOS 26 SwiftUI application; see `docs\/architecture\/CSCI_Project_Form_Trade_Study.md`.\n- The initial authentication mechanism for local human use remains to be selected.\n- The first backend adapter is expected to be GitHub, but Agile Cockpit shall remain backend-agnostic.",
+  "statement" : "Agile Cockpit shall undergo accessibility checks appropriate to the selected UI platform.",
   "status" : "draft",
   "supersedesIDs" : [
 

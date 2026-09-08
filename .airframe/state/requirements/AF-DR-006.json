@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AF-DR-006-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
-  "statement" : "Airframe Core shall maintain mappings between canonical entity identifiers and backend-specific identifiers.\n\n---\n\n## 6. Interface Requirements",
+  "statement" : "Airframe Core shall maintain mappings between canonical entity identifiers and backend-specific identifiers.",
   "status" : "draft",
   "supersedesIDs" : [
 

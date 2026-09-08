@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-007-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "review"
 }

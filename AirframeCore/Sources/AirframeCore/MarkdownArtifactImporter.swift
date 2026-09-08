@@ -542,9 +542,26 @@ private struct AirframeMarkdownRequirementSection {
     let lines: [String]
 
     var statement: String {
-        lines
-            .joined(separator: "\n")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        var statementLines: [String] = []
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.isEmpty {
+                if !statementLines.isEmpty { break }
+                continue
+            }
+            if trimmed.hasPrefix("#") || trimmed == "---" || trimmed == "***"
+                || trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")
+                || Self.isNumberedListItem(trimmed) {
+                break
+            }
+            statementLines.append(trimmed)
+        }
+        return statementLines.joined(separator: "\n")
+    }
+
+    private static func isNumberedListItem(_ line: String) -> Bool {
+        guard let dot = line.firstIndex(of: ".") else { return false }
+        return line[..<dot].allSatisfy(\.isNumber)
     }
 
     static func sections(in markdown: String) -> [AirframeMarkdownRequirementSection] {

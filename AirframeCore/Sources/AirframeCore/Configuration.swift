@@ -42,21 +42,64 @@ public struct AirframeProject: Codable, Equatable, Sendable {
     public let id: AirframeID
     public let name: String
     public let repository: String
-    public let activeSprintID: AirframeID?
-    public let activeEpicID: AirframeID?
+
+    /// Decode-only migration inputs from pre-canonical workspace files.
+    /// They are never re-encoded and must not be used after canonical bootstrap.
+    public let legacyActiveSprintID: AirframeID?
+    public let legacyActiveEpicID: AirframeID?
+    private let resolvedActiveSprintID: AirframeID?
+    private let resolvedActiveEpicID: AirframeID?
+
+    /// Active context supplied by the canonical project record, never configuration.
+    public var activeSprintID: AirframeID? { resolvedActiveSprintID }
+    public var activeEpicID: AirframeID? { resolvedActiveEpicID }
 
     public init(
         id: AirframeID,
         name: String,
         repository: String,
-        activeSprintID: AirframeID?,
-        activeEpicID: AirframeID?
+        activeSprintID: AirframeID? = nil,
+        activeEpicID: AirframeID? = nil
     ) {
         self.id = id
         self.name = name
         self.repository = repository
-        self.activeSprintID = activeSprintID
-        self.activeEpicID = activeEpicID
+        self.legacyActiveSprintID = activeSprintID
+        self.legacyActiveEpicID = activeEpicID
+        self.resolvedActiveSprintID = nil
+        self.resolvedActiveEpicID = nil
+    }
+
+    public init(canonicalProject: AirframeCanonicalProjectRecord) {
+        self.id = canonicalProject.id
+        self.name = canonicalProject.name
+        self.repository = canonicalProject.repository
+        self.legacyActiveSprintID = nil
+        self.legacyActiveEpicID = nil
+        self.resolvedActiveSprintID = canonicalProject.activeSprintID
+        self.resolvedActiveEpicID = canonicalProject.activeEpicID
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, repository, activeSprintID, activeEpicID
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(AirframeID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        repository = try container.decode(String.self, forKey: .repository)
+        legacyActiveSprintID = try container.decodeIfPresent(AirframeID.self, forKey: .activeSprintID)
+        legacyActiveEpicID = try container.decodeIfPresent(AirframeID.self, forKey: .activeEpicID)
+        resolvedActiveSprintID = nil
+        resolvedActiveEpicID = nil
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(repository, forKey: .repository)
     }
 }
 
@@ -324,11 +367,8 @@ public struct AirframeConfigurationLoader: Sendable {
             if project.repository.isEmpty {
                 issue("missingProjectRepository", "Project \(project.id.rawValue) repository is required.")
             }
-            if let activeSprintID = project.activeSprintID, activeSprintID.rawValue.isEmpty {
+            if let activeSprintID = project.legacyActiveSprintID, activeSprintID.rawValue.isEmpty {
                 issue("missingActiveSprintID", "Project \(project.id.rawValue) active sprint ID is empty.")
-            }
-            if let activeEpicID = project.activeEpicID, activeEpicID.rawValue.isEmpty {
-                issue("missingActiveEpicID", "Project \(project.id.rawValue) active epic ID is empty.")
             }
         }
 

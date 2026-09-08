@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-005-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall support generating human-readable Markdown documentation from canonical records.\n\nMarkdown projections shall not be the sole source of workflow truth.",
+  "statement" : "Airframe shall support generating human-readable Markdown documentation from canonical records.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

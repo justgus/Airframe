@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-NFR-006-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "Agile Cockpit shall keep UI logic separate from Airframe Core workflow and authority logic.\n\n---\n\n## 8. Verification Requirements",
+  "statement" : "Agile Cockpit shall keep UI logic separate from Airframe Core workflow and authority logic.",
   "status" : "draft",
   "supersedesIDs" : [
 

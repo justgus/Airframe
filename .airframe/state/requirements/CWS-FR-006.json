@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-006-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "AirframeCore shall detect inconsistent workflow state and report diagnostics with:\n\n- Severity.\n- Affected IDs.\n- Reason code.\n- Explanation.\n- Recommended repair options.\n- Required authority for repair.",
+  "statement" : "AirframeCore shall detect inconsistent workflow state and report diagnostics with:",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "analysis"
 }

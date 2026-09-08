@@ -10,6 +10,30 @@ import Foundation
     #expect(info.summary == "AirframeCore 0.1.0")
 }
 
+@Test func markdownRequirementImportStopsAtDocumentBoundaries() {
+    let markdown = """
+    ### AF-FR-001 Canonical Model
+
+    Airframe shall retain one canonical model.
+
+    ---
+
+    ## 4. Security Requirements
+
+    - This list is not part of the requirement.
+
+    ### AF-FR-002 Authority
+
+    Airframe shall enforce authority.
+    """
+    let result = AirframeMarkdownArtifactImporter().importDocument(markdown)
+
+    #expect(result.requirements.map(\.statement) == [
+        "Airframe shall retain one canonical model.",
+        "Airframe shall enforce authority."
+    ])
+}
+
 @Test func refreshNotificationDefinesStableMessageContract() {
     #expect(AirframeRefreshNotification.message == "refresh")
     #expect(AirframeRefreshNotification.name.rawValue == "com.airframe.agilecockpit.refresh")
@@ -2936,8 +2960,10 @@ import Foundation
     let diagnostics = AirframeConfigurationLoader().diagnostics(for: context.configuration)
 
     #expect(context.workspaceName == "Airframe Live Demo")
-    #expect(context.project.activeSprintID == AirframeID("SP-009"))
-    #expect(context.project.activeEpicID == AirframeID("EP-009"))
+    #expect(context.project.activeSprintID == nil)
+    #expect(context.project.activeEpicID == nil)
+    #expect(context.project.legacyActiveSprintID == AirframeID("SP-009"))
+    #expect(context.project.legacyActiveEpicID == AirframeID("EP-009"))
     #expect(diagnostics.status == .ok)
     #expect(resolver.storeURL().path.hasSuffix(".airframe/airframe-local-backend.json"))
 }

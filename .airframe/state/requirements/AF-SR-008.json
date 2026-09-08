@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AF-SR-008-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
-  "statement" : "Airframe Core shall generate audit events that identify actor, actor type, execution project, target project, operation, result, reason code, target entity, backend reference, and timestamp where available.\n\n---\n\n## 5. Data Requirements",
+  "statement" : "Airframe Core shall generate audit events that identify actor, actor type, execution project, target project, operation, result, reason code, target entity, backend reference, and timestamp where available.",
   "status" : "draft",
   "supersedesIDs" : [
 

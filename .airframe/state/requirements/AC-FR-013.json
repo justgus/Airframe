@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-FR-013-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "Agile Cockpit shall display Airframe Core-provided metrics including, at minimum:\n\n- Sprint progress.\n- Burndown.\n- Velocity.\n- Blocked work count.\n- Recently completed work count.\n- Work ready for verification.\n- Aging of verification items.",
+  "statement" : "Agile Cockpit shall display Airframe Core-provided metrics including, at minimum:",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "inspection"
 }

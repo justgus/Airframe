@@ -5,7 +5,7 @@
 | AC-DR-001 | Dashboard Data | Draft | EP-004-AC-05 |
 | AC-DR-002 | Entity Data | Draft | EP-020-AC-01, EP-021-AC-01 |
 | AC-DR-003 | Metrics Data | Draft |  |
-| AC-DR-004 | Local Presentation State | Draft | EP-019-AC-04, EP-025-AC-04 |
+| AC-DR-004 | Local Presentation State | Draft | EP-019-AC-04 |
 | AC-FR-001 | Project Dashboard | Draft |  |
 | AC-FR-002 | Recently Completed Work | Draft | EP-004-AC-01 |
 | AC-FR-003 | Active Work | Draft | EP-022-AC-02 |
@@ -18,7 +18,7 @@
 | AC-FR-010 | Sprint Control | Draft |  |
 | AC-FR-011 | Epic Control | Draft |  |
 | AC-FR-012 | Issue / Task Review | Draft | EP-004-AC-01, EP-024-AC-03 |
-| AC-FR-013 | Metrics Display | Draft | EP-005-AC-04 |
+| AC-FR-013 | Metrics Display | Draft |  |
 | AC-FR-014 | Audit Visibility | Draft | EP-003-AC-05 |
 | AC-FR-015 | Multi-Project View | Draft |  |
 | AC-FR-016 | Project-Specific View | Draft |  |
@@ -44,7 +44,7 @@
 | AC-VR-002 | Authority Verification | Draft | EP-003-AC-02, EP-024-AC-05, EP-025-AC-02 |
 | AC-VR-003 | Workflow Verification | Draft |  |
 | AC-VR-004 | Metrics Verification | Draft |  |
-| AC-VR-005 | Accessibility Verification | Draft | EP-004-AC-01, EP-018-AC-07, EP-019-AC-06 |
+| AC-VR-005 | Accessibility Verification | Draft |  |
 | AF-BR-001 | Backend Independence | Draft |  |
 | AF-BR-002 | Initial Backend | Draft |  |
 | AF-BR-003 | GitHub Backend | Draft | EP-007-AC-01, EP-007-AC-03, EP-018-AC-07, EP-025-AC-07 |
@@ -55,7 +55,7 @@
 | AF-DR-003 | Workflow State Records | Draft | EP-020-AC-01 |
 | AF-DR-004 | Evidence Records | Draft | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01 |
 | AF-DR-005 | Metrics Records | Draft | EP-020-AC-01 |
-| AF-DR-006 | Backend Mapping Records | Draft | EP-020-AC-01, EP-021-AC-01, EP-025-AC-03 |
+| AF-DR-006 | Backend Mapping Records | Draft | EP-020-AC-01, EP-025-AC-03 |
 | AF-FR-001 | Canonical Project Model | Draft | EP-004-AC-01, EP-020-AC-01, EP-021-AC-01, EP-025-AC-03 |
 | AF-FR-002 | Actor Identity Certification | Draft |  |
 | AF-FR-003 | Actor Type Certification | Draft |  |
@@ -115,7 +115,7 @@
 | AF-VR-005 | Workflow Tests | Draft |  |
 | AF-VR-006 | Backend Adapter Tests | Draft | EP-025-AC-03 |
 | AF-VR-007 | Metrics Tests | Draft |  |
-| AF-VR-008 | Audit Tests | Draft | EP-003-AC-05, EP-004-AC-01, EP-007-AC-01, EP-018-AC-07, EP-019-AC-06, EP-020-AC-01, EP-020-AC-02, EP-025-AC-03, EP-025-AC-07 |
+| AF-VR-008 | Audit Tests | Draft | EP-003-AC-05 |
 | AIC-DR-001 | Task Packet Data | Draft |  |
 | AIC-DR-002 | Entity Proposal Data | Draft |  |
 | AIC-DR-003 | Evidence Data | Draft | EP-004-AC-05, EP-025-AC-03 |
@@ -125,7 +125,7 @@
 | AIC-FR-003 | Propose Issue | Draft |  |
 | AIC-FR-004 | Propose Task | Draft |  |
 | AIC-FR-005 | Retrieve Next Task | Draft | EP-005-AC-03 |
-| AIC-FR-006 | Generate Task Packet | Draft | EP-004-AC-04, EP-020-AC-06, EP-023-AC-02, EP-024-AC-06, EP-025-AC-02, EP-025-AC-10 |
+| AIC-FR-006 | Generate Task Packet | Draft | EP-004-AC-04 |
 | AIC-FR-007 | Attach Evidence | Draft | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01, EP-021-AC-06, EP-025-AC-10 |
 | AIC-FR-008 | Mark Ready for Human Verification | Draft | EP-004-AC-03, EP-005-AC-04, EP-006-AC-02, EP-025-AC-02 |
 | AIC-FR-009 | Project Summary | Draft |  |
@@ -157,49 +157,49 @@
 | AIC-VR-003 | Project Scope Tests | Draft | EP-025-AC-03 |
 | AIC-VR-004 | Task Packet Tests | Draft |  |
 | AIC-VR-005 | Evidence Tests | Draft | EP-005-AC-04, EP-019-AC-02, EP-025-AC-10 |
-| AIC-VR-006 | Output Format Tests | Draft | EP-002-AC-05, EP-004-AC-01, EP-007-AC-01, EP-018-AC-07, EP-019-AC-01, EP-019-AC-04, EP-019-AC-06 |
-| CWS-FR-001 | Canonical Repo-Local Store | Draft | EP-020-AC-02, EP-020-AC-06, EP-024-AC-01, EP-025-AC-03 |
+| AIC-VR-006 | Output Format Tests | Draft |  |
+| CWS-FR-001 | Canonical Repo-Local Store | Draft | EP-020-AC-02, EP-024-AC-01 |
 | CWS-FR-002 | Stable Work Item Identity | Draft | EP-020-AC-01, EP-020-AC-04, EP-021-AC-01, EP-025-AC-10 |
-| CWS-FR-003 | Relationship Model | Draft | EP-007-AC-01, EP-018-AC-07, EP-019-AC-04, EP-020-AC-01, EP-021-AC-06, EP-022-AC-05, EP-024-AC-02, EP-025-AC-10 |
+| CWS-FR-003 | Relationship Model | Draft |  |
 | CWS-FR-004 | Workflow Policy Authority | Draft | EP-020-AC-01 |
-| CWS-FR-005 | Markdown Projection | Draft | EP-020-AC-01, EP-020-AC-04, EP-020-AC-05, EP-020-AC-06 |
+| CWS-FR-005 | Markdown Projection | Draft | EP-020-AC-04, EP-020-AC-05, EP-020-AC-06 |
 | CWS-FR-006 | Validation Diagnostics | Draft | EP-020-AC-03 |
 | CWS-FR-007 | Repair Preview | Draft |  |
 | CWS-FR-008 | Audit Events | Draft | EP-006-AC-04, EP-020-AC-01, EP-022-AC-05 |
-| CWS-FR-009 | Test Evidence Summary | Draft | EP-018-AC-07, EP-019-AC-05, EP-019-AC-06, EP-021-AC-06, EP-021-AC-10, EP-024-AC-01, EP-024-AC-02, EP-024-AC-05, EP-025-AC-03 |
-| CWS-FR-010 | CI Evidence Link | Draft | EP-020-AC-01, EP-021-AC-06, EP-021-AC-10 |
+| CWS-FR-009 | Test Evidence Summary | Draft | EP-024-AC-01 |
+| CWS-FR-010 | CI Evidence Link | Draft | EP-021-AC-06 |
 | CWS-FR-011 | Requirement Traceability | Draft | EP-021-AC-01, EP-021-AC-10, EP-024-AC-02, EP-024-AC-05 |
 | CWS-FR-012 | Fluid Requirements | Draft | EP-021-AC-07 |
-| CWS-FR-013 | External Import Export Stubs | Draft | EP-019-AC-06 |
+| CWS-FR-013 | External Import Export Stubs | Draft |  |
 | CWS-FR-014 | Release Candidate Gate | Draft | EP-021-AC-01, EP-021-AC-07, EP-021-AC-08, EP-021-AC-10, EP-024-AC-05 |
-| CWS-FR-015 | Generated Compliance Outputs | Draft | EP-020-AC-05, EP-021-AC-01, EP-021-AC-09, EP-024-AC-01, EP-024-AC-02, EP-024-AC-03 |
+| CWS-FR-015 | Generated Compliance Outputs | Draft | EP-020-AC-05, EP-021-AC-09 |
 | CWS-NFR-001 | Diffability | Draft | EP-024-AC-01 |
 | CWS-NFR-002 | Human Inspectability | Draft | EP-021-AC-09 |
 | CWS-NFR-003 | Deterministic Projection | Draft |  |
 | CWS-NFR-004 | Backward Compatibility | Draft | EP-020-AC-04 |
-| CWS-NFR-005 | Authority Preservation | Draft | EP-001-AC-05, EP-004-AC-05, EP-005-AC-04, EP-006-AC-01, EP-007-AC-01, EP-007-AC-03, EP-019-AC-04, EP-019-AC-06, EP-020-AC-01, EP-020-AC-02, EP-020-AC-04, EP-020-AC-05, EP-020-AC-06, EP-020-AC-07, EP-020-AC-08, EP-020-AC-09, EP-021-AC-01, EP-021-AC-03, EP-021-AC-04, EP-021-AC-06, EP-021-AC-07, EP-021-AC-09, EP-021-AC-10, EP-022-AC-02, EP-022-AC-04, EP-024-AC-01, EP-024-AC-02, EP-024-AC-04, EP-024-AC-05, EP-024-AC-06, EP-025-AC-01, EP-025-AC-02, EP-025-AC-04, EP-025-AC-05, EP-025-AC-09, EP-025-AC-10 |
+| CWS-NFR-005 | Authority Preservation | Draft | EP-020-AC-08, EP-025-AC-02 |
 | RT-FR-001 | Requirement Records | Draft | EP-020-AC-04 |
 | RT-FR-002 | Requirement Revision State | Draft | EP-021-AC-07 |
-| RT-FR-003 | Fluid Requirement Lifecycle | Draft | EP-021-AC-07, EP-022-AC-05 |
+| RT-FR-003 | Fluid Requirement Lifecycle | Draft |  |
 | RT-FR-004 | Requirement Source | Draft |  |
 | RT-FR-005 | Implementation Trace | Draft | EP-021-AC-01 |
 | RT-FR-006 | Verification Trace | Draft | EP-021-AC-01, EP-021-AC-06 |
 | RT-FR-007 | Validation Trace | Draft | EP-021-AC-01 |
-| RT-FR-008 | Bidirectional Traceability | Draft | EP-021-AC-10, EP-024-AC-02, EP-024-AC-05 |
-| RT-FR-009 | Traceability Gap Detection | Draft | EP-005-AC-04, EP-020-AC-01, EP-021-AC-01, EP-021-AC-05, EP-021-AC-10, EP-024-AC-02, EP-024-AC-05, EP-025-AC-02, EP-025-AC-04, EP-025-AC-09 |
+| RT-FR-008 | Bidirectional Traceability | Draft |  |
+| RT-FR-009 | Traceability Gap Detection | Draft | EP-021-AC-05 |
 | RT-FR-010 | Release Scope | Draft |  |
-| RT-FR-011 | Release Gate Summary | Draft | EP-018-AC-02, EP-018-AC-03, EP-018-AC-04, EP-021-AC-01, EP-021-AC-05, EP-021-AC-07, EP-021-AC-08, EP-021-AC-10, EP-022-AC-05, EP-024-AC-02, EP-024-AC-05, EP-024-AC-06 |
+| RT-FR-011 | Release Gate Summary | Draft | EP-021-AC-07, EP-021-AC-08 |
 | RT-FR-012 | Deviation And Waiver Records | Draft | EP-021-AC-01, EP-024-AC-03 |
 | RT-FR-013 | Test Result Summaries | Draft | EP-021-AC-01, EP-021-AC-06, EP-024-AC-01 |
 | RT-FR-014 | CI Integration Link | Draft | EP-021-AC-01, EP-021-AC-06 |
-| RT-FR-015 | Code Reference Trace | Draft | EP-020-AC-01, EP-020-AC-06, EP-021-AC-01, EP-021-AC-06, EP-024-AC-02, EP-025-AC-04, EP-025-AC-10 |
-| RT-FR-016 | Compliance Document Generation | Draft | EP-021-AC-01, EP-021-AC-04, EP-021-AC-09, EP-021-AC-10, EP-024-AC-01, EP-024-AC-02, EP-024-AC-03, EP-025-AC-04 |
+| RT-FR-015 | Code Reference Trace | Draft |  |
+| RT-FR-016 | Compliance Document Generation | Draft | EP-021-AC-09 |
 | RT-IE-001 | CSV Import | Draft |  |
 | RT-IE-002 | CSV Export | Draft |  |
 | RT-IE-003 | JSON Import Export | Draft | EP-021-AC-10, EP-024-AC-01, EP-025-AC-04 |
 | RT-IE-004 | Diffable Workflow | Draft | EP-021-AC-10 |
-| RT-IE-005 | External Tool Stubs | Draft | EP-021-AC-10, EP-025-AC-04 |
+| RT-IE-005 | External Tool Stubs | Draft | EP-025-AC-04 |
 | RT-RG-001 | Configurable Gate Policy | Draft |  |
-| RT-RG-002 | Default Gate Policy | Draft | EP-021-AC-01, EP-021-AC-05, EP-021-AC-07, EP-021-AC-10, EP-025-AC-09 |
+| RT-RG-002 | Default Gate Policy | Draft | EP-021-AC-07 |
 | RT-RG-003 | Gate Explanation | Draft | EP-021-AC-07, EP-021-AC-08 |
-| RT-RG-004 | Human Authority | Draft | EP-005-AC-04, EP-020-AC-01, EP-020-AC-06, EP-020-AC-09, EP-021-AC-01, EP-021-AC-06, EP-021-AC-07, EP-021-AC-09, EP-021-AC-10, EP-024-AC-01, EP-024-AC-02, EP-024-AC-05, EP-024-AC-06, EP-025-AC-04, EP-025-AC-09 |
+| RT-RG-004 | Human Authority | Draft |  |

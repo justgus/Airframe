@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AIC-DR-004-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AICockpit_CSCI_Requirements.md",
-  "statement" : "AI Cockpit shall minimize output to the data required for the requested operation unless verbose output is explicitly requested.\n\n---\n\n## 6. Interface Requirements",
+  "statement" : "AI Cockpit shall minimize output to the data required for the requested operation unless verbose output is explicitly requested.",
   "status" : "draft",
   "supersedesIDs" : [
 

@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "RT-IE-005-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
-  "statement" : "Airframe shall reserve import\/export adapter boundaries for external requirements tools such as DOORS.\n\nNative DOORS integration is out of scope for Version 1.0.\n\n## 5. Release Gate Requirements",
+  "statement" : "Airframe shall reserve import\/export adapter boundaries for external requirements tools such as DOORS.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-015-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall support generating compliance and traceability documents from canonical records when templates are available.\n\nCandidate outputs include:\n\n- Compliance Verification Matrix.\n- Requirements Traceability Matrix.\n- Bidirectional Requirements Traceability Matrix.\n- Deviation or waiver report.\n- Test plan.\n- Verification report.\n- Release candidate closeout package.\n\n## 4. Non-Functional Requirements",
+  "statement" : "Airframe shall support generating compliance and traceability documents from canonical records when templates are available.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

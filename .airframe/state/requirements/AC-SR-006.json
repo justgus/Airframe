@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-SR-006-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "Agile Cockpit write operations shall result in Airframe Core-generated audit events.\n\n---\n\n## 5. Data Requirements",
+  "statement" : "Agile Cockpit write operations shall result in Airframe Core-generated audit events.",
   "status" : "draft",
   "supersedesIDs" : [
 

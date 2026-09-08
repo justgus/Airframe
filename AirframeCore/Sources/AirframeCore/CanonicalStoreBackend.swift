@@ -16,6 +16,7 @@ public struct AirframeCanonicalStoreState: Sendable {
     public let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
     public let planDecisions: [AirframeCanonicalPlanDecisionRecord]
     public let evidence: [AirframeCanonicalEvidenceSummaryRecord]
+    public let backendMappings: [AirframeCanonicalBackendMappingRecord]
 
     public init(
         workspaces: [AirframeCanonicalWorkspaceRecord] = [],
@@ -32,7 +33,8 @@ public struct AirframeCanonicalStoreState: Sendable {
         testRuns: [AirframeCanonicalTestRunRecord] = [],
         implementationPlans: [AirframeCanonicalImplementationPlanRecord] = [],
         planDecisions: [AirframeCanonicalPlanDecisionRecord] = [],
-        evidence: [AirframeCanonicalEvidenceSummaryRecord] = []
+        evidence: [AirframeCanonicalEvidenceSummaryRecord] = [],
+        backendMappings: [AirframeCanonicalBackendMappingRecord] = []
     ) {
         self.workspaces = workspaces
         self.projects = projects
@@ -49,6 +51,7 @@ public struct AirframeCanonicalStoreState: Sendable {
         self.implementationPlans = implementationPlans
         self.planDecisions = planDecisions
         self.evidence = evidence
+        self.backendMappings = backendMappings
     }
 }
 
@@ -79,7 +82,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             testRuns: store.list(AirframeCanonicalTestRunRecord.self),
             implementationPlans: store.list(AirframeCanonicalImplementationPlanRecord.self),
             planDecisions: store.list(AirframeCanonicalPlanDecisionRecord.self),
-            evidence: store.list(AirframeCanonicalEvidenceSummaryRecord.self)
+            evidence: store.list(AirframeCanonicalEvidenceSummaryRecord.self),
+            backendMappings: store.list(AirframeCanonicalBackendMappingRecord.self)
         )
     }
 
@@ -92,8 +96,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             id: context.project.id,
             name: context.project.name,
             repository: context.project.repository,
-            activeEpicID: context.project.activeEpicID,
-            activeSprintID: context.project.activeSprintID,
+            activeEpicID: context.project.legacyActiveEpicID,
+            activeSprintID: context.project.legacyActiveSprintID,
             epicIDs: importResult.epics.map(\.workItem.id),
             sprintIDs: importResult.sprints.map(\.workItem.id),
             taskIDs: importResult.tasks.map(\.workItem.id),
@@ -116,6 +120,19 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         try importResult.requirements.forEach(store.save)
         try importResult.requirementRevisions.forEach(store.save)
         try importResult.acceptanceCriteria.forEach(store.save)
+    }
+
+    /// Re-imports only canonical requirements and their revisions, preserving all
+    /// workflow and relationship records outside the requirements domain.
+    public func replaceRequirements(from importResult: AirframeMarkdownImportResult) throws {
+        try store.list(AirframeCanonicalRequirementRecord.self).forEach {
+            try store.delete(AirframeCanonicalRequirementRecord.self, id: $0.id)
+        }
+        try store.list(AirframeCanonicalRequirementRevisionRecord.self).forEach {
+            try store.delete(AirframeCanonicalRequirementRevisionRecord.self, id: $0.id)
+        }
+        try importResult.requirements.forEach(store.save)
+        try importResult.requirementRevisions.forEach(store.save)
     }
 
     private func replaceManagedRecords() throws {
@@ -607,8 +624,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             id: project.id,
             name: project.name,
             repository: project.repository,
-            activeEpicID: project.activeEpicID,
-            activeSprintID: project.activeSprintID,
+            activeEpicID: project.legacyActiveEpicID,
+            activeSprintID: project.legacyActiveSprintID,
             epicIDs: state.epics.map(\.workItem.id),
             sprintIDs: state.sprints.map(\.workItem.id),
             taskIDs: state.tasks.map(\.workItem.id),
@@ -624,7 +641,8 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             acceptanceCriteria: state.acceptanceCriteria,
             tests: state.tests,
             testSuites: state.testSuites,
-            testRuns: state.testRuns
+            testRuns: state.testRuns,
+            backendMappings: state.backendMappings
         )
     }
 

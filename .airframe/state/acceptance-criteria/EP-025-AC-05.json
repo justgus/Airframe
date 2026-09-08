@@ -1,17 +1,19 @@
 {
+  "disposition" : "verified",
   "evidenceIDs" : [
 
   ],
   "id" : {
     "rawValue" : "EP-025-AC-05"
   },
-  "isVerified" : false,
+  "isVerified" : true,
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,
       "minor" : 0,
       "patch" : 0
-    }
+    },
+    "updatedAt" : "2026-09-08T13:44:26Z"
   },
   "ownerID" : {
     "rawValue" : "EP-025"

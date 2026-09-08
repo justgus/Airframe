@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "RT-FR-009-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
-  "statement" : "AirframeCore shall detect missing or incomplete traceability for in-scope requirements.\n\nExample gaps:\n\n- Requirement has no implementing work.\n- Requirement has no verification method.\n- Requirement has no passing verification evidence.\n- Requirement has verification evidence but no validation decision where validation is required.\n- Source reference claims a requirement that does not exist.",
+  "statement" : "AirframeCore shall detect missing or incomplete traceability for in-scope requirements.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "analysis"
 }

@@ -329,6 +329,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             let implementationPlans: [AirframeCanonicalImplementationPlanRecord]
             let planDecisions: [AirframeCanonicalPlanDecisionRecord]
             let evidence: [AirframeCanonicalEvidenceSummaryRecord]
+            let backendMappings: [AirframeCanonicalBackendMappingRecord]
         }
 
         nonisolated struct CachedCanonicalSnapshot: Codable, Sendable {
@@ -1023,8 +1024,19 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     var backendStatusText: String {
         let capabilities = backend.capabilities
-        let githubStatus = capabilities.supportsGitHubIssues ? "GitHub issue mapping on" : "GitHub issue mapping off"
-        return "\(capabilities.backendKind) | \(githubStatus)"
+        let mappings = canonicalSnapshot.backendMappings
+        let stateCounts = Dictionary(grouping: mappings, by: \.state).mapValues(\.count)
+        let mappingStatus: String
+        if !capabilities.supportsGitHubIssues {
+            mappingStatus = "mapping backend not configured; local operation is intentional"
+        } else if mappings.isEmpty {
+            mappingStatus = "0 mapped; \(records.count) pending mapping"
+        } else {
+            mappingStatus = AirframeBackendMappingState.allCases.map {
+                "\($0.rawValue)=\(stateCounts[$0, default: 0])"
+            }.joined(separator: ", ")
+        }
+        return "\(capabilities.backendKind) | \(mappingStatus)"
     }
 
     var configurationStatusText: String {
@@ -2755,6 +2767,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             implementationPlans: state.implementationPlans,
             planDecisions: state.planDecisions,
             evidence: state.evidence
+            ,backendMappings: state.backendMappings
         )
     }
 
@@ -2783,6 +2796,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 tests: state.tests,
                 testSuites: state.testSuites,
                 testRuns: state.testRuns
+                ,backendMappings: state.backendMappings
             )
         }
         guard let snapshot = fallback else {
@@ -2842,7 +2856,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
                     testRuns: $0.testRuns,
                     implementationPlans: $0.implementationPlans,
                     planDecisions: $0.planDecisions,
-                    evidence: $0.evidence
+                    evidence: $0.evidence,
+                    backendMappings: $0.backendMappings
                 )
             },
             fallbackSnapshot: canonicalState == nil ? LaunchCachePayload.CachedCanonicalSnapshot(

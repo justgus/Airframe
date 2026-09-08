@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-009-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall support recording summarized test evidence without storing every raw local test run.\n\nAt minimum, test evidence shall include:\n\n- Command or test source.\n- Pass\/fail summary.\n- Relevant failing tests when applicable.\n- Timestamp.\n- Environment summary.\n- Linked requirement IDs when applicable.\n- Optional CI run or artifact link.",
+  "statement" : "Airframe shall support recording summarized test evidence without storing every raw local test run.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

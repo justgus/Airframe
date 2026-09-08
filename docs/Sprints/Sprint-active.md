@@ -4,48 +4,6 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-039: Configuration and Backend Mapping Model
-
-**Status:** Planning
-**Epic:** EP-025
-**Goal:** Remove duplicated active-context pointers and define an explicit backend-mapping model, so the active Epic and Sprint have one authoritative source and Cockpit interfaces render mapping state directly.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0169 | Remove duplicated active-context configuration pointers | High | Backlog |
-| T-0170 | Define optional backend-mapping state model | High | Backlog |
-| T-0171 | Expose mapping and active-context state in Cockpit interfaces | High | Backlog |
-
-### Assigned Issues
-
-None.
-
-## SP-040: Requirement Importer and Canonical Data Repair
-
-**Status:** Planning
-**Epic:** EP-025
-**Goal:** Correct the requirement importer's section-boundary handling, repair the requirements it mis-parsed, and regenerate the requirement projections so canonical requirement data matches its documented source.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0172 | Correct requirement importer section boundaries | High | Backlog |
-| T-0173 | Repair and source-compare affected requirements | High | Backlog |
-| T-0174 | Regenerate and validate requirement projections | High | Backlog |
-
-### Assigned Issues
-
-None.
-
 ## SP-041: Projection Reliability and Terminology
 
 **Status:** Planning
@@ -160,4 +118,4 @@ None.
 
 None.
 
-*Last Updated: 2026-09-07*
+*Last Updated: 2026-09-08*

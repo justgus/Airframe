@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-DR-004-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "Agile Cockpit may maintain local presentation state such as user-selected filters, collapsed sections, and dashboard preferences. Such state shall not override authoritative Airframe Core workflow state.\n\n---\n\n## 6. Interface Requirements",
+  "statement" : "Agile Cockpit may maintain local presentation state such as user-selected filters, collapsed sections, and dashboard preferences. Such state shall not override authoritative Airframe Core workflow state.",
   "status" : "draft",
   "supersedesIDs" : [
 

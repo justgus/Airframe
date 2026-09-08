@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AIC-VR-006-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AICockpit_CSCI_Requirements.md",
-  "statement" : "Tests shall verify Markdown and JSON output formats.\n\n---\n\n## 9. Open Issues\n\n- Final CLI command names remain to be selected.\n- Initial credential strategy for local LLM agents remains to be selected.\n- Initial backend adapter is expected to be GitHub, but AI Cockpit shall remain backend-agnostic through Airframe Core.",
+  "statement" : "Tests shall verify Markdown and JSON output formats.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "review"
 }

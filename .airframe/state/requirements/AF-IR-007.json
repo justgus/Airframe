@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AF-IR-007-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
-  "statement" : "Airframe Core shall expose audit event recording and query interfaces.\n\n---\n\n## 7. Backend Requirements",
+  "statement" : "Airframe Core shall expose audit event recording and query interfaces.",
   "status" : "draft",
   "supersedesIDs" : [
 

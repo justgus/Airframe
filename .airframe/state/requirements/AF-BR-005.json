@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AF-BR-005-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AirframeCore_CSCI_Requirements.md",
-  "statement" : "Airframe Core shall report backend failures with clear error classifications and shall avoid partial silent updates.\n\n---\n\n## 8. Metrics Requirements",
+  "statement" : "Airframe Core shall report backend failures with clear error classifications and shall avoid partial silent updates.",
   "status" : "draft",
   "supersedesIDs" : [
 

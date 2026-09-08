@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "CWS-FR-003-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/CanonicalWorkflowState_Requirements.md",
-  "statement" : "Airframe shall represent relationships between work products by ID, including:\n\n- Epic to Sprint.\n- Epic to Task.\n- Epic to Issue.\n- Sprint to Task.\n- Sprint to Issue.\n- Requirement to Task.\n- Requirement to Test.\n- Requirement to Evidence.\n- Task or Issue to Evidence.\n- Work item to GitHub issue where applicable.",
+  "statement" : "Airframe shall represent relationships between work products by ID, including:",
   "status" : "draft",
   "supersedesIDs" : [
 

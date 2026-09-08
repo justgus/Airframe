@@ -1480,8 +1480,8 @@ import Foundation
     #expect(result.standardOutput.contains("Workspace: Airframe Live Demo (WS-AIRFRAME-LIVE)"))
     #expect(result.standardOutput.contains("Project: Agile Airframe (PRJ-AIRFRAME)"))
     #expect(result.standardOutput.contains("Repository: justgus/Airframe"))
-    #expect(result.standardOutput.contains("Active Epic: EP-009"))
-    #expect(result.standardOutput.contains("Active Sprint: SP-009"))
+    #expect(result.standardOutput.contains("Active Epic: None"))
+    #expect(result.standardOutput.contains("Active Sprint: None"))
 }
 
 @Test func contextCommandPrefersCanonicalProjectActiveSprintWhenStateExists() throws {

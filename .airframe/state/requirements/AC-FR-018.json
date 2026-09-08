@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "AC-FR-018-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/AgileCockpit_CSCI_Requirements.md",
-  "statement" : "When Airframe Core denies an operation, Agile Cockpit shall display the denial reason in human-readable form.\n\n---\n\n## 4. Security and Authority Requirements",
+  "statement" : "When Airframe Core denies an operation, Agile Cockpit shall display the denial reason in human-readable form.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "inspection"
 }

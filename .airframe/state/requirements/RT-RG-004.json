@@ -1,4 +1,7 @@
 {
+  "currentRevisionID" : {
+    "rawValue" : "RT-RG-004-R1"
+  },
   "derivedFromIDs" : [
 
   ],
@@ -26,7 +29,7 @@
   ],
   "sourceKind" : "manual",
   "sourceURI" : "docs\/requirements\/RequirementsTraceability_Requirements.md",
-  "statement" : "Final release candidate closeout and validation approval shall require human authority.\n\n## 6. Version 1.0 Boundary\n\nVersion 1.0 should provide a lightweight traceability foundation:\n\n- Requirement records.\n- CSV\/JSON import\/export.\n- Requirement-to-work trace links.\n- Requirement-to-test trace links.\n- Test evidence summaries.\n- Release gate summary.\n- Generated traceability reports from simple templates.\n\nVersion 1.0 should avoid:\n\n- Full DOORS replacement behavior.\n- Deep external requirements-tool synchronization.\n- Mandatory source-code annotation for all requirements.\n- Heavy template authoring workflows.",
+  "statement" : "Final release candidate closeout and validation approval shall require human authority.",
   "status" : "draft",
   "supersedesIDs" : [
 
@@ -36,5 +39,5 @@
 
   ],
   "validationRequired" : true,
-  "verificationMethod" : "test"
+  "verificationMethod" : "demonstration"
 }

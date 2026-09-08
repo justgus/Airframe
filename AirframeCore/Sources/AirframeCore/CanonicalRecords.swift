@@ -830,20 +830,32 @@ public struct AirframeCanonicalAuditEventRecord: Codable, Equatable, Sendable {
     }
 }
 
+public enum AirframeBackendMappingState: String, Codable, CaseIterable, Sendable {
+    case backendNotConfigured
+    case intentionallyLocal
+    case pending
+    case mapped
+    case error
+}
+
 public struct AirframeCanonicalBackendMappingRecord: Codable, Equatable, Sendable {
     public let metadata: AirframeCanonicalRecordMetadata
     public let id: AirframeID
     public let localRecordID: AirframeID
     public let backendKind: String
-    public let externalID: String
+    public let externalID: String?
     public let externalURL: String?
+    public let state: AirframeBackendMappingState
+    public let diagnostic: String?
 
     public init(
         id: AirframeID,
         localRecordID: AirframeID,
         backendKind: String,
-        externalID: String,
+        externalID: String? = nil,
         externalURL: String? = nil,
+        state: AirframeBackendMappingState = .mapped,
+        diagnostic: String? = nil,
         metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
     ) {
         self.metadata = metadata
@@ -852,6 +864,8 @@ public struct AirframeCanonicalBackendMappingRecord: Codable, Equatable, Sendabl
         self.backendKind = backendKind
         self.externalID = externalID
         self.externalURL = externalURL
+        self.state = state
+        self.diagnostic = diagnostic
     }
 }
 

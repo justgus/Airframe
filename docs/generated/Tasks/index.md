@@ -4,10 +4,10 @@ Currently: **198 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 25 |
+| Backlog | 22 |
 | Active | 3 |
 | Implemented - Not Verified | 0 |
-| Implemented - Verified | 170 |
+| Implemented - Verified | 173 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -180,12 +180,12 @@ Currently: **198 total Tasks**
 | T-0166 | TBD | Define historical-close acceptance disposition | Implemented - Verified |
 | T-0167 | TBD | Repair canonical membership and reciprocal relationships | Implemented - Verified |
 | T-0168 | TBD | Implement systematic canonical invariant diagnostics | Implemented - Verified |
-| T-0169 | TBD | Remove duplicated active-context configuration pointers | Active |
-| T-0170 | TBD | Define optional backend-mapping state model | Active |
-| T-0171 | TBD | Expose mapping and active-context state in Cockpit interfaces | Active |
-| T-0172 | TBD | Correct requirement importer section boundaries | Backlog |
-| T-0173 | TBD | Repair and source-compare affected requirements | Backlog |
-| T-0174 | TBD | Regenerate and validate requirement projections | Backlog |
+| T-0169 | TBD | Remove duplicated active-context configuration pointers | Implemented - Verified |
+| T-0170 | TBD | Define optional backend-mapping state model | Implemented - Verified |
+| T-0171 | TBD | Expose mapping and active-context state in Cockpit interfaces | Implemented - Verified |
+| T-0172 | TBD | Correct requirement importer section boundaries | Active |
+| T-0173 | TBD | Repair and source-compare affected requirements | Active |
+| T-0174 | TBD | Regenerate and validate requirement projections | Active |
 | T-0175 | TBD | Make canonical projection refresh durable | Backlog |
 | T-0176 | TBD | Render artifact terminology and relationship statuses | Backlog |
 | T-0177 | TBD | Investigate projection omission and regenerate the complete set | Backlog |

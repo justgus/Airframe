@@ -379,6 +379,23 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals == ["requirements", "import-markdown"] {
+            do {
+                let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
+                let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
+                let documents = try markdownArtifactDocuments(rootURL: rootURL)
+                    .filter { $0.sourcePath?.hasPrefix("docs/requirements/") == true }
+                let importResult = AirframeMarkdownArtifactImporter().importDocuments(documents)
+                try AirframeCanonicalStoreRepository(rootURL: rootURL).replaceRequirements(from: importResult)
+                return AICockpitCommandResult(
+                    exitCode: importResult.isClean ? 0 : 78,
+                    standardOutput: try renderImportResult(importResult, rootURL: rootURL, outputFormat: outputFormat)
+                )
+            } catch {
+                return errorResult(exitCode: 78, code: "requirementsMarkdownImportFailed", message: "\(error)", outputFormat: outputFormat)
+            }
+        }
+
         if parsed.positionals == ["state", "export-markdown"] {
             do {
                 let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
@@ -3542,13 +3559,7 @@ private struct AICockpitArguments {
         }
         let snapshot = try AirframeCanonicalStoreRepository(rootURL: rootURL)
             .snapshot(project: projectContext.project)
-        let canonicalProject = AirframeProject(
-            id: snapshot.project.id,
-            name: snapshot.project.name,
-            repository: snapshot.project.repository,
-            activeSprintID: snapshot.project.activeSprintID,
-            activeEpicID: snapshot.project.activeEpicID
-        )
+        let canonicalProject = AirframeProject(canonicalProject: snapshot.project)
         return AirframeProjectContext(
             configuration: projectContext.configuration,
             project: canonicalProject

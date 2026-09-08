@@ -5,13 +5,19 @@ public struct AirframeCanonicalStateSnapshotBuilder: Sendable {
         project: AirframeProject,
         records: [AirframeLocalWorkRecord]
     ) -> AirframeCanonicalStateSnapshot {
-        AirframeCanonicalStateSnapshot(
+        let activeEpicIDs = records
+            .filter { $0.workItem.kind == .epic && $0.workItem.status == .active }
+            .map(\.workItem.id)
+        let activeSprintIDs = records
+            .filter { $0.workItem.kind == .sprint && $0.workItem.status == .active }
+            .map(\.workItem.id)
+        return AirframeCanonicalStateSnapshot(
             project: AirframeCanonicalProjectRecord(
                 id: project.id,
                 name: project.name,
                 repository: project.repository,
-                activeEpicID: project.activeEpicID,
-                activeSprintID: project.activeSprintID,
+                activeEpicID: activeEpicIDs.count == 1 ? activeEpicIDs[0] : nil,
+                activeSprintID: activeSprintIDs.count == 1 ? activeSprintIDs[0] : nil,
                 epicIDs: records.filter { $0.workItem.kind == .epic }.map(\.workItem.id),
                 sprintIDs: records.filter { $0.workItem.kind == .sprint }.map(\.workItem.id),
                 taskIDs: records.filter { $0.workItem.kind == .task }.map(\.workItem.id),
