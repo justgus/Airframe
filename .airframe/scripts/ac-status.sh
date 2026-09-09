@@ -5,4 +5,4 @@ source "$(dirname "$0")/_ac_common.sh"
 
 ac_run context
 echo ""
-ac_run project summary --backend github-issues --output json
+ac_run project summary --backend canonical --output json

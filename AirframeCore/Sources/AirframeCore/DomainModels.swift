@@ -651,11 +651,33 @@ public struct AirframeEvidence: Codable, Equatable, Sendable {
     public let id: AirframeID
     public let summary: String
     public let artifact: String
+    public let result: AirframeCanonicalEvidenceResult
+    public let command: String?
+    public let environment: String?
+    public let artifactReferences: [String]
+    public let ciReferences: [String]
+    public let workItemIDs: [AirframeID]
 
-    public init(id: AirframeID, summary: String, artifact: String) {
+    public init(
+        id: AirframeID,
+        summary: String,
+        artifact: String,
+        result: AirframeCanonicalEvidenceResult = .informational,
+        command: String? = nil,
+        environment: String? = nil,
+        artifactReferences: [String] = [],
+        ciReferences: [String] = [],
+        workItemIDs: [AirframeID] = []
+    ) {
         self.id = id
         self.summary = summary
         self.artifact = artifact
+        self.result = result
+        self.command = command
+        self.environment = environment
+        self.artifactReferences = artifactReferences
+        self.ciReferences = ciReferences
+        self.workItemIDs = workItemIDs
     }
 }
 

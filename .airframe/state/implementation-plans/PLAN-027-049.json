@@ -1,0 +1,53 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "swift test --package-path AirframeCore --filter workItemIDAllocation"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+
+  ],
+  "fileChanges" : [
+    "AirframeCore canonical project\/state repository, ID allocator, validation, and focused tests.",
+    "AICockpit work-item create commands and bounded work-ID lookup command."
+  ],
+  "id" : {
+    "rawValue" : "PLAN-027-049"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "This companion plan must be approved with PLAN-027-048 before EP-027 is drafted or implementation begins."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "Maintain canonical per-project counters for Epic, Sprint, Task, and Issue IDs.",
+    "Allocate an ID atomically as part of work-item creation; normal create commands must not require a caller-supplied ID.",
+    "Provide a bounded next-ID query that reads only allocator state and returns one candidate ID.",
+    "Retain explicit ID input only for controlled import or migration, with duplicate and counter-consistency validation.",
+    "Initialize counters safely for existing workspaces without reading generated Markdown, GitHub enumeration, or broad work-item collections during normal operation."
+  ],
+  "summary" : "Replace inferred work-item numbering and collection scans with canonical, atomic per-kind ID allocation and a bounded next-ID lookup.",
+  "targetEpicID" : {
+    "rawValue" : "EP-027"
+  },
+  "targetTaskIDs" : [
+
+  ],
+  "title" : "Canonical Work Item ID Allocation",
+  "verificationCriteria" : [
+    "Tests cover sequential allocation, per-kind independence, duplicate explicit IDs, counter initialization, atomic create allocation, bounded lookup output, and no collection enumeration on normal allocation."
+  ]
+}

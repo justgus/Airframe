@@ -1,0 +1,44 @@
+{
+  "artifactReferences" : [
+    "AirframeCore\/Sources\/AirframeCore\/CanonicalStoreBackend.swift",
+    "AICockpit\/Sources\/AICockpitKit\/AICockpitCommand.swift",
+    "AgileCockpit\/AgileCockpit\/ContentView.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AirframeCore; swift test --package-path AICockpit; xcodebuild -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -sdk macosx build; aicockpit evidence reconcile; aicockpit state diagnostics --backend canonical",
+  "environment" : "Local macOS canonical Airframe workspace",
+  "id" : {
+    "rawValue" : "EV-0185-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "SP-044 native canonical evidence workflow completed and verified.",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0185"
+    },
+    {
+      "rawValue" : "T-0186"
+    },
+    {
+      "rawValue" : "T-0187"
+    },
+    {
+      "rawValue" : "T-0188"
+    },
+    {
+      "rawValue" : "T-0189"
+    }
+  ]
+}

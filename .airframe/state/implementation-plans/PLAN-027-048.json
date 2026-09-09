@@ -1,0 +1,55 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "swift test --package-path AirframeCore --filter lifecycle",
+    "xcodebuild -workspace Airframe.xcworkspace -scheme AgileCockpit -destination platform=macOS,arch=arm64 build"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "An explicit human pre-activation action may create and switch to a Git branch; no automated commits, merges, pushes, or deletions are in scope."
+  ],
+  "fileChanges" : [
+    "AirframeCore workflow policy, canonical records, repository invariants, mutation guard, and tests.",
+    "AgileCockpit Planning, activation, and Close Eligibility views plus lifecycle audit integration."
+  ],
+  "id" : {
+    "rawValue" : "PLAN-027-048"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Proposed sequence: SP-048 lifecycle authority and activation foundation; SP-049 Sprint Git workspace; SP-050 human Task\/Issue activation; SP-051 close eligibility hardening. IrisOS per-commit branch enforcement remains repository policy outside this plan."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "Authorize human activation alongside agents for Epics, Sprints, Tasks, and Issues while retaining human-only verification and closure.",
+    "Configure Git workspace during Sprint Planning: Mainline or an optional named Sprint branch.",
+    "Create or switch a branch only through an explicit human action before Sprint activation; record the configured workspace canonically.",
+    "Make close eligibility validate the configured workspace without Git routing, branch creation, switching, merging, pushing, or deletion.",
+    "Add explicit Task and Issue activation with active-Sprint assignment validation.",
+    "Preserve focused canonical mutations and prohibit global generated-Markdown export from lifecycle actions."
+  ],
+  "summary" : "Define and deliver human activation controls and pre-activation optional Sprint Git workspace setup. Close eligibility becomes read-only validation; it never creates or switches a branch.",
+  "targetEpicID" : {
+    "rawValue" : "EP-027"
+  },
+  "targetTaskIDs" : [
+
+  ],
+  "title" : "Human Work Lifecycle and Git Workspace Control",
+  "verificationCriteria" : [
+    "Focused unit and UI coverage for Mainline, existing\/new branch, mismatched branch, dirty worktree, Git failure, cancellation, active-pointer invariants, task\/issue assignment, and no global projection export."
+  ]
+}

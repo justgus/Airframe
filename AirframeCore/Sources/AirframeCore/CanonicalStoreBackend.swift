@@ -642,8 +642,49 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
             tests: state.tests,
             testSuites: state.testSuites,
             testRuns: state.testRuns,
-            backendMappings: state.backendMappings
+            backendMappings: state.backendMappings,
+            evidence: state.evidence
         )
+    }
+
+    /// Reconciles the two persisted sides of supported Task/Issue evidence links.
+    /// Missing records are deliberately left untouched so diagnostics retain their provenance.
+    @discardableResult
+    public func reconcileEvidenceRelationships() throws -> [AirframeID] {
+        let evidence = try store.list(AirframeCanonicalEvidenceSummaryRecord.self)
+        let evidenceByID = Dictionary(uniqueKeysWithValues: evidence.map { ($0.id, $0) })
+        var changed = Set<AirframeID>()
+
+        for record in evidence {
+            for workItemID in record.workItemIDs {
+                if let task = try store.load(AirframeCanonicalTaskRecord.self, id: workItemID), !task.evidenceIDs.contains(record.id) {
+                    try store.save(task.addingEvidenceID(record.id))
+                    changed.insert(workItemID)
+                } else if let issue = try store.load(AirframeCanonicalIssueRecord.self, id: workItemID), !issue.evidenceIDs.contains(record.id) {
+                    try store.save(issue.addingEvidenceID(record.id))
+                    changed.insert(workItemID)
+                }
+            }
+        }
+        for task in try store.list(AirframeCanonicalTaskRecord.self) {
+            for evidenceID in task.evidenceIDs where evidenceByID[evidenceID] != nil {
+                guard let record = try store.load(AirframeCanonicalEvidenceSummaryRecord.self, id: evidenceID) else { continue }
+                if !record.workItemIDs.contains(task.workItem.id) {
+                    try store.save(record.addingWorkItemID(task.workItem.id))
+                    changed.insert(evidenceID)
+                }
+            }
+        }
+        for issue in try store.list(AirframeCanonicalIssueRecord.self) {
+            for evidenceID in issue.evidenceIDs where evidenceByID[evidenceID] != nil {
+                guard let record = try store.load(AirframeCanonicalEvidenceSummaryRecord.self, id: evidenceID) else { continue }
+                if !record.workItemIDs.contains(issue.workItem.id) {
+                    try store.save(record.addingWorkItemID(issue.workItem.id))
+                    changed.insert(evidenceID)
+                }
+            }
+        }
+        return changed.sorted { $0.rawValue < $1.rawValue }
     }
 
     private func applyActiveSprintPointerSideEffect(
@@ -747,7 +788,34 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
     }
 
     public func attachEvidence(_ evidence: AirframeEvidence, to workItemID: AirframeID) throws {
-        throw AirframeBackendError.readOnlyBackend("direct evidence attachment")
+        guard try workRecord(id: workItemID) != nil else {
+            throw AirframeBackendError.missingWorkItem(workItemID)
+        }
+        let existing = try repository.store.load(AirframeCanonicalEvidenceSummaryRecord.self, id: evidence.id)
+        let workItemIDs = ((existing?.workItemIDs ?? []) + [workItemID])
+            .reduce(into: [AirframeID]()) { ids, id in
+                if !ids.contains(id) { ids.append(id) }
+            }
+            .sorted { $0.rawValue < $1.rawValue }
+        try repository.store.save(
+            AirframeCanonicalEvidenceSummaryRecord(
+                id: evidence.id,
+                workItemIDs: workItemIDs,
+                summary: existing?.summary ?? evidence.summary,
+                result: existing?.result ?? evidence.result,
+                requirementIDs: existing?.requirementIDs ?? [],
+                command: existing?.command ?? evidence.command,
+                artifactReferences: existing?.artifactReferences ?? (evidence.artifactReferences.isEmpty ? [evidence.artifact] : evidence.artifactReferences),
+                ciReferences: existing?.ciReferences ?? evidence.ciReferences,
+                environment: existing?.environment ?? evidence.environment,
+                metadata: existing?.metadata ?? AirframeCanonicalRecordMetadata()
+            )
+        )
+        if let task = try repository.store.load(AirframeCanonicalTaskRecord.self, id: workItemID) {
+            try repository.store.save(task.addingEvidenceID(evidence.id))
+        } else if let issue = try repository.store.load(AirframeCanonicalIssueRecord.self, id: workItemID) {
+            try repository.store.save(issue.addingEvidenceID(evidence.id))
+        }
     }
 
     public func evidence(for workItemID: AirframeID) throws -> [AirframeEvidence] {
@@ -756,7 +824,12 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
             .sorted { $0.id.rawValue < $1.id.rawValue }
         return matching.map { record -> AirframeEvidence in
             let artifact: String = record.artifactReferences.first ?? record.command ?? "canonical-evidence"
-            return AirframeEvidence(id: record.id, summary: record.summary, artifact: artifact)
+            return AirframeEvidence(
+                id: record.id, summary: record.summary, artifact: artifact,
+                result: record.result, command: record.command, environment: record.environment,
+                artifactReferences: record.artifactReferences, ciReferences: record.ciReferences,
+                workItemIDs: record.workItemIDs
+            )
         }
     }
 
@@ -1257,6 +1330,9 @@ private extension AirframeCanonicalSprintRecord {
 }
 
 private extension AirframeCanonicalTaskRecord {
+    func addingEvidenceID(_ evidenceID: AirframeID) -> AirframeCanonicalTaskRecord {
+        AirframeCanonicalTaskRecord(workItem: workItem, component: component, priority: priority, rationale: rationale, epicID: epicID, sprintID: sprintID, dateRequested: dateRequested, dateImplemented: dateImplemented, dateVerified: dateVerified, currentBehavior: currentBehavior, desiredBehavior: desiredBehavior, requirementIDs: requirementIDs, acceptanceCriteria: acceptanceCriteria, designApproach: designApproach, componentsAffected: componentsAffected, implementationDetails: implementationDetails, evidenceIDs: appendUnique(evidenceID, to: evidenceIDs), testSteps: testSteps, notes: notes, metadata: metadata.updatingTimestamp())
+    }
     func updating(from record: AirframeLocalWorkRecord) -> AirframeCanonicalTaskRecord {
         AirframeCanonicalTaskRecord(
             workItem: record.workItem,
@@ -1358,7 +1434,16 @@ private extension AirframeCanonicalTaskRecord {
     }
 }
 
+private extension AirframeCanonicalEvidenceSummaryRecord {
+    func addingWorkItemID(_ workItemID: AirframeID) -> AirframeCanonicalEvidenceSummaryRecord {
+        AirframeCanonicalEvidenceSummaryRecord(id: id, workItemIDs: appendUnique(workItemID, to: workItemIDs), summary: summary, result: result, requirementIDs: requirementIDs, command: command, artifactReferences: artifactReferences, ciReferences: ciReferences, environment: environment, metadata: metadata.updatingTimestamp())
+    }
+}
+
 private extension AirframeCanonicalIssueRecord {
+    func addingEvidenceID(_ evidenceID: AirframeID) -> AirframeCanonicalIssueRecord {
+        AirframeCanonicalIssueRecord(workItem: workItem, severity: severity, observedBehavior: observedBehavior, expectedBehavior: expectedBehavior, epicID: epicID, sprintID: sprintID, dateReported: dateReported, dateResolved: dateResolved, dateVerified: dateVerified, reproductionSteps: reproductionSteps, affectedComponents: affectedComponents, evidenceIDs: appendUnique(evidenceID, to: evidenceIDs), notes: notes, metadata: metadata.updatingTimestamp())
+    }
     func updating(from record: AirframeLocalWorkRecord) -> AirframeCanonicalIssueRecord {
         AirframeCanonicalIssueRecord(
             workItem: record.workItem,

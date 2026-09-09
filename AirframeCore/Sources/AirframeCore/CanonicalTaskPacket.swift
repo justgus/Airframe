@@ -187,10 +187,13 @@ public struct AirframeCanonicalTaskPacketAssembler: Sendable {
     ) -> AirframeCanonicalEvidenceSummaryRecord {
         AirframeCanonicalEvidenceSummaryRecord(
             id: evidence.id,
-            workItemIDs: [ownerID],
+            workItemIDs: evidence.workItemIDs.isEmpty ? [ownerID] : evidence.workItemIDs,
             summary: evidence.summary,
-            result: .informational,
-            artifactReferences: [evidence.artifact]
+            result: evidence.result,
+            command: evidence.command,
+            artifactReferences: evidence.artifactReferences.isEmpty ? [evidence.artifact] : evidence.artifactReferences,
+            ciReferences: evidence.ciReferences,
+            environment: evidence.environment
         )
     }
 
@@ -198,7 +201,13 @@ public struct AirframeCanonicalTaskPacketAssembler: Sendable {
         AirframeEvidence(
             id: evidence.id,
             summary: evidence.summary,
-            artifact: evidence.artifactReferences.first ?? evidence.command ?? "canonical-evidence"
+            artifact: evidence.artifactReferences.first ?? evidence.command ?? "canonical-evidence",
+            result: evidence.result,
+            command: evidence.command,
+            environment: evidence.environment,
+            artifactReferences: evidence.artifactReferences,
+            ciReferences: evidence.ciReferences,
+            workItemIDs: evidence.workItemIDs
         )
     }
 }

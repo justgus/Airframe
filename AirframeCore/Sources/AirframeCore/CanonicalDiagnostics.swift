@@ -36,6 +36,9 @@ public enum AirframeCanonicalDiagnosticReasonCode: String, Codable, Equatable, S
     case testSuiteTestMissing
     case testRunTestMissing
     case testRunSuiteMissing
+    case evidenceWorkItemMissing
+    case evidenceRecordMissing
+    case evidenceRelationshipAsymmetric
 }
 
 public enum AirframeCanonicalRepairAction: String, Codable, Equatable, Sendable {
@@ -473,6 +476,7 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
     public let testSuites: [AirframeCanonicalTestSuiteRecord]
     public let testRuns: [AirframeCanonicalTestRunRecord]
     public let backendMappings: [AirframeCanonicalBackendMappingRecord]
+    public let evidence: [AirframeCanonicalEvidenceSummaryRecord]
 
     public init(
         project: AirframeCanonicalProjectRecord,
@@ -485,7 +489,8 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
         tests: [AirframeCanonicalTestRecord] = [],
         testSuites: [AirframeCanonicalTestSuiteRecord] = [],
         testRuns: [AirframeCanonicalTestRunRecord] = [],
-        backendMappings: [AirframeCanonicalBackendMappingRecord] = []
+        backendMappings: [AirframeCanonicalBackendMappingRecord] = [],
+        evidence: [AirframeCanonicalEvidenceSummaryRecord] = []
     ) {
         self.project = project
         self.epics = epics
@@ -498,6 +503,7 @@ public struct AirframeCanonicalStateSnapshot: Sendable {
         self.testSuites = testSuites
         self.testRuns = testRuns
         self.backendMappings = backendMappings
+        self.evidence = evidence
     }
 }
 
@@ -540,6 +546,7 @@ public struct AirframeCanonicalStateValidator: Sendable {
             )
         )
         diagnostics.append(contentsOf: acceptanceLifecycleDiagnostics(epicsByID: epicsByID, criteria: snapshot.acceptanceCriteria))
+        diagnostics.append(contentsOf: evidenceDiagnostics(tasks: snapshot.tasks, issues: snapshot.issues, evidence: snapshot.evidence))
         diagnostics.append(
             contentsOf: testDiagnostics(
                 tests: snapshot.tests,
@@ -563,6 +570,39 @@ public struct AirframeCanonicalStateValidator: Sendable {
                     : $0.reasonCode.rawValue < $1.reasonCode.rawValue
             }
         )
+    }
+
+    private func evidenceDiagnostics(
+        tasks: [AirframeCanonicalTaskRecord],
+        issues: [AirframeCanonicalIssueRecord],
+        evidence: [AirframeCanonicalEvidenceSummaryRecord]
+    ) -> [AirframeCanonicalDiagnostic] {
+        let evidenceByID = Dictionary(uniqueKeysWithValues: evidence.map { ($0.id, $0) })
+        let workEvidence = Dictionary(uniqueKeysWithValues: (tasks.map { ($0.workItem.id, $0.evidenceIDs) } + issues.map { ($0.workItem.id, $0.evidenceIDs) }))
+        var diagnostics: [AirframeCanonicalDiagnostic] = []
+        for (workID, evidenceIDs) in workEvidence {
+            for evidenceID in evidenceIDs {
+                guard let record = evidenceByID[evidenceID] else {
+                    diagnostics.append(AirframeCanonicalDiagnostic(severity: .error, reasonCode: .evidenceRecordMissing, affectedIDs: [workID, evidenceID], message: "Work item \(workID.rawValue) references missing evidence \(evidenceID.rawValue)."))
+                    continue
+                }
+                if !record.workItemIDs.contains(workID) {
+                    diagnostics.append(AirframeCanonicalDiagnostic(severity: .error, reasonCode: .evidenceRelationshipAsymmetric, affectedIDs: [workID, evidenceID], message: "Work item \(workID.rawValue) references evidence \(evidenceID.rawValue), but the evidence does not link back."))
+                }
+            }
+        }
+        for record in evidence {
+            for workID in record.workItemIDs {
+                guard let evidenceIDs = workEvidence[workID] else {
+                    diagnostics.append(AirframeCanonicalDiagnostic(severity: .error, reasonCode: .evidenceWorkItemMissing, affectedIDs: [record.id, workID], message: "Evidence \(record.id.rawValue) references missing work item \(workID.rawValue)."))
+                    continue
+                }
+                if !evidenceIDs.contains(record.id) {
+                    diagnostics.append(AirframeCanonicalDiagnostic(severity: .error, reasonCode: .evidenceRelationshipAsymmetric, affectedIDs: [record.id, workID], message: "Evidence \(record.id.rawValue) references work item \(workID.rawValue), but the work item does not link back."))
+                }
+            }
+        }
+        return diagnostics
     }
 
     private func backendMappingDiagnostics(

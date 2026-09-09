@@ -1775,12 +1775,26 @@ public enum AICockpitCommand {
                     throw AirframeBackendError.unsupportedWorkItemKind(record.workItem.kind)
                 }
                 let links = try? artifactLinks(for: id, parsed: parsed)
+                let relatedWorkItems: [AirframeWorkItem]
+                if kind == .sprint,
+                   let repository = try? canonicalTestRepository(parsed: parsed),
+                   let state = try? repository.loadState() {
+                    relatedWorkItems = (state.tasks
+                        .filter { $0.sprintID == id }
+                        .map(\.workItem) + state.issues
+                        .filter { $0.sprintID == id }
+                        .map(\.workItem))
+                        .sorted { $0.id.rawValue < $1.id.rawValue }
+                } else {
+                    relatedWorkItems = []
+                }
                 return try render(
                     AICockpitArtifactCommandEnvelope(
                         status: "ok",
                         kind: "\(kind.rawValue)Inspection",
                         message: "\(kind.rawValue.capitalized) inspected",
                         workItem: record.workItem,
+                        workItems: relatedWorkItems,
                         links: links
                     ),
                     as: outputFormat
@@ -1885,6 +1899,68 @@ public enum AICockpitCommand {
             }
         }
 
+        if parsed.positionals == ["evidence", "list"] {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let evidence = try repository.loadState().evidence
+                    .sorted { $0.id.rawValue < $1.id.rawValue }
+                    .map(AirframeEvidence.init)
+                return AICockpitCommandResult(exitCode: 0, standardOutput: try render(
+                    AICockpitCommandEnvelope(status: "ok", kind: "canonicalEvidenceList", message: "Canonical evidence listed", backendCapabilities: .canonicalStore, workItem: nil, taskPacket: nil, dashboardSummary: nil, evidence: evidence),
+                    as: outputFormat
+                ))
+            } catch { return errorResult(exitCode: 78, code: "canonicalEvidenceCommandFailed", message: "\(error)", outputFormat: outputFormat) }
+        }
+
+        if parsed.positionals.count == 3 && parsed.positionals[0] == "evidence" && parsed.positionals[1] == "inspect" {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let id = AirframeID(parsed.positionals[2])
+                guard let record = try repository.store.load(AirframeCanonicalEvidenceSummaryRecord.self, id: id) else { throw AirframeBackendError.missingWorkItem(id) }
+                let evidence = AirframeEvidence(record)
+                return AICockpitCommandResult(exitCode: 0, standardOutput: try render(
+                    AICockpitCommandEnvelope(status: "ok", kind: "canonicalEvidenceInspection", message: "Canonical evidence loaded", backendCapabilities: .canonicalStore, workItem: nil, taskPacket: nil, dashboardSummary: nil, evidence: [evidence]),
+                    as: outputFormat
+                ))
+            } catch { return errorResult(exitCode: 78, code: "canonicalEvidenceCommandFailed", message: "\(error)", outputFormat: outputFormat) }
+        }
+
+        if parsed.positionals == ["evidence", "create"] {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let id = AirframeID(try parsed.requiredValue(for: "--id"))
+                guard try repository.store.load(AirframeCanonicalEvidenceSummaryRecord.self, id: id) == nil else { throw AirframeBackendError.duplicateWorkItem(id) }
+                let summary = try parsed.requiredValue(for: "--summary")
+                let artifact = try parsed.requiredValue(for: "--artifact")
+                let result = parsed.value(for: "--result").flatMap(AirframeCanonicalEvidenceResult.init(rawValue:)) ?? .informational
+                let record = AirframeCanonicalEvidenceSummaryRecord(
+                    id: id, workItemIDs: [], summary: summary, result: result,
+                    command: parsed.value(for: "--command"),
+                    artifactReferences: parsed.repeatedValues(for: "--artifact").isEmpty ? [artifact] : parsed.repeatedValues(for: "--artifact"),
+                    ciReferences: parsed.repeatedValues(for: "--ci"),
+                    environment: parsed.value(for: "--environment")
+                )
+                try repository.store.save(record)
+                let evidence = AirframeEvidence(record)
+                return AICockpitCommandResult(exitCode: 0, standardOutput: try render(
+                    AICockpitCommandEnvelope(status: "ok", kind: "canonicalEvidenceCreation", message: "Canonical evidence created", backendCapabilities: .canonicalStore, workItem: nil, taskPacket: nil, dashboardSummary: nil, evidence: [evidence]),
+                    as: outputFormat
+                ))
+            } catch { return errorResult(exitCode: 78, code: "canonicalEvidenceCommandFailed", message: "\(error)", outputFormat: outputFormat) }
+        }
+
+        if parsed.positionals == ["evidence", "reconcile"] {
+            do {
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let changedIDs = try repository.reconcileEvidenceRelationships()
+                let evidence = changedIDs.map { AirframeEvidence(id: $0, summary: "Evidence relationship reconciled", artifact: "canonical-evidence") }
+                return AICockpitCommandResult(exitCode: 0, standardOutput: try render(
+                    AICockpitCommandEnvelope(status: "ok", kind: "canonicalEvidenceReconciliation", message: changedIDs.isEmpty ? "Evidence relationships already reconciled" : "Evidence relationships reconciled", backendCapabilities: .canonicalStore, workItem: nil, taskPacket: nil, dashboardSummary: nil, evidence: evidence),
+                    as: outputFormat
+                ))
+            } catch { return errorResult(exitCode: 78, code: "canonicalEvidenceCommandFailed", message: "\(error)", outputFormat: outputFormat) }
+        }
+
         if parsed.positionals.count == 3 && parsed.positionals[0] == "evidence" && parsed.positionals[1] == "attach" {
             return executeBackendCommand(
                 outputFormat: outputFormat,
@@ -1905,7 +1981,13 @@ public enum AICockpitCommand {
                 let evidence = AirframeEvidence(
                     id: AirframeID(try parsed.requiredValue(for: "--id")),
                     summary: try parsed.requiredValue(for: "--summary"),
-                    artifact: try parsed.requiredValue(for: "--artifact")
+                    artifact: try parsed.requiredValue(for: "--artifact"),
+                    result: parsed.value(for: "--result").flatMap(AirframeCanonicalEvidenceResult.init(rawValue:)) ?? .informational,
+                    command: parsed.value(for: "--command"),
+                    environment: parsed.value(for: "--environment"),
+                    artifactReferences: parsed.repeatedValues(for: "--artifact"),
+                    ciReferences: parsed.repeatedValues(for: "--ci"),
+                    workItemIDs: [AirframeID(parsed.positionals[2])]
                 )
                 try backend.attachEvidence(evidence, to: AirframeID(parsed.positionals[2]))
                 return try render(
@@ -2130,7 +2212,11 @@ public enum AICockpitCommand {
           aicockpit epic ready EP-ID [--config path] [--output markdown|json]
           aicockpit task next [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit task packet T-XXXX [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
-          aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend local-fixture|github-fixture] [--store path]
+          aicockpit evidence create --id EV-XXXX --summary text --artifact path [--result passed|failed|notRun|informational] [--command text] [--environment text] [--ci reference] [--config path] [--output markdown|json]
+          aicockpit evidence list [--config path] [--output markdown|json]
+          aicockpit evidence inspect EV-XXXX [--config path] [--output markdown|json]
+          aicockpit evidence reconcile [--config path] [--output markdown|json]
+          aicockpit evidence attach T-XXXX --id EV-XXXX --summary text --artifact path [--config path] [--backend canonical|local-fixture|github-fixture] [--store path] [--output markdown|json]
           aicockpit work ready T-XXXX [--config path] [--backend local-fixture|github-fixture] [--store path]
           aicockpit github comment T-XXXX --body text --approve --approved-by name [--config path] [--backend github-issues] [--output markdown|json]
           aicockpit github evidence-comment T-XXXX --id EV-XXXX --summary text --artifact path --approve --approved-by name [--config path] [--backend github-issues] [--output markdown|json]
@@ -3476,6 +3562,22 @@ private enum AICockpitRequirementInterchangeFormat: String {
 private enum AICockpitCommandError: Error, Equatable {
     case invalidArguments(String)
     case denied(AirframeAuthorityDecision, AirframeOperation)
+}
+
+private extension AirframeEvidence {
+    init(_ record: AirframeCanonicalEvidenceSummaryRecord) {
+        self.init(
+            id: record.id,
+            summary: record.summary,
+            artifact: record.artifactReferences.first ?? record.command ?? "canonical-evidence",
+            result: record.result,
+            command: record.command,
+            environment: record.environment,
+            artifactReferences: record.artifactReferences,
+            ciReferences: record.ciReferences,
+            workItemIDs: record.workItemIDs
+        )
+    }
 }
 
 private struct AICockpitArguments {

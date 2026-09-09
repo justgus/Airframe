@@ -4252,7 +4252,56 @@ struct ContentView: View {
                     .accessibilityIdentifier("agile-cockpit-review-id")
 
                 packetSection("Acceptance Criteria", values: packet.acceptanceCriteria)
-                packetSection("Evidence", values: packet.existingEvidence.map { "\($0.id.rawValue): \($0.summary)" })
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Evidence")
+                        .font(.headline)
+                    if packet.existingEvidence.isEmpty {
+                        Text("None recorded.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(packet.existingEvidence, id: \.id) { evidence in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(evidence.id.rawValue)
+                                    .font(.subheadline.weight(.semibold))
+                                Text(evidence.summary)
+                                Text("Result: \(evidence.result.rawValue)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                if let command = evidence.command {
+                                    Text("Command: \(command)")
+                                        .font(.caption)
+                                        .textSelection(.enabled)
+                                }
+                                if let environment = evidence.environment {
+                                    Text("Environment: \(environment)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Text(evidence.artifact)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                if !evidence.ciReferences.isEmpty {
+                                    Text("CI: \(evidence.ciReferences.joined(separator: ", "))")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                if !evidence.workItemIDs.isEmpty {
+                                    HStack(spacing: 4) {
+                                        Text("Linked work:").font(.caption)
+                                        ForEach(evidence.workItemIDs, id: \.rawValue) { workItemID in
+                                            Button(workItemID.rawValue) {
+                                                model.selectVerificationWorkItem(workItemID)
+                                            }
+                                            .buttonStyle(.link)
+                                            .font(.caption)
+                                        }
+                                    }
+                                }
+                            }
+                            .accessibilityIdentifier("agile-cockpit-evidence-\(evidence.id.rawValue)")
+                        }
+                    }
+                }
                 packetSection("Constraints", values: packet.constraints)
 
                 VStack(alignment: .leading, spacing: 6) {

@@ -1,12 +1,12 @@
 {
-  "disposition" : "verified",
+  "disposition" : "unverified",
   "evidenceIDs" : [
 
   ],
   "id" : {
     "rawValue" : "EP-025-AC-10"
   },
-  "isVerified" : true,
+  "isVerified" : false,
   "metadata" : {
     "schemaVersion" : {
       "major" : 1,

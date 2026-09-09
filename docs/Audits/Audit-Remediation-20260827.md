@@ -51,7 +51,7 @@
 
 **Files changed:** AirframeCore acceptance models and migration service, AICockpit migration interface, AgileCockpit presentation, and 42 canonical acceptance records owned by EP-001 through EP-008
 **What was done:** Added a historical-close disposition distinct from human verification, constrained it to the approved closed Epics, migrated exactly 42 eligible records, and prevented its use for current or future Epic close eligibility.
-**Deviations:** None. The migration was applied through AICockpit; direct canonical fallback was used only for evidence records.
+**Deviations:** None. The migration was applied through AICockpit. Evidence records are now created, attached, inspected, and reconciled through AICockpit's native canonical evidence commands; no direct-record fallback is supported.
 **Verification:** A repeated migration changed zero records; Core, CLI, and app verification are recorded by EV-0166-001 and EV-0168-001.
 **Status:** Applied - Not Verified
 

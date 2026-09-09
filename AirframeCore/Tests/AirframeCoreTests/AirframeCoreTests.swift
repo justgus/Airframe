@@ -1144,6 +1144,35 @@ import Foundation
     #expect(packet.existingEvidence.first?.summary == "Verification run passed.")
 }
 
+@Test func canonicalBackendAttachesEvidenceIdempotently() throws {
+    let rootURL = URL(filePath: NSTemporaryDirectory())
+        .appending(path: "airframe-evidence-attach-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: rootURL) }
+
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(id: AirframeID("T-9901"), kind: .task, title: "Evidence target", status: .active),
+            component: "",
+            priority: .medium,
+            rationale: ""
+        )
+    )
+    let backend = AirframeCanonicalStoreBackend(rootURL: rootURL)
+    let evidence = AirframeEvidence(id: AirframeID("EV-9901-001"), summary: "Focused test passed.", artifact: "AirframeCoreTests", result: .passed, command: "swift test", environment: "test", artifactReferences: ["AirframeCoreTests"], ciReferences: ["CI-1"])
+    try backend.attachEvidence(evidence, to: AirframeID("T-9901"))
+    try backend.attachEvidence(evidence, to: AirframeID("T-9901"))
+
+    let saved = try repository.store.load(AirframeCanonicalEvidenceSummaryRecord.self, id: evidence.id)
+    #expect(saved?.workItemIDs == [AirframeID("T-9901")])
+    #expect(saved?.artifactReferences == ["AirframeCoreTests"])
+    #expect(saved?.result == .passed)
+    #expect(saved?.command == "swift test")
+    #expect(saved?.ciReferences == ["CI-1"])
+    #expect(try repository.store.load(AirframeCanonicalTaskRecord.self, id: AirframeID("T-9901"))?.evidenceIDs == [AirframeID("EV-9901-001")])
+}
+
 @Test func requirementGapDiagnosticsSkipNotYetStartedRequirements() throws {
     // proposed and draft requirements have not been started, so missing implementation
     // work and missing verification evidence are not defects. active and later statuses

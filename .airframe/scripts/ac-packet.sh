@@ -9,4 +9,4 @@ if [[ $# -lt 1 ]]; then
   exit 1
 fi
 
-ac_run task packet "$1" --backend github-issues --output json
+ac_run task packet "$1" --backend canonical --output json

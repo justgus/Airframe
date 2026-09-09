@@ -55,7 +55,7 @@ public struct AirframeBackendCapabilities: Codable, Equatable, Sendable {
         backendKind: "canonical",
         supportsCreateWorkItem: true,
         supportsUpdateWorkItem: true,
-        supportsEvidenceAttachment: false,
+        supportsEvidenceAttachment: true,
         supportsTaskPacket: true,
         supportsDashboardSummary: true
     )

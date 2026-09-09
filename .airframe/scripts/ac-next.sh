@@ -3,4 +3,4 @@
 set -euo pipefail
 source "$(dirname "$0")/_ac_common.sh"
 
-ac_run task next --backend github-issues --output json
+ac_run task next --backend canonical --output json

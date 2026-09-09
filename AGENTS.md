@@ -72,7 +72,7 @@ Not every file under `docs/` is a design authority. Tracking indexes, archives, 
 
 ## AICockpit Artifact Management
 
-For all Agile Artifact work, use AICockpit before directly editing `docs/Tasks`, `docs/Issues`, `docs/Sprints`, `docs/Epics`, or GitHub issue state. Helper scripts in `.airframe/scripts/` are the canonical interface for routine startup and Task-packet retrieval.
+For all Agile Artifact work, use AICockpit before directly editing `docs/Tasks`, `docs/Issues`, `docs/Sprints`, `docs/Epics`, or GitHub issue state. Helper scripts in `.airframe/scripts/` are the canonical interface for routine startup and Task-packet retrieval. Routine discovery, Task packets, and workflow status must use the `canonical` backend; canonical state is the source of truth. The dedicated `ac-github-*` helpers are only for the permitted GitHub synchronization boundary and must not be used to determine local artifact existence, status, or completion.
 
 At the start of artifact-related work, inspect project state:
 

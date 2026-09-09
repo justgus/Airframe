@@ -4,7 +4,9 @@
   },
   "goal" : "Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit.",
   "issueIDs" : [
-
+    {
+      "rawValue" : "I-0037"
+    }
   ],
   "metadata" : {
     "schemaVersion" : {
@@ -12,7 +14,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-08-29T16:07:44Z"
+    "updatedAt" : "2026-09-09T15:12:27Z"
   },
   "notes" : [
     "Complete before SP-043 final integrated remediation verification.",
@@ -40,7 +42,7 @@
       "rawValue" : "SP-044"
     },
     "kind" : "sprint",
-    "status" : "planning",
+    "status" : "active",
     "title" : "Canonical Evidence Management and Review"
   }
 }

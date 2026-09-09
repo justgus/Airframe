@@ -1251,6 +1251,11 @@ import Foundation
         "--config", configPath,
         "--output", "json"
     ])
+    let sprintInspect = AICockpitCommand.response(arguments: [
+        "sprint", "inspect", "SP-9728",
+        "--config", configPath,
+        "--output", "json"
+    ])
     let list = AICockpitCommand.response(arguments: [
         "task", "list",
         "--config", configPath,
@@ -1263,6 +1268,8 @@ import Foundation
     #expect(gapsBefore.standardOutput.contains("T-9728 has no requirement links."))
     #expect(gapsBefore.standardOutput.contains("T-9728 has no linked tests."))
     #expect(link.exitCode == 0)
+    #expect(sprintInspect.exitCode == 0)
+    #expect(sprintInspect.standardOutput.contains("T-9728"))
     #expect(link.standardOutput.contains("\"kind\" : \"taskLinks\""))
     #expect(inspect.exitCode == 0)
     #expect(inspect.standardOutput.contains("\"requirementIDs\" : ["))
@@ -1674,6 +1681,28 @@ import Foundation
     #expect(ready.standardOutput.contains("\"kind\" : \"readyForVerification\""))
     #expect(ready.standardOutput.contains("\"status\" : \"implementedNotVerified\""))
     #expect(ready.standardOutput.contains("EV-9004-001"))
+}
+
+@Test func canonicalEvidenceCommandsCreateAttachListAndInspect() throws {
+    let configPath = try temporaryCanonicalTestConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
+    try repository.store.save(
+        AirframeCanonicalTaskRecord(
+            workItem: AirframeWorkItem(id: AirframeID("T-9005"), kind: .task, title: "Canonical evidence target", status: .active),
+            component: "", priority: .medium, rationale: ""
+        )
+    )
+    let create = AICockpitCommand.response(arguments: ["evidence", "create", "--id", "EV-9005-001", "--summary", "Canonical test passed", "--artifact", "swift test", "--result", "passed", "--command", "swift test", "--environment", "test", "--ci", "CI-9005", "--config", configPath, "--output", "json"])
+    let attach = AICockpitCommand.response(arguments: ["evidence", "attach", "T-9005", "--id", "EV-9005-001", "--summary", "Canonical test passed", "--artifact", "swift test", "--config", configPath, "--backend", "canonical", "--output", "json"])
+    let list = AICockpitCommand.response(arguments: ["evidence", "list", "--config", configPath, "--output", "json"])
+    let inspect = AICockpitCommand.response(arguments: ["evidence", "inspect", "EV-9005-001", "--config", configPath, "--output", "json"])
+    #expect(create.exitCode == 0)
+    #expect(attach.exitCode == 0)
+    #expect(list.standardOutput.contains("EV-9005-001"))
+    #expect(inspect.standardOutput.contains("Canonical test passed"))
+    #expect(inspect.standardOutput.contains("CI-9005"))
+    #expect(inspect.standardOutput.contains("\"result\" : \"passed\""))
 }
 
 @Test func githubFixtureBackendWorksThroughCanonicalCommands() {
