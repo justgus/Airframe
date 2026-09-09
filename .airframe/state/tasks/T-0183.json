@@ -10,6 +10,7 @@
   "componentsAffected" : [
     "Resolve I-0031 and GitHub #177 across workspace configuration, mutation coordination, and AgileCockpit UI."
   ],
+  "dateVerified" : "2026-09-09",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -22,7 +23,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-08T18:52:23Z"
+    "updatedAt" : "2026-09-09T03:14:22Z"
   },
   "notes" : [
     "Never silently mutate a configured protected branch."
@@ -43,7 +44,7 @@
       "rawValue" : "T-0183"
     },
     "kind" : "task",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Implement branch-aware AgileCockpit mutations"
   }
 }

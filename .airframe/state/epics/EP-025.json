@@ -34,9 +34,6 @@
   "goal" : "Remediate the findings of the 2026-08-27 Audit across configuration, requirement data, projections, legacy artifacts, GitHub integration, and canonical evidence, so that canonical state, its generated projections, and the GitHub backend agree and stay that way.",
   "issueIDs" : [
     {
-      "rawValue" : "I-0031"
-    },
-    {
       "rawValue" : "I-0032"
     },
     {
@@ -49,6 +46,9 @@
       "rawValue" : "I-0035"
     },
     {
+      "rawValue" : "I-0031"
+    },
+    {
       "rawValue" : "I-0036"
     }
   ],
@@ -58,7 +58,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-08T19:55:38Z"
+    "updatedAt" : "2026-09-09T03:23:17Z"
   },
   "notes" : [
 
@@ -101,6 +101,9 @@
     },
     {
       "rawValue" : "SP-046"
+    },
+    {
+      "rawValue" : "SP-047"
     }
   ],
   "taskIDs" : [
@@ -139,15 +142,6 @@
     },
     {
       "rawValue" : "T-0177"
-    },
-    {
-      "rawValue" : "T-0181"
-    },
-    {
-      "rawValue" : "T-0182"
-    },
-    {
-      "rawValue" : "T-0183"
     },
     {
       "rawValue" : "T-0185"
@@ -204,10 +198,34 @@
       "rawValue" : "T-0180"
     },
     {
-      "rawValue" : "T-0200"
+      "rawValue" : "T-0201"
+    },
+    {
+      "rawValue" : "T-0202"
+    },
+    {
+      "rawValue" : "T-0203"
+    },
+    {
+      "rawValue" : "T-0204"
+    },
+    {
+      "rawValue" : "T-0205"
+    },
+    {
+      "rawValue" : "T-0181"
+    },
+    {
+      "rawValue" : "T-0182"
+    },
+    {
+      "rawValue" : "T-0183"
     },
     {
       "rawValue" : "T-0184"
+    },
+    {
+      "rawValue" : "T-0200"
     }
   ],
   "workItem" : {

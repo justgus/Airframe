@@ -2,6 +2,8 @@
   "affectedComponents" : [
     "Execution sandbox, AICockpit GitHub integration"
   ],
+  "dateResolved" : "2026-09-09",
+  "dateVerified" : "2026-09-09",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -15,10 +17,10 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-08T19:01:03Z"
+    "updatedAt" : "2026-09-09T03:24:00Z"
   },
   "notes" : [
-    "Created after SP-043 activation investigation. This is an execution-environment capability gap, not a GitHub outage or repository credential failure."
+    "Revalidated 2026-09-08: sandboxed DNS resolves api.github.com (140.82.113.6) and a GitHub-backed AICockpit Issue query completes successfully. Workspace configuration persists networkReadiness ready. No source-code DNS workaround is required."
   ],
   "observedBehavior" : "Commands executed inside the workspace sandbox fail DNS resolution for api.github.com (curl error 6), while the same request succeeds when granted escalated execution.",
   "reproductionSteps" : [
@@ -33,7 +35,7 @@
       "rawValue" : "I-0036"
     },
     "kind" : "issue",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Sandboxed commands cannot resolve external GitHub API DNS"
   }
 }

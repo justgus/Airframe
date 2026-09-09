@@ -8,6 +8,7 @@
   "componentsAffected" : [
     "AirframeCore backend policy, AICockpit, AgileCockpit, and controlled live synchronization for R-11."
   ],
+  "dateVerified" : "2026-09-09",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -20,7 +21,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-08T18:52:17Z"
+    "updatedAt" : "2026-09-09T03:14:17Z"
   },
   "notes" : [
     "Only prior canonical human verification authorizes a Verified backend label."
@@ -41,7 +42,7 @@
       "rawValue" : "T-0182"
     },
     "kind" : "task",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Implement canonical-to-GitHub reconciliation"
   }
 }

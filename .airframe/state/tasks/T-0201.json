@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Unchanged canonical requirement records are not rewritten.",
+    "Apply output reports the exact changed-record count and paths.",
+    "Repository-wide reconciliation requires an explicit full-reconcile option."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+    "Compute canonical requirement import changes before mutation and expose a dry-run summary of adds, updates, and removals."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-08T20:58:39Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-047"
+  },
+  "testSteps" : [
+    "Unit tests for no-op, single-record, and full-reconcile imports."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0201"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Make canonical requirement imports incremental and previewable"
+  }
+}

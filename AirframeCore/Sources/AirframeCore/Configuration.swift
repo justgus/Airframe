@@ -409,7 +409,7 @@ public struct AirframeConfigurationLoader: Sendable {
         }
 
         let networkReadiness: AirframeNetworkReadiness = configuration.backend.networkAccessRequired
-            ? .unavailable
+            ? configuration.backend.networkReadiness ?? .unavailable
             : .notRequired
         if let guidance = networkReadiness.guidance {
             issues.append(

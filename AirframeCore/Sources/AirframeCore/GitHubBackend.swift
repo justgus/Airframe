@@ -1111,6 +1111,50 @@ public final class AirframeGitHubIssuesBackend: @unchecked Sendable, AirframeBac
         )
     }
 
+    /// Synchronizes labels from an already-authoritative canonical record. This
+    /// is not a new workflow transition: the human-only verification has
+    /// already occurred in canonical state, so re-evaluating it as agent
+    /// acceptance would incorrectly block backend convergence.
+    public func synchronizeCanonicalLabels(
+        for record: AirframeLocalWorkRecord,
+        action: AirframeCanonicalRepairAction,
+        approval: AirframeGitHubMutationApproval?
+    ) throws {
+        guard approval?.isApproved == true else {
+            throw AirframeBackendError.requiresConfirmation(.requiresConfirmation)
+        }
+        let issueNumber = try githubIssueNumber(for: record)
+        let issue = try transport.issue(number: issueNumber, configuration: configuration)
+        switch action {
+        case .applyBackendStatusLabels:
+            guard record.workItem.status == .implementedVerified else {
+                throw AirframeBackendError.authorityDenied(.authorityClassNotPermitted)
+            }
+            try transport.replaceStatusLabel(
+                issueNumber: issueNumber,
+                removing: issue.labels.filter { $0.hasPrefix("status-") },
+                adding: statusLabel(for: record.workItem.status),
+                configuration: configuration
+            )
+        case .applyBackendRelationshipLabels:
+            let oldLabels = issue.labels.filter { $0.hasPrefix("epic-") || $0.hasPrefix("sprint-") }
+            let newLabels = mapper.labels(for: record).filter { $0.hasPrefix("epic-") || $0.hasPrefix("sprint-") }
+            try transport.updateIssue(
+                issueNumber: issueNumber,
+                title: nil,
+                // Relationships may also be represented in the Airframe body.
+                // Replacing labels alone cannot clear a stale body value because
+                // deserialization falls back to that value when no label exists.
+                body: mapper.body(for: record, evidence: mapper.evidence(from: issue)),
+                removing: oldLabels,
+                adding: newLabels,
+                configuration: configuration
+            )
+        default:
+            throw AirframeBackendError.readOnlyBackend("canonical synchronization action \(action.rawValue)")
+        }
+    }
+
     public func transitionGitHubStatus(
         workItemID: AirframeID,
         to status: AirframeWorkStatus,

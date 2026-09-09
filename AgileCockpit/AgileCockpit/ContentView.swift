@@ -79,6 +79,17 @@ struct AgileCockpitAuditRow: Codable, Equatable, Identifiable {
     let reason: String
 }
 
+/// A read-only Audit-cycle artifact. Audit artifacts remain operator-authored
+/// records; the Cockpit presents their actual contents and never synthesizes a
+/// finding, ruling, or lifecycle transition.
+struct AgileCockpitAuditArtifact: Equatable, Identifiable {
+    let id: String
+    let title: String
+    let lifecycle: String
+    let humanAction: String
+    let contents: String
+}
+
 struct AgileCockpitDiagnosticRow: Codable, Equatable, Identifiable {
     let id: String
     let severity: String
@@ -383,6 +394,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
     @Published private(set) var canonicalSnapshot: AirframeCanonicalStateSnapshot
     @Published private(set) var canonicalDiagnostics: AirframeCanonicalDiagnostics
     @Published private(set) var auditRows: [AgileCockpitAuditRow]
+    @Published var selectedAuditArtifactID: String?
     @Published private(set) var requirementCoverageSummary: AirframeRequirementCoverageSummary
     @Published private(set) var requirementGateSummary: AirframeRequirementReleaseGateSummary
     @Published private(set) var requirementTraceRows: [AgileCockpitRequirementTraceRow]
@@ -441,6 +453,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.canonicalDiagnostics = launchData.canonicalDiagnostics
         self.summary = launchData.summary
         self.auditRows = launchData.auditRows
+        self.selectedAuditArtifactID = Self.auditArtifacts(rootURL: launchData.artifactRootURL).first?.id
         self.requirementCoverageSummary = launchData.requirementCoverageSummary
         self.requirementGateSummary = launchData.requirementGateSummary
         self.requirementTraceRows = launchData.requirementTraceRows
@@ -524,6 +537,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.canonicalDiagnostics = canonicalDiagnostics
         self.summary = Self.canonicalSummary(records: dashboardData.records)
         self.auditRows = auditStore.events.map(Self.auditRow)
+        self.selectedAuditArtifactID = Self.auditArtifacts(rootURL: artifactRootURL).first?.id
         let requirementState = Self.requirementState(
             canonicalState: self.canonicalState,
             canonicalSnapshot: canonicalSnapshot
@@ -608,6 +622,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
         self.canonicalDiagnostics = payload.canonicalDiagnostics
         self.summary = payload.summary
         self.auditRows = payload.auditRows
+        self.selectedAuditArtifactID = Self.auditArtifacts(rootURL: cachedArtifactRootURL).first?.id
         self.requirementCoverageSummary = traceability.requirementCoverageSummary
         self.requirementGateSummary = traceability.requirementGateSummary
         self.requirementTraceRows = traceability.requirementTraceRows
@@ -1065,6 +1080,14 @@ final class AgileCockpitDashboardModel: ObservableObject {
         currentEpicID?.rawValue ?? "None"
     }
 
+    var auditArtifacts: [AgileCockpitAuditArtifact] {
+        Self.auditArtifacts(rootURL: artifactRootURL)
+    }
+
+    var selectedAuditArtifact: AgileCockpitAuditArtifact? {
+        auditArtifacts.first { $0.id == selectedAuditArtifactID }
+    }
+
     var activeRecords: [AirframeLocalWorkRecord] {
         recordsWithStatus(.active)
     }
@@ -1339,6 +1362,22 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     var selectedStatusDetailText: String? {
         guard let selectedStatusWorkItemID else { return nil }
+        // In a canonical workspace, the dashboard detail must be scoped to the
+        // selected canonical record. Legacy Epic/Sprint indexes deliberately
+        // contain several records and are compatibility views, not detail
+        // sources. Tasks already used their per-record canonical data, which
+        // is why the defect was visible only for Epics and Sprints.
+        if canonicalRepository != nil,
+           let selectedRecord = selectedStatusRecord {
+            var sections = [Self.detailText(for: selectedRecord)]
+            if let description = canonicalDescriptionDetailText(for: selectedStatusWorkItemID) {
+                sections.append(description)
+            }
+            if let relationships = canonicalRelationshipDetailText(for: selectedStatusWorkItemID) {
+                sections.append(relationships)
+            }
+            return sections.joined(separator: "\n\n---\n")
+        }
         guard let detailText = dashboardDetailTextByID[selectedStatusWorkItemID] else {
             return nil
         }
@@ -3590,6 +3629,42 @@ final class AgileCockpitDashboardModel: ObservableObject {
         )
     }
 
+    nonisolated private static func auditArtifacts(rootURL: URL?) -> [AgileCockpitAuditArtifact] {
+        guard let rootURL else { return [] }
+        let directory = rootURL.appending(path: "docs/Audits")
+        guard let urls = try? FileManager.default.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        ) else { return [] }
+        return urls
+            .filter { $0.pathExtension == "md" && $0.lastPathComponent != "Audit-Guidelines.md" }
+            .sorted { $0.lastPathComponent > $1.lastPathComponent }
+            .compactMap { url in
+                guard let contents = try? String(contentsOf: url, encoding: .utf8) else { return nil }
+                let name = url.deletingPathExtension().lastPathComponent
+                let lifecycle: String
+                let humanAction: String
+                if name.contains("Findings") {
+                    lifecycle = "Findings complete — awaiting human Rulings authorization"
+                    humanAction = "Human action: authorize the Rulings session before remediation planning."
+                } else if name.contains("Rulings") {
+                    lifecycle = "Rulings recorded — awaiting human Remediation authorization"
+                    humanAction = "Human action: authorize remediation for the recorded rulings."
+                } else {
+                    lifecycle = "Remediation recorded — awaiting human Audit closure"
+                    humanAction = "Human action: review the remediation log and close the Audit in AgileCockpit."
+                }
+                return AgileCockpitAuditArtifact(
+                    id: url.lastPathComponent,
+                    title: name.replacingOccurrences(of: "Audit-", with: ""),
+                    lifecycle: lifecycle,
+                    humanAction: humanAction,
+                    contents: contents
+                )
+            }
+    }
+
     nonisolated private static func humanReviewerContext(projectID: AirframeID) throws -> AirframeCertifiedContext {
         let actor = AirframeActor(
             id: AirframeID("ACTOR-HUMAN-REVIEWER"),
@@ -5170,6 +5245,37 @@ struct ContentView: View {
             statusTileGrid
             Text("Audit")
                 .font(.headline)
+            if model.auditArtifacts.isEmpty {
+                Text("No Audit findings, rulings, or remediation artifacts are available.")
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("agile-cockpit-audit-artifacts-empty")
+            } else {
+                Picker("Audit artifact", selection: $model.selectedAuditArtifactID) {
+                    ForEach(model.auditArtifacts) { artifact in
+                        Text(artifact.title).tag(Optional(artifact.id))
+                    }
+                }
+                .accessibilityIdentifier("agile-cockpit-audit-artifact-picker")
+                if let artifact = model.selectedAuditArtifact {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(artifact.lifecycle)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(artifact.humanAction)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityIdentifier("agile-cockpit-audit-human-action")
+                        ScrollView {
+                            Text(artifact.contents)
+                                .font(.system(.caption, design: .monospaced))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
+                        }
+                        .frame(minHeight: 180, maxHeight: 360)
+                    }
+                    .accessibilityIdentifier("agile-cockpit-audit-artifact-detail")
+                }
+            }
             ForEach(model.auditRows) { row in
                 HStack {
                     Text(row.id).frame(width: 140, alignment: .leading)

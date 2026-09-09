@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "An ID-scoped export touches only the requested artifact and required indexes.",
+    "An unchanged projection is not rewritten.",
+    "Full export requires an explicit all-records option and reports its scope."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+    "Provide ID-scoped Markdown projection export and make every export write only content whose bytes changed."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-08T20:58:45Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-047"
+  },
+  "testSteps" : [
+    "Regression tests covering scoped export, no-op export, and explicit full export."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0202"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add scoped and idempotent Markdown projection export"
+  }
+}

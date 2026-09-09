@@ -83,6 +83,29 @@ import Foundation
 }
 
 @MainActor
+@Test func agileCockpitReadsAuditArtifactsAndIdentifiesTheRequiredHumanAction() throws {
+    let configURL = try temporaryLiveConfigurationURL()
+    let rootURL = configURL.deletingLastPathComponent()
+    let auditDirectory = rootURL.appending(path: "docs/Audits")
+    try FileManager.default.createDirectory(at: auditDirectory, withIntermediateDirectories: true)
+    try "# Findings\n\nA recorded finding.".write(
+        to: auditDirectory.appending(path: "Audit-Findings-20260908.md"),
+        atomically: true,
+        encoding: .utf8
+    )
+
+    let model = try AgileCockpitDashboardModel.configured(
+        configurationURL: configURL,
+        environment: [:]
+    )
+
+    let artifact = try #require(model.auditArtifacts.first)
+    #expect(artifact.contents.contains("A recorded finding."))
+    #expect(artifact.lifecycle.contains("awaiting human Rulings authorization"))
+    #expect(artifact.humanAction.contains("authorize the Rulings session"))
+}
+
+@MainActor
 @Test func agileCockpitTestsTabIncludesCanonicalTestCoverageAndSelection() throws {
     let configURL = try temporaryCanonicalTestsConfigurationURL()
     let model = try AgileCockpitDashboardModel.configured(

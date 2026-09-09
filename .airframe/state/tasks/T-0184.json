@@ -9,6 +9,7 @@
     "Expose canonical Audit findings, rulings, remediation artifacts, and lifecycle state in AgileCockpit Metrics and Audit.",
     "Provide drill-down views and permitted human verification actions without granting agent closure authority."
   ],
+  "dateVerified" : "2026-09-09",
   "epicID" : {
     "rawValue" : "EP-025"
   },
@@ -21,7 +22,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-08T19:55:38Z"
+    "updatedAt" : "2026-09-09T03:14:26Z"
   },
   "notes" : [
     "Do not invent Audit findings or rulings when canonical state has none."
@@ -42,7 +43,7 @@
       "rawValue" : "T-0184"
     },
     "kind" : "task",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Make Audit findings, rulings, evidence, and verification actionable"
   }
 }

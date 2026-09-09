@@ -1,0 +1,45 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "goal" : "",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-08T20:59:16Z"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0201"
+    },
+    {
+      "rawValue" : "T-0202"
+    },
+    {
+      "rawValue" : "T-0203"
+    },
+    {
+      "rawValue" : "T-0204"
+    },
+    {
+      "rawValue" : "T-0205"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-047"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "Token-Churn Incident Prevention"
+  }
+}

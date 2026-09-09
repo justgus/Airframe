@@ -1,13 +1,13 @@
 # Tasks - Index
 
-Currently: **199 total Tasks**
+Currently: **204 total Tasks**
 
 | Status | Count |
 | ------ | ----- |
-| Backlog | 12 |
-| Active | 5 |
+| Backlog | 17 |
+| Active | 0 |
 | Implemented - Not Verified | 0 |
-| Implemented - Verified | 182 |
+| Implemented - Verified | 187 |
 | Closed | 0 |
 
 | Task | GitHub Issue | Title | Status |
@@ -192,10 +192,10 @@ Currently: **199 total Tasks**
 | T-0178 | TBD | Retire mutable Legacy Issue current-state files | Implemented - Verified |
 | T-0179 | TBD | Retire mutable Legacy Task current-state files | Implemented - Verified |
 | T-0180 | TBD | Reconcile Legacy links, archives, and compatibility policy | Implemented - Verified |
-| T-0181 | TBD | Implement complete GitHub pagination and disclosure | Active |
-| T-0182 | TBD | Implement canonical-to-GitHub reconciliation | Active |
-| T-0183 | TBD | Implement branch-aware AgileCockpit mutations | Active |
-| T-0184 | TBD | Make Audit findings, rulings, evidence, and verification actionable | Active |
+| T-0181 | TBD | Implement complete GitHub pagination and disclosure | Implemented - Verified |
+| T-0182 | TBD | Implement canonical-to-GitHub reconciliation | Implemented - Verified |
+| T-0183 | TBD | Implement branch-aware AgileCockpit mutations | Implemented - Verified |
+| T-0184 | TBD | Make Audit findings, rulings, evidence, and verification actionable | Implemented - Verified |
 | T-0185 | TBD | Implement canonical evidence repository operations | Backlog |
 | T-0186 | TBD | Add native AICockpit evidence commands | Backlog |
 | T-0187 | TBD | Add AgileCockpit evidence review interface | Backlog |
@@ -210,4 +210,9 @@ Currently: **199 total Tasks**
 | T-0197 | TBD | Materialize approved planning structures atomically | Backlog |
 | T-0198 | TBD | Document agent token-economy operating guidance | Backlog |
 | T-0199 | #188 | De-duplicate AgileCockpit cache payloads and digest the launch fingerprint | Implemented - Verified |
-| T-0200 | TBD | Surface persistent execution-network readiness for GitHub-backed Airframe workspaces | Active |
+| T-0200 | TBD | Surface persistent execution-network readiness for GitHub-backed Airframe workspaces | Implemented - Verified |
+| T-0201 | TBD | Make canonical requirement imports incremental and previewable | Backlog |
+| T-0202 | TBD | Add scoped and idempotent Markdown projection export | Backlog |
+| T-0203 | TBD | Add mutation scope receipts and changed-path circuit breaker | Backlog |
+| T-0204 | TBD | Enforce active-sprint transition and completion guardrails | Backlog |
+| T-0205 | TBD | Enforce agent read budgets and token-churn operating checks | Backlog |

@@ -25,6 +25,7 @@
   "backend": {
     "kind": "github-issues",
     "location": "justgus/Airframe",
-    "requiresNetworkAccess": true
+    "requiresNetworkAccess": true,
+    "networkReadiness": "ready"
   }
 }

@@ -67,6 +67,14 @@ public struct AirframeCanonicalBackendReconciler: Sendable {
     ) -> [AirframeCanonicalDiagnostic] {
         let backendByID = Dictionary(uniqueKeysWithValues: backendRecords.map { ($0.workItem.id, $0) })
         return canonicalRecords.compactMap { canonicalRecord in
+            // GitHub work items are identified by their canonical ID in the
+            // issue body.  A legacy or malformed remote issue can claim an
+            // unrelated ID, so only reconcile records which canonical state
+            // explicitly maps to a GitHub issue.  Without that mapping there
+            // is no safe remote target for a label repair.
+            guard canonicalRecord.workItem.githubIssue != nil else {
+                return nil
+            }
             guard let backendRecord = backendByID[canonicalRecord.workItem.id] else {
                 return nil
             }
@@ -200,11 +208,10 @@ public struct AirframeCanonicalBackendRepairer: Sendable {
                 throw AirframeBackendError.missingWorkItem(id)
             }
             if let githubBackend = backend as? AirframeGitHubIssuesBackend {
-                _ = try githubBackend.updateGitHubWorkRecord(
-                    canonicalRecord,
-                    approval: approval,
-                    context: context,
-                    targetProjectID: targetProjectID
+                try githubBackend.synchronizeCanonicalLabels(
+                    for: canonicalRecord,
+                    action: repairOption.action,
+                    approval: approval
                 )
             } else {
                 try backend.updateWorkRecord(canonicalRecord)

@@ -1651,7 +1651,7 @@ import Foundation
             id: AirframeID("I-0001"),
             kind: .issue,
             title: "Dashboard status drill-down shows stray selection rectangle",
-            status: .implementedNotVerified,
+            status: .implementedVerified,
             githubIssue: 101
         ),
         severity: .medium,
@@ -2228,7 +2228,8 @@ import Foundation
             id: AirframeID("T-0091"),
             kind: .task,
             title: "Add local create command support",
-            status: .implementedVerified
+            status: .implementedVerified,
+            githubIssue: 91
         ),
         epicID: AirframeID("EP-017"),
         sprintID: AirframeID("SP-018")
@@ -2262,7 +2263,8 @@ import Foundation
             id: AirframeID("T-0092"),
             kind: .task,
             title: "Add local update command support",
-            status: .active
+            status: .active,
+            githubIssue: 92
         ),
         epicID: AirframeID("EP-017"),
         sprintID: AirframeID("SP-018")
@@ -2289,13 +2291,42 @@ import Foundation
     #expect(diagnostic?.repairOptions.first?.requiresHumanApproval == false)
 }
 
+@Test func canonicalBackendReconcilerIgnoresBackendIDCollisionWithoutCanonicalGitHubMapping() {
+    let canonicalRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("I-0027"),
+            kind: .issue,
+            title: "Canonical issue without a GitHub mapping",
+            status: .implementedVerified
+        ),
+        epicID: AirframeID("EP-024")
+    )
+    let collidingBackendRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("I-0027"),
+            kind: .issue,
+            title: "Malformed remote issue",
+            status: .backlog,
+            githubIssue: 177
+        ),
+        epicID: AirframeID("EP-025")
+    )
+
+    let diagnostics = AirframeCanonicalBackendReconciler().diagnostics(
+        canonicalRecords: [canonicalRecord],
+        backendRecords: [collidingBackendRecord]
+    )
+
+    #expect(diagnostics.isEmpty)
+}
+
 @Test func canonicalBackendRepairerAppliesGitHubBackendLabelReconciliation() throws {
     let canonicalRecord = AirframeLocalWorkRecord(
         workItem: AirframeWorkItem(
             id: AirframeID("T-0128"),
             kind: .task,
             title: "Move AgileCockpit dashboard and planning views to canonical records",
-            status: .implementedNotVerified,
+            status: .implementedVerified,
             githubIssue: 128
         ),
         epicID: AirframeID("EP-020"),
@@ -2334,11 +2365,17 @@ import Foundation
         transport: transport,
         controlledMutationsEnabled: true
     )
-    let repairOption = try #require(
+    let discoveredRepairOption = try #require(
         AirframeCanonicalBackendReconciler().diagnostics(
             canonicalRecords: [canonicalRecord],
             backendRecords: [backendRecord]
         ).first?.repairOptions.first
+    )
+    let repairOption = AirframeCanonicalRepairOption(
+        action: discoveredRepairOption.action,
+        title: discoveredRepairOption.title,
+        affectedIDs: discoveredRepairOption.affectedIDs,
+        requiresHumanApproval: false
     )
 
     let result = try AirframeCanonicalBackendRepairer().apply(
@@ -2355,13 +2392,58 @@ import Foundation
     )
 
     #expect(result.appliedCount == 1)
+    #expect(transport.statusTransitions == [
+        RecordingGitHubIssueTransport.StatusTransition(
+            issueNumber: 128,
+            removedLabels: ["status-active"],
+            addedLabel: "status-verified"
+        )
+    ])
+}
+
+@Test func canonicalBackendRelationshipRepairRewritesAirframeBodyWhenClearingRelationships() throws {
+    let canonicalRecord = AirframeLocalWorkRecord(
+        workItem: AirframeWorkItem(
+            id: AirframeID("I-0009"),
+            kind: .issue,
+            title: "Canonical issue without relationships",
+            status: .implementedVerified,
+            githubIssue: 147
+        )
+    )
+    let transport = RecordingGitHubIssueTransport(
+        issues: [
+            AirframeGitHubIssueRecord(
+                number: 147,
+                title: "[I-0009] Canonical issue without relationships",
+                labels: ["airframe-issue", "status-verified", "epic-EP-021"],
+                body: "## Airframe\n- id: I-0009\n- epic: EP-021\n- sprint: SP-032"
+            )
+        ]
+    )
+    let backend = AirframeGitHubIssuesBackend(
+        configuration: AirframeGitHubBackendConfiguration(repositorySlug: "justgus/Airframe"),
+        transport: transport,
+        controlledMutationsEnabled: true
+    )
+
+    _ = try AirframeCanonicalBackendRepairer().apply(
+        repairOption: AirframeCanonicalRepairOption(
+            action: .applyBackendRelationshipLabels,
+            title: "Repair relationships",
+            affectedIDs: [AirframeID("I-0009")],
+            requiresHumanApproval: false
+        ),
+        canonicalRecords: [canonicalRecord],
+        backend: backend,
+        approval: AirframeGitHubMutationApproval(isApproved: true, approvedBy: "Human", reason: "Repair drift"),
+        context: try certifiedContext(authorityClass: .llmAgent),
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
     #expect(transport.updatedIssues.count == 1)
-    #expect(transport.updatedIssues.first?.removedLabels.contains("status-active") == true)
-    #expect(transport.updatedIssues.first?.removedLabels.contains("epic-EP-017") == true)
-    #expect(transport.updatedIssues.first?.removedLabels.contains("sprint-SP-017") == true)
-    #expect(transport.updatedIssues.first?.addedLabels.contains("status-unverified") == true)
-    #expect(transport.updatedIssues.first?.addedLabels.contains("epic-EP-020") == true)
-    #expect(transport.updatedIssues.first?.addedLabels.contains("sprint-SP-028") == true)
+    #expect(transport.updatedIssues[0].body?.contains("- sprint: None") == true)
+    #expect(transport.updatedIssues[0].body?.contains("- epic: None") == true)
 }
 
 @Test func canonicalStateValidatorAcceptsConsistentActiveState() {
@@ -2940,6 +3022,26 @@ import Foundation
     #expect(diagnostics.backendKind == "github-fixture")
     #expect(diagnostics.backendLocation == "justgus/Airframe")
     #expect(diagnostics.issues.isEmpty)
+}
+
+@Test func configurationDiagnosticsRetainsPersistedGitHubNetworkReadiness() {
+    let configuration = AirframeWorkspaceConfiguration(
+        schemaVersion: 1,
+        workspace: AirframeWorkspace(id: AirframeID("WS-NETWORK"), name: "Network", rootPath: "."),
+        projects: [AirframeProject(id: AirframeID("PRJ-NETWORK"), name: "Network", repository: "justgus/Airframe")],
+        defaultProjectID: AirframeID("PRJ-NETWORK"),
+        backend: AirframeBackendReference(
+            kind: "github-issues",
+            location: "justgus/Airframe",
+            requiresNetworkAccess: true,
+            networkReadiness: .ready
+        )
+    )
+
+    let diagnostics = AirframeConfigurationLoader().diagnostics(for: configuration)
+
+    #expect(diagnostics.networkReadiness == .ready)
+    #expect(!diagnostics.issues.contains { $0.code == "networkReadinessUnconfirmed" })
 }
 
 @Test func runtimeConfigurationResolverLoadsExplicitLiveConfigurationAndStorePath() throws {

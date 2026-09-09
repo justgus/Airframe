@@ -1005,11 +1005,21 @@ public struct AirframeBackendReference: Codable, Equatable, Sendable {
     /// configured backend. The host owns the permission; Airframe records and
     /// reports the requirement rather than attempting to grant it.
     public let requiresNetworkAccess: Bool?
+    /// The last readiness confirmed by the workspace operator. This is an
+    /// execution-context fact, not permission escalation; it lets subsequent
+    /// launches distinguish an untested backend from a known-ready one.
+    public let networkReadiness: AirframeNetworkReadiness?
 
-    public init(kind: String, location: String, requiresNetworkAccess: Bool? = nil) {
+    public init(
+        kind: String,
+        location: String,
+        requiresNetworkAccess: Bool? = nil,
+        networkReadiness: AirframeNetworkReadiness? = nil
+    ) {
         self.kind = kind
         self.location = location
         self.requiresNetworkAccess = requiresNetworkAccess
+        self.networkReadiness = networkReadiness
     }
 
     public var networkAccessRequired: Bool {

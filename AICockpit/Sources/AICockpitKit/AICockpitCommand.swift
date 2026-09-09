@@ -2431,6 +2431,7 @@ public enum AICockpitCommand {
             projectCount: diagnostics.projectCount,
             backendKind: diagnostics.backendKind,
             backendLocation: diagnostics.backendLocation,
+            networkReadiness: diagnostics.networkReadiness,
             issues: issues
         )
     }

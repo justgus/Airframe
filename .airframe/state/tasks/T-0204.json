@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "Review transition is rejected unless the Sprint is Active and every assigned task is eligible.",
+    "Status responses disclose the sole active Sprint and whether it changed.",
+    "Agent paths cannot close or verify a Sprint."
+  ],
+  "component" : "",
+  "componentsAffected" : [
+    "Harden Sprint state transitions so active context and task readiness are verified rather than inferred."
+  ],
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-08T20:58:57Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-047"
+  },
+  "testSteps" : [
+    "Transition-matrix regression tests and active-context tests."
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0204"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Enforce active-sprint transition and completion guardrails"
+  }
+}
