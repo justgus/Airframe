@@ -3494,8 +3494,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
         }
         if let issue = canonicalSnapshot.issues.first(where: { $0.workItem.id == id }) {
             let parts = [
-                section("Observed Behavior", issue.observedBehavior ?? ""),
-                section("Expected Behavior", issue.expectedBehavior ?? "")
+                section("Observed Behavior", issue.observedBehavior),
+                section("Expected Behavior", issue.expectedBehavior)
             ].compactMap { $0 }
             return parts.isEmpty ? nil : parts.joined(separator: "\n\n")
         }

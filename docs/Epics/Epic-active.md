@@ -26,7 +26,7 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | SP-042 | Retire the mutable Legacy Issue and Task current-state files and reconcile the remaining Legacy links, archives, and compatibility policy, so canonical state is the single source for current work status. | Closed |
 | SP-044 | Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit. | Closed |
 | SP-043 | Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end. | Closed |
-| SP-045 | Reduce agent token consumption by adding granular read primitives to AICockpit, so that answering a question about one record does not require loading the corpus. | Backlog |
+| SP-045 | Reduce agent token consumption by adding granular read primitives to AICockpit, so that answering a question about one record does not require loading the corpus. | Closed |
 | SP-046 | Reduce AICockpit token churn while preserving canonical-first artifact management, relationship integrity, and human approval boundaries. | Planning |
 | SP-047 |  | Planning |
 
