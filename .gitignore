@@ -21,6 +21,9 @@ demos/LiveDemo/DerivedData/
 demos/LiveDemo/bin/aicockpit
 demos/LiveDemo/Applications/
 
+# Generated Agile tracking projections
+docs/generated/
+
 # Xcode user-local state
 *.xcuserstate
 *.xcscmblueprint
