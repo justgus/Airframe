@@ -3845,6 +3845,24 @@ import Foundation
     #expect(decision == .allowed(branch: "review/operator-choice"))
 }
 
+@Test func workspaceMutationGuardRoutesDirtyWorktreeWhenGitCanPreserveIt() {
+    let guardrail = AirframeWorkspaceMutationGuard(protectedBranches: ["main", "master"]) { arguments, _ in
+        switch arguments {
+        case ["branch", "--list", "review/SP-044"]: return ""
+        case ["switch", "-c", "review/SP-044"]: return ""
+        default: throw AirframeBackendError.githubAccessFailed("unexpected git command")
+        }
+    }
+
+    let decision = guardrail.route(
+        rootURL: URL(fileURLWithPath: "/workspace"),
+        to: "review/SP-044",
+        createIfMissing: true
+    )
+
+    #expect(decision == .allowed(branch: "review/SP-044"))
+}
+
 @Test func workspaceMutationGuardNormalizesWhitespaceInReviewBranchNames() {
     #expect(AirframeWorkspaceMutationGuard.normalizedBranchName(" SP-043 Review ") == "SP-043-Review")
     #expect(AirframeWorkspaceMutationGuard.normalizedBranchName("review\tSP-043") == "review-SP-043")

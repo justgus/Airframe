@@ -14,7 +14,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-07T19:34:33Z"
+    "updatedAt" : "2026-09-09T21:58:38Z"
   },
   "notes" : [
     "Scope driven by measured read amplification: task list ~10,200 tokens for 189 records; requirements have no single-record read at all.",
@@ -36,7 +36,7 @@
       "rawValue" : "SP-045"
     },
     "kind" : "sprint",
-    "status" : "closed",
+    "status" : "planning",
     "title" : "Performance Improvement and Resource Reduction"
   }
 }

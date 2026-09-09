@@ -1,0 +1,28 @@
+{
+  "artifactReferences" : [
+    "AirframeCore\/Sources\/AirframeCore\/WorkspaceMutationGuard.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AirframeCore --filter workspaceMutationGuard; xcodebuild -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -sdk macosx -only-testing:AgileCockpitTests\/agileCockpitClosesSprintToReviewWhenAssignedTasksAndIssuesAreVerified test",
+  "environment" : "macOS; Xcode-beta",
+  "id" : {
+    "rawValue" : "EV-0038-002"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Dirty-worktree review-branch routing guard tests and focused Sprint-to-Review test passed.",
+  "workItemIDs" : [
+
+  ]
+}

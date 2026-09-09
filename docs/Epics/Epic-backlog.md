@@ -2,10 +2,16 @@
 
 Epics listed here are proposed and queued for future planning.
 
-Currently: **0 backlog Epics**
+Currently: **1 backlog Epic**
 
 ---
 
-No Epics are currently in Backlog.
+## EP-027: Human Work Lifecycle and Git Workspace Control
+
+**Status:** Proposed
+**Owner:** 
+
+**Goal:**
+
 
 *Last Updated: 2026-09-09*

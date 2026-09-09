@@ -83,9 +83,9 @@ public struct AirframeWorkspaceMutationGuard: Sendable {
         }
     }
 
-    /// Routes only after the operator has supplied a destination. A dirty tree
-    /// is deliberately left in place rather than relying on Git to decide
-    /// whether a switch happens to be safe.
+    /// Routes only after the operator has supplied a destination. Uncommitted
+    /// work is preserved; Git rejects a switch if the destination would make
+    /// that preservation unsafe.
     public func route(
         rootURL: URL?,
         to branch: String,
@@ -99,12 +99,6 @@ public struct AirframeWorkspaceMutationGuard: Sendable {
             return .unavailable("workspace root is not configured")
         }
         do {
-            let status = try run(["status", "--porcelain"], rootURL)
-            guard status.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                let current = try run(["branch", "--show-current"], rootURL)
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
-                return .requiresReviewBranch(currentBranch: current, isDirty: true)
-            }
             let listed = try run(["branch", "--list", destination], rootURL)
             if listed.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 guard createIfMissing else {

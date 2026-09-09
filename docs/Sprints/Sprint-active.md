@@ -4,29 +4,6 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-044: Canonical Evidence Management and Review
-
-**Status:** Planning
-**Epic:** EP-025
-**Goal:** Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0185 | Implement canonical evidence repository operations | Medium | Backlog |
-| T-0186 | Add native AICockpit evidence commands | Medium | Backlog |
-| T-0187 | Add AgileCockpit evidence review interface | Medium | Backlog |
-| T-0188 | Diagnose and migrate evidence relationship integrity | Medium | Backlog |
-| T-0189 | Verify native evidence workflow and retire fallback | Medium | Backlog |
-
-### Assigned Issues
-
-None.
-
 ## SP-046: Reduce AICockpit token churn
 
 **Status:** Planning

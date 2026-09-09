@@ -1,0 +1,28 @@
+{
+  "artifactReferences" : [
+    "AgileCockpit\/AgileCockpit\/ContentView.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "xcodebuild -project AgileCockpit\/AgileCockpit.xcodeproj -scheme AgileCockpit -sdk macosx -only-testing:AgileCockpitTests\/agileCockpitClosesSprintToReviewWhenAssignedTasksAndIssuesAreVerified test",
+  "environment" : "macOS; Xcode-beta",
+  "id" : {
+    "rawValue" : "EV-0038-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Focused AgileCockpit close-to-Review test passed after canonical persistence verification was added.",
+  "workItemIDs" : [
+
+  ]
+}

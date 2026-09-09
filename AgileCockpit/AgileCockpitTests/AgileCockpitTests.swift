@@ -1504,7 +1504,7 @@ import Foundation
     #expect(sprintRecord?.workItem.status == .review)
     #expect(model.activeSprintRecord?.workItem.status == .review)
     #expect(model.auditRows.last?.action == "OP-HUMAN-REVIEW-SPRINT")
-    #expect(model.statusMessage == "Sprint SP-022 close accepted: moved to Review.")
+    #expect(model.statusMessage == "Sprint SP-022 close accepted: persisted as Review.")
 }
 
 @MainActor

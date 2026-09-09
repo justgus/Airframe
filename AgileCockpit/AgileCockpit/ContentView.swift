@@ -1448,13 +1448,15 @@ final class AgileCockpitDashboardModel: ObservableObject {
 
     /// Canonical lifecycle actions are writes. Keep them off a protected branch
     /// so the user can deliberately route the review to its intended branch.
-    private func permitCanonicalMutation() -> Bool {
+    /// Returns the branch on which a canonical mutation is permitted.  Keeping
+    /// the routed branch available lets a failed write distinguish a routing
+    /// success from a persisted canonical-state success.
+    private func permitCanonicalMutation() -> String? {
         let guardrail = AirframeWorkspaceMutationGuard()
         let initialDecision = guardrail.evaluate(rootURL: artifactRootURL)
         let decision: AirframeWorkspaceMutationGuard.Decision
-        if case .requiresReviewBranch(_, let isDirty) = initialDecision,
-           !reviewBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-           !isDirty {
+        if case .requiresReviewBranch = initialDecision,
+           !reviewBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             decision = guardrail.route(
                 rootURL: artifactRootURL,
                 to: reviewBranchName,
@@ -1466,12 +1468,13 @@ final class AgileCockpitDashboardModel: ObservableObject {
         guard decision.isAllowed else {
             statusMessage = decision.message
             reviewBranchStatus = decision.message
-            return false
+            return nil
         }
         if case .allowed(let branch) = decision {
             reviewBranchStatus = "Canonical mutation routed to review branch \(branch)."
+            return branch
         }
-        return true
+        return nil
     }
 
     private func decideSelectedPlan(_ outcome: AirframeCanonicalPlanDecisionState) {
@@ -1483,7 +1486,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "Plan decisions require canonical Airframe state."
             return
         }
-        guard permitCanonicalMutation() else { return }
+        guard permitCanonicalMutation() != nil else { return }
         let note = planDecisionCommentText.trimmingCharacters(in: .whitespacesAndNewlines)
         do {
             let result = try AirframePlanReviewService().decide(
@@ -1533,7 +1536,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Epic criteria verification requires canonical Airframe state."
                 return
             }
-            guard permitCanonicalMutation() else { return }
+            guard permitCanonicalMutation() != nil else { return }
             suppressFileRefreshUntil = Date().addingTimeInterval(2)
             try canonicalRepository.verifyEpicCriterion(id: criterion.id)
             auditStore.record(
@@ -1570,18 +1573,28 @@ final class AgileCockpitDashboardModel: ObservableObject {
             statusMessage = "Sprint \(activeSprintID.rawValue) cannot close: \(eligibility.eligibility.blockingReasons.joined(separator: " "))"
             return
         }
+        var mutationBranch: String?
         do {
             guard let canonicalRepository else {
                 statusMessage = "Sprint close requires canonical Airframe state."
                 return
             }
-            guard permitCanonicalMutation() else { return }
+            mutationBranch = permitCanonicalMutation()
+            guard mutationBranch != nil else { return }
             switch activeSprintRecord.workItem.status {
             case .active:
                 try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .review)
+                guard try canonicalRepository.snapshot(project: context.project)
+                    .sprints
+                    .first(where: { $0.workItem.id == activeSprintID })?
+                    .workItem.status == .review else {
+                    throw AirframeBackendError.unwritableStore(
+                        "Sprint \(activeSprintID.rawValue) did not persist as Review after branch routing."
+                    )
+                }
                 recordCloseAudit(action: "OP-HUMAN-REVIEW-SPRINT", workItemID: activeSprintID)
                 try reload(selecting: selectedWorkItemID)
-                statusMessage = "Sprint \(activeSprintID.rawValue) close accepted: moved to Review."
+                statusMessage = "Sprint \(activeSprintID.rawValue) close accepted: persisted as Review."
             case .review:
                 try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .closed)
                 try canonicalRepository.clearActiveSprintID(projectID: context.project.id)
@@ -1593,7 +1606,8 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Sprint \(activeSprintID.rawValue) cannot close from \(activeSprintRecord.workItem.status.description)."
             }
         } catch {
-            statusMessage = "Sprint close failed: \(error)"
+            let branch = mutationBranch ?? "the selected review branch"
+            statusMessage = "Sprint close failed after routing to \(branch); canonical state remains unchanged: \(error)"
         }
     }
 
@@ -1612,7 +1626,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Returning a Review Sprint to Backlog requires canonical Airframe state."
                 return
             }
-            guard permitCanonicalMutation() else { return }
+            guard permitCanonicalMutation() != nil else { return }
             try canonicalRepository.transitionWorkItem(id: sprintID, to: .backlog)
             try synchronizeMarkdownProjections()
             recordCloseAudit(action: "OP-RETURN-SPRINT-TO-BACKLOG", workItemID: sprintID)
@@ -1642,7 +1656,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Returning an Active Sprint to Backlog requires canonical Airframe state."
                 return
             }
-            guard permitCanonicalMutation() else { return }
+            guard permitCanonicalMutation() != nil else { return }
             try canonicalRepository.transitionWorkItem(id: activeSprintID, to: .backlog)
             try canonicalRepository.clearActiveSprintID(projectID: context.project.id)
             try synchronizeMarkdownProjections()
@@ -1672,7 +1686,7 @@ final class AgileCockpitDashboardModel: ObservableObject {
                 statusMessage = "Epic close requires canonical Airframe state."
                 return
             }
-            guard permitCanonicalMutation() else { return }
+            guard permitCanonicalMutation() != nil else { return }
             try canonicalRepository.transitionWorkItem(id: activeEpicID, to: .closed)
             try canonicalRepository.clearActiveEpicID(projectID: context.project.id)
             try synchronizeMarkdownProjections()

@@ -1,0 +1,41 @@
+{
+  "affectedComponents" : [
+    "AgileCockpit"
+  ],
+  "dateResolved" : "2026-09-09",
+  "dateVerified" : "2026-09-09",
+  "epicID" : {
+    "rawValue" : "EP-025"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "expectedBehavior" : "A successful Close Sprint action must persist SP-044 Review state after routing, or report a clear transition failure.",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-09T21:48:40Z"
+  },
+  "notes" : [
+    "Follow-up fix: a dirty worktree no longer prevents requested review-branch routing. Git preserves changes or rejects unsafe switching. Evidence: EV-0038-001, EV-0038-002. Files: AirframeCore\/Sources\/AirframeCore\/WorkspaceMutationGuard.swift; AirframeCore\/Tests\/AirframeCoreTests\/AirframeCoreTests.swift; AgileCockpit\/AgileCockpit\/ContentView.swift."
+  ],
+  "observedBehavior" : "Close Sprint can create or switch to a requested review branch while SP-044 remains Active in canonical state.",
+  "reproductionSteps" : [
+
+  ],
+  "severity" : "medium",
+  "sprintID" : {
+    "rawValue" : "SP-044"
+  },
+  "workItem" : {
+    "id" : {
+      "rawValue" : "I-0038"
+    },
+    "kind" : "issue",
+    "status" : "implementedVerified",
+    "title" : "Sprint close can create a review branch without persisting the canonical transition"
+  }
+}
