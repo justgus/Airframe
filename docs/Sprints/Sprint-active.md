@@ -4,30 +4,6 @@ Sprints listed here are currently in Planning or Active status and are the curre
 
 ---
 
-## SP-043: GitHub Integration, Reconciliation, and Safe Workspace Mutations
-
-**Status:** Planning
-**Epic:** EP-025
-**Goal:** Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end.
-**Start Date:** TBD
-**End Date:** TBD
-**Capacity:** TBD
-
-### Assigned Tasks
-
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| T-0181 | Implement complete GitHub pagination and disclosure | High | Backlog |
-| T-0182 | Implement canonical-to-GitHub reconciliation | High | Backlog |
-| T-0183 | Implement branch-aware AgileCockpit mutations | High | Backlog |
-| T-0184 | Complete integrated audit remediation verification | High | Backlog |
-
-### Assigned Issues
-
-| Issue | Title | Severity | Status |
-| ----- | ----- | -------- | ------ |
-| I-0031 | AgileCockpit should support branch-based workspace mutations | Medium | Backlog |
-
 ## SP-044: Canonical Evidence Management and Review
 
 **Status:** Planning
@@ -76,4 +52,27 @@ None.
 
 None.
 
-*Last Updated: 2026-09-08*
+## SP-047: Token-Churn Incident Prevention
+
+**Status:** Planning
+**Epic:** EP-025
+**Goal:** 
+**Start Date:** TBD
+**End Date:** TBD
+**Capacity:** TBD
+
+### Assigned Tasks
+
+| Task | Title | Priority | Status |
+| ---- | ----- | -------- | ------ |
+| T-0201 | Make canonical requirement imports incremental and previewable | Medium | Backlog |
+| T-0202 | Add scoped and idempotent Markdown projection export | Medium | Backlog |
+| T-0203 | Add mutation scope receipts and changed-path circuit breaker | Medium | Backlog |
+| T-0204 | Enforce active-sprint transition and completion guardrails | Medium | Backlog |
+| T-0205 | Enforce agent read budgets and token-churn operating checks | Medium | Backlog |
+
+### Assigned Issues
+
+None.
+
+*Last Updated: 2026-09-09*

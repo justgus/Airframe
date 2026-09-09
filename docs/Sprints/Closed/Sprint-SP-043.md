@@ -1,6 +1,6 @@
 # SP-043: GitHub Integration, Reconciliation, and Safe Workspace Mutations
 
-**Status:** Active
+**Status:** Closed
 **Epic:** EP-025
 **Goal:** Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end.
 **Start Date:** TBD
@@ -11,15 +11,15 @@
 
 | Task | Status |
 | ---- | ---- |
-| T-0181 | Implemented - Verified |
-| T-0182 | Implemented - Verified |
-| T-0183 | Implemented - Verified |
-| T-0184 | Implemented - Verified |
-| T-0200 | Implemented - Verified |
+| T-0181 |  |
+| T-0182 |  |
+| T-0183 |  |
+| T-0184 |  |
+| T-0200 |  |
 
 ### Assigned Issues
 
 | Issue | Status |
 | ---- | ---- |
-| I-0031 | Resolved - Verified |
-| I-0036 | Resolved - Verified |
+| I-0031 |  |
+| I-0036 |  |

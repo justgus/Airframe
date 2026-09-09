@@ -43,6 +43,9 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
             humanVerificationTransition(kind: .task),
             taskTransition(.implementedVerified, .closed, "OP-CLOSE-TASK"),
             taskTransition(.active, .backlog, "OP-RETURN-TASK-TO-BACKLOG"),
+            taskTransition(.implementedNotVerified, .active, "OP-REOPEN-TASK"),
+            taskTransition(.implementedVerified, .active, "OP-REOPEN-TASK"),
+            taskTransition(.closed, .active, "OP-REOPEN-TASK"),
 
             issueTransition(.backlog, .active, "OP-ACTIVATE-ISSUE"),
             issueTransition(.active, .implementedNotVerified, "OP-RESOLVE-ISSUE"),
@@ -51,6 +54,8 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
             issueTransition(.active, .backlog, "OP-RETURN-ISSUE-TO-BACKLOG"),
             issueTransition(.implementedNotVerified, .active, "OP-RETURN-ISSUE-TO-ACTIVE"),
             issueTransition(.implementedNotVerified, .backlog, "OP-RETURN-ISSUE-TO-BACKLOG"),
+            issueTransition(.implementedVerified, .active, "OP-REOPEN-ISSUE"),
+            issueTransition(.closed, .active, "OP-REOPEN-ISSUE"),
 
             sprintTransition(.backlog, .planning, "OP-PLAN-SPRINT"),
             sprintTransition(.planning, .active, "OP-ACTIVATE-SPRINT"),
@@ -58,6 +63,8 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
             sprintCloseTransition(),
             sprintReturnToBacklogTransition(from: .active),
             sprintReturnToBacklogTransition(from: .review),
+            sprintTransition(.review, .active, "OP-REOPEN-SPRINT"),
+            sprintTransition(.closed, .active, "OP-REOPEN-SPRINT"),
 
             epicTransition(.proposed, .draft, "OP-DRAFT-EPIC"),
             epicTransition(.draft, .backlog, "OP-BACKLOG-EPIC"),
@@ -65,7 +72,9 @@ public struct AirframeCanonicalWorkflowPolicyCatalog: Codable, Equatable, Sendab
             epicTransition(.active, .complete, "OP-COMPLETE-EPIC"),
             epicCloseTransition(),
             epicTransition(.active, .backlog, "OP-RETURN-EPIC-TO-BACKLOG"),
-            epicTransition(.complete, .backlog, "OP-RETURN-COMPLETE-EPIC-TO-BACKLOG")
+            epicTransition(.complete, .backlog, "OP-RETURN-COMPLETE-EPIC-TO-BACKLOG"),
+            epicTransition(.complete, .active, "OP-REOPEN-EPIC"),
+            epicTransition(.closed, .active, "OP-REOPEN-EPIC")
         ]
 
         return AirframeCanonicalWorkflowPolicyCatalog(

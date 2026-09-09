@@ -83,56 +83,10 @@ public struct AirframeWorkflowTransitionEvaluator: Sendable {
         from: AirframeWorkStatus,
         to: AirframeWorkStatus
     ) -> Bool {
-        switch kind {
-        case .task:
-            switch (from, to) {
-            case (.backlog, .active),
-                 (.active, .implementedNotVerified),
-                 (.implementedNotVerified, .implementedVerified),
-                 (.implementedVerified, .closed),
-                 (.active, .backlog):
-                true
-            default:
-                false
-            }
-        case .issue:
-            switch (from, to) {
-            case (.backlog, .active),
-                 (.active, .implementedNotVerified),
-                 (.implementedNotVerified, .implementedVerified),
-                 (.implementedVerified, .closed),
-                 (.active, .backlog),
-                 (.implementedNotVerified, .active),
-                 (.implementedNotVerified, .backlog):
-                true
-            default:
-                false
-            }
-        case .sprint:
-            switch (from, to) {
-            case (.backlog, .planning),
-                 (.planning, .active),
-                 (.active, .review),
-                 (.active, .backlog),
-                 (.review, .closed),
-                 (.review, .backlog):
-                true
-            default:
-                false
-            }
-        case .epic:
-            switch (from, to) {
-            case (.proposed, .draft),
-                 (.draft, .backlog),
-                 (.backlog, .active),
-                 (.active, .complete),
-                 (.complete, .closed),
-                 (.active, .backlog),
-                 (.complete, .backlog):
-                true
-            default:
-                false
-            }
-        }
+        AirframeCanonicalWorkflowPolicyCatalog.airframeDefault.transition(
+            for: kind,
+            from: from,
+            to: to
+        ) != nil
     }
 }

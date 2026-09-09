@@ -1889,6 +1889,47 @@ import Foundation
     })
 }
 
+@Test func canonicalWorkflowPolicyAllowsReopeningPostActiveWorkAndReturningActiveWorkToBacklog() {
+    let catalog = AirframeCanonicalWorkflowPolicyCatalog.airframeDefault
+    let reopenCases: [(AirframeWorkItemKind, AirframeWorkStatus)] = [
+        (.task, .implementedNotVerified),
+        (.task, .implementedVerified),
+        (.task, .closed),
+        (.issue, .implementedNotVerified),
+        (.issue, .implementedVerified),
+        (.issue, .closed),
+        (.sprint, .review),
+        (.sprint, .closed),
+        (.epic, .complete),
+        (.epic, .closed)
+    ]
+
+    for (kind, status) in reopenCases {
+        #expect(catalog.transition(for: kind, from: status, to: .active) != nil)
+    }
+    for kind in [AirframeWorkItemKind.task, .issue, .sprint, .epic] {
+        #expect(catalog.transition(for: kind, from: .active, to: .backlog) != nil)
+    }
+}
+
+@Test func workflowEvaluatorUsesCanonicalPolicyForReopenTransitions() throws {
+    let transition = AirframeWorkflowTransition(
+        workItemID: AirframeID("SP-0043"),
+        kind: .sprint,
+        fromStatus: .closed,
+        toStatus: .active,
+        operation: AirframeOperation(id: AirframeID("OP-REOPEN-SPRINT"), category: .workflowTransition)
+    )
+
+    let decision = AirframeWorkflowTransitionEvaluator().evaluate(
+        context: try certifiedContext(authorityClass: .llmAgent),
+        transition: transition,
+        targetProjectID: AirframeID("PRJ-AIRFRAME")
+    )
+
+    #expect(decision == .allowed)
+}
+
 @Test func canonicalWorkflowPolicyCatalogProtectsHumanOnlyTransitions() throws {
     let catalog = AirframeCanonicalWorkflowPolicyCatalog.airframeDefault
     let taskVerify = try #require(
@@ -3773,6 +3814,11 @@ import Foundation
     )
 
     #expect(decision == .allowed(branch: "review/operator-choice"))
+}
+
+@Test func workspaceMutationGuardNormalizesWhitespaceInReviewBranchNames() {
+    #expect(AirframeWorkspaceMutationGuard.normalizedBranchName(" SP-043 Review ") == "SP-043-Review")
+    #expect(AirframeWorkspaceMutationGuard.normalizedBranchName("review\tSP-043") == "review-SP-043")
 }
 
 @Test func githubIssuesBackendRequiresApprovalBeforeControlledCommentWrites() throws {

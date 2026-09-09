@@ -4554,10 +4554,16 @@ struct ContentView: View {
                     .font(.subheadline)
                 TextField("Review branch name", text: $model.reviewBranchName)
                     .textFieldStyle(.roundedBorder)
+                    .onChange(of: model.reviewBranchName) { _, name in
+                        let normalized = AirframeWorkspaceMutationGuard.normalizedBranchName(name)
+                        if normalized != name {
+                            model.reviewBranchName = normalized
+                        }
+                    }
                     .accessibilityIdentifier("agile-cockpit-review-branch-name")
                 Toggle("Create branch if it does not exist", isOn: $model.createReviewBranchIfMissing)
                     .accessibilityIdentifier("agile-cockpit-create-review-branch")
-                Text("Required before a canonical write on a protected branch. Existing worktree changes are never switched or discarded.")
+                Text("Spaces are converted to hyphens. Required before a canonical write on a protected branch. Existing worktree changes are never switched or discarded.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if let status = model.reviewBranchStatus {

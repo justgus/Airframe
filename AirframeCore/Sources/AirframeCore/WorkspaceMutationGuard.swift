@@ -44,6 +44,15 @@ public struct AirframeWorkspaceMutationGuard: Sendable {
         self.run = run
     }
 
+    /// Git branch names cannot contain whitespace. Keep operator-entered
+    /// labels readable while normalizing whitespace runs to a single hyphen.
+    public static func normalizedBranchName(_ branch: String) -> String {
+        branch
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: "-")
+    }
+
     public func evaluate(rootURL: URL?) -> Decision {
         guard let rootURL else {
             return .unavailable("workspace root is not configured")
@@ -82,7 +91,7 @@ public struct AirframeWorkspaceMutationGuard: Sendable {
         to branch: String,
         createIfMissing: Bool
     ) -> Decision {
-        let destination = branch.trimmingCharacters(in: .whitespacesAndNewlines)
+        let destination = Self.normalizedBranchName(branch)
         guard !destination.isEmpty else {
             return .unavailable("a review branch name is required")
         }
