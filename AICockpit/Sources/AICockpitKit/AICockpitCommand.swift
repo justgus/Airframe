@@ -36,15 +36,41 @@ public enum AICockpitCommand {
         arguments: [String],
         refreshNotifier: any AICockpitRefreshNotifying
     ) -> AICockpitCommandResult {
+        let options = AICockpitArguments(arguments)
+        let compact = options.value(for: "--compact") == "true"
+        let sections = options.value(for: "--sections")
+        if compact || sections != nil {
+            if let sections {
+                let allowed = Set(["workItem", "links", "workItems", "objective", "scope", "acceptanceCriteria", "constraints", "evidenceRequirements", "protectedPaths", "reportFormat", "diagnostics", "existingEvidence"])
+                let requested = sections.split(separator: ",").map(String.init)
+                guard !requested.isEmpty, Set(requested).isSubset(of: allowed),
+                      options.positionals.contains("inspect") || options.positionals.contains("packet") else {
+                    return errorResult(exitCode: 64, code: "invalidSections", message: "--sections requires inspect or packet and valid section names", outputFormat: .json)
+                }
+            }
+            let result = executeResponse(arguments: arguments + ["--output", "json"], refreshNotifier: refreshNotifier)
+            return AICockpitOutputProjection.project(result, compact: compact, sections: sections, markdown: options.value(for: "--output") != "json")
+        }
+        return executeResponse(arguments: arguments, refreshNotifier: refreshNotifier)
+    }
+
+    private static func executeResponse(arguments: [String], refreshNotifier: any AICockpitRefreshNotifying) -> AICockpitCommandResult {
         let parsed = AICockpitArguments(arguments)
         let outputFormat = parsed.value(for: "--output").flatMap(AICockpitOutputFormat.init(rawValue:)) ?? .markdown
 
         if arguments.isEmpty || arguments.contains("--help") || arguments.contains("-h") {
-            return AICockpitCommandResult(exitCode: 0, standardOutput: helpText())
+            return AICockpitCommandResult(exitCode: 0, standardOutput: AICockpitDiscovery.help(parsed.positionals.filter { $0 != "-h" }))
         }
 
         if arguments == ["version"] || arguments == ["--version"] {
             return AICockpitCommandResult(exitCode: 0, standardOutput: AirframeCoreInfo.current.summary)
+        }
+
+        if parsed.positionals == ["schema"] {
+            return AICockpitCommandResult(
+                exitCode: 0,
+                standardOutput: AICockpitDiscovery.schema(command: parsed.value(for: "--command"))
+            )
         }
 
         if parsed.positionals == ["context"] {
@@ -123,14 +149,23 @@ public enum AICockpitCommand {
                     canonicalRecords: canonicalRecords,
                     backendRecords: backend.listWorkRecords()
                 )
+                let requestedID = parsed.value(for: "--id")
+                if let requestedID, !canonicalRecords.contains(where: { $0.workItem.id.rawValue == requestedID }) {
+                    throw AirframeBackendError.missingWorkItem(AirframeID(requestedID))
+                }
                 let diagnostics = AirframeCanonicalDiagnostics(
-                    diagnostics: stateDiagnostics.diagnostics + reconciliationDiagnostics
+                    diagnostics: (stateDiagnostics.diagnostics + reconciliationDiagnostics).filter {
+                        guard let requestedID else { return true }
+                        return $0.affectedIDs.contains(AirframeID(requestedID))
+                    }
                 )
                 return try render(
                     AICockpitCommandEnvelope(
                         status: diagnostics.isValid ? "ok" : "error",
                         kind: "canonicalStateDiagnostics",
-                        message: diagnostics.isValid ? "Canonical state diagnostics passed" : "Canonical state diagnostics found issues",
+                        message: diagnostics.isValid
+                            ? "Canonical state diagnostics passed\(requestedID.map { " for \($0)" } ?? "")"
+                            : "Canonical state diagnostics found issues\(requestedID.map { " for \($0)" } ?? "")",
                         backendCapabilities: backend.capabilities,
                         workItem: nil,
                         taskPacket: nil,
@@ -695,6 +730,9 @@ public enum AICockpitCommand {
                 let repository = try canonicalTestRepository(parsed: parsed)
                 let context = try parsed.canonicalAwareProjectContext()
                 let plan = try buildPlanRecord(parsed: parsed, projectContext: context)
+                guard try repository.store.load(AirframeCanonicalImplementationPlanRecord.self, id: plan.id) == nil else {
+                    throw AirframeBackendError.duplicateWorkItem(plan.id)
+                }
                 try repository.store.save(plan)
                 return AICockpitCommandResult(
                     exitCode: 0,
@@ -727,6 +765,20 @@ public enum AICockpitCommand {
                     message: "\(error)",
                     outputFormat: outputFormat
                 )
+            }
+        }
+
+        if parsed.positionals.count == 3, parsed.positionals.prefix(2) == ["plans", "materialize"] {
+            do {
+                try assertLLMAllowed(parsed: parsed, operationID: "OP-MATERIALIZE-PLAN", category: .proposal)
+                let repository = try canonicalTestRepository(parsed: parsed)
+                let ids = try repository.materializePlan(AirframeID(parsed.positionals[2]))
+                refreshNotifier.postRefresh()
+                let receipt: [String: Any] = ["status": "ok", "kind": "canonicalPlanMaterialization", "createdIDs": ids.map(\.rawValue)]
+                let data = try JSONSerialization.data(withJSONObject: receipt, options: [.sortedKeys])
+                return AICockpitCommandResult(exitCode: 0, standardOutput: String(decoding: data, as: UTF8.self))
+            } catch {
+                return errorResult(exitCode: 65, code: "planMaterializationFailed", message: String(describing: error), outputFormat: outputFormat)
             }
         }
 
@@ -2227,6 +2279,11 @@ public enum AICockpitCommand {
         """
     }
 
+    /// Bounded help keeps routine agent discovery to the command being used.
+    public static func helpText(for positionals: [String]) -> String {
+        AICockpitDiscovery.help(positionals)
+    }
+
     public static func contextText(for context: AirframeProjectContext) -> String {
         """
         Airframe Context
@@ -2897,7 +2954,10 @@ public enum AICockpitCommand {
             commands: parsed.repeatedValues(for: "--command"),
             externalEffects: parsed.repeatedValues(for: "--external-effect"),
             verificationCriteria: parsed.repeatedValues(for: "--verification"),
-            notes: parsed.repeatedValues(for: "--note")
+            notes: parsed.repeatedValues(for: "--note"),
+            proposedWork: try parsed.value(for: "--structure").map {
+                try AirframeCanonicalJSONStore.makeDecoder().decode([AirframeLocalWorkRecord].self, from: Data(contentsOf: URL(filePath: $0)))
+            }
         )
     }
 
@@ -3064,6 +3124,7 @@ public enum AICockpitCommand {
         )
         try validateID(id, for: kind)
         let repository = try canonicalTestRepository(parsed: parsed)
+        try repository.store.transaction {
         switch kind {
         case .task:
             guard let task = try repository.store.load(AirframeCanonicalTaskRecord.self, id: id) else {
@@ -3158,6 +3219,46 @@ public enum AICockpitCommand {
                 )
             )
         }
+        // The command above updates the requested record. Reconcile every affected
+        // reverse edge before returning so a successful link receipt never leaves
+        // canonical relationship diagnostics behind.
+        switch kind {
+        case .task:
+            guard let task = try repository.store.load(AirframeCanonicalTaskRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            try repository.reconcileEpicTaskLinks(epicID: task.epicID, taskID: id)
+            try repository.reconcileSprintTaskLinks(sprintID: task.sprintID, taskID: id)
+        case .issue:
+            guard let issue = try repository.store.load(AirframeCanonicalIssueRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            try repository.reconcileEpicIssueLinks(epicID: issue.epicID, issueID: id)
+            try repository.reconcileSprintIssueLinks(sprintID: issue.sprintID, issueID: id)
+        case .sprint:
+            guard let sprint = try repository.store.load(AirframeCanonicalSprintRecord.self, id: id) else {
+                throw AirframeBackendError.missingWorkItem(id)
+            }
+            if let epicID = sprint.epicID {
+                try repository.reconcileEpicSprintLinks(epicID: epicID, sprintID: id)
+            }
+            for taskID in parsed.repeatedValues(for: "--task").map(AirframeID.init) {
+                try repository.reconcileSprintTaskLinks(sprintID: id, taskID: taskID)
+            }
+            for issueID in parsed.repeatedValues(for: "--issue").map(AirframeID.init) {
+                try repository.reconcileSprintIssueLinks(sprintID: id, issueID: issueID)
+            }
+        case .epic:
+            for sprintID in parsed.repeatedValues(for: "--sprint").map(AirframeID.init) {
+                try repository.reconcileEpicSprintLinks(epicID: id, sprintID: sprintID)
+            }
+            for taskID in parsed.repeatedValues(for: "--task").map(AirframeID.init) {
+                try repository.reconcileEpicTaskLinks(epicID: id, taskID: taskID)
+            }
+            for issueID in parsed.repeatedValues(for: "--issue").map(AirframeID.init) {
+                try repository.reconcileEpicIssueLinks(epicID: id, issueID: issueID)
+            }
+        }
         for testID in parsed.repeatedValues(for: "--test").map(AirframeID.init) {
             guard let test = try repository.store.load(AirframeCanonicalTestRecord.self, id: testID) else {
                 throw AICockpitCommandError.invalidArguments("missing test \(testID.rawValue)")
@@ -3181,6 +3282,7 @@ public enum AICockpitCommand {
                     metadata: test.metadata
                 )
             )
+        }
         }
     }
 
@@ -3591,7 +3693,10 @@ private struct AICockpitArguments {
         while index < arguments.count {
             let argument = arguments[index]
             if argument.hasPrefix("--") {
-                if index + 1 < arguments.count && !arguments[index + 1].hasPrefix("--") {
+                if ["--compact", "--help", "--apply", "--dry-run", "--approve", "--ids-only"].contains(argument) {
+                    options[argument, default: []].append("true")
+                    index += 1
+                } else if index + 1 < arguments.count && !arguments[index + 1].hasPrefix("--") {
                     options[argument, default: []].append(arguments[index + 1])
                     index += 2
                 } else {

@@ -679,6 +679,7 @@ extension AirframeCanonicalPlanDecisionState: CustomStringConvertible {
 }
 
 public struct AirframeCanonicalImplementationPlanRecord: Codable, Equatable, Sendable {
+    public let proposedWork: [AirframeLocalWorkRecord]?
     public let metadata: AirframeCanonicalRecordMetadata
     public let id: AirframeID
     public let title: String
@@ -714,9 +715,11 @@ public struct AirframeCanonicalImplementationPlanRecord: Codable, Equatable, Sen
         auditEventIDs: [AirframeID] = [],
         evidenceIDs: [AirframeID] = [],
         notes: [String] = [],
+        proposedWork: [AirframeLocalWorkRecord]? = nil,
         metadata: AirframeCanonicalRecordMetadata = AirframeCanonicalRecordMetadata()
     ) {
         self.metadata = metadata
+        self.proposedWork = proposedWork
         self.id = id
         self.title = title
         self.summary = summary

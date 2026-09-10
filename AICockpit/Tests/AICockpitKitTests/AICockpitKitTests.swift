@@ -3,6 +3,52 @@ import AirframeCore
 @testable import AICockpitKit
 import Foundation
 
+@Test func sp046BoundedHelpAndDiscoveryCoverTaskOptions() throws {
+    for action in ["create", "update"] {
+        let result = AICockpitCommand.response(arguments: ["task", action, "--help"])
+        #expect(result.standardOutput.utf8.count < 2400)
+        for option in ["--github", "--acceptance", "--evidence-required", "--protected-path", "--priority", "--epic", "--sprint"] {
+            #expect(result.standardOutput.contains(option))
+        }
+    }
+    let schema = AICockpitCommand.response(arguments: ["schema", "--command", "task.update", "--output", "json"])
+    let object = try #require(JSONSerialization.jsonObject(with: Data(schema.standardOutput.utf8)) as? [String: Any])
+    let entries = try #require(object["commands"] as? [[String: Any]])
+    #expect(entries.count == 1)
+    #expect((entries[0]["options"] as? [String])?.contains("--report-format") == true)
+}
+
+@Test func sp046CompactReceiptsAndSelectedPacketsReducePayload() throws {
+    let config = try temporaryLiveConfigurationPath()
+    let store = temporaryStorePath()
+    let create = AICockpitCommand.response(arguments: ["task", "create", "--id", "T-9901", "--title", "Very long echoed input should be absent", "--scope", "Scope detail", "--backend", "local-fixture", "--config", config, "--store", store, "--compact", "--output", "json"])
+    #expect(create.exitCode == 0)
+    #expect(!create.standardOutput.contains("Very long"))
+    #expect(!create.standardOutput.contains("backendCapabilities"))
+    let base = ["task", "packet", "T-9901", "--backend", "local-fixture", "--config", config, "--store", store, "--output", "json"]
+    let full = AICockpitCommand.response(arguments: base)
+    let selected = AICockpitCommand.response(arguments: base + ["--sections", "scope", "--compact"])
+    #expect(selected.exitCode == 0)
+    #expect(selected.standardOutput.contains("Scope detail"))
+    #expect(!selected.standardOutput.contains("acceptanceCriteria"))
+    #expect(selected.standardOutput.utf8.count < full.standardOutput.utf8.count / 2)
+    let invalid = AICockpitCommand.response(arguments: base + ["--sections", "misspelled"])
+    #expect(invalid.exitCode != 0)
+}
+
+@Test func sp046FailedLinkRestoresCanonicalRecord() throws {
+    let config = try temporaryCanonicalTestConfigurationPath()
+    let owner = AICockpitCommand.response(arguments: ["epic", "create", "--id", "EP-9700", "--title", "Owner", "--config", config])
+    #expect(owner.exitCode == 0, "\(owner.standardOutput) \(owner.standardError)")
+    let create = AICockpitCommand.response(arguments: ["task", "create", "--id", "T-9902", "--title", "Rollback test", "--config", config])
+    #expect(create.exitCode == 0, "\(create.standardOutput) \(create.standardError)")
+    let args = ["task", "inspect", "T-9902", "--config", config, "--output", "json"]
+    let before = AICockpitCommand.response(arguments: args)
+    let failed = AICockpitCommand.response(arguments: ["task", "link", "T-9902", "--epic", "EP-MISSING", "--config", config])
+    #expect(failed.exitCode != 0)
+    #expect(AICockpitCommand.response(arguments: args).standardOutput == before.standardOutput)
+}
+
 @Test func helpTextIncludesCommandNameAndCoreIdentity() {
     let help = AICockpitCommand.helpText()
 

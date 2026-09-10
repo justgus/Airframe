@@ -286,6 +286,13 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
     }
 
     public func updateWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        try store.transaction {
+            try validateOwners(record)
+            try updateWorkRecordContents(record)
+        }
+    }
+
+    private func updateWorkRecordContents(_ record: AirframeLocalWorkRecord) throws {
         switch record.workItem.kind {
         case .epic:
             guard let existing = try store.load(AirframeCanonicalEpicRecord.self, id: record.workItem.id) else {
@@ -297,6 +304,9 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
                 throw AirframeBackendError.missingWorkItem(record.workItem.id)
             }
             try store.save(existing.updating(from: record))
+            if let epicID = record.epicID {
+                try reconcileEpicSprintLinks(epicID: epicID, sprintID: record.workItem.id)
+            }
         case .task:
             guard let existing = try store.load(AirframeCanonicalTaskRecord.self, id: record.workItem.id) else {
                 throw AirframeBackendError.missingWorkItem(record.workItem.id)
@@ -315,6 +325,22 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
     }
 
     public func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
+        try store.transaction {
+            try validateOwners(record)
+            try createWorkRecordContents(record)
+        }
+    }
+
+    private func validateOwners(_ record: AirframeLocalWorkRecord) throws {
+        if let epicID = record.epicID, try store.load(AirframeCanonicalEpicRecord.self, id: epicID) == nil {
+            throw AirframeBackendError.missingWorkItem(epicID)
+        }
+        if let sprintID = record.sprintID, try store.load(AirframeCanonicalSprintRecord.self, id: sprintID) == nil {
+            throw AirframeBackendError.missingWorkItem(sprintID)
+        }
+    }
+
+    private func createWorkRecordContents(_ record: AirframeLocalWorkRecord) throws {
         switch record.workItem.kind {
         case .epic:
             guard try store.load(AirframeCanonicalEpicRecord.self, id: record.workItem.id) == nil else {
@@ -474,11 +500,23 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
     }
 
     public func reconcileEpicSprintLinks(epicID: AirframeID, sprintID: AirframeID) throws {
+        try store.transaction { try reconcileEpicSprintContents(epicID: epicID, sprintID: sprintID) }
+    }
+
+    private func reconcileEpicSprintContents(epicID: AirframeID, sprintID: AirframeID) throws {
         guard let epic = try store.load(AirframeCanonicalEpicRecord.self, id: epicID) else {
             throw AirframeBackendError.missingWorkItem(epicID)
         }
         guard let sprint = try store.load(AirframeCanonicalSprintRecord.self, id: sprintID) else {
             throw AirframeBackendError.missingWorkItem(sprintID)
+        }
+        for old in try store.list(AirframeCanonicalEpicRecord.self) where old.workItem.id != epicID && old.sprintIDs.contains(sprintID) {
+            try store.save(AirframeCanonicalEpicRecord(
+                workItem: old.workItem, owner: old.owner, goal: old.goal, rationale: old.rationale,
+                startDate: old.startDate, targetCloseDate: old.targetCloseDate, closeDate: old.closeDate,
+                scope: old.scope, outOfScope: old.outOfScope, acceptanceCriterionIDs: old.acceptanceCriterionIDs,
+                sprintIDs: old.sprintIDs.filter { $0 != sprintID }, taskIDs: old.taskIDs, issueIDs: old.issueIDs,
+                planningDocumentPaths: old.planningDocumentPaths, notes: old.notes, metadata: old.metadata))
         }
         try store.save(epic.addingSprintID(sprintID))
         try store.save(sprint.settingEpicID(epicID))

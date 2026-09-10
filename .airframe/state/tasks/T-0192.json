@@ -18,7 +18,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-06T21:51:27Z"
+    "updatedAt" : "2026-09-09T22:32:56Z"
   },
   "notes" : [
 
@@ -39,7 +39,7 @@
       "rawValue" : "T-0192"
     },
     "kind" : "task",
-    "status" : "backlog",
+    "status" : "active",
     "title" : "Add command-specific help and complete Task option documentation"
   }
 }

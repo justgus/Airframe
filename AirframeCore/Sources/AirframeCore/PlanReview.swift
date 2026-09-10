@@ -101,6 +101,7 @@ public struct AirframePlanReviewService: Sendable {
             auditEventIDs: mergedIDs(existingPlan.auditEventIDs, [auditEvent.id]),
             evidenceIDs: existingPlan.evidenceIDs,
             notes: note.map { existingPlan.notes + [$0] } ?? existingPlan.notes,
+            proposedWork: existingPlan.proposedWork,
             metadata: existingPlan.metadata
         )
 

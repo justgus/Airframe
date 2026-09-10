@@ -106,7 +106,36 @@ public final class AirframeCanonicalJSONStore: @unchecked Sendable {
     private let fileManager: FileManager
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
-    private let lock = NSLock()
+    private let lock = NSRecursiveLock()
+    private var transactionOriginals: [URL: Data?]? = nil
+
+    /// Serializes a batch for this store and restores original bytes on failure.
+    /// This is failure atomicity, not crash durability or cross-process isolation.
+    public func transaction<T>(_ body: () throws -> T) throws -> T {
+        try withLock {
+            if transactionOriginals != nil { return try body() }
+            transactionOriginals = [:]
+            do {
+                let result = try body()
+                transactionOriginals = nil
+                return result
+            } catch {
+                let originals = transactionOriginals ?? [:]
+                transactionOriginals = nil
+                for (url, data) in originals {
+                    if let data { try data.write(to: url, options: .atomic) }
+                    else if fileManager.fileExists(atPath: url.path) { try fileManager.removeItem(at: url) }
+                }
+                throw error
+            }
+        }
+    }
+
+    private func remember(_ url: URL) throws {
+        guard transactionOriginals != nil, transactionOriginals?.keys.contains(url) == false else { return }
+        let original = fileManager.fileExists(atPath: url.path) ? try Data(contentsOf: url) : nil
+        transactionOriginals?.updateValue(original, forKey: url)
+    }
 
     public init(
         rootURL: URL,
@@ -136,6 +165,7 @@ public final class AirframeCanonicalJSONStore: @unchecked Sendable {
 
     public func save<Record: AirframeCanonicalFileRecord>(_ record: Record) throws {
         try withLock {
+            try remember(recordURL(for: record.canonicalRecordID, as: Record.self))
             let directoryURL = directoryURL(for: Record.self)
             do {
                 try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
@@ -202,6 +232,7 @@ public final class AirframeCanonicalJSONStore: @unchecked Sendable {
     ) throws {
         try withLock {
             let url = recordURL(for: id, as: Record.self)
+            try remember(url)
             guard fileManager.fileExists(atPath: url.path) else {
                 return
             }
