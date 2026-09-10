@@ -1,0 +1,30 @@
+{
+  "artifactReferences" : [
+    "docs\/Agent-Token-Economy.md"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AICockpit; swift test --package-path AirframeCore; aicockpit state diagnostics --backend canonical",
+  "environment" : "macOS Swift 6.2",
+  "id" : {
+    "rawValue" : "EV-0198-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Agent token-economy guidance reviewed",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0198"
+    }
+  ]
+}

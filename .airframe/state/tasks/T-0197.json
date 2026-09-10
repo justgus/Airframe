@@ -6,11 +6,14 @@
   "componentsAffected" : [
     "Canonical planning model and AICockpit plan commands"
   ],
+  "dateVerified" : "2026-09-10",
   "epicID" : {
     "rawValue" : "EP-025"
   },
   "evidenceIDs" : [
-
+    {
+      "rawValue" : "EV-0197-001"
+    }
   ],
   "metadata" : {
     "schemaVersion" : {
@@ -18,7 +21,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-09T22:33:27Z"
+    "updatedAt" : "2026-09-10T20:32:56Z"
   },
   "notes" : [
 
@@ -39,7 +42,7 @@
       "rawValue" : "T-0197"
     },
     "kind" : "task",
-    "status" : "active",
+    "status" : "implementedVerified",
     "title" : "Materialize approved planning structures atomically"
   }
 }

@@ -27,7 +27,8 @@ enum AICockpitDiscovery {
                         .replacingOccurrences(of: words[1], with: group)
                     if actions.count > 1 { usage = usage.replacingOccurrences(of: words[2], with: action) }
                     if group == "task", ["create", "update", "propose"].contains(action) {
-                        usage += " [--github number] [--epic EP-ID] [--sprint SP-ID] [--priority low|medium|high|critical] [--acceptance text] [--scope text] [--constraint text] [--evidence-required text] [--protected-path path]"
+                        let identity = action == "update" ? "T-XXXX" : "--id T-XXXX --title title"
+                        usage = "aicockpit task \(action) \(identity) [--title title] [--status value] [--github number] [--epic EP-ID] [--sprint SP-ID] [--priority low|medium|high|critical] [--acceptance text] [--scope text] [--constraint text] [--evidence-required text] [--protected-path path]"
                         if action == "update" { usage += " [--report-format text]" }
                     }
                     if command == "state.diagnostics" { usage += " [--id ID]" }

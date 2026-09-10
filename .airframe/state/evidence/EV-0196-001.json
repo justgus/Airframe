@@ -1,0 +1,30 @@
+{
+  "artifactReferences" : [
+    "AICockpit\/Sources\/AICockpitKit\/AICockpitCommand.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AICockpit; swift test --package-path AirframeCore; aicockpit state diagnostics --backend canonical",
+  "environment" : "macOS Swift 6.2",
+  "id" : {
+    "rawValue" : "EV-0196-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Targeted diagnostics and concise receipt tests passed",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0196"
+    }
+  ]
+}

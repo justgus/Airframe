@@ -27,7 +27,7 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | SP-044 | Make canonical implementation evidence attachable, inspectable, reviewable, and integrity-checked through AICockpit and AgileCockpit. | Closed |
 | SP-043 | Complete GitHub integration with full pagination and disclosure, canonical-to-GitHub reconciliation, and branch-aware workspace mutations, then verify the integrated audit remediation end to end. | Closed |
 | SP-045 | Reduce agent token consumption by adding granular read primitives to AICockpit, so that answering a question about one record does not require loading the corpus. | Closed |
-| SP-046 | Reduce AICockpit token churn while preserving canonical-first artifact management, relationship integrity, and human approval boundaries. | Planning |
+| SP-046 | Reduce AICockpit token churn while preserving canonical-first artifact management, relationship integrity, and human approval boundaries. | Closed |
 | SP-047 |  | Planning |
 
 ### Related Tasks
@@ -53,13 +53,13 @@ Remediate the findings of the 2026-08-27 Audit across configuration, requirement
 | T-0189 | Verify native evidence workflow and retire fallback | Implemented - Verified |
 | T-0190 | Add granular read primitives and close the github-issues mutation gap in AICockpit | Implemented - Verified |
 | T-0191 |  |  |
-| T-0192 | Add command-specific help and complete Task option documentation | Backlog |
-| T-0193 | Add compact output and selective detail projections | Backlog |
-| T-0194 | Reconcile Task Sprint and Epic relationships on mutation | Backlog |
-| T-0195 | Publish versioned machine-readable command schema | Backlog |
-| T-0196 | Add targeted validation and concise mutation receipts | Backlog |
-| T-0197 | Materialize approved planning structures atomically | Backlog |
-| T-0198 | Document agent token-economy operating guidance | Backlog |
+| T-0192 | Add command-specific help and complete Task option documentation | Implemented - Verified |
+| T-0193 | Add compact output and selective detail projections | Implemented - Verified |
+| T-0194 | Reconcile Task Sprint and Epic relationships on mutation | Implemented - Verified |
+| T-0195 | Publish versioned machine-readable command schema | Implemented - Verified |
+| T-0196 | Add targeted validation and concise mutation receipts | Implemented - Verified |
+| T-0197 | Materialize approved planning structures atomically | Implemented - Verified |
+| T-0198 | Document agent token-economy operating guidance | Implemented - Verified |
 | T-0199 | De-duplicate AgileCockpit cache payloads and digest the launch fingerprint | Implemented - Verified |
 | T-0178 | Retire mutable Legacy Issue current-state files | Implemented - Verified |
 | T-0179 | Retire mutable Legacy Task current-state files | Implemented - Verified |
@@ -114,4 +114,4 @@ Elevate Requirements, Tests, and Acceptance Criteria evidence to first-class Agi
 | Issue | Title | Status |
 | ----- | ----- | ------ |
 
-*Last Updated: 2026-09-09*
+*Last Updated: 2026-09-10*

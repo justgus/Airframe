@@ -1,0 +1,30 @@
+{
+  "artifactReferences" : [
+    "AICockpit\/Sources\/AICockpitKit\/CommandDiscovery.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AICockpit; swift test --package-path AirframeCore; aicockpit state diagnostics --backend canonical",
+  "environment" : "macOS Swift 6.2",
+  "id" : {
+    "rawValue" : "EV-0192-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Command-specific help and Task option coverage passed",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0192"
+    }
+  ]
+}

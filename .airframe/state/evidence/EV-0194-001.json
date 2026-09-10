@@ -1,0 +1,30 @@
+{
+  "artifactReferences" : [
+    "AirframeCore\/Sources\/AirframeCore\/CanonicalStoreBackend.swift"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AICockpit; swift test --package-path AirframeCore; aicockpit state diagnostics --backend canonical",
+  "environment" : "macOS Swift 6.2",
+  "id" : {
+    "rawValue" : "EV-0194-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "Reciprocal relationship and rollback tests passed",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0194"
+    }
+  ]
+}

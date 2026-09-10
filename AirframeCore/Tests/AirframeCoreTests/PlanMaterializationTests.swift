@@ -6,6 +6,13 @@ import Testing
     let root = FileManager.default.temporaryDirectory.appending(path: "sp046-\(UUID())")
     defer { try? FileManager.default.removeItem(at: root) }
     let repository = AirframeCanonicalStoreRepository(rootURL: root)
+    try repository.store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe"
+        )
+    )
     let epic = AirframeLocalWorkRecord(workItem: AirframeWorkItem(id: AirframeID("EP-9900"), kind: .epic, title: "Planned epic", status: .backlog))
     let invalidTask = AirframeLocalWorkRecord(workItem: AirframeWorkItem(id: AirframeID("T-9900"), kind: .task, title: "Planned task", status: .backlog), epicID: epic.workItem.id, sprintID: AirframeID("SP-MISSING"))
     let id = AirframeID("PLAN-9900")

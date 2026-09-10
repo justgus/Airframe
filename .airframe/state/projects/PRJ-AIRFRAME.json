@@ -2,9 +2,6 @@
   "activeEpicID" : {
     "rawValue" : "EP-025"
   },
-  "activeSprintID" : {
-    "rawValue" : "SP-046"
-  },
   "backendMappingIDs" : [
 
   ],
@@ -216,7 +213,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-09T22:30:55Z"
+    "updatedAt" : "2026-09-10T20:33:40Z"
   },
   "name" : "Agile Airframe",
   "repository" : "justgus\/Airframe",

@@ -38,6 +38,14 @@ import Foundation
 
 @Test func sp046FailedLinkRestoresCanonicalRecord() throws {
     let config = try temporaryCanonicalTestConfigurationPath()
+    let root = URL(filePath: config).deletingLastPathComponent()
+    try AirframeCanonicalStoreRepository(rootURL: root).store.save(
+        AirframeCanonicalProjectRecord(
+            id: AirframeID("PRJ-AIRFRAME"),
+            name: "Agile Airframe",
+            repository: "justgus/Airframe"
+        )
+    )
     let owner = AICockpitCommand.response(arguments: ["epic", "create", "--id", "EP-9700", "--title", "Owner", "--config", config])
     #expect(owner.exitCode == 0, "\(owner.standardOutput) \(owner.standardError)")
     let create = AICockpitCommand.response(arguments: ["task", "create", "--id", "T-9902", "--title", "Rollback test", "--config", config])
