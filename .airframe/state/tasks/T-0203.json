@@ -8,11 +8,14 @@
   "componentsAffected" : [
     "Add preflight and post-mutation receipts that declare intended artifact scope and stop on unexpected repository changes."
   ],
+  "dateVerified" : "2026-09-11",
   "epicID" : {
     "rawValue" : "EP-025"
   },
   "evidenceIDs" : [
-
+    {
+      "rawValue" : "EV-SP047-001"
+    }
   ],
   "metadata" : {
     "schemaVersion" : {
@@ -20,7 +23,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-08T20:58:51Z"
+    "updatedAt" : "2026-09-11T18:04:40Z"
   },
   "notes" : [
 
@@ -41,7 +44,7 @@
       "rawValue" : "T-0203"
     },
     "kind" : "task",
-    "status" : "backlog",
+    "status" : "implementedVerified",
     "title" : "Add mutation scope receipts and changed-path circuit breaker"
   }
 }

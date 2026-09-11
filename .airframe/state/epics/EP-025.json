@@ -31,6 +31,7 @@
       "rawValue" : "EP-025-AC-10"
     }
   ],
+  "closeDate" : "2026-09-11",
   "goal" : "Remediate the findings of the 2026-08-27 Audit across configuration, requirement data, projections, legacy artifacts, GitHub integration, and canonical evidence, so that canonical state, its generated projections, and the GitHub backend agree and stay that way.",
   "issueIDs" : [
     {
@@ -64,7 +65,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-09T21:48:40Z"
+    "updatedAt" : "2026-09-11T18:05:54Z"
   },
   "notes" : [
 
@@ -239,7 +240,7 @@
       "rawValue" : "EP-025"
     },
     "kind" : "epic",
-    "status" : "active",
+    "status" : "closed",
     "title" : "Audit Finding Remediation"
   }
 }

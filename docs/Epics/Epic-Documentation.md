@@ -32,7 +32,7 @@ Currently: **27 Epics** | Next available: **EP-028**
 | EP-022 | Telemetrix Importer and Canonical Repair Fixes | Closed | 2026-06-25 | 2026-06-30 |
 | EP-023 | AgileCockpit Plan Review and Approval | Closed | TBD | 2026-07-07 |
 | EP-024 | Canonical Test Definition and Management | Closed | TBD | 2026-07-07 |
-| EP-025 | Audit Finding Remediation | Active | TBD | TBD |
+| EP-025 | Audit Finding Remediation | Closed | TBD | 2026-09-11 |
 | EP-026 | First-Class Requirements, Tests, and Evidence Work Products | Draft | TBD | TBD |
 | EP-027 | Human Work Lifecycle and Git Workspace Control | Proposed | TBD | TBD |
 
@@ -40,8 +40,8 @@ Currently: **27 Epics** | Next available: **EP-028**
 
 - **Total Epics:** 27
 - **Backlog:** 0
-- **Active:** 1
-- **Closed:** 24
+- **Active:** 0
+- **Closed:** 25
 - **Next available:** EP-028
 
-*Last Updated: 2026-09-10*
+*Last Updated: 2026-09-11*

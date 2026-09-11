@@ -125,13 +125,26 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals == ["state", "diagnostics"] {
+            if parsed.value(for: "--id") == nil,
+               !(parsed.value(for: "--all-records") == "true" && parsed.value(for: "--approve") == "true") {
+                return errorResult(exitCode: 64, code: "broadReadRequiresApproval", message: "full diagnostics require --all-records --approve; prefer --id ID", outputFormat: outputFormat)
+            }
             return executeBackendCommand(outputFormat: outputFormat, parsed: parsed) { backend, _ in
                 let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 let rootURL = try? parsed.workspaceRootURL(projectContext: projectContext)
                 let canonicalStoreURL = rootURL?.appending(path: ".airframe/state")
                 let canonicalRecords: [AirframeLocalWorkRecord]
                 let snapshot: AirframeCanonicalStateSnapshot
-                if let rootURL,
+                if let requestedID = parsed.value(for: "--id") {
+                    guard let record = try backend.workRecord(id: AirframeID(requestedID)) else {
+                        throw AirframeBackendError.missingWorkItem(AirframeID(requestedID))
+                    }
+                    canonicalRecords = [record]
+                    snapshot = AirframeCanonicalStateSnapshotBuilder().snapshot(
+                        project: projectContext.project,
+                        records: canonicalRecords
+                    )
+                } else if let rootURL,
                    let canonicalStoreURL,
                    FileManager.default.fileExists(atPath: canonicalStoreURL.path) {
                     let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
@@ -145,9 +158,14 @@ public enum AICockpitCommand {
                     )
                 }
                 let stateDiagnostics = AirframeCanonicalStateValidator().diagnostics(for: snapshot)
-                let reconciliationDiagnostics = try AirframeCanonicalBackendReconciler().diagnostics(
+                let backendRecords = if let requestedID = parsed.value(for: "--id") {
+                    try backend.workRecord(id: AirframeID(requestedID)).map { [$0] } ?? []
+                } else {
+                    try backend.listWorkRecords()
+                }
+                let reconciliationDiagnostics = AirframeCanonicalBackendReconciler().diagnostics(
                     canonicalRecords: canonicalRecords,
-                    backendRecords: backend.listWorkRecords()
+                    backendRecords: backendRecords
                 )
                 let requestedID = parsed.value(for: "--id")
                 if let requestedID, !canonicalRecords.contains(where: { $0.workItem.id.rawValue == requestedID }) {
@@ -214,21 +232,43 @@ public enum AICockpitCommand {
                     guard preview.conflictedCount == 0 else {
                         throw AICockpitCommandError.invalidArguments("requirements import --apply cannot proceed with conflicted records")
                     }
-                    let incomingRequirementIDs = Set(document.requirements.map(\.id))
-                    for requirement in state.requirements where !incomingRequirementIDs.contains(requirement.id) {
-                        try repository.store.delete(AirframeCanonicalRequirementRecord.self, id: requirement.id)
+                    let fullReconcile = parsed.value(for: "--full-reconcile") == "true"
+                    if fullReconcile, parsed.value(for: "--approve") != "true" {
+                        throw AICockpitCommandError.invalidArguments("--full-reconcile requires --approve")
                     }
-                    for revision in state.requirementRevisions where !incomingRequirementIDs.contains(revision.requirementID) {
-                        try repository.store.delete(AirframeCanonicalRequirementRevisionRecord.self, id: revision.id)
+                    let existingRequirements = Dictionary(uniqueKeysWithValues: state.requirements.map { ($0.id, $0) })
+                    let existingRevisions = Dictionary(uniqueKeysWithValues: state.requirementRevisions.map { ($0.id, $0) })
+                    var changedPaths: [String] = []
+                    try repository.store.transaction {
+                        if fullReconcile {
+                            let incomingRequirementIDs = Set(document.requirements.map(\.id))
+                            for requirement in state.requirements where !incomingRequirementIDs.contains(requirement.id) {
+                                try repository.store.delete(AirframeCanonicalRequirementRecord.self, id: requirement.id)
+                                changedPaths.append(".airframe/state/requirements/\(requirement.id.rawValue).json")
+                            }
+                            let incomingRevisionIDs = Set(document.revisions.map(\.id))
+                            for revision in state.requirementRevisions where !incomingRevisionIDs.contains(revision.id) {
+                                try repository.store.delete(AirframeCanonicalRequirementRevisionRecord.self, id: revision.id)
+                                changedPaths.append(".airframe/state/requirement-revisions/\(revision.id.rawValue).json")
+                            }
+                        }
+                        for requirement in document.requirements where existingRequirements[requirement.id] != requirement {
+                            try repository.store.save(requirement)
+                            changedPaths.append(".airframe/state/requirements/\(requirement.id.rawValue).json")
+                        }
+                        for revision in document.revisions where existingRevisions[revision.id] != revision {
+                            try repository.store.save(revision)
+                            changedPaths.append(".airframe/state/requirement-revisions/\(revision.id.rawValue).json")
+                        }
                     }
-                    try document.requirements.forEach(repository.store.save)
-                    try document.revisions.forEach(repository.store.save)
                     return AICockpitCommandResult(
                         exitCode: 0,
                         standardOutput: try renderRequirementImportPreview(
                             preview,
                             format: format,
                             applied: true,
+                            changedPaths: changedPaths.sorted(),
+                            removedCount: fullReconcile ? preview.removedCount : 0,
                             as: outputFormat
                         )
                     )
@@ -387,6 +427,9 @@ public enum AICockpitCommand {
         }
 
         if parsed.positionals == ["state", "import-markdown"] {
+            guard parsed.value(for: "--full-reconcile") == "true", parsed.value(for: "--approve") == "true" else {
+                return errorResult(exitCode: 64, code: "broadImportRequiresApproval", message: "state import-markdown requires --full-reconcile --approve", outputFormat: outputFormat)
+            }
             do {
                 let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
@@ -435,14 +478,24 @@ public enum AICockpitCommand {
             do {
                 let projectContext = try parsed.runtimeResolver.loadContext(explicitPath: parsed.value(for: "--config"))
                 let rootURL = try parsed.workspaceRootURL(projectContext: projectContext)
-                let count = try exportMarkdownProjections(rootURL: rootURL)
+                let requestedID = parsed.value(for: "--id").map(AirframeID.init)
+                let allRecords = parsed.value(for: "--all-records") == "true"
+                guard requestedID != nil || allRecords else {
+                    throw AICockpitCommandError.invalidArguments("export requires --id ID or --all-records --approve")
+                }
+                if allRecords, parsed.value(for: "--approve") != "true" {
+                    throw AICockpitCommandError.invalidArguments("--all-records requires --approve")
+                }
+                let result = try exportMarkdownProjections(rootURL: rootURL, id: requestedID)
                 let output = """
                 # Airframe Command
 
                 - status: ok
                 - kind: canonicalMarkdownExport
                 - message: Markdown projections exported
-                - exportedFiles: \(count)
+                - scope: \(requestedID?.rawValue ?? "all-records")
+                - changedFiles: \(result.changedPaths.count)
+                - changedPaths: \(result.changedPaths.joined(separator: ", ").ifEmpty("None"))
                 """
                 return AICockpitCommandResult(exitCode: 0, standardOutput: output)
             } catch {
@@ -1693,6 +1746,8 @@ public enum AICockpitCommand {
                 let workItemID = AirframeID(parsed.positionals[2])
                 try validateID(workItemID, for: kind)
                 let status = try parsed.requiredCommandStatus(for: "--to", kind: kind)
+                let before = try backend.workRecord(id: workItemID)?.workItem
+                let activeSprintBefore = try? parsed.canonicalAwareProjectContext().project.activeSprintID
                 if let githubBackend = backend as? AirframeGitHubIssuesBackend {
                     let result = try githubBackend.transitionGitHubStatus(
                         workItemID: workItemID,
@@ -1723,6 +1778,11 @@ public enum AICockpitCommand {
                     targetProjectID: context.targetProjectID
                 )
                 let workItem = try backend.workRecord(id: workItemID)?.workItem
+                let activeSprintAfter = try? parsed.canonicalAwareProjectContext().project.activeSprintID
+                var changedPaths = [".airframe/state/\(kind.rawValue)s/\(workItemID.rawValue).json"]
+                if kind == .sprint, activeSprintBefore != activeSprintAfter {
+                    changedPaths.append(".airframe/state/projects/\(context.targetProjectID.rawValue).json")
+                }
                 return try render(
                     AICockpitCommandEnvelope(
                         status: "ok",
@@ -1732,7 +1792,13 @@ public enum AICockpitCommand {
                         workItem: workItem,
                         taskPacket: nil,
                         dashboardSummary: nil,
-                        evidence: []
+                        evidence: [],
+                        targetID: workItemID,
+                        beforeStatus: before?.status,
+                        afterStatus: workItem?.status,
+                        changedPaths: changedPaths,
+                        activeSprintID: activeSprintAfter ?? nil,
+                        activeSprintChanged: activeSprintBefore != activeSprintAfter
                     ),
                     as: outputFormat
                 )
@@ -2216,11 +2282,11 @@ public enum AICockpitCommand {
           aicockpit version
           aicockpit context [--config path]
           aicockpit config diagnose [--config path] [--output markdown|json]
-          aicockpit state diagnostics [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
+          aicockpit state diagnostics (--id ID | --all-records --approve) [--config path] [--backend canonical|local-fixture|github-fixture|github-issues] [--store path] [--output markdown|json]
           aicockpit state import-markdown [--config path] [--output markdown|json]
-          aicockpit state export-markdown [--config path]
+          aicockpit state export-markdown (--id ID | --all-records --approve) [--config path]
           aicockpit requirements import --format csv|json --file path --dry-run [--config path] [--output markdown|json]
-          aicockpit requirements import --format csv|json --file path --apply [--config path] [--output markdown|json]
+          aicockpit requirements import --format csv|json --file path --apply [--full-reconcile --approve] [--config path] [--output markdown|json]
           aicockpit requirements export --format csv|json [--config path]
           aicockpit requirements inspect REQ-ID [--config path] [--output markdown|json]
           aicockpit requirements list [--ids-only] [--status value] [--limit n] [--config path] [--output markdown|json]
@@ -2507,7 +2573,11 @@ public enum AICockpitCommand {
             let output = try body(backend, certifiedContext)
             if refreshProjections, backend is AirframeCanonicalStoreBackend {
                 let rootURL = try parsed.workspaceRootURL(projectContext: context)
-                _ = try exportMarkdownProjections(rootURL: rootURL)
+                // Mutation commands place the affected work item immediately after
+                // their verb.  `--id` can instead name a child artifact (for example,
+                // an evidence record being attached), so it must not take precedence.
+                let target = parsed.positionals.dropFirst(2).first ?? parsed.value(for: "--id")
+                _ = try exportMarkdownProjections(rootURL: rootURL, id: target.map(AirframeID.init))
             }
             refreshNotifier?.postRefresh()
             return AICockpitCommandResult(exitCode: 0, standardOutput: output)
@@ -2671,6 +2741,8 @@ public enum AICockpitCommand {
         _ preview: AirframeRequirementImportPreview,
         format: AICockpitRequirementInterchangeFormat,
         applied: Bool,
+        changedPaths: [String] = [],
+        removedCount: Int? = nil,
         as outputFormat: AICockpitOutputFormat
     ) throws -> String {
         let response = AICockpitRequirementImportPreviewResponse(
@@ -2682,10 +2754,11 @@ public enum AICockpitCommand {
             createdCount: preview.createdCount,
             updatedCount: preview.updatedCount,
             unchangedCount: preview.unchangedCount,
-            removedCount: preview.removedCount,
+            removedCount: removedCount ?? preview.removedCount,
             conflictedCount: preview.conflictedCount,
             requirements: preview.requirements,
-            revisions: preview.revisions
+            revisions: preview.revisions,
+            changedPaths: changedPaths
         )
         switch outputFormat {
         case .json:
@@ -3435,7 +3508,9 @@ public enum AICockpitCommand {
         )
     }
 
-    private static func exportMarkdownProjections(rootURL: URL) throws -> Int {
+    private struct ProjectionExportResult { let changedPaths: [String] }
+
+    private static func exportMarkdownProjections(rootURL: URL, id: AirframeID? = nil) throws -> ProjectionExportResult {
         let repository = AirframeCanonicalStoreRepository(rootURL: rootURL)
         let state = try repository.loadState()
         let projector = AirframeMarkdownArtifactProjector()
@@ -3443,34 +3518,39 @@ public enum AICockpitCommand {
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: outputRoot, withIntermediateDirectories: true)
 
-        var count = 0
+        var changedPaths: [String] = []
         func write(_ contents: String, to relativePath: String) throws {
             let url = outputRoot.appending(path: relativePath)
             try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            if let existing = try? String(contentsOf: url, encoding: .utf8), existing == contents { return }
             try contents.write(to: url, atomically: true, encoding: .utf8)
-            count += 1
+            changedPaths.append("docs/generated/\(relativePath)")
         }
 
-        for epic in state.epics {
+        for epic in state.epics where id == nil || epic.workItem.id == id {
             let criteria = state.acceptanceCriteria.filter {
                 $0.ownerID == epic.workItem.id || epic.acceptanceCriterionIDs.contains($0.id)
             }
             try write(projector.projectEpic(epic, acceptanceCriteria: criteria, sprints: state.sprints, tasks: state.tasks, issues: state.issues), to: "Epics/\(epic.workItem.id.rawValue).md")
         }
-        for sprint in state.sprints {
+        for sprint in state.sprints where id == nil || sprint.workItem.id == id {
             try write(projector.projectSprint(sprint, tasks: state.tasks, issues: state.issues), to: "Sprints/\(sprint.workItem.id.rawValue).md")
         }
-        for task in state.tasks {
+        for task in state.tasks where id == nil || task.workItem.id == id {
             try write(projector.projectTask(task), to: "Tasks/\(task.workItem.id.rawValue).md")
         }
-        for issue in state.issues {
+        for issue in state.issues where id == nil || issue.workItem.id == id {
             try write(projector.projectIssue(issue), to: "Issues/\(issue.workItem.id.rawValue).md")
         }
-        try write(projector.projectTaskIndex(state.tasks), to: "Tasks/index.md")
-        for (relativePath, contents) in requirementMarkdownFiles(state: state) {
-            try write(contents, to: relativePath)
+        if id == nil || state.tasks.contains(where: { $0.workItem.id == id }) {
+            try write(projector.projectTaskIndex(state.tasks), to: "Tasks/index.md")
         }
-        return count
+        if id == nil || state.requirements.contains(where: { $0.id == id }) {
+            for (relativePath, contents) in requirementMarkdownFiles(state: state) { try write(contents, to: relativePath) }
+        }
+        let exists = state.epics.contains { $0.workItem.id == id } || state.sprints.contains { $0.workItem.id == id } || state.tasks.contains { $0.workItem.id == id } || state.issues.contains { $0.workItem.id == id } || state.requirements.contains { $0.id == id }
+        if let id, !exists { throw AirframeBackendError.missingWorkItem(id) }
+        return ProjectionExportResult(changedPaths: changedPaths.sorted())
     }
 
     private static func requirementMarkdownFiles(state: AirframeCanonicalStoreState) -> [(String, String)] {
@@ -3940,6 +4020,12 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
     var canonicalDiagnostics: AirframeCanonicalDiagnostics? = nil
     let evidence: [AirframeEvidence]
     var mutationResult: AirframeGitHubMutationResult? = nil
+    var targetID: AirframeID? = nil
+    var beforeStatus: AirframeWorkStatus? = nil
+    var afterStatus: AirframeWorkStatus? = nil
+    var changedPaths: [String]? = nil
+    var activeSprintID: AirframeID? = nil
+    var activeSprintChanged: Bool? = nil
 
     var markdown: String {
         var lines = [
@@ -4083,6 +4169,17 @@ private struct AICockpitCommandEnvelope: Codable, Equatable {
                 "- issue: #\(mutationResult.githubIssue)",
                 "- audit: \(mutationResult.auditEvent.id.rawValue)",
                 "- action: \(mutationResult.auditEvent.action)"
+            ])
+        }
+        if let targetID {
+            lines.append(contentsOf: [
+                "", "## Mutation Receipt",
+                "- target: \(targetID.rawValue)",
+                "- beforeStatus: \(beforeStatus?.description ?? "None")",
+                "- afterStatus: \(afterStatus?.description ?? "None")",
+                "- changedPaths: \(changedPaths?.joined(separator: ", ").ifEmpty("None") ?? "None")",
+                "- activeSprint: \(activeSprintID?.rawValue ?? "None")",
+                "- activeSprintChanged: \(activeSprintChanged == true ? "yes" : "no")"
             ])
         }
 
@@ -4758,6 +4855,7 @@ private struct AICockpitRequirementImportPreviewResponse: Codable, Equatable {
     let conflictedCount: Int
     let requirements: [AirframeRequirementImportPreviewItem]
     let revisions: [AirframeRequirementImportPreviewItem]
+    let changedPaths: [String]
 
     var markdown: String {
         var lines = [
@@ -4774,6 +4872,7 @@ private struct AICockpitRequirementImportPreviewResponse: Codable, Equatable {
             "- removed: \(removedCount)",
             "- conflicted: \(conflictedCount)"
         ]
+        lines.append("- changedPaths: \(changedPaths.joined(separator: ", ").ifEmpty("None"))")
         let items = requirements + revisions
         if !items.isEmpty {
             lines.append("")

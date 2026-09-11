@@ -111,12 +111,26 @@ public final class AirframeCanonicalJSONStore: @unchecked Sendable {
 
     /// Serializes a batch for this store and restores original bytes on failure.
     /// This is failure atomicity, not crash durability or cross-process isolation.
-    public func transaction<T>(_ body: () throws -> T) throws -> T {
+    public func transaction<T>(
+        allowedChangedPaths: Set<String>? = nil,
+        _ body: () throws -> T
+    ) throws -> T {
         try withLock {
             if transactionOriginals != nil { return try body() }
             transactionOriginals = [:]
             do {
                 let result = try body()
+                if let allowedChangedPaths {
+                    let changedPaths = Set((transactionOriginals ?? [:]).keys.map { url in
+                        url.path.replacingOccurrences(of: stateURL.path + "/", with: "")
+                    })
+                    let unexpectedPaths = changedPaths.subtracting(allowedChangedPaths)
+                    guard unexpectedPaths.isEmpty else {
+                        throw AirframeBackendError.unwritableStore(
+                            "mutation scope violation: \(unexpectedPaths.sorted().joined(separator: ", "))"
+                        )
+                    }
+                }
                 transactionOriginals = nil
                 return result
             } catch {

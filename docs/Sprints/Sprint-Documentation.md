@@ -58,16 +58,16 @@ Currently: **47 Sprints** | Next available: **SP-048**
 | SP-044 | Canonical Evidence Management and Review | EP-025 | T-0185, T-0186, T-0187, T-0188, T-0189 | I-0037, I-0038 | Closed |
 | SP-045 | Performance Improvement and Resource Reduction | EP-025 | T-0190, T-0199 | None | Closed |
 | SP-046 | Reduce AICockpit token churn | EP-025 | T-0192, T-0193, T-0194, T-0195, T-0196, T-0197, T-0198 | None | Closed |
-| SP-047 | Token-Churn Incident Prevention | EP-025 | T-0201, T-0202, T-0203, T-0204, T-0205 | None | Planning |
+| SP-047 | Token-Churn Incident Prevention | EP-025 | T-0201, T-0202, T-0203, T-0204, T-0205 | None | Closed |
 
 ## Statistics
 
 - **Total Sprints:** 47
 - **Backlog:** 0
-- **Planning:** 1
+- **Planning:** 0
 - **Active:** 0
 - **Review:** 0
-- **Closed:** 46
+- **Closed:** 47
 - **Next available:** SP-048
 
-*Last Updated: 2026-09-10*
+*Last Updated: 2026-09-11*

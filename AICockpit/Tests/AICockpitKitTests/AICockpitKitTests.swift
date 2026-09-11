@@ -178,6 +178,7 @@ import Foundation
     let diagnostics = AICockpitCommand.response(arguments: [
         "state", "diagnostics",
         "--store", store,
+        "--all-records", "--approve",
         "--output", "json"
     ])
 
@@ -203,6 +204,7 @@ import Foundation
     let diagnostics = AICockpitCommand.response(arguments: [
         "state", "diagnostics",
         "--store", store,
+        "--all-records", "--approve",
         "--output", "json"
     ])
     let verified = AICockpitCommand.response(arguments: [
@@ -331,6 +333,7 @@ import Foundation
 
     let result = AICockpitCommand.response(arguments: [
         "state", "import-markdown",
+        "--full-reconcile", "--approve",
         "--config", configPath
     ])
     let store = AirframeCanonicalJSONStore(rootURL: rootURL)
@@ -377,6 +380,7 @@ import Foundation
 
     let result = AICockpitCommand.response(arguments: [
         "state", "import-markdown",
+        "--full-reconcile", "--approve",
         "--config", configPath
     ])
     let store = AirframeCanonicalJSONStore(rootURL: rootURL)
@@ -413,6 +417,7 @@ import Foundation
 
     let result = AICockpitCommand.response(arguments: [
         "state", "import-markdown",
+        "--full-reconcile", "--approve",
         "--config", configPath
     ])
     let store = AirframeCanonicalJSONStore(rootURL: rootURL)
@@ -831,6 +836,8 @@ import Foundation
         "--format", "csv",
         "--file", importURL.path,
         "--apply",
+        "--full-reconcile",
+        "--approve",
         "--output", "json"
     ])
     let savedRequirement = try store.load(AirframeCanonicalRequirementRecord.self, id: AirframeID("REQ-0200"))
@@ -843,6 +850,29 @@ import Foundation
     #expect(result.standardOutput.contains("\"removedCount\" : 1"))
     #expect(savedRequirement?.title == "Apply requirement")
     #expect(removedRequirement == nil)
+}
+
+@Test func requirementsImportApplyIsIncrementalAndIdempotentUnlessReconciliationIsApproved() throws {
+    let configPath = try temporaryCanonicalRequirementsConfigurationPath()
+    let rootURL = URL(filePath: configPath).deletingLastPathComponent()
+    let store = AirframeCanonicalJSONStore(rootURL: rootURL)
+    try store.save(AirframeCanonicalRequirementRecord(id: AirframeID("REQ-0299"), title: "Retained", statement: "Retained", status: .draft))
+    let importURL = rootURL.appending(path: "incremental.csv")
+    try Data(
+        """
+        record_kind,id,requirement_id,revision_number,external_id,title,statement,status,rationale,source_kind,source_uri,priority,verification_method,validation_required,release_scope,parent_ids,derived_from_ids,supersedes_ids,trace_links,deviation_ids,current_revision_id,change_rationale
+        requirement,REQ-0201,,,EXT-201,Incremental requirement,Statement,draft,,airframe,,medium,test,true,,,,,,,,
+        """.utf8
+    ).write(to: importURL)
+
+    let first = AICockpitCommand.response(arguments: ["requirements", "import", "--config", configPath, "--format", "csv", "--file", importURL.path, "--apply", "--output", "json"])
+    let second = AICockpitCommand.response(arguments: ["requirements", "import", "--config", configPath, "--format", "csv", "--file", importURL.path, "--apply", "--output", "json"])
+
+    #expect(first.exitCode == 0)
+    #expect(first.standardOutput.contains("REQ-0201.json"))
+    #expect(try store.load(AirframeCanonicalRequirementRecord.self, id: AirframeID("REQ-0299")) != nil)
+    #expect(second.exitCode == 0)
+    #expect(!second.standardOutput.contains("REQ-0201.json"))
 }
 
 @Test func testsListInspectAndValidateCanonicalTestDefinitions() throws {
@@ -1068,7 +1098,7 @@ import Foundation
     ])
     let export = AICockpitCommand.response(arguments: [
         "state", "export-markdown",
-        "--config", configPath
+        "--config", configPath, "--all-records", "--approve"
     ])
 
     let savedEpic = try repository.store.load(AirframeCanonicalEpicRecord.self, id: AirframeID("EP-9702"))
@@ -1198,7 +1228,7 @@ import Foundation
 
     let result = AICockpitCommand.response(arguments: [
         "state", "export-markdown",
-        "--config", configPath
+        "--config", configPath, "--all-records", "--approve"
     ])
     let taskProjection = try String(
         contentsOf: rootURL.appending(path: "docs/generated/Tasks/T-9700.md"),
@@ -1425,7 +1455,7 @@ import Foundation
     ])
     let export = AICockpitCommand.response(arguments: [
         "state", "export-markdown",
-        "--config", configPath
+        "--config", configPath, "--all-records", "--approve"
     ])
 
     let sprint = try repository.store.load(AirframeCanonicalSprintRecord.self, id: AirframeID("SP-9600"))
@@ -1489,6 +1519,7 @@ import Foundation
 
     let result = AICockpitCommand.response(arguments: [
         "state", "import-markdown",
+        "--full-reconcile", "--approve",
         "--config", configPath
     ])
 

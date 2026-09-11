@@ -1,0 +1,42 @@
+{
+  "artifactReferences" : [
+    "swift test --package-path AICockpit; swift test --package-path AirframeCore"
+  ],
+  "ciReferences" : [
+
+  ],
+  "command" : "swift test --package-path AICockpit; swift test --package-path AirframeCore",
+  "environment" : "local",
+  "id" : {
+    "rawValue" : "EV-SP047-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "passed",
+  "summary" : "SP-047 AICockpit and AirframeCore test suites passed",
+  "workItemIDs" : [
+    {
+      "rawValue" : "T-0201"
+    },
+    {
+      "rawValue" : "T-0202"
+    },
+    {
+      "rawValue" : "T-0203"
+    },
+    {
+      "rawValue" : "T-0204"
+    },
+    {
+      "rawValue" : "T-0205"
+    }
+  ]
+}

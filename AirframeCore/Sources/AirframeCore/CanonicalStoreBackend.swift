@@ -178,6 +178,24 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
         try workRecords(from: loadState())
     }
 
+    /// Loads a single work record without enumerating every canonical collection.
+    /// This is the routine path for ID-scoped AICockpit commands.
+    public func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
+        if let epic = try store.load(AirframeCanonicalEpicRecord.self, id: id) {
+            return workRecords(from: .init(epics: [epic])).first
+        }
+        if let sprint = try store.load(AirframeCanonicalSprintRecord.self, id: id) {
+            return workRecords(from: .init(sprints: [sprint])).first
+        }
+        if let task = try store.load(AirframeCanonicalTaskRecord.self, id: id) {
+            return workRecords(from: .init(tasks: [task])).first
+        }
+        if let issue = try store.load(AirframeCanonicalIssueRecord.self, id: id) {
+            return workRecords(from: .init(issues: [issue])).first
+        }
+        return nil
+    }
+
     public func workRecords(from state: AirframeCanonicalStoreState) -> [AirframeLocalWorkRecord] {
         let epics = state.epics.map { epic in
             AirframeLocalWorkRecord(
@@ -266,20 +284,43 @@ public final class AirframeCanonicalStoreRepository: @unchecked Sendable {
 
     public func transitionWorkItem(id: AirframeID, to status: AirframeWorkStatus) throws {
         if let record = try store.load(AirframeCanonicalEpicRecord.self, id: id) {
-            try store.save(record.updatingStatus(status))
+            try store.transaction(allowedChangedPaths: ["epics/\(id.rawValue).json"]) {
+                try store.save(record.updatingStatus(status))
+            }
             return
         }
         if let record = try store.load(AirframeCanonicalSprintRecord.self, id: id) {
-            try store.save(record.updatingStatus(status))
-            try applyActiveSprintPointerSideEffect(for: record, transitioningTo: status)
+            if status == .review {
+                guard record.workItem.status == .active else {
+                    throw AirframeBackendError.invalidTransition(from: record.workItem.status, to: status)
+                }
+                let tasks = try store.list(AirframeCanonicalTaskRecord.self)
+                    .filter { record.taskIDs.contains($0.workItem.id) }
+                let eligible: Set<AirframeWorkStatus> = [.implementedNotVerified, .implementedVerified, .closed]
+                guard tasks.count == record.taskIDs.count,
+                      tasks.allSatisfy({ eligible.contains($0.workItem.status) }) else {
+                    throw AirframeBackendError.invalidTransition(from: record.workItem.status, to: status)
+                }
+            }
+            let projectPaths = try store.list(AirframeCanonicalProjectRecord.self)
+                .filter { $0.sprintIDs.contains(id) }
+                .map { "projects/\($0.id.rawValue).json" }
+            try store.transaction(allowedChangedPaths: Set(["sprints/\(id.rawValue).json"] + projectPaths)) {
+                try store.save(record.updatingStatus(status))
+                try applyActiveSprintPointerSideEffect(for: record, transitioningTo: status)
+            }
             return
         }
         if let record = try store.load(AirframeCanonicalTaskRecord.self, id: id) {
-            try store.save(record.updatingStatus(status))
+            try store.transaction(allowedChangedPaths: ["tasks/\(id.rawValue).json"]) {
+                try store.save(record.updatingStatus(status))
+            }
             return
         }
         if let record = try store.load(AirframeCanonicalIssueRecord.self, id: id) {
-            try store.save(record.updatingStatus(status))
+            try store.transaction(allowedChangedPaths: ["issues/\(id.rawValue).json"]) {
+                try store.save(record.updatingStatus(status))
+            }
             return
         }
         throw AirframeBackendError.missingWorkItem(id)
@@ -773,7 +814,7 @@ public final class AirframeCanonicalStoreBackend: @unchecked Sendable, AirframeB
     }
 
     public func workRecord(id: AirframeID) throws -> AirframeLocalWorkRecord? {
-        try listWorkRecords().first { $0.workItem.id == id }
+        try repository.workRecord(id: id)
     }
 
     public func createWorkRecord(_ record: AirframeLocalWorkRecord) throws {
