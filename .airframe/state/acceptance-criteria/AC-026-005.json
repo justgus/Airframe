@@ -1,0 +1,23 @@
+{
+  "disposition" : "unverified",
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "id" : {
+    "rawValue" : "AC-026-005"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-026"
+  },
+  "text" : "I-0033 and I-0035 are resolved with regression coverage for empty-detail rendering and active-Sprint close-action wording."
+}

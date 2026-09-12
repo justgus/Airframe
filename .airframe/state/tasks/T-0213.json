@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-003"
+  ],
+  "component" : "Scoped Markdown projections indexes and no-op export behavior",
+  "componentsAffected" : [
+    "Scoped Markdown projections indexes and no-op export behavior"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:10:14Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-003"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-050"
+  },
+  "testSteps" : [
+    "Projection golden-file regression output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0213"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Publish deterministic work-product projections"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "goal" : "",
+  "issueIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:10:10Z"
+  },
+  "notes" : [
+
+  ],
+  "taskIDs" : [
+    {
+      "rawValue" : "T-0207"
+    },
+    {
+      "rawValue" : "T-0212"
+    }
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "SP-049"
+    },
+    "kind" : "sprint",
+    "status" : "planning",
+    "title" : "EP-026 Bounded AICockpit Workflows"
+  }
+}

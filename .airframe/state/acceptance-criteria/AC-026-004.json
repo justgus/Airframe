@@ -1,0 +1,23 @@
+{
+  "disposition" : "unverified",
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "id" : {
+    "rawValue" : "AC-026-004"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-026"
+  },
+  "text" : "Every implementation Task defines verification steps and required evidence before activation."
+}

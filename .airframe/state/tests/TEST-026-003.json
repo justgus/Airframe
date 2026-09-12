@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "AC-026-003"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "expectedResults" : [
+    "Every configured link is represented deterministically."
+  ],
+  "id" : {
+    "rawValue" : "TEST-026-003"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+
+  ],
+  "objective" : "Verify deterministic projections and diagnostics for requirement-to-evidence links.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-003"
+    }
+  ],
+  "status" : "draft",
+  "steps" : [
+    "Export projections and inspect traceability diagnostics."
+  ],
+  "title" : "Traceability projection coverage",
+  "workItemIDs" : [
+    {
+      "rawValue" : "EP-026"
+    },
+    {
+      "rawValue" : "T-0208"
+    },
+    {
+      "rawValue" : "T-0213"
+    }
+  ]
+}

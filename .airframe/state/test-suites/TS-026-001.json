@@ -1,0 +1,69 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "AC-026-001"
+    },
+    {
+      "rawValue" : "AC-026-002"
+    },
+    {
+      "rawValue" : "AC-026-003"
+    },
+    {
+      "rawValue" : "AC-026-004"
+    },
+    {
+      "rawValue" : "AC-026-005"
+    }
+  ],
+  "id" : {
+    "rawValue" : "TS-026-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+
+  ],
+  "objective" : "Collect persistence, bounded-command, projection, readiness, and presentation coverage for EP-026.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-001"
+    },
+    {
+      "rawValue" : "REQ-026-002"
+    },
+    {
+      "rawValue" : "REQ-026-003"
+    },
+    {
+      "rawValue" : "REQ-026-004"
+    },
+    {
+      "rawValue" : "REQ-026-005"
+    }
+  ],
+  "status" : "draft",
+  "testIDs" : [
+    {
+      "rawValue" : "TEST-026-001"
+    },
+    {
+      "rawValue" : "TEST-026-002"
+    },
+    {
+      "rawValue" : "TEST-026-003"
+    },
+    {
+      "rawValue" : "TEST-026-004"
+    },
+    {
+      "rawValue" : "TEST-026-005"
+    }
+  ],
+  "title" : "EP-026 Work Product Acceptance Suite"
+}

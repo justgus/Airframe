@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-001"
+  ],
+  "component" : "AirframeCore canonical records and relationship validation",
+  "componentsAffected" : [
+    "AirframeCore canonical records and relationship validation"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T20:51:10Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-001"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-048"
+  },
+  "testSteps" : [
+    "Persistence and relationship test output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0206"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Implement canonical Requirements Tests and Evidence record relationships"
+  }
+}

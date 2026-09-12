@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-002"
+  ],
+  "component" : "Command schemas help discovery receipt and authority coverage",
+  "componentsAffected" : [
+    "Command schemas help discovery receipt and authority coverage"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:10:10Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-002"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-049"
+  },
+  "testSteps" : [
+    "Command discovery and receipt regression output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0212"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add work-product command discovery and mutation receipts"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "disposition" : "unverified",
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "id" : {
+    "rawValue" : "AC-026-002"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-026"
+  },
+  "text" : "AICockpit supports ID-scoped creation inspection listing and linking for the work-product records, with explicit approval for broad operations."
+}

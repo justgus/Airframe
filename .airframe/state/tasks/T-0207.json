@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-002"
+  ],
+  "component" : "AICockpit ID-scoped create inspect list link and approval guards",
+  "componentsAffected" : [
+    "AICockpit ID-scoped create inspect list link and approval guards"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:09:38Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-002"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-049"
+  },
+  "testSteps" : [
+    "Command and guard test output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0207"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add bounded AICockpit workflows for work products"
+  }
+}

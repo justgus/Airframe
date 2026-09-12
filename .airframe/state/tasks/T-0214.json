@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-004"
+  ],
+  "component" : "Evidence lifecycle release gates and task-packet readiness diagnostics",
+  "componentsAffected" : [
+    "Evidence lifecycle release gates and task-packet readiness diagnostics"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:10:19Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-004"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-051"
+  },
+  "testSteps" : [
+    "Governance and release-gate regression output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0214"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Add evidence governance and release-readiness checks"
+  }
+}

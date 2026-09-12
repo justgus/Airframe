@@ -73,26 +73,23 @@ When a Task or Issue moves to or from backlog:
 
 GitHub status changes made manually must be reconciled into canonical state before the affected work is considered current.
 
-## Nightly GitHub Import
+## Canonical GitHub Import
 
-The workflow `.github/workflows/nightly-github-issue-sync.yml` runs nightly and can also be run manually.
+GitHub Issue import is a deliberate, initiated canonical operation. There is no scheduled GitHub Issue import workflow.
 
-It imports open GitHub Issues that do not already have:
+Before importing, inspect open GitHub Issues that do not already have:
 
 - a `[T-XXXX]` or `[I-XXXX]` title prefix; or
 - an `Airframe ID:` field in the body.
 
-Imported GitHub Issues become backlogged Airframe Issues:
+Import each qualifying GitHub Issue through AICockpit's canonical Issue workflow. The imported GitHub Issue becomes a backlogged Airframe Issue:
 
 - next available `I-XXXX` ID assigned;
 - GitHub Issue title changed to `[I-XXXX] ...`;
 - GitHub Issue body updated with `Airframe Type: Issue` and `Airframe ID: I-XXXX`;
 - labels `airframe-issue` and `status-backlog` added;
 - the canonical Issue record and mapping updated;
-- `docs/generated/` regenerated from canonical state;
-- the workflow commits those canonical and generated updates back to `main`.
-
-## Manual Verification
+- projections under `docs/generated/` are regenerated from canonical state.
 
 The former `scripts/import-github-issues.sh` mutator is retired; it exits without changing files. Use AICockpit's canonical Issue workflow for imports and regenerate projections afterward.
 

@@ -3,7 +3,7 @@
     "AgileCockpit Sprint & Epic tab"
   ],
   "epicID" : {
-    "rawValue" : "EP-025"
+    "rawValue" : "EP-026"
   },
   "evidenceIDs" : [
 
@@ -15,7 +15,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-07T19:37:46Z"
+    "updatedAt" : "2026-09-11T18:13:22Z"
   },
   "notes" : [
 

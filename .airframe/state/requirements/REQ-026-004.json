@@ -1,0 +1,39 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "externalID" : "EP-026-REQ-04",
+  "id" : {
+    "rawValue" : "REQ-026-004"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "Preserves human acceptance boundaries.",
+  "releaseScope" : [
+    "EP-026"
+  ],
+  "sourceKind" : "airframe",
+  "statement" : "Each EP-026 Task shall define acceptance criteria verification steps and required evidence before activation.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Planning and evidence governance",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "review"
+}

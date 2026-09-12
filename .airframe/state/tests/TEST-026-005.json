@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "AC-026-005"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "expectedResults" : [
+    "No blank sections and correct action wording."
+  ],
+  "id" : {
+    "rawValue" : "TEST-026-005"
+  },
+  "kind" : "ui",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+
+  ],
+  "objective" : "Verify blank narrative suppression and active-Sprint close-action wording.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-005"
+    }
+  ],
+  "status" : "draft",
+  "steps" : [
+    "Render the affected Sprint and Epic detail states."
+  ],
+  "title" : "Presentation regression coverage",
+  "workItemIDs" : [
+    {
+      "rawValue" : "EP-026"
+    },
+    {
+      "rawValue" : "T-0210"
+    },
+    {
+      "rawValue" : "T-0215"
+    }
+  ]
+}

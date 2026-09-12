@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-005"
+  ],
+  "component" : "I-0033 blank narrative sections and I-0035 active Sprint close-action label",
+  "componentsAffected" : [
+    "I-0033 blank narrative sections and I-0035 active Sprint close-action label"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:09:45Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-005"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-052"
+  },
+  "testSteps" : [
+    "UI regression evidence for I-0033 and I-0035"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0210"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Resolve scoped Sprint and Epic presentation defects"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "externalID" : "EP-026-REQ-01",
+  "id" : {
+    "rawValue" : "REQ-026-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Supports auditability and incremental work.",
+  "releaseScope" : [
+    "EP-026"
+  ],
+  "sourceKind" : "airframe",
+  "statement" : "The system shall persist Requirements Tests and Evidence as individually addressable canonical records with stable identifiers and explicit links.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Canonical work-product records",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-004"
+  ],
+  "component" : "Task packets test suite and evidence readiness rules",
+  "componentsAffected" : [
+    "Task packets test suite and evidence readiness rules"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:09:42Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-004"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-051"
+  },
+  "testSteps" : [
+    "Task-packet and acceptance suite output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0209"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Enforce work-product verification and evidence readiness"
+  }
+}

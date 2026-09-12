@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "AC-026-002"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "expectedResults" : [
+    "Scoped commands succeed and broad commands require approval."
+  ],
+  "id" : {
+    "rawValue" : "TEST-026-002"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+
+  ],
+  "objective" : "Verify ID-scoped record commands and approval gates for broad operations.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-002"
+    }
+  ],
+  "status" : "draft",
+  "steps" : [
+    "Exercise scoped commands and rejected broad requests."
+  ],
+  "title" : "Bounded AICockpit workflow coverage",
+  "workItemIDs" : [
+    {
+      "rawValue" : "EP-026"
+    },
+    {
+      "rawValue" : "T-0207"
+    },
+    {
+      "rawValue" : "T-0212"
+    }
+  ]
+}

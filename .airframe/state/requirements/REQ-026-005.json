@@ -1,0 +1,39 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "externalID" : "EP-026-REQ-05",
+  "id" : {
+    "rawValue" : "REQ-026-005"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "Resolves the scoped I-0033 and I-0035 defects.",
+  "releaseScope" : [
+    "EP-026"
+  ],
+  "sourceKind" : "airframe",
+  "statement" : "The system shall suppress empty narrative sections and present the correct close action for an active Sprint.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Carried-forward presentation fixes",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

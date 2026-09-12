@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "AC-026-004"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "expectedResults" : [
+    "Each packet names verification and evidence requirements."
+  ],
+  "id" : {
+    "rawValue" : "TEST-026-004"
+  },
+  "kind" : "acceptance",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+
+  ],
+  "objective" : "Verify planned Tasks carry acceptance verification and evidence requirements before activation.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-004"
+    }
+  ],
+  "status" : "draft",
+  "steps" : [
+    "Inspect every planned Task packet."
+  ],
+  "title" : "Task evidence readiness coverage",
+  "workItemIDs" : [
+    {
+      "rawValue" : "EP-026"
+    },
+    {
+      "rawValue" : "T-0209"
+    },
+    {
+      "rawValue" : "T-0214"
+    }
+  ]
+}

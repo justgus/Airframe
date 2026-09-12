@@ -1,0 +1,39 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "externalID" : "EP-026-REQ-03",
+  "id" : {
+    "rawValue" : "REQ-026-003"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Makes canonical state reviewable without manual reconstruction.",
+  "releaseScope" : [
+    "EP-026"
+  ],
+  "sourceKind" : "airframe",
+  "statement" : "The system shall project deterministic human-readable views and report traceability from requirements through tests evidence and work items.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Deterministic projections and traceability",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

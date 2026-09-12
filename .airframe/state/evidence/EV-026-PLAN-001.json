@@ -1,0 +1,27 @@
+{
+  "artifactReferences" : [
+    "EP-026 canonical planning package"
+  ],
+  "ciReferences" : [
+
+  ],
+  "environment" : "planning",
+  "id" : {
+    "rawValue" : "EV-026-PLAN-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "requirementIDs" : [
+
+  ],
+  "result" : "informational",
+  "summary" : "EP-026 planning baseline: requirements, acceptance criteria, test strategy, Sprint and Task decomposition",
+  "workItemIDs" : [
+
+  ]
+}

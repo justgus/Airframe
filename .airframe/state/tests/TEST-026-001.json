@@ -1,0 +1,54 @@
+{
+  "acceptanceCriterionIDs" : [
+    {
+      "rawValue" : "AC-026-001"
+    }
+  ],
+  "artifactReferences" : [
+
+  ],
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "expectedResults" : [
+    "Stable IDs and relationships round-trip."
+  ],
+  "id" : {
+    "rawValue" : "TEST-026-001"
+  },
+  "kind" : "integration",
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+
+  ],
+  "objective" : "Verify independently addressable Requirements Tests and Evidence records and their links.",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-001"
+    }
+  ],
+  "status" : "draft",
+  "steps" : [
+    "Create and inspect linked canonical records."
+  ],
+  "title" : "Canonical work-product persistence",
+  "workItemIDs" : [
+    {
+      "rawValue" : "EP-026"
+    },
+    {
+      "rawValue" : "T-0206"
+    },
+    {
+      "rawValue" : "T-0211"
+    }
+  ]
+}

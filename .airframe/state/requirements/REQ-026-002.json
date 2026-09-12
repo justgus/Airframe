@@ -1,0 +1,39 @@
+{
+  "derivedFromIDs" : [
+
+  ],
+  "deviationIDs" : [
+
+  ],
+  "externalID" : "EP-026-REQ-02",
+  "id" : {
+    "rawValue" : "REQ-026-002"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "parentIDs" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "Prevents avoidable token churn and unsafe bulk operations.",
+  "releaseScope" : [
+    "EP-026"
+  ],
+  "sourceKind" : "airframe",
+  "statement" : "AICockpit shall create inspect list and link the new work-product records through ID-scoped commands with explicit approval for broad operations.",
+  "status" : "draft",
+  "supersedesIDs" : [
+
+  ],
+  "title" : "Bounded AICockpit workflows",
+  "traceLinks" : [
+
+  ],
+  "validationRequired" : true,
+  "verificationMethod" : "test"
+}

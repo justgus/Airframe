@@ -1,0 +1,87 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "swift test --package-path AirframeCore",
+    "swift test --package-path AICockpit"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "No Sprint is activated by this plan; each remains Planning pending human start."
+  ],
+  "fileChanges" : [
+
+  ],
+  "id" : {
+    "rawValue" : "PLAN-026-002"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Dependency decision: canonical model changes precede command surfaces; command surfaces precede projections.",
+    "Tradeoff: retain separate governance and closeout Sprints to keep acceptance evidence reviewable.",
+    "Resolution sequencing: I-0033 and I-0035 occur only after the shared presentation regression harness is available."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "SP-048 canonical work-product foundation and migration validation",
+    "SP-049 bounded command workflows and receipt discovery",
+    "SP-050 projections traceability and diagnostics",
+    "SP-051 evidence governance release readiness and regression coverage",
+    "SP-052 I-0033 I-0035 presentation fixes and integrated closeout"
+  ],
+  "summary" : "Sequence EP-026 over five dependency-ordered Sprints so data foundation precedes commands, projections, governance, and presentation closeout.",
+  "targetEpicID" : {
+    "rawValue" : "EP-026"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-048"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0206"
+    },
+    {
+      "rawValue" : "T-0211"
+    },
+    {
+      "rawValue" : "T-0207"
+    },
+    {
+      "rawValue" : "T-0212"
+    },
+    {
+      "rawValue" : "T-0208"
+    },
+    {
+      "rawValue" : "T-0213"
+    },
+    {
+      "rawValue" : "T-0209"
+    },
+    {
+      "rawValue" : "T-0214"
+    },
+    {
+      "rawValue" : "T-0210"
+    },
+    {
+      "rawValue" : "T-0215"
+    }
+  ],
+  "title" : "EP-026 phased delivery plan",
+  "verificationCriteria" : [
+    "Each Sprint has two backlog Tasks linked to an EP-026 requirement and test."
+  ]
+}

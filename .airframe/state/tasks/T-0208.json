@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-003"
+  ],
+  "component" : "Deterministic Markdown projections and traceability diagnostics",
+  "componentsAffected" : [
+    "Deterministic Markdown projections and traceability diagnostics"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:09:40Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "high",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-003"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-050"
+  },
+  "testSteps" : [
+    "Projection and traceability regression output"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0208"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Project work products and traceability diagnostics"
+  }
+}

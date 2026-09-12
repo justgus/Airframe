@@ -1,0 +1,23 @@
+{
+  "disposition" : "unverified",
+  "evidenceIDs" : [
+    {
+      "rawValue" : "EV-026-PLAN-001"
+    }
+  ],
+  "id" : {
+    "rawValue" : "AC-026-001"
+  },
+  "isVerified" : false,
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "ownerID" : {
+    "rawValue" : "EP-026"
+  },
+  "text" : "Requirements Tests and Evidence records persist independently with stable IDs and explicit relationships."
+}

@@ -1,4 +1,7 @@
 {
+  "activeEpicID" : {
+    "rawValue" : "EP-026"
+  },
   "backendMappingIDs" : [
 
   ],
@@ -210,7 +213,7 @@
       "minor" : 0,
       "patch" : 0
     },
-    "updatedAt" : "2026-09-11T18:05:54Z"
+    "updatedAt" : "2026-09-11T21:10:03Z"
   },
   "name" : "Agile Airframe",
   "repository" : "justgus\/Airframe",
@@ -355,6 +358,21 @@
     },
     {
       "rawValue" : "SP-047"
+    },
+    {
+      "rawValue" : "SP-048"
+    },
+    {
+      "rawValue" : "SP-049"
+    },
+    {
+      "rawValue" : "SP-050"
+    },
+    {
+      "rawValue" : "SP-051"
+    },
+    {
+      "rawValue" : "SP-052"
     }
   ],
   "taskIDs" : [
@@ -972,6 +990,36 @@
     },
     {
       "rawValue" : "T-0205"
+    },
+    {
+      "rawValue" : "T-0206"
+    },
+    {
+      "rawValue" : "T-0207"
+    },
+    {
+      "rawValue" : "T-0208"
+    },
+    {
+      "rawValue" : "T-0209"
+    },
+    {
+      "rawValue" : "T-0210"
+    },
+    {
+      "rawValue" : "T-0211"
+    },
+    {
+      "rawValue" : "T-0212"
+    },
+    {
+      "rawValue" : "T-0213"
+    },
+    {
+      "rawValue" : "T-0214"
+    },
+    {
+      "rawValue" : "T-0215"
     }
   ]
 }

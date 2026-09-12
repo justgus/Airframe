@@ -1,0 +1,47 @@
+{
+  "acceptanceCriteria" : [
+    "AC-026-005"
+  ],
+  "component" : "Cross-feature integration and I-0033 I-0035 regression verification",
+  "componentsAffected" : [
+    "Cross-feature integration and I-0033 I-0035 regression verification"
+  ],
+  "epicID" : {
+    "rawValue" : "EP-026"
+  },
+  "evidenceIDs" : [
+
+  ],
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "updatedAt" : "2026-09-11T21:10:24Z"
+  },
+  "notes" : [
+
+  ],
+  "priority" : "medium",
+  "rationale" : "",
+  "requirementIDs" : [
+    {
+      "rawValue" : "REQ-026-005"
+    }
+  ],
+  "sprintID" : {
+    "rawValue" : "SP-052"
+  },
+  "testSteps" : [
+    "Integrated suite and UI regression evidence"
+  ],
+  "workItem" : {
+    "id" : {
+      "rawValue" : "T-0215"
+    },
+    "kind" : "task",
+    "status" : "backlog",
+    "title" : "Run EP-026 integration and presentation regression closeout"
+  }
+}

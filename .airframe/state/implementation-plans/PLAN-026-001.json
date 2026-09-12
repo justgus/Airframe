@@ -1,0 +1,75 @@
+{
+  "auditEventIDs" : [
+
+  ],
+  "commands" : [
+    "swift test --package-path AirframeCore",
+    "swift test --package-path AICockpit"
+  ],
+  "decisionState" : "pending",
+  "evidenceIDs" : [
+
+  ],
+  "externalEffects" : [
+    "No external publication; canonical state only until human verification"
+  ],
+  "fileChanges" : [
+    "AirframeCore canonical models and repository",
+    "AICockpit command and projection surfaces",
+    "AICockpit and AirframeCore tests"
+  ],
+  "id" : {
+    "rawValue" : "PLAN-026-001"
+  },
+  "metadata" : {
+    "schemaVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "notes" : [
+    "Decision: retain canonical JSON as the source of truth; projections remain derived.",
+    "Decision: default to ID-scoped workflows; full scans and exports require explicit approval.",
+    "Tradeoff: SP-048 stays Planning until the human starts implementation, avoiding premature active work.",
+    "Resolution plan: T-0210 owns I-0033 and I-0035 regression fixes."
+  ],
+  "proposedByActorID" : {
+    "rawValue" : "ACTOR-LLM"
+  },
+  "scope" : [
+    "Canonical records and relationship validation",
+    "ID-scoped AICockpit commands and explicit broad-operation approval",
+    "Deterministic projections diagnostics and traceability",
+    "I-0033 and I-0035 resolution with regression coverage"
+  ],
+  "summary" : "Deliver first-class Requirements Tests and Evidence work products with bounded AICockpit workflows, deterministic projections, traceability, and the scoped presentation fixes.",
+  "targetEpicID" : {
+    "rawValue" : "EP-026"
+  },
+  "targetSprintID" : {
+    "rawValue" : "SP-048"
+  },
+  "targetTaskIDs" : [
+    {
+      "rawValue" : "T-0206"
+    },
+    {
+      "rawValue" : "T-0207"
+    },
+    {
+      "rawValue" : "T-0208"
+    },
+    {
+      "rawValue" : "T-0209"
+    },
+    {
+      "rawValue" : "T-0210"
+    }
+  ],
+  "title" : "EP-026 canonical work-product implementation plan",
+  "verificationCriteria" : [
+    "Five acceptance criteria each linked to a draft test definition",
+    "Task evidence is required before Task activation"
+  ]
+}
